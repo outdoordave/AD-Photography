@@ -425,7 +425,7 @@
        Home-Indicator-Zone, in der iOS sonst horizontale Wische abfaengt. */
     bottom: calc(34px + env(safe-area-inset-bottom, 0px));
     display: flex; gap: 8px;
-    padding: 10px calc(50% - 32px); /* erstes/letztes Bild kann exakt mittig einrasten (50% - halbe Thumb-Breite) */
+    padding: 10px 0; /* Zentrier-Polster kommt jetzt aus ::before/::after (siehe unten), NICHT mehr aus seitlichem Padding */
     overflow-x: auto;   /* KEIN scroll-behavior:smooth -> sonst macht behavior:'auto' in scrollBy/scrollTo einen Smooth-Scroll, den mandatory-Snap zurueckzieht */
     scroll-snap-type: x mandatory;    /* Thumbs rasten exakt mittig ein, nie zwischen zwei stehen */
     overscroll-behavior-x: contain;   /* horizontales Scrollen loest NICHT die Browser-Zurueck-Geste aus */
@@ -433,6 +433,13 @@
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
+  /* Zentrier-Polster als ECHTE Flex-Spacer statt seitlichem Padding: erstes/letztes Thumb
+     kann mittig unter den Marker, ABER anders als Padding zaehlen Flex-Items immer zur
+     scrollWidth (Safari laesst End-Padding bei Flex-Scroll-Containern weg -> auf breitem
+     Desktop war 50vw-Padding > alle Thumbs => maxScrollLeft 0 = unscrollbar). 50% - 40px
+     = altes (50% - 32px) minus 8px gap -> Zentrierung bleibt pixelgenau wie bisher. */
+  .lb-filmstrip::before,
+  .lb-filmstrip::after { content: ""; flex: 0 0 calc(50% - 40px); }
   .lb-filmstrip::-webkit-scrollbar { display: none; }
   .lb-filmstrip .lb-thumb {
     flex: 0 0 auto; width: 64px; height: 64px; border-radius: var(--radius-sm);
