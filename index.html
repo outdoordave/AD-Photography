@@ -609,15 +609,16 @@
   .trip-detail-wrap { position: relative; min-width: 0; overflow: hidden; }   /* min-width:0 + overflow:hidden: als Grid-Item den 1fr-Slot nicht auf die min-content-Breite aller Slides aufblaehen (sonst quetscht es die Map-Spalte auf 0). Stellt das Shrink-Verhalten her, das #tripDetail als direkter Scroll-Container hatte. */
   .stop-arrow {
     position: absolute; top: 50%; transform: translateY(-50%); z-index: 10;   /* Overlay ueber der Bahn, vertikal mittig */
-    width: 34px; height: 34px; border-radius: var(--radius-full); cursor: pointer;
-    border: 1.5px solid var(--c-line); background: var(--c-bg); color: var(--c-ink-soft);  /* opak: schwebt jetzt ueber Slide-Inhalt/Foto -> lesbar */
-    font-size: var(--fs-title); line-height: 1; display: flex; align-items: center; justify-content: center;
-    padding-bottom: 3px; transition: border-color var(--dur-base) var(--ease), color var(--dur-base) var(--ease), background var(--dur-base) var(--ease);
+    width: 34px; height: 34px; cursor: pointer;
+    border: none; background: transparent; color: #fff;   /* nur das Icon; kein Kreis/Hintergrund -> stoert das Foto nicht */
+    text-shadow: 0 1px 3px rgba(0,0,0,.6), 0 0 2px rgba(0,0,0,.55);   /* dunkler Halo -> Pfeil bleibt auf hellen UND dunklen Hintergruenden lesbar */
+    font-size: var(--fs-title-lg); line-height: 1; display: flex; align-items: center; justify-content: center;
+    padding-bottom: 3px; transition: opacity var(--dur-base) var(--ease);
   }
   .stop-arrow-prev { left: 8px; }
   .stop-arrow-next { right: 8px; }
-  .stop-arrow::before { content: ""; position: absolute; inset: -5px; }  /* 44x44 Tap-Target, sichtbarer Kreis bleibt 34px */
-  .stop-arrow:hover { border-color: var(--c-accent); color: var(--c-accent); }
+  .stop-arrow::before { content: ""; position: absolute; inset: -5px; }  /* 44x44 Tap-Target */
+  .stop-arrow:hover { opacity: .65; }   /* dezentes Feedback statt Kreis-Hintergrund */
   .trip-detail h3 { font-family: var(--font-display); font-size: var(--fs-title-lg); font-weight: var(--fw-medium); margin-bottom: 8px; }
   .trip-detail .date { font-size: var(--fs-label); color: var(--c-ink-soft); margin-bottom: 16px; }
   .trip-detail .ph { aspect-ratio: var(--ar-media); border-radius: var(--radius-sm); margin-bottom: 16px; }
