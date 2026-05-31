@@ -422,6 +422,7 @@
     position: fixed; left: 0; right: 0; bottom: 18px; z-index: 1101;
     display: flex; gap: 8px; padding: 10px 50vw; /* 50vw Polster => erstes/letztes Bild kann mittig */
     overflow-x: auto; scroll-behavior: smooth;
+    overscroll-behavior-x: contain;   /* horizontales Scrollen loest NICHT die Browser-Zurueck-Geste aus */
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
