@@ -50,10 +50,11 @@
       0%   { margin-left: -40%; }
       100% { margin-left: 100%; }
     }
-    /* Dezenter "Zurueck zur Website"-Link. BEWUSST unten links: oben sitzt
+    /* "Zurueck zur Website"-Action-Button. BEWUSST unten links: oben sitzt
        Sveltias App-Leiste (Logo links, Konto rechts), unten Mitte das
        Fortschritts-Banner -> unten links ist die einzige kollisionsfreie Ecke
-       und auf Desktop wie Mobil sichtbar. Gleicher Look wie das Banner. */
+       und auf Desktop wie Mobil sichtbar. Anthrazit (#1f2937) mit weisser Schrift:
+       klar erkennbar, aber neutral genug, um Sveltias UI nicht zu stoeren. */
     #ww-back {
       position: fixed;
       left: 12px;
@@ -62,19 +63,23 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(28,24,18,.82);
-      color: #f4ede1;
+      background: #1f2937;
+      color: #fff;
       font-family: -apple-system, system-ui, sans-serif;
-      font-size: 12px;
+      font-size: 13px;
+      font-weight: 600;
       line-height: 1;
       text-decoration: none;
-      padding: 8px 12px;
+      padding: 10px 14px;
       border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.2);
-      opacity: .72;
-      transition: opacity .2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,.15);
+      transition: background .2s, transform .2s, box-shadow .2s;
     }
-    #ww-back:hover { opacity: 1; }
+    #ww-back:hover {
+      background: #374151;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,.22);
+    }
   </style>
 </head>
 <body>
