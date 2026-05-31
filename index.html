@@ -2155,7 +2155,16 @@ function lbCenterStrip(idx) {
   var strip = document.getElementById('lbFilmstrip');
   if (!strip) return;
   var active = strip.querySelectorAll('.lb-thumb')[idx];
-  if (active) strip.scrollTo({ left: active.offsetLeft - (strip.clientWidth / 2) + (active.clientWidth / 2), behavior: 'auto' });   // 'auto' = instant (kein scroll-behavior:smooth am Streifen mehr) -> wird vom mandatory-Snap nicht zurueckgezogen
+  if (!active) return;
+  var left = active.offsetLeft - (strip.clientWidth / 2) + (active.clientWidth / 2);
+  // scroll-snap-type:x mandatory zieht auf Desktop einen programmatischen scrollLeft sofort
+  // auf die aktuelle Snap-Grenze zurueck (auf Mobile uebernimmt das der native Touch-Scroll).
+  // Daher Snap fuer den Sprung kurz aus, scrollLeft setzen, im naechsten Frame wieder an ->
+  // das Ziel-Thumb steht zentriert unter dem Marker und bleibt dort eingerastet.
+  var prevSnap = strip.style.scrollSnapType;
+  strip.style.scrollSnapType = 'none';
+  strip.scrollLeft = left;
+  requestAnimationFrame(function(){ strip.style.scrollSnapType = prevSnap; });
 }
 function lbSetCaption(idx) {
   if (!lbGallery) return;   // Guard: keine aktive Galerie (z.B. nach closeLightbox) -> kein Zugriff auf .length
@@ -3690,21 +3699,19 @@ function initSite() {
   (function(){
     var strip = document.getElementById('lbFilmstrip');
     if (!strip) return;
-    // Thema 1: Wheel (horizontal ODER vertikal) -> horizontaler Streifen-Scroll.
-    // Pro Wheel-Raste exakt EINE Thumb-Teilung springen (scrollBy statt scrollLeft+=):
-    // kleine scrollLeft-Schritte wuerden vom mandatory-Snap sofort zurueckgezogen, der
-    // Streifen wirkte auf Desktop "eingefroren". Ein voller Thumb-Schritt ueberschreitet
-    // sicher die Snap-Grenze. Thumb-Teilung = Thumb-Breite + gap (dynamisch).
+    // Thema 1: Desktop-Mausrad. Den Streifen NICHT direkt scrollen (mandatory-Snap zieht
+    // jeden programmatischen Strip-Scroll zurueck), sondern via lbStep das HAUPTBILD ein
+    // weiter blaettern (wie Pfeil/Tastatur) -> der Streifen folgt zentriert ueber
+    // setLbCurrent -> lbCenterStrip. Throttle: ein Thumb pro Tick, kein Mehrfach-Sprung.
+    var lbWheelLock = false;
     strip.addEventListener('wheel', function(e){
       var d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
       if (!d) return;
       e.preventDefault();
-      var first = strip.querySelector('.lb-thumb');
-      var gap = parseFloat(getComputedStyle(strip).columnGap);
-      if (isNaN(gap)) gap = 8;
-      var step = first ? first.offsetWidth + gap : 72;
-      strip.scrollBy({ left: d > 0 ? step : -step, behavior: 'auto' });   // instant: smooth wird von scroll-snap mandatory zurueckgezogen; instant landet exakt auf der Snap-Grenze
-      lbStripUser();   // zaehlt als Nutzer-Geste am Streifen (Thema 2)
+      if (lbWheelLock || !lbGallery) return;
+      lbWheelLock = true;
+      setTimeout(function(){ lbWheelLock = false; }, 150);
+      lbStep(d > 0 ? 1 : -1);   // KEIN lbStripUser -> lbStripActive bleibt false, damit setLbCurrent lbCenterStrip aufruft
     }, { passive: false });
     // Thema 2: echte Nutzer-Geste am Streifen (Touch-Drag) markieren.
     strip.addEventListener('touchmove', lbStripUser, { passive: true });
