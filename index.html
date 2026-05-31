@@ -3706,30 +3706,32 @@ function initSite() {
   (function(){
     var strip = document.getElementById('lbFilmstrip');
     if (!strip) return;
-    // Thema 1: Desktop-Mausrad / Trackpad = iPhone-Mediathek-Gefuehl. Streifen ist echt
-    // scrollbar (Flex-Spacer) -> waehrend des Wischens Snap AUS, Delta fliesst in scrollLeft,
-    // Hauptbild folgt live (scroll-Handler unten). Nach kurzer Stille Snap AN -> Thumb rastet
-    // mittig ein. ENTPRELLT gegen Trackpad-Zappeln:
-    //  (1) NUR deltaX nehmen wenn vorhanden -> vertikales Zittern waehrend einer Horizontal-
-    //      Wischgeste kippt die Richtung nicht mehr um (das "wilde Hin und Her").
-    //  (2) Deltas pro Frame buendeln (requestAnimationFrame) statt pro Event -> ruhiges Scrollen.
-    var lbWheelIdle = null, lbWheelAccum = 0, lbWheelRAF = 0;
+    // Thema 1: Streifen-Scroll am Desktop = iPhone-Mediathek-Gefuehl.
+    // Der Streifen ist seit dem Flex-Spacer-Fix NATIV scrollbar. Daher die Trackpad-Geste
+    // dem Browser ueberlassen: echtes Momentum + natives scroll-snap (mandatory) erledigen
+    // fluessiges Wandern UND sauberes Ausrollen/Einrasten beim Loslassen - inkl. des langen
+    // 1-2px-Inertia-Schwanzes, an dem ein manueller scrollLeft-Handler sonst "haengen bleibt".
+    var lbWheelIdle = null;
     strip.addEventListener('wheel', function(e){
-      var d = (e.deltaX !== 0) ? e.deltaX : e.deltaY;   // Trackpad-Horizontal: deltaX; klassische Maus: deltaY
+      if (!lbGallery) return;
+      // Trackpad-Horizontalgeste (deltaX vorhanden): NICHT eingreifen -> Browser scrollt nativ
+      // mit Momentum + Snap. Nur markieren, dass der Streifen das Hauptbild treibt.
+      if (e.deltaX !== 0) {
+        clearTimeout(lbWheelIdle);
+        strip.style.scrollSnapType = '';   // Snap an lassen (falls der Maus-Pfad ihn kurz aushatte)
+        lbStripUser();
+        return;
+      }
+      // Klassische Maus liefert nur deltaY -> auf horizontalen Streifen-Scroll mappen. Das ist
+      // programmatisch, daher Snap fuer die Bewegung kurz aus, nach kurzer Stille wieder an.
+      var d = e.deltaY;
       if (!d) return;
       e.preventDefault();
-      if (!lbGallery) return;
-      strip.style.scrollSnapType = 'none';   // Snap aus -> freies, fluessiges Wandern
-      lbWheelAccum += d;
-      if (!lbWheelRAF) lbWheelRAF = requestAnimationFrame(function(){
-        strip.scrollLeft += lbWheelAccum;    // gebuendelt: ein Scroll-Update pro Frame
-        lbWheelAccum = 0; lbWheelRAF = 0;
-      });
-      lbStripUser();                          // Streifen treibt das Hauptbild (scroll-Handler aktualisiert es live)
+      strip.style.scrollSnapType = 'none';
+      strip.scrollLeft += d;
+      lbStripUser();
       clearTimeout(lbWheelIdle);
-      lbWheelIdle = setTimeout(function(){
-        strip.style.scrollSnapType = '';      // Stille -> mandatory wieder an -> naechstes Thumb rastet zentriert ein
-      }, 140);
+      lbWheelIdle = setTimeout(function(){ strip.style.scrollSnapType = ''; }, 140);
     }, { passive: false });
     // Thema 2: echte Nutzer-Geste am Streifen (Touch-Drag) markieren.
     strip.addEventListener('touchmove', lbStripUser, { passive: true });
