@@ -622,6 +622,7 @@
   .trip-detail h3 { font-family: var(--font-display); font-size: var(--fs-title-lg); font-weight: var(--fw-medium); margin-bottom: 8px; }
   .trip-detail .date { font-size: var(--fs-label); color: var(--c-ink-soft); margin-bottom: 16px; }
   .trip-detail .ph { aspect-ratio: var(--ar-media); border-radius: var(--radius-sm); margin-bottom: 16px; }
+  .trip-slide .ww-photo { cursor: zoom-in; }   /* Titelbild der Station ist anklickbar -> Lightbox */
   .trip-detail p { font-size: var(--fs-ui); color: var(--c-ink-soft); line-height: 1.7; }
   .trip-detail .hint { color: var(--c-ink-soft); font-style: italic; }
   .trip-stoplist { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
@@ -3521,16 +3522,21 @@ function renderStops() {
   var nextBtn = wrap && wrap.querySelector('.stop-arrow-next');
   if (prevBtn) { prevBtn.onclick = function(e){ e.stopPropagation(); stepStop(-1); }; prevBtn.style.display = total > 1 ? '' : 'none'; }
   if (nextBtn) { nextBtn.onclick = function(e){ e.stopPropagation(); stepStop(1); }; nextBtn.style.display = total > 1 ? '' : 'none'; }
-  // Station-Fotos je Stop blaetterbar (eigene Gruppe pro Station)
+  // Stationsbilder blaetterbar: Titelbild (.ww-photo) + weitere Bilder (data-ww-grp="stop")
+  // bilden EINE Galerie pro Station; Klick auf irgendeins oeffnet sie beim geklickten Bild.
   for (var si = 0; si < total; si++) {
     var sp = stops[si];
-    if (!sp.photos || !sp.photos.length) continue;
-    (function(slist, stitle, sidx){
-      var imgs = detail.querySelectorAll('.trip-slide[data-sidx="' + sidx + '"] img[data-ww-grp="stop"]');
+    var group = (sp.photo ? [normalizePath(sp.photo)] : []).concat(sp.photos || []);
+    if (!group.length) continue;
+    (function(glist, stitle, sidx){
+      var imgs = detail.querySelectorAll('.trip-slide[data-sidx="' + sidx + '"] .ww-photo img, .trip-slide[data-sidx="' + sidx + '"] img[data-ww-grp="stop"]');
       for (var q = 0; q < imgs.length; q++) {
-        (function(qi){ imgs[qi].addEventListener('click', function(){ wwOpenImage(slist[qi], slist, stitle); }); })(q);
+        imgs[q].addEventListener('click', function(e){
+          e.stopPropagation();   // nicht das Admin-Edit-Overlay des Titelbilds ausloesen
+          wwOpenImage(this.getAttribute('src'), glist, stitle);   // normalizePath-Abgleich in wwOpenImage trifft den Start-Index
+        });
       }
-    })(sp.photos.slice(), (sp[currentLang] && sp[currentLang].t) || '', si);
+    })(group, (sp[currentLang] && sp[currentLang].t) || '', si);
   }
   // Observer: zentrierte Station -> Karte fliegt hin + Auswahl (wie Lightbox)
   if (typeof IntersectionObserver !== 'undefined') {
