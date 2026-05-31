@@ -375,7 +375,7 @@
   /* ============ LIGHTBOX ============ */
   .lightbox { position: fixed; inset: 0; z-index: 1100; background: rgba(20,17,12,0.94); display: none; align-items: center; justify-content: center; padding: 24px; }
   .lightbox.open { display: flex; }
-  .lightbox .lb-inner { max-width: 1500px; width: 100%; text-align: center; margin-bottom: calc(92px + env(safe-area-inset-bottom, 0px)); position: relative; } /* Platz fuer den (ggf. angehobenen) Filmstreifen */
+  .lightbox .lb-inner { max-width: 1500px; width: 100%; text-align: center; margin-bottom: calc(108px + env(safe-area-inset-bottom, 0px)); position: relative; } /* Platz fuer den angehobenen Filmstreifen (34px + Streifenhoehe) */
   .lightbox .ph { width: 100%; height: 78vh; border-radius: var(--radius-sm); position: relative; }
   .lightbox .ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; border-radius: var(--radius-sm); }
   .lightbox .cap { color: var(--c-dark-ink); margin-top: 12px; font-family: var(--font-display); font-size: var(--fs-ui); opacity: .85; }
@@ -420,12 +420,16 @@
   /* Filmstreifen unten: aktuelles Bild wird per JS mittig gescrollt */
   .lb-filmstrip {
     position: fixed; left: 0; right: 0; z-index: 1101;
-    bottom: calc(18px + env(safe-area-inset-bottom, 0px)); /* iPhone: bei ausgeblendeter Safari-Leiste aus der unteren Gesten-Zone heben (sonst unscrollbar) */
+    /* 34px feste Anhebung: env(safe-area) ist ohne viewport-fit=cover auf iOS = 0, daher
+       reicht env allein nicht -> fester Abstand hebt den Streifen aus der unteren Gesten-/
+       Home-Indicator-Zone, in der iOS sonst horizontale Wische abfaengt. */
+    bottom: calc(34px + env(safe-area-inset-bottom, 0px));
     display: flex; gap: 8px;
     padding: 10px calc(50% - 32px); /* erstes/letztes Bild kann exakt mittig einrasten (50% - halbe Thumb-Breite) */
     overflow-x: auto; scroll-behavior: smooth;
     scroll-snap-type: x mandatory;    /* Thumbs rasten exakt mittig ein, nie zwischen zwei stehen */
     overscroll-behavior-x: contain;   /* horizontales Scrollen loest NICHT die Browser-Zurueck-Geste aus */
+    touch-action: pan-x;              /* horizontale Wische sicher an den Streifen, nicht ans System */
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
@@ -442,7 +446,7 @@
      -> das Hauptbild dunkelt NICHT mit. pointer-events:none -> Thumb-Klicks gehen durch. */
   .lb-strip-marker {
     position: fixed; left: 0; right: 0; z-index: 1102; pointer-events: none; display: none;
-    bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(34px + env(safe-area-inset-bottom, 0px));  /* deckungsgleich mit dem (angehobenen) Streifen */
     height: 84px;                 /* = Streifenhoehe (10 + 64 + 10) */
     overflow: hidden;
   }
