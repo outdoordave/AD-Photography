@@ -606,7 +606,7 @@
   .trip-detail .step { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 8px; }
   /* Pfeil-Navigation: Overlay (Option B) - die Pfeile liegen ueber der Snap-Bahn,
      ausserhalb der mitwischenden Slides. */
-  .trip-detail-wrap { position: relative; }
+  .trip-detail-wrap { position: relative; min-width: 0; overflow: hidden; }   /* min-width:0 + overflow:hidden: als Grid-Item den 1fr-Slot nicht auf die min-content-Breite aller Slides aufblaehen (sonst quetscht es die Map-Spalte auf 0). Stellt das Shrink-Verhalten her, das #tripDetail als direkter Scroll-Container hatte. */
   .stop-arrow {
     position: absolute; top: 50%; transform: translateY(-50%); z-index: 10;   /* Overlay ueber der Bahn, vertikal mittig */
     width: 34px; height: 34px; border-radius: var(--radius-full); cursor: pointer;
