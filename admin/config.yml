@@ -253,6 +253,11 @@ collections:
       widget: boolean
       default: true
       hint: Der Bereich „Wonach uns gerade ist“ direkt unter „Aktuell“. Aus = wird auf der Startseite ausgeblendet.
+    - name: gallery_loop
+      label: Galerie-Umlauf (nach dem letzten Bild zurück zum ersten)?
+      widget: boolean
+      default: true
+      hint: An = in der Vollbild-Galerie springen Pfeile/Pfeiltasten vom letzten Bild zurück zum ersten (und umgekehrt). Freies Wischen stoppt weiterhin am Ende.
 
 # === 📖 Stories / Beiträge ===
 - name: stories

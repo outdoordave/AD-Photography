@@ -2178,12 +2178,14 @@ function lbStep(dir) {
   if (!lbGallery) return;
   var track = document.getElementById('lbTrack');
   if (!track) return;
-  var slides = track.children, cur = 0, best = Infinity;
-  for (var i = 0; i < slides.length; i++) {
+  var slides = track.children, n = slides.length, cur = 0, best = Infinity;
+  for (var i = 0; i < n; i++) {
     var d = Math.abs(slides[i].offsetLeft - track.scrollLeft);
     if (d < best) { best = d; cur = i; }
   }
-  var target = Math.max(0, Math.min(slides.length - 1, cur + dir));
+  // Umlauf (CMS: gallery_loop, Default AN) -> ueber die Enden wrappen; sonst klemmen.
+  var loop = !(window.WW_SITE && window.WW_SITE.gallery_loop === false);
+  var target = loop ? ((cur + dir + n) % n) : Math.max(0, Math.min(n - 1, cur + dir));
   if (slides[target]) track.scrollTo({ left: slides[target].offsetLeft, behavior: 'smooth' });
 }
 
@@ -3692,7 +3694,9 @@ function loadSiteTexts() {
       // Fallback: fehlt die Datei/ein Feld, bleibt alles AN (= bisheriges Verhalten).
       logo:           appearance.logo || '',
       show_hero_logo: appearance.show_hero_logo !== false,
-      show_discover:  appearance.show_discover !== false
+      show_discover:  appearance.show_discover !== false,
+      // Vollbild-Galerie: Umlauf (Pfeile/Tastatur springen ueber die Enden). Default AN.
+      gallery_loop:   appearance.gallery_loop !== false
     };
     applySiteTexts();
     applyStoriesVisibility();
