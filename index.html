@@ -622,7 +622,7 @@
   .trip-detail h3 { font-family: var(--font-display); font-size: var(--fs-title-lg); font-weight: var(--fw-medium); margin-bottom: 8px; }
   .trip-detail .date { font-size: var(--fs-label); color: var(--c-ink-soft); margin-bottom: 16px; }
   .trip-detail .ph { aspect-ratio: var(--ar-media); border-radius: var(--radius-sm); margin-bottom: 16px; }
-  .trip-slide .ww-photo { cursor: zoom-in; }   /* Titelbild der Station ist anklickbar -> Lightbox */
+  .trip-slide .ww-photo { cursor: pointer; }   /* Titelbild der Station ist anklickbar -> Lightbox (Hand statt Lupe) */
   /* Vollbild-Hinweis (Expand-Symbol) unten rechts auf dem Stationstitelbild: signalisiert
      "Klick oeffnet gross". Reine CSS-Loesung via ::after (.ww-photo = div mit position:relative
      + overflow:hidden; ::before ist vom Verlauf belegt, ::after frei). */
@@ -767,7 +767,7 @@
   .ww-masonry figure figcaption { font-size: var(--fs-label); color: var(--c-ink-soft, #6e5e49); padding: 4px 2px 0; }
   .ww-trip-gallery-title { font-size: var(--fs-title); font-weight: var(--fw-semibold); margin: 40px 0 4px; }
   .ww-station-photos { column-count: 2; column-gap: 8px; margin-top: 12px; }
-  .ww-station-photos img { width: 100%; border-radius: var(--radius-sm); margin-bottom: 8px; display: block; break-inside: avoid; cursor: zoom-in; }
+  .ww-station-photos img { width: 100%; border-radius: var(--radius-sm); margin-bottom: 8px; display: block; break-inside: avoid; cursor: pointer; }
   @media (max-width: 700px) { .ww-masonry { column-count: 2; } .ww-station-photos { column-count: 2; } }
   @media (max-width: 480px) { .ww-masonry { column-count: 1; } .ww-station-photos { column-count: 1; } }
   .ww-hero-tools { top: 90px; right: 20px; z-index: 60; }
