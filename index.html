@@ -89,7 +89,7 @@
     --ar-media:    16 / 10;
     --ar-banner:   21 / 9;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; } /* kein blaues/graues Tap-Flackern; Tastatur-Fokus (:focus-visible) bleibt */
   html { scroll-behavior: smooth; }
   body {
     font-family: var(--font-body); background: var(--c-bg); color: var(--c-ink);
@@ -128,7 +128,7 @@
   /* ============ NAVIGATION ============ */
   header {
     position: sticky; top: 0; z-index: 1100; background: rgba(244,237,225,0.94);
-    backdrop-filter: blur(10px); border-bottom: 1px solid var(--c-line);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: 1px solid var(--c-line);
   }
   /* MapLibre-Karte darf nicht ueber den Header scrollen */
   .map-box .maplibregl-map { z-index: 1; }
@@ -179,7 +179,7 @@
 
   /* ============ HERO (Startseite) ============ */
   .hero {
-    position: relative; min-height: 90vh; display: flex; flex-direction: column;
+    position: relative; min-height: 90vh; min-height: 90svh; display: flex; flex-direction: column;
     align-items: center; justify-content: center; text-align: center; overflow: hidden;
     background: linear-gradient(160deg, #3a4038 0%, #2b2a22 45%, #4a3826 100%);
     padding: 60px 24px;
