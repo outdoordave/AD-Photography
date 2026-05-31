@@ -3670,11 +3670,19 @@ function initSite() {
     var strip = document.getElementById('lbFilmstrip');
     if (!strip) return;
     // Thema 1: Wheel (horizontal ODER vertikal) -> horizontaler Streifen-Scroll.
+    // Pro Wheel-Raste exakt EINE Thumb-Teilung springen (scrollBy statt scrollLeft+=):
+    // kleine scrollLeft-Schritte wuerden vom mandatory-Snap sofort zurueckgezogen, der
+    // Streifen wirkte auf Desktop "eingefroren". Ein voller Thumb-Schritt ueberschreitet
+    // sicher die Snap-Grenze. Thumb-Teilung = Thumb-Breite + gap (dynamisch).
     strip.addEventListener('wheel', function(e){
       var d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
       if (!d) return;
-      strip.scrollLeft += d;
       e.preventDefault();
+      var first = strip.querySelector('.lb-thumb');
+      var gap = parseFloat(getComputedStyle(strip).columnGap);
+      if (isNaN(gap)) gap = 8;
+      var step = first ? first.offsetWidth + gap : 72;
+      strip.scrollBy({ left: d > 0 ? step : -step, behavior: 'smooth' });
       lbStripUser();   // zaehlt als Nutzer-Geste am Streifen (Thema 2)
     }, { passive: false });
     // Thema 2: echte Nutzer-Geste am Streifen (Touch-Drag) markieren.
