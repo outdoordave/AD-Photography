@@ -623,6 +623,18 @@
   .trip-detail .date { font-size: var(--fs-label); color: var(--c-ink-soft); margin-bottom: 16px; }
   .trip-detail .ph { aspect-ratio: var(--ar-media); border-radius: var(--radius-sm); margin-bottom: 16px; }
   .trip-slide .ww-photo { cursor: zoom-in; }   /* Titelbild der Station ist anklickbar -> Lightbox */
+  /* Vollbild-Hinweis (Expand-Symbol) unten rechts auf dem Stationstitelbild: signalisiert
+     "Klick oeffnet gross". Reine CSS-Loesung via ::after (.ww-photo = div mit position:relative
+     + overflow:hidden; ::before ist vom Verlauf belegt, ::after frei). */
+  .trip-slide .ww-photo::after {
+    content: ""; position: absolute; bottom: 10px; right: 10px;
+    width: 32px; height: 32px; z-index: 3; pointer-events: none;
+    background: center / contain no-repeat url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2024%2024%22%20fill=%22none%22%20stroke=%22white%22%20stroke-width=%222%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%3E%3Cpath%20d=%22M4%204h6v6M20%2020h-6v-6M10%204L4%2010M14%2020l6-6%22/%3E%3C/svg%3E");
+    opacity: 0.6; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.6));
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .trip-slide .ww-photo:hover::after { opacity: 1; transform: scale(1.15); }
+  @media (hover: none) { .trip-slide .ww-photo::after { opacity: 0.8; } }   /* Touch ohne Hover: dauerhaft sichtbar */
   .trip-detail p { font-size: var(--fs-ui); color: var(--c-ink-soft); line-height: 1.7; }
   .trip-detail .hint { color: var(--c-ink-soft); font-style: italic; }
   .trip-stoplist { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
