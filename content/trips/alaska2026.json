@@ -12,11 +12,15 @@
       "text_de": "Der Start unserer Best-of-Runde: zwei Tage in San Francisco, bevor es die Küste hinunter geht.",
       "date_de": "23.–25. Okt",
       "photo": "/uploads/img_0206.jpg",
-      "text_en": "The start of our best-of loop: two days in San Francisco before heading down the coast.",
-      "title_en": "San Francisco",
-      "date_en": "Oct 23–25",
+      "photos": [
+        "/uploads/img_5273.jpg",
+        "/uploads/img_1418-2.jpg"
+      ],
+      "lat": 37.77,
       "lon": -122.42,
-      "lat": 37.77
+      "date_en": "Oct 23–25",
+      "title_en": "San Francisco",
+      "text_en": "The start of our best-of loop: two days in San Francisco before heading down the coast."
     },
     {
       "location": "{\"type\":\"Point\",\"coordinates\":[-120.85,35.37]}",
@@ -25,11 +29,11 @@
       "text_de": "Wieder die Ottern beim Spielen beobachten und ein Stück Highway 1 genießen.",
       "date_de": "25.–26. Okt",
       "photo": "",
-      "text_en": "Watching the otters play again and enjoying a stretch of Highway 1.",
-      "title_en": "Morro Bay",
-      "date_en": "Oct 25–26",
+      "lat": 35.37,
       "lon": -120.85,
-      "lat": 35.37
+      "date_en": "Oct 25–26",
+      "title_en": "Morro Bay",
+      "text_en": "Watching the otters play again and enjoying a stretch of Highway 1."
     },
     {
       "location": "{\"type\":\"Point\",\"coordinates\":[-118.24,34.05]}",
@@ -38,11 +42,11 @@
       "text_de": "Ein Wiedersehen mit der Stadt der Engel, bevor wir ins Yosemite-Hochland aufbrechen.",
       "date_de": "26.–28. Okt",
       "photo": "",
-      "text_en": "A reunion with the City of Angels before we set off for the Yosemite highlands.",
-      "title_en": "Los Angeles",
-      "date_en": "Oct 26–28",
+      "lat": 34.05,
       "lon": -118.24,
-      "lat": 34.05
+      "date_en": "Oct 26–28",
+      "title_en": "Los Angeles",
+      "text_en": "A reunion with the City of Angels before we set off for the Yosemite highlands."
     },
     {
       "location": "{\"type\":\"Point\",\"coordinates\":[-119.54,37.87]}",
@@ -51,11 +55,11 @@
       "text_de": "Zurück zu unserem Lieblings-Nationalpark, diesmal mit mehr Zeit.",
       "date_de": "28.–30. Okt",
       "photo": "",
-      "text_en": "Back to our favorite national park, this time with more time.",
-      "title_en": "Yosemite",
-      "date_en": "Oct 28–30",
+      "lat": 37.87,
       "lon": -119.54,
-      "lat": 37.87
+      "date_en": "Oct 28–30",
+      "title_en": "Yosemite",
+      "text_en": "Back to our favorite national park, this time with more time."
     },
     {
       "location": "{\"type\":\"Point\",\"coordinates\":[-120.03,39.1]}",
@@ -64,11 +68,11 @@
       "text_de": "Ein paar ruhige Tage am Bergsee, bevor der Flug in den hohen Norden geht.",
       "date_de": "30. Okt – 01. Nov",
       "photo": "",
-      "text_en": "A few quiet days at the mountain lake before flying up to the far north.",
-      "title_en": "Lake Tahoe",
-      "date_en": "Oct 30 – Nov 1",
+      "lat": 39.1,
       "lon": -120.03,
-      "lat": 39.1
+      "date_en": "Oct 30 – Nov 1",
+      "title_en": "Lake Tahoe",
+      "text_en": "A few quiet days at the mountain lake before flying up to the far north."
     },
     {
       "location": "{\"type\":\"Point\",\"coordinates\":[-149.9,61.22]}",
@@ -77,11 +81,11 @@
       "text_de": "Ankunft in Alaska. Anchorage als Basislager für die großen Wildnis-Etappen.",
       "date_de": "01.–04. Nov",
       "photo": "",
-      "text_en": "Arrival in Alaska. Anchorage as a base camp for the great wilderness legs.",
-      "title_en": "Anchorage",
-      "date_en": "Nov 1–4",
+      "lat": 61.22,
       "lon": -149.9,
-      "lat": 61.22
+      "date_en": "Nov 1–4",
+      "title_en": "Anchorage",
+      "text_en": "Arrival in Alaska. Anchorage as a base camp for the great wilderness legs."
     },
     {
       "location": "{\"type\":\"Point\",\"coordinates\":[-151.0,63.07]}",
@@ -90,11 +94,11 @@
       "text_de": "Der höchste Berg Nordamerikas — Wildnis, Weite und hoffentlich klare Sicht.",
       "date_de": "04.–05. Nov",
       "photo": "",
-      "text_en": "The highest mountain in North America — wilderness, vastness and hopefully a clear view.",
-      "title_en": "Denali",
-      "date_en": "Nov 4–5",
+      "lat": 63.07,
       "lon": -151,
-      "lat": 63.07
+      "date_en": "Nov 4–5",
+      "title_en": "Denali",
+      "text_en": "The highest mountain in North America — wilderness, vastness and hopefully a clear view."
     },
     {
       "location": "{\"type\":\"Point\",\"coordinates\":[-147.72,64.84]}",
@@ -103,11 +107,11 @@
       "text_de": "Tor zur Arktis und Basis für die Polarlichter.",
       "date_de": "05.–06. & 09.–11. Nov",
       "photo": "",
-      "text_en": "Gateway to the Arctic and base for the northern lights.",
-      "title_en": "Fairbanks",
-      "date_en": "Nov 5–6 & 9–11",
+      "lat": 64.84,
       "lon": -147.72,
-      "lat": 64.84
+      "date_en": "Nov 5–6 & 9–11",
+      "title_en": "Fairbanks",
+      "text_en": "Gateway to the Arctic and base for the northern lights."
     },
     {
       "location": "{\"type\":\"Point\",\"coordinates\":[-150.18,67.25]}",
@@ -116,11 +120,11 @@
       "text_de": "Der nördlichste Punkt jenseits des Polarkreises am Dalton Highway — das große Ziel.",
       "date_de": "07.–09. Nov",
       "photo": "",
-      "text_en": "The northernmost point beyond the Arctic Circle on the Dalton Highway — the grand goal.",
-      "title_en": "Coldfoot",
-      "date_en": "Nov 7–9",
+      "lat": 67.25,
       "lon": -150.18,
-      "lat": 67.25
+      "date_en": "Nov 7–9",
+      "title_en": "Coldfoot",
+      "text_en": "The northernmost point beyond the Arctic Circle on the Dalton Highway — the grand goal."
     },
     {
       "location": "{\"type\":\"Point\",\"coordinates\":[-142.99,63.34]}",
@@ -129,11 +133,11 @@
       "text_de": "Letzter Halt im Landesinneren auf dem Rückweg nach Anchorage.",
       "date_de": "11.–13. Nov",
       "photo": "",
-      "text_en": "Last stop inland on the way back to Anchorage.",
-      "title_en": "Tok",
-      "date_en": "Nov 11–13",
+      "lat": 63.34,
       "lon": -142.99,
-      "lat": 63.34
+      "date_en": "Nov 11–13",
+      "title_en": "Tok",
+      "text_en": "Last stop inland on the way back to Anchorage."
     }
   ],
   "summary_en": "Our upcoming big trip: first revisiting our favorite places in California, then up to the far north — Anchorage, Denali, Fairbanks all the way up to Coldfoot near the Arctic Circle. We can hardly wait.",
