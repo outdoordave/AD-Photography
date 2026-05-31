@@ -604,16 +604,18 @@
   .trip-detail::-webkit-scrollbar { display: none; }
   .trip-slide { flex: 0 0 100%; box-sizing: border-box; padding: 28px; scroll-snap-align: center; }
   .trip-detail .step { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 8px; }
-  /* Pfeil-Navigation durch die Stationen */
-  .trip-detail .stop-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
-  .trip-detail .stop-nav .step { margin-bottom: 0; }
+  /* Pfeil-Navigation: Overlay (Option B) - die Pfeile liegen ueber der Snap-Bahn,
+     ausserhalb der mitwischenden Slides. */
+  .trip-detail-wrap { position: relative; }
   .stop-arrow {
-    flex: 0 0 auto; width: 34px; height: 34px; border-radius: var(--radius-full); cursor: pointer;
-    position: relative;   /* fuer die vergroesserte Tap-Flaeche (::before) */
-    border: 1.5px solid var(--c-line); background: transparent; color: var(--c-ink-soft);
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 10;   /* Overlay ueber der Bahn, vertikal mittig */
+    width: 34px; height: 34px; border-radius: var(--radius-full); cursor: pointer;
+    border: 1.5px solid var(--c-line); background: var(--c-bg); color: var(--c-ink-soft);  /* opak: schwebt jetzt ueber Slide-Inhalt/Foto -> lesbar */
     font-size: var(--fs-title); line-height: 1; display: flex; align-items: center; justify-content: center;
     padding-bottom: 3px; transition: border-color var(--dur-base) var(--ease), color var(--dur-base) var(--ease), background var(--dur-base) var(--ease);
   }
+  .stop-arrow-prev { left: 8px; }
+  .stop-arrow-next { right: 8px; }
   .stop-arrow::before { content: ""; position: absolute; inset: -5px; }  /* 44x44 Tap-Target, sichtbarer Kreis bleibt 34px */
   .stop-arrow:hover { border-color: var(--c-accent); color: var(--c-accent); }
   .trip-detail h3 { font-family: var(--font-display); font-size: var(--fs-title-lg); font-weight: var(--fw-medium); margin-bottom: 8px; }
@@ -1020,7 +1022,11 @@
         <div class="map-box ww-editable" id="mapBox" style="position:relative">
           <div class="ww-edit-toolbar" style="z-index:5"><button class="ww-edit-btn" title="Karten-Stil ändern" onclick="event.stopPropagation(); window.open('/admin/#/collections/kartenstil/entries/mapstyle','_blank')"><svg viewBox="0 0 24 24" style="width:17px;height:17px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>
         </div>
-        <div class="trip-detail" id="tripDetail"></div>
+        <div class="trip-detail-wrap">
+          <button class="stop-arrow stop-arrow-prev" type="button" aria-label="Vorherige Station">‹</button>
+          <div class="trip-detail" id="tripDetail"></div>
+          <button class="stop-arrow stop-arrow-next" type="button" aria-label="Nächste Station">›</button>
+        </div>
       </div>
       <div class="trip-stoplist" id="tripStoplist" style="justify-content:center;"></div>
       <div class="wrap" id="tripGallery"></div>
@@ -3482,13 +3488,7 @@ function buildStopHTML(s, idx, total) {
     photosHtml += '</div>';
   }
   return '<div class="ww-editable" style="position:relative">' +
-    (total > 1
-      ? '<div class="stop-nav">' +
-          '<button class="stop-arrow" type="button" data-step="-1" aria-label="' + (currentLang==='en'?'Previous stop':'Vorherige Station') + '">‹</button>' +
-          '<div class="step">' + stepLabel + '</div>' +
-          '<button class="stop-arrow" type="button" data-step="1" aria-label="' + (currentLang==='en'?'Next stop':'Nächste Station') + '">›</button>' +
-        '</div>'
-      : '<div class="step">' + stepLabel + '</div>') +
+    '<div class="step">' + stepLabel + '</div>' +   // Pfeile sitzen jetzt als Overlay im .trip-detail-wrap (ausserhalb der Snap-Slides)
     '<h3>' + d.t + '</h3>' +
     '<div class="date">' + d.date + '</div>' +
     wwMediaBox(s.c1, s.c2, s.img, s.photo) +
@@ -3513,11 +3513,13 @@ function renderStops() {
     slide.innerHTML = buildStopHTML(stops[i], i, total);
     detail.appendChild(slide);
   }
-  // Pfeile (pro Slide) -> stepStop
-  var navBtns = detail.querySelectorAll('.stop-arrow');
-  for (var nb = 0; nb < navBtns.length; nb++) {
-    (function(btn){ btn.addEventListener('click', function(e){ e.stopPropagation(); stepStop(parseInt(btn.getAttribute('data-step'), 10)); }); })(navBtns[nb]);
-  }
+  // Pfeile sitzen jetzt als Overlay im .trip-detail-wrap (ausserhalb der Snap-Slides) ->
+  // einmal verdrahten. .onclick (statt addEventListener) bleibt bei Re-Render duplikatfrei.
+  var wrap = detail.parentNode;
+  var prevBtn = wrap && wrap.querySelector('.stop-arrow-prev');
+  var nextBtn = wrap && wrap.querySelector('.stop-arrow-next');
+  if (prevBtn) { prevBtn.onclick = function(e){ e.stopPropagation(); stepStop(-1); }; prevBtn.style.display = total > 1 ? '' : 'none'; }
+  if (nextBtn) { nextBtn.onclick = function(e){ e.stopPropagation(); stepStop(1); }; nextBtn.style.display = total > 1 ? '' : 'none'; }
   // Station-Fotos je Stop blaetterbar (eigene Gruppe pro Station)
   for (var si = 0; si < total; si++) {
     var sp = stops[si];
