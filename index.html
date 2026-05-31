@@ -376,7 +376,7 @@
   .lightbox { position: fixed; inset: 0; z-index: 1100; background: rgba(20,17,12,0.94); display: none; align-items: center; justify-content: center; padding: 24px; }
   .lightbox.open { display: flex; }
   .lightbox .lb-inner { max-width: 1500px; width: 100%; text-align: center; margin-bottom: calc(108px + env(safe-area-inset-bottom, 0px)); position: relative; } /* Platz fuer den angehobenen Filmstreifen (34px + Streifenhoehe) */
-  .lightbox .ph { width: 100%; height: 78vh; border-radius: var(--radius-sm); position: relative; }
+  .lightbox .ph { width: 100%; height: 78vh; height: 78dvh; border-radius: var(--radius-sm); position: relative; }
   .lightbox .ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; border-radius: var(--radius-sm); }
   .lightbox .cap { color: var(--c-dark-ink); margin-top: 12px; font-family: var(--font-display); font-size: var(--fs-ui); opacity: .85; }
   /* Galerie-Modus: horizontale Snap-Bahn (scroll-snap) statt Einzelbild-Tausch.
@@ -384,7 +384,7 @@
   .lb-track { display: none; }
   .lightbox.lb-gallery .lb-inner > .ph { display: none; }          /* Einzelbild-.ph im Galerie-Modus aus */
   .lightbox.lb-gallery .lb-track {
-    display: flex; width: 100%; height: 78vh; position: relative; gap: 28px;  /* gap = Luecke NUR zwischen den Bildern, kein Rand neben dem aktiven */
+    display: flex; width: 100%; height: 78vh; height: 78dvh; position: relative; gap: 28px;  /* gap = Luecke NUR zwischen den Bildern, kein Rand neben dem aktiven */
     overflow-x: auto; overflow-y: hidden;
     scroll-snap-type: x mandatory;
     overscroll-behavior-x: contain;                                 /* unterdrueckt die Browser-Zurueck-Geste */
@@ -404,7 +404,7 @@
   .lb-close { position: fixed; top: 22px; right: 24px; width: 46px; height: 46px; border-radius: var(--radius-full); background: rgba(240,229,212,0.16); color: #fff; border: none; font-size: var(--fs-title); cursor: pointer; z-index: 1102; }
   /* Blätter-Pfeile links/rechts außen */
   .lb-nav {
-    position: absolute; top: 39vh; transform: translateY(-50%);   /* 39vh = halbe Track-Hoehe (78vh) -> auf Bildmitte, nicht Viewport-Mitte */
+    position: absolute; top: 39vh; top: 39dvh; transform: translateY(-50%);   /* 39dvh = halbe Track-Hoehe (78dvh) -> auf Bildmitte, dvh folgt der Safari-Leiste */
     width: 48px; height: 48px; border-radius: var(--radius-full);
     background: rgba(20,17,12,0.28);                 /* nur ein zarter Glas-Kreis -> Bild scheint durch, nicht "zugedeckt" */
     -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
@@ -609,10 +609,12 @@
   .trip-detail .stop-nav .step { margin-bottom: 0; }
   .stop-arrow {
     flex: 0 0 auto; width: 34px; height: 34px; border-radius: var(--radius-full); cursor: pointer;
+    position: relative;   /* fuer die vergroesserte Tap-Flaeche (::before) */
     border: 1.5px solid var(--c-line); background: transparent; color: var(--c-ink-soft);
     font-size: var(--fs-title); line-height: 1; display: flex; align-items: center; justify-content: center;
     padding-bottom: 3px; transition: border-color var(--dur-base) var(--ease), color var(--dur-base) var(--ease), background var(--dur-base) var(--ease);
   }
+  .stop-arrow::before { content: ""; position: absolute; inset: -5px; }  /* 44x44 Tap-Target, sichtbarer Kreis bleibt 34px */
   .stop-arrow:hover { border-color: var(--c-accent); color: var(--c-accent); }
   .trip-detail h3 { font-family: var(--font-display); font-size: var(--fs-title-lg); font-weight: var(--fw-medium); margin-bottom: 8px; }
   .trip-detail .date { font-size: var(--fs-label); color: var(--c-ink-soft); margin-bottom: 16px; }
@@ -772,7 +774,7 @@
   @media (max-width: 860px) {
     .nav { height: 72px; }
     .nav-logo img { height: 48px; }
-    .nav-links { position: fixed; top: 72px; right: 0; width: 78%; max-width: 320px; height: calc(100vh - 72px); background: var(--c-bg); flex-direction: column; align-items: flex-start; padding: 32px 30px; gap: 8px; border-left: 1px solid var(--c-line); transform: translateX(100%); transition: transform var(--dur-base) var(--ease); overflow-y: auto; }
+    .nav-links { position: fixed; top: 72px; right: 0; width: 78%; max-width: 320px; height: calc(100vh - 72px); height: calc(100dvh - 72px); background: var(--c-bg); flex-direction: column; align-items: flex-start; padding: 32px 30px; gap: 8px; border-left: 1px solid var(--c-line); transform: translateX(100%); transition: transform var(--dur-base) var(--ease); overflow-y: auto; }
     .nav-links.open { transform: translateX(0); }
     .nav-links a { font-size: var(--fs-ui); padding: 12px 0; width: 100%; border-bottom: 1px solid var(--c-line); }
     .nav-links a.active::after { display: none; }
