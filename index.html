@@ -421,8 +421,10 @@
   .lb-filmstrip {
     position: fixed; left: 0; right: 0; z-index: 1101;
     bottom: calc(18px + env(safe-area-inset-bottom, 0px)); /* iPhone: bei ausgeblendeter Safari-Leiste aus der unteren Gesten-Zone heben (sonst unscrollbar) */
-    display: flex; gap: 8px; padding: 10px 50vw; /* 50vw Polster => erstes/letztes Bild kann mittig */
+    display: flex; gap: 8px;
+    padding: 10px calc(50% - 32px); /* erstes/letztes Bild kann exakt mittig einrasten (50% - halbe Thumb-Breite) */
     overflow-x: auto; scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;    /* Thumbs rasten exakt mittig ein, nie zwischen zwei stehen */
     overscroll-behavior-x: contain;   /* horizontales Scrollen loest NICHT die Browser-Zurueck-Geste aus */
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
@@ -430,16 +432,33 @@
   .lb-filmstrip::-webkit-scrollbar { display: none; }
   .lb-filmstrip .lb-thumb {
     flex: 0 0 auto; width: 64px; height: 64px; border-radius: var(--radius-sm);
-    overflow: hidden; cursor: pointer; opacity: .5;
-    border: 2px solid transparent; transition: opacity var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease), transform var(--dur-base) var(--ease);
+    scroll-snap-align: center; scroll-snap-stop: always;  /* genau ein Bild rastet mittig ein */
+    overflow: hidden; cursor: pointer;
     background-size: cover; background-position: center; background-color: #2a241c;
   }
-  .lb-filmstrip .lb-thumb:hover { opacity: .85; }
-  .lb-filmstrip .lb-thumb.active { opacity: 1; border-color: var(--c-accent); transform: translateY(-3px); }
+  /* Feste Mitte-Markierung: ortsfester Rahmen in der Streifen-Mitte; die Thumbs laufen
+     durch ihn hindurch, was mittig steht ist aktiv (kein wanderndes aktives Thumbnail).
+     box-shadow dunkelt drumherum ab, per overflow:hidden auf das Streifen-Band geklippt
+     -> das Hauptbild dunkelt NICHT mit. pointer-events:none -> Thumb-Klicks gehen durch. */
+  .lb-strip-marker {
+    position: fixed; left: 0; right: 0; z-index: 1102; pointer-events: none; display: none;
+    bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+    height: 84px;                 /* = Streifenhoehe (10 + 64 + 10) */
+    overflow: hidden;
+  }
+  .lightbox.lb-gallery .lb-strip-marker { display: block; }
+  .lb-strip-marker::before {
+    content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: 68px; height: 68px; border-radius: var(--radius-sm);  /* border-box: Innenloch = 64px = Thumb */
+    border: 2px solid var(--c-accent);
+    box-shadow: 0 0 0 9999px rgba(0,0,0,0.35);
+  }
   @media (max-width: 640px) {
     .lb-nav { width: 44px; height: 44px; font-size: var(--fs-title-lg); }
     .lb-prev { left: 8px; } .lb-next { right: 8px; }
     .lb-filmstrip .lb-thumb { width: 50px; height: 50px; }
+    .lb-strip-marker { height: 70px; }                       /* 10 + 50 + 10 */
+    .lb-strip-marker::before { width: 54px; height: 54px; }  /* Innenloch = 50px */
     .lightbox { padding: 20px 12px 96px; }
   }
 
@@ -1125,6 +1144,7 @@
     <div class="cap" id="lbCap"></div>
   </div>
   <div class="lb-filmstrip" id="lbFilmstrip"></div>
+  <div class="lb-strip-marker" id="lbStripMarker" aria-hidden="true"></div>
 </div>
 
 <script>
