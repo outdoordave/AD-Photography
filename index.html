@@ -426,7 +426,7 @@
     bottom: calc(34px + env(safe-area-inset-bottom, 0px));
     display: flex; gap: 8px;
     padding: 10px calc(50% - 32px); /* erstes/letztes Bild kann exakt mittig einrasten (50% - halbe Thumb-Breite) */
-    overflow-x: auto; scroll-behavior: smooth;
+    overflow-x: auto;   /* KEIN scroll-behavior:smooth -> sonst macht behavior:'auto' in scrollBy/scrollTo einen Smooth-Scroll, den mandatory-Snap zurueckzieht */
     scroll-snap-type: x mandatory;    /* Thumbs rasten exakt mittig ein, nie zwischen zwei stehen */
     overscroll-behavior-x: contain;   /* horizontales Scrollen loest NICHT die Browser-Zurueck-Geste aus */
     touch-action: pan-x;              /* horizontale Wische sicher an den Streifen, nicht ans System */
@@ -2143,7 +2143,7 @@ function lbCenterStrip(idx) {
   var strip = document.getElementById('lbFilmstrip');
   if (!strip) return;
   var active = strip.querySelectorAll('.lb-thumb')[idx];
-  if (active) strip.scrollTo({ left: active.offsetLeft - (strip.clientWidth / 2) + (active.clientWidth / 2), behavior: 'smooth' });
+  if (active) strip.scrollTo({ left: active.offsetLeft - (strip.clientWidth / 2) + (active.clientWidth / 2), behavior: 'auto' });   // 'auto' = instant (kein scroll-behavior:smooth am Streifen mehr) -> wird vom mandatory-Snap nicht zurueckgezogen
 }
 function lbSetCaption(idx) {
   if (!lbGallery) return;   // Guard: keine aktive Galerie (z.B. nach closeLightbox) -> kein Zugriff auf .length
