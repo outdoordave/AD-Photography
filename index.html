@@ -375,15 +375,19 @@
   .lb-track { display: none; }
   .lightbox.lb-gallery .lb-inner > .ph { display: none; }          /* Einzelbild-.ph im Galerie-Modus aus */
   .lightbox.lb-gallery .lb-track {
-    display: flex; width: 100%; height: 78vh;
+    display: flex; width: 100%; height: 78vh; position: relative; gap: 28px;  /* gap = Luecke NUR zwischen den Bildern, kein Rand neben dem aktiven */
     overflow-x: auto; overflow-y: hidden;
     scroll-snap-type: x mandatory;
     overscroll-behavior-x: contain;                                 /* unterdrueckt die Browser-Zurueck-Geste */
     -webkit-overflow-scrolling: touch; scrollbar-width: none;
   }
   .lightbox.lb-gallery .lb-track::-webkit-scrollbar { display: none; }
+  /* Galerie randlos (Full-Bleed): aktives Bild laeuft bis zur Viewport-Kante,
+     kein dunkler Randstreifen. Nur Galerie-Modus; Einzelbild-Modus bleibt zentriert. */
+  .lightbox.lb-gallery { padding-left: 0; padding-right: 0; }
+  .lightbox.lb-gallery .lb-inner { max-width: none; }
   .lb-slide {
-    flex: 0 0 100%; height: 100%; box-sizing: border-box; padding: 0 14px;  /* Abstand zwischen den Bildern (Slide bleibt 100% breit) */
+    flex: 0 0 100%; height: 100%;          /* volle Viewport-Breite -> aktives Bild bis zur Kante (Luecke kommt vom gap) */
     scroll-snap-align: center;            /* einrasten, aber OHNE erzwungenen Stop -> fluessiges, sofort dranhaengbares Doppelwischen (kraeftiger Flick darf mehrere weiter) */
     display: flex; align-items: center; justify-content: center;
   }
@@ -2131,16 +2135,23 @@ function setLbCurrent(idx) {
 /* Zu Slide N scrollen: smooth fuer Pfeile/Filmleiste, instant beim Oeffnen. */
 function lbScrollToIndex(idx, smooth) {
   var track = document.getElementById('lbTrack');
-  if (!track) return;
-  track.scrollTo({ left: idx * track.clientWidth, behavior: smooth ? 'smooth' : 'auto' });
+  if (!track || !track.children[idx]) return;
+  // offsetLeft (Track ist position:relative) bezieht die gap-Luecken korrekt mit ein
+  track.scrollTo({ left: track.children[idx].offsetLeft, behavior: smooth ? 'smooth' : 'auto' });
 }
 
-/* Pfeile/Tastatur: ein Bild weiter/zurueck -> Browser rastet auf das naechste ein. */
+/* Pfeile/Tastatur: ein Bild weiter/zurueck -> exakt zur Nachbar-Slide (gap-sicher). */
 function lbStep(dir) {
   if (!lbGallery) return;
   var track = document.getElementById('lbTrack');
   if (!track) return;
-  track.scrollBy({ left: dir * track.clientWidth, behavior: 'smooth' });
+  var slides = track.children, cur = 0, best = Infinity;
+  for (var i = 0; i < slides.length; i++) {
+    var d = Math.abs(slides[i].offsetLeft - track.scrollLeft);
+    if (d < best) { best = d; cur = i; }
+  }
+  var target = Math.max(0, Math.min(slides.length - 1, cur + dir));
+  if (slides[target]) track.scrollTo({ left: slides[target].offsetLeft, behavior: 'smooth' });
 }
 
 /* Macht ein Element horizontal wischbar (Touch).
