@@ -634,18 +634,29 @@
   .trip-detail .date { font-size: var(--fs-label); color: var(--c-ink-soft); margin-bottom: 16px; }
   .trip-detail .ph { aspect-ratio: var(--ar-media); border-radius: var(--radius-sm); margin-bottom: 16px; }
   .trip-slide .ww-photo { cursor: pointer; }   /* Titelbild der Station ist anklickbar -> Lightbox (Hand statt Lupe) */
-  /* Vollbild-Hinweis (Expand-Symbol) unten rechts auf dem Stationstitelbild: signalisiert
-     "Klick oeffnet gross". Reine CSS-Loesung via ::after (.ww-photo = div mit position:relative
-     + overflow:hidden; ::before ist vom Verlauf belegt, ::after frei). */
-  .trip-slide .ww-photo::after {
-    content: ""; position: absolute; bottom: 10px; right: 10px;
-    width: 32px; height: 32px; z-index: 3; pointer-events: none;
+  /* Vollbild-Hinweis (Expand-Symbol): signalisiert "Klick oeffnet gross". Erscheint auf dem
+     Stations-Titelbild (.ww-photo, BEWUSST auf .trip-slide begrenzt - .ww-photo steckt auch in
+     nicht-klickbaren Medienboxen) UND auf jedem Lightbox-Bild, das in einen .zoom-hint-Span
+     gewickelt ist (<img> selbst kann kein ::after rendern). Gemeinsames, dezentes Styling. */
+  .zoom-hint { position: relative; display: block; cursor: pointer; }
+  .trip-slide .ww-photo::after,
+  .zoom-hint::after {
+    content: ""; position: absolute; bottom: 8px; right: 8px;
+    width: 24px; height: 24px; z-index: 3; pointer-events: none;
     background: center / contain no-repeat url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2024%2024%22%20fill=%22none%22%20stroke=%22white%22%20stroke-width=%222%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%3E%3Cpath%20d=%22M4%204h6v6M20%2020h-6v-6M10%204L4%2010M14%2020l6-6%22/%3E%3C/svg%3E");
-    opacity: 0.6; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.6));
+    opacity: 0.4; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
     transition: opacity 0.25s ease, transform 0.25s ease;
   }
-  .trip-slide .ww-photo:hover::after { opacity: 1; transform: scale(1.15); }
-  @media (hover: none) { .trip-slide .ww-photo::after { opacity: 0.8; } }   /* Touch ohne Hover: dauerhaft sichtbar */
+  .trip-slide .ww-photo:hover::after,
+  .zoom-hint:hover::after { opacity: 0.9; transform: scale(1.1); }
+  @media (hover: none) {
+    .trip-slide .ww-photo::after,
+    .zoom-hint::after { opacity: 0.6; }   /* Touch ohne Hover: dezent dauerhaft sichtbar */
+  }
+  /* .zoom-hint als Spalten-Item in den weiteren Stationsbildern (CSS-Spalten): uebernimmt das
+     Layout, das vorher direkt am <img> sass (Abstand/Umbruchschutz); das <img> fuellt den Span. */
+  .ww-station-photos .zoom-hint { break-inside: avoid; margin-bottom: 8px; }
+  .ww-station-photos .zoom-hint img { margin-bottom: 0; }
   .trip-detail p { font-size: var(--fs-ui); color: var(--c-ink-soft); line-height: 1.7; }
   .trip-detail .hint { color: var(--c-ink-soft); font-style: italic; }
   .trip-stoplist { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
@@ -3561,6 +3572,18 @@ function renderStops() {
     var group = (sp.photo ? [normalizePath(sp.photo)] : []).concat(sp.photos || []);
     if (!group.length) continue;
     (function(glist, stitle, sidx){
+      // Weitere Bilder (data-ww-grp="stop") in einen .zoom-hint-Span wickeln, damit sie - wie
+      // das Titelbild - ein ::after-Expand-Symbol tragen koennen (<img> rendert kein ::after).
+      // Der <img> bleibt erhalten (Klick + Selektoren + src unveraendert).
+      var extras = detail.querySelectorAll('.trip-slide[data-sidx="' + sidx + '"] img[data-ww-grp="stop"]');
+      for (var w = 0; w < extras.length; w++) {
+        var im = extras[w], par = im.parentNode;
+        if (!par || par.className === 'zoom-hint') continue;
+        var span = document.createElement('span');
+        span.className = 'zoom-hint';
+        par.insertBefore(span, im);
+        span.appendChild(im);
+      }
       var imgs = detail.querySelectorAll('.trip-slide[data-sidx="' + sidx + '"] .ww-photo img, .trip-slide[data-sidx="' + sidx + '"] img[data-ww-grp="stop"]');
       for (var q = 0; q < imgs.length; q++) {
         imgs[q].addEventListener('click', function(e){
