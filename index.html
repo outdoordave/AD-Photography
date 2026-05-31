@@ -3684,7 +3684,7 @@ function initSite() {
       var gap = parseFloat(getComputedStyle(strip).columnGap);
       if (isNaN(gap)) gap = 8;
       var step = first ? first.offsetWidth + gap : 72;
-      strip.scrollBy({ left: d > 0 ? step : -step, behavior: 'smooth' });
+      strip.scrollBy({ left: d > 0 ? step : -step, behavior: 'auto' });   // instant: smooth wird von scroll-snap mandatory zurueckgezogen; instant landet exakt auf der Snap-Grenze
       lbStripUser();   // zaehlt als Nutzer-Geste am Streifen (Thema 2)
     }, { passive: false });
     // Thema 2: echte Nutzer-Geste am Streifen (Touch-Drag) markieren.
