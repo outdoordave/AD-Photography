@@ -325,12 +325,21 @@
   .album-toggle[aria-expanded="true"] .album-toggle-count { background: rgba(255,255,255,0.22); }
   /* Zugeklappte Diashow */
   .album-slideshow { position: relative; border-radius: var(--radius-sm); overflow: hidden; aspect-ratio: 16/9; background: #2a241c; }
-  .album-slide-stage { position: absolute; inset: 0; cursor: pointer; }
-  .album-slide {
-    position: absolute; inset: 0; background-size: cover; background-position: center;
-    opacity: 0; transition: opacity .9s ease;
+  /* Zugeklappte Vorschau als horizontale Snap-Bahn (frueher Crossfade-Stapel). */
+  .album-track {
+    position: absolute; inset: 0; display: flex; cursor: pointer;
+    overflow-x: auto; overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;          /* horizontaler Scroll kettet nicht zur Seite / Zurueck-Geste */
+    touch-action: pan-x;                     /* horizontal = Karussell, vertikal = Seite scrollt */
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
   }
-  .album-slide.active { opacity: 1; }
+  .album-track::-webkit-scrollbar { display: none; }
+  .album-cell {
+    flex: 0 0 100%; height: 100%;
+    scroll-snap-align: center;
+    background-size: cover; background-position: center;
+  }
   .album-slide-arrow {
     position: absolute; top: 50%; transform: translateY(-50%);
     width: 44px; height: 44px; border-radius: var(--radius-full); border: none; cursor: pointer;
@@ -1725,65 +1734,65 @@ function clearAlbumSlideTimers(){
   albumSlideTimers = [];
 }
 
-/* Baut die zugeklappte Album-Ansicht: eine automatische Diashow der Fotos
-   mit kleinen Pfeilen zum manuellen Durchschauen. Klick aufs Bild oeffnet
-   die Lightbox (ganzes Album, blaetterbar). */
+/* Baut die zugeklappte Album-Ansicht: eine horizontale Snap-Bahn der Fotos
+   (frei scrollen + einrasten, nativ wie die Lightbox) mit Autoplay, das bei
+   bewusster Interaktion stoppt. Klick (kein Wisch) oeffnet die Lightbox. */
 function makeAlbumSlideshow(alb) {
   var box = document.createElement('div');
   box.className = 'album-slideshow';
   if (!alb.photos.length) { box.textContent = ''; return box; }
 
-  var idx = 0;
-  var stage = document.createElement('div');
-  stage.className = 'album-slide-stage';
-  // alle Fotos als gestapelte Schichten (CSS blendet die aktive ein)
+  var track = document.createElement('div');
+  track.className = 'album-track';
   for (var p = 0; p < alb.photos.length; p++) {
-    var ph = alb.photos[p];
-    var layer = document.createElement('div');
-    layer.className = 'album-slide' + (p === 0 ? ' active' : '');
-    var src = normalizePath(ph.image);
-    if (src) layer.style.backgroundImage = "url('" + src + "')";
-    stage.appendChild(layer);
+    var cell = document.createElement('div');
+    cell.className = 'album-cell';
+    var src = normalizePath(alb.photos[p].image);
+    if (src) cell.style.backgroundImage = "url('" + src + "')";
+    track.appendChild(cell);
   }
-  box.appendChild(stage);
+  box.appendChild(track);
 
-  var layers = stage.querySelectorAll('.album-slide');
-  function show(n){
-    idx = (n + layers.length) % layers.length;
-    for (var i = 0; i < layers.length; i++) layers[i].classList.toggle('active', i === idx);
-  }
+  function cellW(){ return track.clientWidth || 1; }
+  function currentCell(){ return Math.round(track.scrollLeft / cellW()); }
+  function scrollToCell(n, smooth){ track.scrollTo({ left: n * cellW(), behavior: smooth ? 'smooth' : 'auto' }); }
 
-  // Klick aufs Bild -> Lightbox mit ganzem Album, beim aktuellen Bild starten
-  stage.addEventListener('click', function(){
+  // Klick (kein Wisch) -> Lightbox beim aktuellen Bild. Ein horizontaler Wisch ist
+  // ein Scroll, KEIN click -> oeffnet die Lightbox nicht (Browser unterscheidet das).
+  track.addEventListener('click', function(){
     var list = alb.photos.map(function(x){ return { photo: x.image, c1: x.c1, c2: x.c2, img: x.img }; });
     var albName = (currentLang === 'en' && alb.hasEN) ? alb.name_en : alb.name_de;
-    openLightboxGallery(list, idx, albName);
+    openLightboxGallery(list, currentCell(), albName);
   });
 
-  // kleine Pfeile (nur wenn mehr als 1 Foto)
+  // Autoplay + Pfeile nur bei mehr als 1 Foto
   if (alb.photos.length > 1) {
+    var auto = null;
+    function restartAuto(){
+      clearInterval(auto);
+      auto = setInterval(function(){
+        var nx = currentCell() + 1;
+        if (nx >= alb.photos.length) scrollToCell(0, false); // am Ende instant zurueck (kein Rueckwaerts-Durchlauf)
+        else scrollToCell(nx, true);
+      }, 4000);
+      albumSlideTimers.push(auto);   // fuer clearAlbumSlideTimers (Re-Render)
+      box._wwSlideTimer = auto;      // fuer setAlbumOpen (genau dieses Album)
+    }
+    function stopAuto(){ if (auto) { clearInterval(auto); auto = null; } }
+    // Autoplay stoppt bei bewusster Interaktion mit DIESEM Karussell (nicht bei
+    // vertikalem Seiten-Scrollen darueber): Touch/Drag-Start oder horizontales Wheel.
+    track.addEventListener('pointerdown', stopAuto, { passive: true });
+    track.addEventListener('wheel', function(e){ if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) stopAuto(); }, { passive: true });
+
     var prev = document.createElement('button');
     prev.className = 'album-slide-arrow prev'; prev.type = 'button';
     prev.setAttribute('aria-label','Vorheriges'); prev.textContent = '‹';
     var next = document.createElement('button');
     next.className = 'album-slide-arrow next'; next.type = 'button';
     next.setAttribute('aria-label','Nächstes'); next.textContent = '›';
-    var auto;
-    function restartAuto(){
-      clearInterval(auto);
-      auto = setInterval(function(){ show(idx + 1); }, 4000);
-      // Timer registrieren, damit clearAlbumSlideTimers ihn stoppen kann
-      albumSlideTimers.push(auto);
-      // ...und zusaetzlich an der Box, damit setAlbumOpen GENAU dieses Album stoppen kann
-      box._wwSlideTimer = auto;
-    }
-    prev.addEventListener('click', function(e){ e.stopPropagation(); show(idx - 1); restartAuto(); });
-    next.addEventListener('click', function(e){ e.stopPropagation(); show(idx + 1); restartAuto(); });
+    prev.addEventListener('click', function(e){ e.stopPropagation(); stopAuto(); scrollToCell(Math.max(0, currentCell() - 1), true); });
+    next.addEventListener('click', function(e){ e.stopPropagation(); stopAuto(); scrollToCell(Math.min(alb.photos.length - 1, currentCell() + 1), true); });
     box.appendChild(prev); box.appendChild(next);
-    // Wischen auf der Diashow: links = nächstes, rechts = vorheriges
-    attachSwipe(stage,
-      function(){ show(idx + 1); restartAuto(); },
-      function(){ show(idx - 1); restartAuto(); });
     restartAuto();
   }
   return box;
