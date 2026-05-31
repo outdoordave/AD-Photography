@@ -3522,6 +3522,20 @@ function initSite() {
   document.getElementById('lbNext').addEventListener('click', function(e){ e.stopPropagation(); lbStep(1); });
   // Wischen im Galerie-Modus uebernimmt jetzt nativ die Snap-Bahn (.lb-track) -
   // kein attachSwipe mehr noetig (Touch/Trackpad/Maus = Browser-Scroll + Snap).
+  // Filmstreifen auf Desktop verlaesslich horizontal scrollbar: Wheel-Delta (horizontal
+  // ODER vertikal) auf scrollLeft mappen. Eine klassische Maus liefert nur deltaY -> ohne
+  // dieses Mapping liesse sich der Streifen am Desktop gar nicht scrollen. preventDefault
+  // verhindert Seiten-Scroll/Zurueck-Geste (overscroll-behavior-x:contain bleibt zusaetzlich).
+  (function(){
+    var strip = document.getElementById('lbFilmstrip');
+    if (!strip) return;
+    strip.addEventListener('wheel', function(e){
+      var d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (!d) return;
+      strip.scrollLeft += d;
+      e.preventDefault();
+    }, { passive: false });
+  })();
 
   // Wischen/Trackpad auf der Stations-Box: links = nächste Station, rechts = vorherige.
   // Einmalig gebunden (tripDetail-Element bleibt bestehen, nur sein Inhalt wird neu gezeichnet).
