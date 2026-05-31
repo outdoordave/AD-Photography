@@ -2114,31 +2114,33 @@ function attachSwipe(el, onLeft, onRight) {
     else { if (onRight) onRight(); }
   }, { passive: true });
 
-  // --- Trackpad / Magic Mouse: horizontale Wheel-Geste (Schwall/Pausen-Modell) ---
+  // --- Trackpad / Magic Mouse: horizontale Wheel-Geste (Cooldown-Modell) ---
   // Zwei-Finger-Wisch / Magic-Mouse-Wisch erzeugen wheel-Events mit deltaX.
   // Vertikales Scrollen (deltaY dominant) lassen wir in Ruhe.
   //
-  // Modell statt Schwellwert-Raten: Eine physische Geste ist ein ZUSAMMENHAENGENDER
-  // Strom von wheel-Events ohne Pause. Der Traegheits-/Momentum-Nachlauf gehoert zum
-  // SELBEN Strom (macOS feuert ihn im Display-Takt ~16ms, ProMotion ~8ms, weiter).
-  // Zwei bewusste Wische haben dazwischen IMMER eine kurze Pause (Finger kurz runter)
-  // -> echte Event-Stille. Daraus die Regel:
-  //   * Pro Strom GENAU EIN Schritt, ausgeloest beim ersten Event, das die Distanz-
-  //     schwelle WHEEL_THRESH ueberschreitet. Der Rest des Stroms (inkl. Momentum)
-  //     wird ignoriert -> kein 2-3-Springen aus EINER Geste.
-  //   * Liegt zwischen zwei Events >= WHEEL_GAP_MS, beginnt ein NEUER Strom (= neue
-  //     Geste) und der Schritt ist wieder frei.
-  // Wichtig: KEIN Timer. Frueher haerteten wir das Stromende per setTimeout-Entprellung
-  // ab; warf das Blaettern beim ausloesenden Event aber eine Exception, wurde der Timer
-  // nie neu gesetzt -> Sperre blieb fuer immer haengen (nur ein Wisch moeglich). Jetzt
-  // entscheidet jedes Event SELBST per Zeitstempel-Vergleich, ob es einen neuen Strom
-  // startet -> nichts kann den Reset verschlucken. Zusaetzlich wird die Sperre gesetzt,
-  // BEVOR onLeft/onRight laeuft -> ein Callback-Fehler hinterlaesst keinen Doppel- oder
-  // Haengezustand. WHEEL_GAP_MS (~80ms) liegt klar ueber dem Intra-Gesten-Takt (~16ms,
-  // ein Strom wird nie faelschlich gespalten) und unter der bewussten Hebe-Pause.
-  var WHEEL_GAP_MS = 80;   // Pause zwischen zwei Events, die eine neue Geste markiert — einzige Stellschraube
-  var WHEEL_THRESH = 30;   // Mindeststrecke (Summe |deltaX|) fuer den einen Schritt im Strom
-  var accX = 0, stepFired = false, lastWheelAt = 0;
+  // Erkenntnis aus Live-Messung (?wheeldebug): Dieses Geraet feuert viele winzige
+  // Events (|deltaX| ~1-3) mit Luecken, die zwischen ~7 und ~99ms schwanken. Momentum-
+  // Nachlauf UND ein bewusst neuer Wisch liegen beide in diesem Luecken-Bereich -> es
+  // gibt KEINE saubere Trennpause. Jedes luecken-basierte Modell (fester Lock per
+  // Stille, Zeitstempel-Gap, Staerke-Raten) blieb daher haengen oder verschluckte
+  // Wische: kam nie 80ms Ruhe, wurde die Sperre nie geloest (1 Wisch, dann tot).
+  //
+  // Loesung: Freigabe ZEITGESTEUERT ab dem Schritt, nicht luecken-abhaengig.
+  //   * Akkumuliere |deltaX|; ueberschreitet die Summe WHEEL_THRESH -> EIN Schritt.
+  //   * Danach harte Sperre fuer WHEEL_COOLDOWN_MS (Momentum wird in diesem Fenster
+  //     komplett verworfen). Nach Ablauf ist es ZWINGEND wieder frei -- unabhaengig
+  //     davon, ob noch Events troepfeln. Damit kann es prinzipiell nicht mehr haengen.
+  //   * Ausserhalb der Sperre: kam laenger als WHEEL_IDLE_RESET_MS kein Event, war die
+  //     vorige Teil-Akkumulation eine abgebrochene Geste -> accX auf 0. Der Wert liegt
+  //     UEBER den gemessenen Binnenluecken (~99ms), damit sanfte, langsame Wische sauber
+  //     bis zur Schwelle aufsummieren statt vorzeitig genullt zu werden.
+  // WHEEL_COOLDOWN_MS ist die zentrale Stellschraube fuer das Tempo-/Zuverlaessigkeits-
+  // Gleichgewicht: kleiner = schnelleres Durchblaettern moeglich, aber Momentum-Rest
+  // kann eher einen Zusatzschritt ausloesen; groesser = traegheitssicher, aber langsamer.
+  var WHEEL_THRESH = 24;          // Summe |deltaX| fuer EINEN Schritt (auch sanfte Wische erreichen das)
+  var WHEEL_COOLDOWN_MS = 300;    // harte Sperre nach einem Schritt -> danach zwingend frei (kein Haengen)
+  var WHEEL_IDLE_RESET_MS = 140;  // ohne Event so lange (und nicht gesperrt) -> Teil-Akkumulation verwerfen
+  var accX = 0, lockUntil = 0, lastWheelAt = 0;
   // --- TEMPORAERE Mess-Anzeige (nur mit ?wheeldebug=1; sonst komplett inaktiv) ---
   // Zeigt jedes wheel-Event live an, damit wir das Desktop-Haengen mit echten Zahlen
   // diagnostizieren statt zu raten. Verhalten bleibt unveraendert, nur Logging.
@@ -2156,31 +2158,29 @@ function attachSwipe(el, onLeft, onRight) {
     box.textContent = (line + '\n' + box.textContent).split('\n').slice(0, 16).join('\n');
   }
   el.addEventListener('wheel', function(e){
-    var dbgNow = WHEEL_DEBUG ? Date.now() : 0;
     if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) { // eher vertikal -> ignorieren
-      if (WHEEL_DEBUG) wwWheelDbg('V  dx=' + e.deltaX.toFixed(1) + ' dy=' + e.deltaY.toFixed(1)
-        + ' gap=' + (dbgNow - lastWheelAt) + 'ms');
+      if (WHEEL_DEBUG) wwWheelDbg('V  dx=' + e.deltaX.toFixed(1) + ' dy=' + e.deltaY.toFixed(1));
       return;
     }
     e.preventDefault(); // verhindert Seiten-Horizontalscroll / Zurueck-Geste
     var now = Date.now();
-    var dbgGap = now - lastWheelAt;
-    var dbgReset = false, dbgFired = false;
-    if (now - lastWheelAt >= WHEEL_GAP_MS) { // Pause seit letztem Event -> neuer Strom = neue Geste
-      stepFired = false; accX = 0; dbgReset = true;
+    if (now < lockUntil) { // Cooldown nach einem Schritt: Momentum komplett verwerfen
+      if (WHEEL_DEBUG) wwWheelDbg('H  dx=' + e.deltaX.toFixed(1) + '  cooldown ' + (lockUntil - now) + 'ms');
+      return;
     }
+    var gap = now - lastWheelAt;
+    if (gap >= WHEEL_IDLE_RESET_MS) accX = 0; // lange Pause -> abgebrochene Geste verwerfen, frisch zaehlen
     lastWheelAt = now;
-    if (!stepFired) {
-      accX += e.deltaX;
-      if (Math.abs(accX) >= WHEEL_THRESH) {
-        stepFired = true;            // ERST sperren (dieser Strom hat sein eines Blaettern)...
-        dbgFired = true;
-        if (accX > 0) { if (onLeft) onLeft(); } else { if (onRight) onRight(); } // ...dann blaettern
-      }
+    accX += e.deltaX;
+    var fired = false;
+    if (Math.abs(accX) >= WHEEL_THRESH) {
+      fired = true;
+      if (accX > 0) { if (onLeft) onLeft(); } else { if (onRight) onRight(); }
+      accX = 0;
+      lockUntil = now + WHEEL_COOLDOWN_MS; // ab jetzt harte Sperre, danach zwingend wieder frei
     }
-    if (WHEEL_DEBUG) wwWheelDbg('H  dx=' + e.deltaX.toFixed(1) + ' gap=' + dbgGap + 'ms'
-      + ' acc=' + accX.toFixed(0) + (dbgReset ? ' [NEU]' : '') + ' lock=' + stepFired
-      + (dbgFired ? '  <<< SCHRITT' : ''));
+    if (WHEEL_DEBUG) wwWheelDbg('H  dx=' + e.deltaX.toFixed(1) + ' gap=' + gap + 'ms'
+      + ' acc=' + accX.toFixed(0) + (fired ? '  <<< SCHRITT (lock ' + WHEEL_COOLDOWN_MS + 'ms)' : ''));
   }, { passive: false });
 }
 
