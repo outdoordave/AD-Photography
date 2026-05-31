@@ -592,7 +592,17 @@
   .map-stop:hover circle.ring, .map-stop.sel circle.ring { stroke: var(--c-accent); opacity: 1; }
   .map-stop text { fill: #efe5d4; font-size: var(--fs-label); font-weight: var(--fw-semibold); font-family: var(--font-body); pointer-events: none; }
   .map-stop.sel text { fill: #f0c9a8; }
-  .trip-detail { background: var(--c-bg-alt); border: 1px solid var(--c-line); border-radius: var(--radius-sm); padding: 28px; min-height: 320px; }
+  /* Stationen als horizontale Snap-Bahn: frei durchscrollen + einrasten (Modell A).
+     Padding wandert in die Slides; .trip-detail ... Descendant-Regeln bleiben gueltig. */
+  .trip-detail {
+    background: var(--c-bg-alt); border: 1px solid var(--c-line); border-radius: var(--radius-sm);
+    min-height: 320px; position: relative;
+    display: flex; overflow-x: auto; overflow-y: hidden;
+    scroll-snap-type: x mandatory; overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  .trip-detail::-webkit-scrollbar { display: none; }
+  .trip-slide { flex: 0 0 100%; box-sizing: border-box; padding: 28px; scroll-snap-align: center; }
   .trip-detail .step { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 8px; }
   /* Pfeil-Navigation durch die Stationen */
   .trip-detail .stop-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
@@ -3303,7 +3313,7 @@ function renderTrip() {
     })(k);
   }
 
-  renderStopDetail();
+  renderStops();
   renderTripGallery();
 }
 
@@ -3412,30 +3422,55 @@ function renderTripGallery() {
 function stepStop(delta) {
   var st = trips[currentTrip] && trips[currentTrip].stops;
   if (!st || !st.length) return;
-  selectStop((currentStop + delta + st.length) % st.length);
+  var target = Math.max(0, Math.min(st.length - 1, wwCenteredStopIndex() + delta)); // klemmen (kein Umlauf)
+  wwScrollStopTo(target, true);
 }
 
 function selectStop(i) {
-  currentStop = i;
-  // Marker neu zeichnen (markiert den aktiven Stop) + auf ihn zentrieren
+  // Stoplist-Klick: zur Station scrollen; der Observer uebernimmt Karte + Markierung.
+  wwScrollStopTo(i, true);
+}
+
+/* Welche Station steht aktuell mittig in der Bahn? */
+function wwCenteredStopIndex() {
+  var detail = document.getElementById('tripDetail');
+  if (!detail) return 0;
+  var slides = detail.querySelectorAll('.trip-slide'), sl = detail.scrollLeft, best = 0, bestD = Infinity;
+  for (var i = 0; i < slides.length; i++) {
+    var d = Math.abs(slides[i].offsetLeft - sl);
+    if (d < bestD) { bestD = d; best = i; }
+  }
+  return best;
+}
+
+/* Zur Station N scrollen (offsetLeft -> padding-sicher; Bahn ist position:relative). */
+function wwScrollStopTo(idx, smooth) {
+  var detail = document.getElementById('tripDetail');
+  if (!detail) return;
+  var slide = detail.querySelector('.trip-slide[data-sidx="' + idx + '"]');
+  if (slide) detail.scrollTo({ left: slide.offsetLeft, behavior: smooth ? 'smooth' : 'auto' });
+}
+
+/* Mittige Station aktiv setzen: Auswahl + Karte fliegt hin (vom Observer aufgerufen).
+   Entkopplung: die Karte treibt die Bahn NICHT -> kein Aufschaukeln. */
+function wwActivateStop(idx) {
+  if (idx === currentStop) return;   // schon aktiv -> kein erneutes Fliegen
+  currentStop = idx;
+  var btns = document.querySelectorAll('#tripStoplist button');
+  for (var b = 0; b < btns.length; b++) btns[b].classList.toggle('active', b === idx);
   if (window._mlReady) {
     wwDrawTrip();
     var stops = trips[currentTrip].stops;
-    if (stops && stops[i]) {
-      window._mlMap.flyTo({ center: [stops[i].lon, stops[i].lat], zoom: Math.max(window._mlMap.getZoom(), 5), duration: 600 });
+    if (stops && stops[idx]) {
+      window._mlMap.flyTo({ center: [stops[idx].lon, stops[idx].lat], zoom: Math.max(window._mlMap.getZoom(), 5), duration: 600 });
     }
   }
-  var btns = document.querySelectorAll('#tripStoplist button');
-  for (var b = 0; b < btns.length; b++) btns[b].classList.toggle('active', b === i);
-  renderStopDetail();
 }
 
-
-function renderStopDetail() {
-  var s = trips[currentTrip].stops[currentStop];
+/* Baut den Inhalt EINER Station (frueher renderStopDetail, jetzt pro Slide). */
+function buildStopHTML(s, idx, total) {
   var d = s[currentLang];
-  var stepLabel = (currentLang === 'de' ? 'Station ' : 'Stop ') + (currentStop + 1) + '/' + trips[currentTrip].stops.length;
-  // Galerie der Stations-Bilder (mehrere, nicht zugeschnitten)
+  var stepLabel = (currentLang === 'de' ? 'Station ' : 'Stop ') + (idx + 1) + '/' + total;
   var photosHtml = '';
   if (s.photos && s.photos.length) {
     photosHtml = '<div class="ww-station-photos">';
@@ -3444,9 +3479,8 @@ function renderStopDetail() {
     }
     photosHtml += '</div>';
   }
-  document.getElementById('tripDetail').innerHTML =
-    '<div class="ww-editable" style="position:relative">' +
-    (trips[currentTrip].stops.length > 1
+  return '<div class="ww-editable" style="position:relative">' +
+    (total > 1
       ? '<div class="stop-nav">' +
           '<button class="stop-arrow" type="button" data-step="-1" aria-label="' + (currentLang==='en'?'Previous stop':'Vorherige Station') + '">‹</button>' +
           '<div class="step">' + stepLabel + '</div>' +
@@ -3460,22 +3494,54 @@ function renderStopDetail() {
     photosHtml +
     wwToolbar({ edit: { coll: 'trips', slug: currentTrip } }) +
     '</div>';
-  // Pfeile zum Blättern durch die Stationen
-  var navBtns = document.getElementById('tripDetail').querySelectorAll('.stop-arrow');
+}
+
+/* Baut die gesamte Stationen-Bahn (alle Stops als Snap-Slides) + Observer + Handler. */
+function renderStops() {
+  var detail = document.getElementById('tripDetail');
+  if (!detail) return;
+  var stops = trips[currentTrip].stops;
+  var total = stops.length;
+  if (window._tripIO) { window._tripIO.disconnect(); window._tripIO = null; }
+  detail.innerHTML = '';
+  for (var i = 0; i < total; i++) {
+    var slide = document.createElement('div');
+    slide.className = 'trip-slide';
+    slide.setAttribute('data-sidx', i);
+    slide.innerHTML = buildStopHTML(stops[i], i, total);
+    detail.appendChild(slide);
+  }
+  // Pfeile (pro Slide) -> stepStop
+  var navBtns = detail.querySelectorAll('.stop-arrow');
   for (var nb = 0; nb < navBtns.length; nb++) {
-    (function(btn){
-      btn.addEventListener('click', function(e){ e.stopPropagation(); stepStop(parseInt(btn.getAttribute('data-step'), 10)); });
-    })(navBtns[nb]);
+    (function(btn){ btn.addEventListener('click', function(e){ e.stopPropagation(); stepStop(parseInt(btn.getAttribute('data-step'), 10)); }); })(navBtns[nb]);
   }
-  // Station-Fotos blätterbar machen (eigene Gruppe)
-  if (s.photos && s.photos.length) {
-    var slist = s.photos.slice();
-    var stitle = d.t || '';
-    var simgs = document.getElementById('tripDetail').querySelectorAll('img[data-ww-grp="stop"]');
-    for (var q = 0; q < simgs.length; q++) {
-      (function(idx){ simgs[idx].addEventListener('click', function(){ wwOpenImage(slist[idx], slist, stitle); }); })(q);
-    }
+  // Station-Fotos je Stop blaetterbar (eigene Gruppe pro Station)
+  for (var si = 0; si < total; si++) {
+    var sp = stops[si];
+    if (!sp.photos || !sp.photos.length) continue;
+    (function(slist, stitle, sidx){
+      var imgs = detail.querySelectorAll('.trip-slide[data-sidx="' + sidx + '"] img[data-ww-grp="stop"]');
+      for (var q = 0; q < imgs.length; q++) {
+        (function(qi){ imgs[qi].addEventListener('click', function(){ wwOpenImage(slist[qi], slist, stitle); }); })(q);
+      }
+    })(sp.photos.slice(), (sp[currentLang] && sp[currentLang].t) || '', si);
   }
+  // Observer: zentrierte Station -> Karte fliegt hin + Auswahl (wie Lightbox)
+  if (typeof IntersectionObserver !== 'undefined') {
+    window._tripIO = new IntersectionObserver(function(entries){
+      for (var k = 0; k < entries.length; k++) {
+        var en = entries[k];
+        if (en.isIntersecting && en.intersectionRatio >= 0.6) {
+          wwActivateStop(parseInt(en.target.getAttribute('data-sidx'), 10));
+        }
+      }
+    }, { root: detail, threshold: [0.6, 0.9] });
+    var slides = detail.querySelectorAll('.trip-slide');
+    for (var s2 = 0; s2 < slides.length; s2++) window._tripIO.observe(slides[s2]);
+  }
+  // zur aktuell gewaehlten Station (instant, kein sichtbares Springen)
+  wwScrollStopTo(currentStop, false);
 }
 
 /* Öffnet ein Bild "voll" in der zentralen Lightbox.
@@ -3624,11 +3690,8 @@ function initSite() {
     });
   })();
 
-  // Wischen/Trackpad auf der Stations-Box: links = nächste Station, rechts = vorherige.
-  // Einmalig gebunden (tripDetail-Element bleibt bestehen, nur sein Inhalt wird neu gezeichnet).
-  attachSwipe(document.getElementById('tripDetail'),
-    function(){ stepStop(1); },
-    function(){ stepStop(-1); });
+  // Stationen sind jetzt eine native scroll-snap-Bahn (.trip-slide) - Touch/Trackpad/Maus
+  // uebernimmt der Browser, die Karte folgt per IntersectionObserver. Kein attachSwipe noetig.
 
   // Kontakt
   document.getElementById('cSend').addEventListener('click', handleSend);
@@ -3637,9 +3700,19 @@ function initSite() {
   document.addEventListener('keydown', function(e) {
     var open = document.getElementById('lightbox').classList.contains('open');
     if (e.key === 'Escape') { closeLightbox(); return; }
-    if (!open || !lbGallery) return;
-    if (e.key === 'ArrowLeft') { e.preventDefault(); lbStep(-1); }
-    else if (e.key === 'ArrowRight') { e.preventDefault(); lbStep(1); }
+    if (open && lbGallery) {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); lbStep(-1); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); lbStep(1); }
+      return;
+    }
+    // Stationen: Pfeiltasten blaettern, wenn die Reisen-Seite aktiv ist (und keine Lightbox)
+    if (!open) {
+      var tp = document.getElementById('page-trips');
+      if (tp && tp.classList.contains('active')) {
+        if (e.key === 'ArrowLeft') { e.preventDefault(); stepStop(-1); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); stepStop(1); }
+      }
+    }
   });
 
   // statische Platzhalter mit data-illus befuellen (Home-Teaser, About)
