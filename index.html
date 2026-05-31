@@ -2040,6 +2040,7 @@ var lbGallery = null;   // Array von Foto-Objekten oder null (= Einzelbild-Modus
 var lbIndex = 0;
 var lbAlbumName = '';
 var lbIO = null;        // IntersectionObserver: erkennt die mittige Slide (Galerie-Modus)
+var lbStripActive = false, lbStripIdle = null; // true = Nutzer scrollt gerade den Filmstreifen (treibt das Hauptbild)
 
 function openLightboxGallery(photos, startIndex, albumName) {
   lbGallery = (photos && photos.length) ? photos : null;
@@ -2075,17 +2076,44 @@ function buildFilmstrip() {
   }
 }
 
-function centerFilmstripThumb(idx) {
+/* Filmstreifen-Helfer, aufgeteilt fuer die Zwei-Wege-Kopplung (Thema 2):
+   Markieren (immer ok) ist getrennt vom Zentrieren (nur wenn die HAUPTBAHN treibt). */
+function lbMarkThumb(idx) {
   var strip = document.getElementById('lbFilmstrip');
   if (!strip) return;
   var thumbs = strip.querySelectorAll('.lb-thumb');
   for (var i = 0; i < thumbs.length; i++) thumbs[i].classList.toggle('active', i === idx);
-  var active = thumbs[idx];
-  if (active) {
-    // Aktuelles Thumbnail mittig scrollen
-    var target = active.offsetLeft - (strip.clientWidth / 2) + (active.clientWidth / 2);
-    strip.scrollTo({ left: target, behavior: 'smooth' });
+}
+function lbCenterStrip(idx) {
+  var strip = document.getElementById('lbFilmstrip');
+  if (!strip) return;
+  var active = strip.querySelectorAll('.lb-thumb')[idx];
+  if (active) strip.scrollTo({ left: active.offsetLeft - (strip.clientWidth / 2) + (active.clientWidth / 2), behavior: 'smooth' });
+}
+function lbSetCaption(idx) {
+  var cap = document.getElementById('lbCap');
+  if (cap) cap.textContent = lbAlbumName ? (lbAlbumName + ' · ' + (idx + 1) + ' / ' + lbGallery.length) : '';
+}
+/* Welcher Thumb steht aktuell mittig im Streifen? (fuer "Streifen treibt Hauptbild") */
+function lbFilmstripCenterIndex() {
+  var strip = document.getElementById('lbFilmstrip');
+  if (!strip) return -1;
+  var thumbs = strip.querySelectorAll('.lb-thumb');
+  if (!thumbs.length) return -1;
+  var center = strip.scrollLeft + strip.clientWidth / 2;
+  var best = 0, bestD = Infinity;
+  for (var i = 0; i < thumbs.length; i++) {
+    var d = Math.abs((thumbs[i].offsetLeft + thumbs[i].clientWidth / 2) - center);
+    if (d < bestD) { bestD = d; best = i; }
   }
+  return best;
+}
+/* Markiert eine echte Nutzer-Geste am Streifen -> Streifen treibt das Hauptbild, und das
+   Auto-Zentrieren der Hauptbahn pausiert kurz (Entkopplung gegen Rueckkopplung). */
+function lbStripUser() {
+  lbStripActive = true;
+  clearTimeout(lbStripIdle);
+  lbStripIdle = setTimeout(function(){ lbStripActive = false; }, 180);
 }
 
 /* Galerie-Bahn aufbauen: alle Album-Bilder als Snap-Slides nebeneinander. */
@@ -2130,9 +2158,11 @@ function observeLbSlides() {
 function setLbCurrent(idx) {
   if (!lbGallery) return;
   lbIndex = idx;
-  var cap = document.getElementById('lbCap');
-  if (cap) cap.textContent = lbAlbumName ? (lbAlbumName + ' · ' + (idx + 1) + ' / ' + lbGallery.length) : '';
-  centerFilmstripThumb(idx);
+  lbSetCaption(idx);
+  lbMarkThumb(idx);
+  // Streifen nur nachzentrieren, wenn der Nutzer NICHT gerade selbst den Streifen scrollt
+  // (sonst Rueckkopplung: Hauptbahn <-> Streifen schaukeln sich auf).
+  if (!lbStripActive) lbCenterStrip(idx);
 }
 
 /* Zu Slide N scrollen: smooth fuer Pfeile/Filmleiste, instant beim Oeffnen. */
@@ -3529,12 +3559,27 @@ function initSite() {
   (function(){
     var strip = document.getElementById('lbFilmstrip');
     if (!strip) return;
+    // Thema 1: Wheel (horizontal ODER vertikal) -> horizontaler Streifen-Scroll.
     strip.addEventListener('wheel', function(e){
       var d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
       if (!d) return;
       strip.scrollLeft += d;
       e.preventDefault();
+      lbStripUser();   // zaehlt als Nutzer-Geste am Streifen (Thema 2)
     }, { passive: false });
+    // Thema 2: echte Nutzer-Geste am Streifen (Touch-Drag) markieren.
+    strip.addEventListener('touchmove', lbStripUser, { passive: true });
+    // Thema 2: Streifen treibt das Hauptbild LIVE -> der mittige Thumb wird sofort aktiv.
+    strip.addEventListener('scroll', function(){
+      if (!lbStripActive) return;            // programmatischer Echo (Hauptbahn treibt) -> ignorieren
+      lbStripUser();                         // solange gescrollt wird (inkl. Momentum) aktiv halten
+      var idx = lbFilmstripCenterIndex();
+      if (idx < 0 || idx === lbIndex) return;
+      lbIndex = idx;
+      lbSetCaption(idx);
+      lbMarkThumb(idx);
+      lbScrollToIndex(idx, false);           // Hauptbild instant nachziehen
+    });
   })();
 
   // Wischen/Trackpad auf der Stations-Box: links = nächste Station, rechts = vorherige.
