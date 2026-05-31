@@ -640,6 +640,7 @@
      gewickelt ist (<img> selbst kann kein ::after rendern). Gemeinsames, dezentes Styling. */
   .zoom-hint { position: relative; display: block; cursor: pointer; }
   .trip-slide .ww-photo::after,
+  .item .ww-photo::after,
   .zoom-hint::after {
     content: ""; position: absolute; bottom: 8px; right: 8px;
     width: 24px; height: 24px; z-index: 3; pointer-events: none;
@@ -648,9 +649,11 @@
     transition: opacity 0.25s ease, transform 0.25s ease;
   }
   .trip-slide .ww-photo:hover::after,
+  .item .ww-photo:hover::after,
   .zoom-hint:hover::after { opacity: 0.9; transform: scale(1.1); }
   @media (hover: none) {
     .trip-slide .ww-photo::after,
+    .item .ww-photo::after,
     .zoom-hint::after { opacity: 0.6; }   /* Touch ohne Hover: dezent dauerhaft sichtbar */
   }
   /* .zoom-hint als Spalten-Item in den weiteren Stationsbildern (CSS-Spalten): uebernimmt das
@@ -3454,7 +3457,7 @@ function renderTripGallery() {
   for (var i = 0; i < g.length; i++) {
     var cap = g[i].cap[currentLang] || '';
     html += '<figure>' +
-      '<img src="' + g[i].src + '" alt="' + cap.replace(/"/g,'&quot;') + '" loading="lazy" data-ww-grp="trip" data-ww-idx="' + i + '">' +
+      '<span class="zoom-hint"><img src="' + g[i].src + '" alt="' + cap.replace(/"/g,'&quot;') + '" loading="lazy" data-ww-grp="trip" data-ww-idx="' + i + '"></span>' +
       (cap ? '<figcaption>' + cap + '</figcaption>' : '') +
       '</figure>';
   }
