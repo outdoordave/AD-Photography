@@ -370,6 +370,24 @@
   .lightbox .ph { width: 100%; height: 78vh; border-radius: var(--radius-sm); position: relative; }
   .lightbox .ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; border-radius: var(--radius-sm); }
   .lightbox .cap { color: var(--c-dark-ink); margin-top: 12px; font-family: var(--font-display); font-size: var(--fs-ui); opacity: .85; }
+  /* Galerie-Modus: horizontale Snap-Bahn (scroll-snap) statt Einzelbild-Tausch.
+     Eine Slide je Album-Bild, frei scrollen + einrasten, kein Ueberblaettern. */
+  .lb-track { display: none; }
+  .lightbox.lb-gallery .lb-inner > .ph { display: none; }          /* Einzelbild-.ph im Galerie-Modus aus */
+  .lightbox.lb-gallery .lb-track {
+    display: flex; width: 100%; height: 78vh;
+    overflow-x: auto; overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;                                 /* unterdrueckt die Browser-Zurueck-Geste */
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  .lightbox.lb-gallery .lb-track::-webkit-scrollbar { display: none; }
+  .lb-slide {
+    flex: 0 0 100%; height: 100%;
+    scroll-snap-align: center; scroll-snap-stop: always;            /* genau ein Bild pro Geste */
+    display: flex; align-items: center; justify-content: center;
+  }
+  .lb-slide img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: var(--radius-sm); }
   .lb-close { position: fixed; top: 22px; right: 24px; width: 46px; height: 46px; border-radius: var(--radius-full); background: rgba(240,229,212,0.16); color: #fff; border: none; font-size: var(--fs-title); cursor: pointer; z-index: 1102; }
   /* Blätter-Pfeile links/rechts außen */
   .lb-nav {
@@ -1093,6 +1111,7 @@
   <button class="lb-nav lb-next" id="lbNext" aria-label="Nächstes Bild">›</button>
   <div class="lb-inner">
     <div class="ph" id="lbImg" data-ph="PLATZHALTER"><img id="lbImgPhoto" alt="" style="display:none"></div>
+    <div class="lb-track" id="lbTrack"></div>
     <div class="cap" id="lbCap"></div>
   </div>
   <div class="lb-filmstrip" id="lbFilmstrip"></div>
@@ -2011,16 +2030,23 @@ function renderRandomMoments() {
 var lbGallery = null;   // Array von Foto-Objekten oder null (= Einzelbild-Modus)
 var lbIndex = 0;
 var lbAlbumName = '';
+var lbIO = null;        // IntersectionObserver: erkennt die mittige Slide (Galerie-Modus)
 
 function openLightboxGallery(photos, startIndex, albumName) {
   lbGallery = (photos && photos.length) ? photos : null;
   lbIndex = startIndex || 0;
   lbAlbumName = albumName || '';
   if (!lbGallery) return;
+  buildLbTrack();          // Snap-Bahn mit allen Album-Bildern aufbauen
   buildFilmstrip();
-  showLbIndex(lbIndex);
-  document.getElementById('lightbox').classList.add('open');
+  var lb = document.getElementById('lightbox');
+  lb.classList.add('lb-gallery'); // Galerie-Modus -> Bahn sichtbar, Einzel-.ph aus
+  lb.classList.add('open');
   document.body.style.overflow = 'hidden';
+  // sofort (ohne Animation) zur Start-Slide, DANN den Beobachter verbinden
+  lbScrollToIndex(lbIndex, false);
+  observeLbSlides();
+  setLbCurrent(lbIndex);
   updateLbNav();
 }
 
@@ -2035,7 +2061,7 @@ function buildFilmstrip() {
     t.className = 'lb-thumb';
     var src = normalizePath(lbGallery[i].photo);
     if (src) t.style.backgroundImage = "url('" + src + "')";
-    (function(idx){ t.addEventListener('click', function(e){ e.stopPropagation(); showLbIndex(idx); }); })(i);
+    (function(idx){ t.addEventListener('click', function(e){ e.stopPropagation(); lbScrollToIndex(idx, true); }); })(i);
     strip.appendChild(t);
   }
 }
@@ -2053,36 +2079,66 @@ function centerFilmstripThumb(idx) {
   }
 }
 
-function showLbIndex(idx) {
-  if (!lbGallery) return;
-  var n = lbGallery.length;
-  // Endlos umlaufen: nach dem letzten Bild wieder zum ersten und umgekehrt
-  if (idx < 0) idx = n - 1;
-  if (idx > n - 1) idx = 0;
-  lbIndex = idx;
-  var p = lbGallery[idx];
-  var img = document.getElementById('lbImg');
-  var lbPhoto = document.getElementById('lbImgPhoto');
-  img.style.setProperty('--ph-c1', p.c1 || '#2a241c');
-  img.style.setProperty('--ph-c2', p.c2 || '#1c1812');
-  if (p.photo) {
-    img.classList.remove('has-illus'); img.classList.add('has-photo');
-    if (lbPhoto) { lbPhoto.src = normalizePath(p.photo); lbPhoto.style.display = 'block'; lbPhoto.style.objectFit = 'contain'; }
-    img.style.backgroundImage = '';
-  } else {
-    if (lbPhoto) { lbPhoto.style.display = 'none'; lbPhoto.src = ''; }
-    img.classList.remove('has-photo');
+/* Galerie-Bahn aufbauen: alle Album-Bilder als Snap-Slides nebeneinander. */
+function buildLbTrack() {
+  var track = document.getElementById('lbTrack');
+  if (!track) return;
+  if (lbIO) { lbIO.disconnect(); lbIO = null; }
+  track.innerHTML = '';
+  for (var i = 0; i < lbGallery.length; i++) {
+    var slide = document.createElement('div');
+    slide.className = 'lb-slide';
+    slide.setAttribute('data-idx', i);
+    var src = normalizePath(lbGallery[i].photo);
+    if (src) {
+      var im = document.createElement('img');
+      im.src = src; im.alt = ''; im.loading = 'lazy';
+      slide.appendChild(im);
+    }
+    track.appendChild(slide);
   }
-  // Bildunterschrift: Albumname + Position
+}
+
+/* Beobachtet, welche Slide mittig steht -> Caption + aktiver Filmleisten-Thumb.
+   Ersetzt den frueheren Index-Zaehler (zuverlaessig auch bei freiem Scrollen). */
+function observeLbSlides() {
+  var track = document.getElementById('lbTrack');
+  if (!track || typeof IntersectionObserver === 'undefined') return;
+  lbIO = new IntersectionObserver(function(entries){
+    for (var k = 0; k < entries.length; k++) {
+      var en = entries[k];
+      if (en.isIntersecting && en.intersectionRatio >= 0.6) {
+        var idx = parseInt(en.target.getAttribute('data-idx'), 10);
+        if (idx !== lbIndex) setLbCurrent(idx);
+      }
+    }
+  }, { root: track, threshold: [0.6, 0.9] });
+  var slides = track.querySelectorAll('.lb-slide');
+  for (var s = 0; s < slides.length; s++) lbIO.observe(slides[s]);
+}
+
+/* Aktuellen Stand spiegeln: Caption "Album · X / Y" + aktiven Thumb markieren. */
+function setLbCurrent(idx) {
+  if (!lbGallery) return;
+  lbIndex = idx;
   var cap = document.getElementById('lbCap');
   if (cap) cap.textContent = lbAlbumName ? (lbAlbumName + ' · ' + (idx + 1) + ' / ' + lbGallery.length) : '';
   centerFilmstripThumb(idx);
-  updateLbNav();
 }
 
+/* Zu Slide N scrollen: smooth fuer Pfeile/Filmleiste, instant beim Oeffnen. */
+function lbScrollToIndex(idx, smooth) {
+  var track = document.getElementById('lbTrack');
+  if (!track) return;
+  track.scrollTo({ left: idx * track.clientWidth, behavior: smooth ? 'smooth' : 'auto' });
+}
+
+/* Pfeile/Tastatur: ein Bild weiter/zurueck -> Browser rastet auf das naechste ein. */
 function lbStep(dir) {
   if (!lbGallery) return;
-  showLbIndex(lbIndex + dir);
+  var track = document.getElementById('lbTrack');
+  if (!track) return;
+  track.scrollBy({ left: dir * track.clientWidth, behavior: 'smooth' });
 }
 
 /* Macht ein Element horizontal wischbar (Touch).
@@ -2206,6 +2262,8 @@ function updateLbNav() {
 function openLightbox(p) {
   // Einzelbild-Modus: Galerie-Blättern deaktivieren
   lbGallery = null;
+  document.getElementById('lightbox').classList.remove('lb-gallery'); // Bahn aus, Einzel-.ph sichtbar
+  if (lbIO) { lbIO.disconnect(); lbIO = null; }
   updateLbNav();
   // Wenn p ein String ist, ist es eine reine Bild-URL (z.B. aus Beitrags-Text)
   if (typeof p === 'string') {
@@ -2247,9 +2305,12 @@ function openLightbox(p) {
   document.body.style.overflow = 'hidden';
 }
 function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('open');
+  var lb = document.getElementById('lightbox');
+  lb.classList.remove('open');
+  lb.classList.remove('lb-gallery');
   document.body.style.overflow = '';
   lbGallery = null;
+  if (lbIO) { lbIO.disconnect(); lbIO = null; }
 }
 
 /* ---------- Stories Liste ---------- */
@@ -3470,10 +3531,8 @@ function initSite() {
   // Blätter-Pfeile
   document.getElementById('lbPrev').addEventListener('click', function(e){ e.stopPropagation(); lbStep(-1); });
   document.getElementById('lbNext').addEventListener('click', function(e){ e.stopPropagation(); lbStep(1); });
-  // Wischen auf dem Lightbox-Bild: links = nächstes, rechts = vorheriges
-  attachSwipe(document.getElementById('lbImg'),
-    function(){ if (lbGallery) lbStep(1); },
-    function(){ if (lbGallery) lbStep(-1); });
+  // Wischen im Galerie-Modus uebernimmt jetzt nativ die Snap-Bahn (.lb-track) -
+  // kein attachSwipe mehr noetig (Touch/Trackpad/Maus = Browser-Scroll + Snap).
 
   // Wischen/Trackpad auf der Stations-Box: links = nächste Station, rechts = vorherige.
   // Einmalig gebunden (tripDetail-Element bleibt bestehen, nur sein Inhalt wird neu gezeichnet).
