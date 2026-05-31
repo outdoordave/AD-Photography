@@ -2139,21 +2139,48 @@ function attachSwipe(el, onLeft, onRight) {
   var WHEEL_GAP_MS = 80;   // Pause zwischen zwei Events, die eine neue Geste markiert — einzige Stellschraube
   var WHEEL_THRESH = 30;   // Mindeststrecke (Summe |deltaX|) fuer den einen Schritt im Strom
   var accX = 0, stepFired = false, lastWheelAt = 0;
+  // --- TEMPORAERE Mess-Anzeige (nur mit ?wheeldebug=1; sonst komplett inaktiv) ---
+  // Zeigt jedes wheel-Event live an, damit wir das Desktop-Haengen mit echten Zahlen
+  // diagnostizieren statt zu raten. Verhalten bleibt unveraendert, nur Logging.
+  var WHEEL_DEBUG = /[?&]wheeldebug=1/.test(location.search);
+  function wwWheelDbg(line){
+    if (!WHEEL_DEBUG) return;
+    var box = document.getElementById('ww-wheel-debug');
+    if (!box){
+      box = document.createElement('div'); box.id = 'ww-wheel-debug';
+      box.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:99999;max-width:60vw;'
+        + 'background:rgba(0,0,0,.85);color:#5f5;font:11px/1.3 monospace;padding:8px 10px;'
+        + 'border-radius:6px;white-space:pre;pointer-events:none;';
+      document.body.appendChild(box);
+    }
+    box.textContent = (line + '\n' + box.textContent).split('\n').slice(0, 16).join('\n');
+  }
   el.addEventListener('wheel', function(e){
-    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return; // eher vertikal -> ignorieren
+    var dbgNow = WHEEL_DEBUG ? Date.now() : 0;
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) { // eher vertikal -> ignorieren
+      if (WHEEL_DEBUG) wwWheelDbg('V  dx=' + e.deltaX.toFixed(1) + ' dy=' + e.deltaY.toFixed(1)
+        + ' gap=' + (dbgNow - lastWheelAt) + 'ms');
+      return;
+    }
     e.preventDefault(); // verhindert Seiten-Horizontalscroll / Zurueck-Geste
     var now = Date.now();
+    var dbgGap = now - lastWheelAt;
+    var dbgReset = false, dbgFired = false;
     if (now - lastWheelAt >= WHEEL_GAP_MS) { // Pause seit letztem Event -> neuer Strom = neue Geste
-      stepFired = false; accX = 0;
+      stepFired = false; accX = 0; dbgReset = true;
     }
     lastWheelAt = now;
     if (!stepFired) {
       accX += e.deltaX;
       if (Math.abs(accX) >= WHEEL_THRESH) {
         stepFired = true;            // ERST sperren (dieser Strom hat sein eines Blaettern)...
+        dbgFired = true;
         if (accX > 0) { if (onLeft) onLeft(); } else { if (onRight) onRight(); } // ...dann blaettern
       }
     }
+    if (WHEEL_DEBUG) wwWheelDbg('H  dx=' + e.deltaX.toFixed(1) + ' gap=' + dbgGap + 'ms'
+      + ' acc=' + accX.toFixed(0) + (dbgReset ? ' [NEU]' : '') + ' lock=' + stepFired
+      + (dbgFired ? '  <<< SCHRITT' : ''));
   }, { passive: false });
 }
 
