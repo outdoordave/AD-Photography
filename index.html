@@ -3706,19 +3706,25 @@ function initSite() {
   (function(){
     var strip = document.getElementById('lbFilmstrip');
     if (!strip) return;
-    // Thema 1: Desktop-Mausrad = iPhone-Mediathek-Gefuehl. Der Streifen ist jetzt echt
-    // scrollbar (Flex-Spacer), daher waehrend des Wischens Snap AUS -> Wheel-Delta fliesst
-    // kontinuierlich in scrollLeft (fluessiges Wandern, kein Thumb-fuer-Thumb-Springen); das
-    // Hauptbild folgt live ueber den scroll-Handler unten (lbStripActive). Nach kurzer Stille
-    // Snap wieder AN -> das naechste Thumb rastet mittig unter dem Marker ein (wie am iPhone).
-    var lbWheelIdle = null;
+    // Thema 1: Desktop-Mausrad / Trackpad = iPhone-Mediathek-Gefuehl. Streifen ist echt
+    // scrollbar (Flex-Spacer) -> waehrend des Wischens Snap AUS, Delta fliesst in scrollLeft,
+    // Hauptbild folgt live (scroll-Handler unten). Nach kurzer Stille Snap AN -> Thumb rastet
+    // mittig ein. ENTPRELLT gegen Trackpad-Zappeln:
+    //  (1) NUR deltaX nehmen wenn vorhanden -> vertikales Zittern waehrend einer Horizontal-
+    //      Wischgeste kippt die Richtung nicht mehr um (das "wilde Hin und Her").
+    //  (2) Deltas pro Frame buendeln (requestAnimationFrame) statt pro Event -> ruhiges Scrollen.
+    var lbWheelIdle = null, lbWheelAccum = 0, lbWheelRAF = 0;
     strip.addEventListener('wheel', function(e){
-      var d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      var d = (e.deltaX !== 0) ? e.deltaX : e.deltaY;   // Trackpad-Horizontal: deltaX; klassische Maus: deltaY
       if (!d) return;
       e.preventDefault();
       if (!lbGallery) return;
       strip.style.scrollSnapType = 'none';   // Snap aus -> freies, fluessiges Wandern
-      strip.scrollLeft += d;
+      lbWheelAccum += d;
+      if (!lbWheelRAF) lbWheelRAF = requestAnimationFrame(function(){
+        strip.scrollLeft += lbWheelAccum;    // gebuendelt: ein Scroll-Update pro Frame
+        lbWheelAccum = 0; lbWheelRAF = 0;
+      });
       lbStripUser();                          // Streifen treibt das Hauptbild (scroll-Handler aktualisiert es live)
       clearTimeout(lbWheelIdle);
       lbWheelIdle = setTimeout(function(){
