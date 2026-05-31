@@ -629,13 +629,6 @@
   .insta-row.on-dark .insta-link:hover { border-color: #f0c9a8; color: #f0c9a8; }
 
   /* ============ REISE-SLIDESHOW & GALERIE ============ */
-  .trip-detail .slideshow { position: relative; aspect-ratio: var(--ar-media); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: 16px; }
-  .trip-detail .slideshow .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1s ease; }
-  .trip-detail .slideshow .slide.active { opacity: 1; }
-  .trip-detail .slideshow .slide .ph { position: absolute; inset: 0; }
-  .trip-detail .slideshow .dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 5; display: flex; gap: 6px; }
-  .trip-detail .slideshow .dots span { width: 7px; height: 7px; border-radius: var(--radius-full); background: rgba(255,255,255,0.45); transition: background var(--dur-base) var(--ease); }
-  .trip-detail .slideshow .dots span.active { background: #fff; }
   .view-all-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; color: var(--c-accent); font-weight: var(--fw-bold); font-size: var(--fs-ui); cursor: pointer; }
   .view-all-link::after { content: "\u2192"; transition: transform var(--dur-base) var(--ease); }
   .view-all-link:hover::after { transform: translateX(4px); }
@@ -2197,7 +2190,7 @@ function attachSwipe(el, onLeft, onRight) {
   // Zwei-Finger-Wisch / Magic-Mouse-Wisch erzeugen wheel-Events mit deltaX.
   // Vertikales Scrollen (deltaY dominant) lassen wir in Ruhe.
   //
-  // Erkenntnisse aus Live-Messung (?wheeldebug):
+  // Erkenntnisse aus Live-Messung auf echtem Trackpad/Magic Mouse:
   //   1. Das Geraet feuert viele winzige Events (|deltaX| ~1-3) sehr dicht (Luecken
   //      meist 2-30ms), eine EINZELNE Geste ist also ein langer, dichter Strom.
   //   2. Ein fester Cooldown (300ms) ist KUERZER als so eine Geste -> nach Ablauf
@@ -2221,28 +2214,8 @@ function attachSwipe(el, onLeft, onRight) {
   var WHEEL_END_IDLE_MS = 150;    // so lange Stille = Geste beendet -> Sperre frei (ueber den ~99ms Binnenluecken)
   var WHEEL_MAX_LOCK_MS = 1200;   // Sicherheitsnetz: spaetestens dann Sperre frei (nie dauerhaft gesperrt)
   var accX = 0, locked = false, lockUntil = 0, lastWheelAt = 0;
-  // --- TEMPORAERE Mess-Anzeige (nur mit ?wheeldebug=1; sonst komplett inaktiv) ---
-  // Zeigt jedes wheel-Event live an, damit wir das Desktop-Haengen mit echten Zahlen
-  // diagnostizieren statt zu raten. Verhalten bleibt unveraendert, nur Logging.
-  var WHEEL_DEBUG = /[?&]wheeldebug=1/.test(location.search);
-  function wwWheelDbg(line){
-    if (!WHEEL_DEBUG) return;
-    var box = document.getElementById('ww-wheel-debug');
-    if (!box){
-      box = document.createElement('div'); box.id = 'ww-wheel-debug';
-      box.style.cssText = 'position:fixed;left:8px;top:8px;bottom:8px;z-index:99999;width:42vw;'
-        + 'background:rgba(0,0,0,.85);color:#5f5;font:11px/1.3 monospace;padding:8px 10px;'
-        + 'border-radius:6px;white-space:pre;overflow:auto;'
-        + 'pointer-events:auto;user-select:text;-webkit-user-select:text;';
-      document.body.appendChild(box);
-    }
-    box.textContent = (line + '\n' + box.textContent).split('\n').slice(0, 120).join('\n');
-  }
   el.addEventListener('wheel', function(e){
-    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) { // eher vertikal -> ignorieren
-      if (WHEEL_DEBUG) wwWheelDbg('V  dx=' + e.deltaX.toFixed(1) + ' dy=' + e.deltaY.toFixed(1));
-      return;
-    }
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return; // eher vertikal -> ignorieren
     e.preventDefault(); // verhindert Seiten-Horizontalscroll / Zurueck-Geste
     var now = Date.now();
     var gap = now - lastWheelAt;
@@ -2252,21 +2225,14 @@ function attachSwipe(el, onLeft, onRight) {
       locked = false; accX = 0;
     }
     lastWheelAt = now;
-    if (locked) { // mitten in der gesperrten Geste -> Rest (inkl. Momentum) verwerfen
-      if (WHEEL_DEBUG) wwWheelDbg('H  dx=' + e.deltaX.toFixed(1) + ' gap=' + gap + 'ms  gesperrt');
-      return;
-    }
+    if (locked) return; // mitten in der gesperrten Geste -> Rest (inkl. Momentum) verwerfen
     if (gap >= WHEEL_END_IDLE_MS) accX = 0; // neue Geste nach Pause -> frisch zaehlen
     accX += e.deltaX;
-    var fired = false;
     if (Math.abs(accX) >= WHEEL_THRESH) {
-      fired = true;
       if (accX > 0) { if (onLeft) onLeft(); } else { if (onRight) onRight(); }
       accX = 0;
       locked = true; lockUntil = now + WHEEL_MAX_LOCK_MS; // gesperrt bis Gesten-Ende (Stille) bzw. Cap
     }
-    if (WHEEL_DEBUG) wwWheelDbg('H  dx=' + e.deltaX.toFixed(1) + ' gap=' + gap + 'ms'
-      + ' acc=' + accX.toFixed(0) + (fired ? '  <<< SCHRITT (gesperrt bis Gesten-Ende)' : ''));
   }, { passive: false });
 }
 
