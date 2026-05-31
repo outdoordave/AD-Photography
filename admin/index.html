@@ -50,6 +50,31 @@
       0%   { margin-left: -40%; }
       100% { margin-left: 100%; }
     }
+    /* Dezenter "Zurueck zur Website"-Link. BEWUSST unten links: oben sitzt
+       Sveltias App-Leiste (Logo links, Konto rechts), unten Mitte das
+       Fortschritts-Banner -> unten links ist die einzige kollisionsfreie Ecke
+       und auf Desktop wie Mobil sichtbar. Gleicher Look wie das Banner. */
+    #ww-back {
+      position: fixed;
+      left: 12px;
+      bottom: 12px;
+      z-index: 999997;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(28,24,18,.82);
+      color: #f4ede1;
+      font-family: -apple-system, system-ui, sans-serif;
+      font-size: 12px;
+      line-height: 1;
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+      opacity: .72;
+      transition: opacity .2s;
+    }
+    #ww-back:hover { opacity: 1; }
   </style>
 </head>
 <body>
@@ -58,6 +83,10 @@
     <div class="ww-progress-label">Speichern …</div>
     <div class="ww-progress-bar"><div class="ww-progress-fill"></div></div>
   </div>
+
+  <!-- Zurueck zur Website (gleicher Tab; ungespeicherte Aenderungen warnt der
+       beforeunload-Guard weiter unten ab) -->
+  <a id="ww-back" href="/" title="Zurück zur Website">← Zur Website</a>
 
   <!-- Sveltia CMS: aktiv gepflegter, direkter Nachfolger von Decap CMS.
        Liest dieselbe admin/config.yml und schreibt dieselben JSON/MD-Dateien,
