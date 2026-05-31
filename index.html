@@ -327,7 +327,7 @@
   .album-slideshow { position: relative; border-radius: var(--radius-sm); overflow: hidden; aspect-ratio: 16/9; background: #2a241c; }
   /* Zugeklappte Vorschau als horizontale Snap-Bahn (frueher Crossfade-Stapel). */
   .album-track {
-    position: absolute; inset: 0; display: flex; cursor: pointer;
+    position: absolute; inset: 0; display: flex; cursor: pointer; gap: 12px;  /* dezenter Abstand zwischen den Vorschau-Bildern (kein Kleben) */
     overflow-x: auto; overflow-y: hidden;
     scroll-snap-type: x mandatory;
     overscroll-behavior-x: contain;          /* horizontaler Scroll kettet nicht zur Seite / Zurueck-Geste */
@@ -1748,9 +1748,19 @@ function makeAlbumSlideshow(alb) {
   }
   box.appendChild(track);
 
-  function cellW(){ return track.clientWidth || 1; }
-  function currentCell(){ return Math.round(track.scrollLeft / cellW()); }
-  function scrollToCell(n, smooth){ track.scrollTo({ left: n * cellW(), behavior: smooth ? 'smooth' : 'auto' }); }
+  // offsetLeft-basiert -> stimmt auch MIT gap zwischen den Zellen (Track ist position:absolute -> offsetParent)
+  function currentCell(){
+    var cells = track.children, sl = track.scrollLeft, best = 0, bestD = Infinity;
+    for (var i = 0; i < cells.length; i++){
+      var d = Math.abs(cells[i].offsetLeft - sl);
+      if (d < bestD){ bestD = d; best = i; }
+    }
+    return best;
+  }
+  function scrollToCell(n, smooth){
+    var c = track.children[n];
+    if (c) track.scrollTo({ left: c.offsetLeft, behavior: smooth ? 'smooth' : 'auto' });
+  }
 
   // Klick (kein Wisch) -> Lightbox beim aktuellen Bild. Ein horizontaler Wisch ist
   // ein Scroll, KEIN click -> oeffnet die Lightbox nicht (Browser unterscheidet das).
