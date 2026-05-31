@@ -2091,6 +2091,7 @@ function lbCenterStrip(idx) {
   if (active) strip.scrollTo({ left: active.offsetLeft - (strip.clientWidth / 2) + (active.clientWidth / 2), behavior: 'smooth' });
 }
 function lbSetCaption(idx) {
+  if (!lbGallery) return;   // Guard: keine aktive Galerie (z.B. nach closeLightbox) -> kein Zugriff auf .length
   var cap = document.getElementById('lbCap');
   if (cap) cap.textContent = lbAlbumName ? (lbAlbumName + ' · ' + (idx + 1) + ' / ' + lbGallery.length) : '';
 }
@@ -2119,7 +2120,7 @@ function lbStripUser() {
 /* Galerie-Bahn aufbauen: alle Album-Bilder als Snap-Slides nebeneinander. */
 function buildLbTrack() {
   var track = document.getElementById('lbTrack');
-  if (!track) return;
+  if (!track || !lbGallery) return;   // Guard: ohne aktive Galerie nicht ueber lbGallery.length iterieren
   if (lbIO) { lbIO.disconnect(); lbIO = null; }
   track.innerHTML = '';
   for (var i = 0; i < lbGallery.length; i++) {
@@ -3573,7 +3574,7 @@ function initSite() {
     strip.addEventListener('touchmove', lbStripUser, { passive: true });
     // Thema 2: Streifen treibt das Hauptbild LIVE -> der mittige Thumb wird sofort aktiv.
     strip.addEventListener('scroll', function(){
-      if (!lbStripActive) return;            // programmatischer Echo (Hauptbahn treibt) -> ignorieren
+      if (!lbStripActive || !lbGallery) return;  // Echo ODER keine aktive Galerie (z.B. Schliessen waehrend Momentum)
       lbStripUser();                         // solange gescrollt wird (inkl. Momentum) aktiv halten
       var idx = lbFilmstripCenterIndex();
       if (idx < 0 || idx === lbIndex) return;
