@@ -331,7 +331,7 @@
     overflow-x: auto; overflow-y: hidden;
     scroll-snap-type: x mandatory;
     overscroll-behavior-x: contain;          /* horizontaler Scroll kettet nicht zur Seite / Zurueck-Geste */
-    touch-action: pan-x;                     /* horizontal = Karussell, vertikal = Seite scrollt */
+    touch-action: pan-x pan-y;               /* beide Achsen erlaubt: horizontal = Karussell, vertikal scrollt die Seite (Browser-Richtungs-Locking). pan-x allein blockierte vertikales Scrollen, sobald der Finger auf dem Album aufsetzte */
     -webkit-overflow-scrolling: touch; scrollbar-width: none;
   }
   .album-track::-webkit-scrollbar { display: none; }
