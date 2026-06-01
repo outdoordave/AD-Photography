@@ -562,6 +562,14 @@
   .trip-tabs button { background: transparent; border: 1px solid var(--c-line); color: var(--c-ink-soft); padding: 10px 24px; border-radius: var(--radius-lg); font-size: var(--fs-ui); font-weight: var(--fw-bold); letter-spacing: var(--tracking-slight); cursor: pointer; transition: all var(--dur-base) var(--ease); }
   .trip-tabs button:hover { border-color: var(--c-accent); color: var(--c-accent); }
   .trip-tabs button.active { background: var(--c-accent); border-color: var(--c-accent); color: #fff; }
+  /* Sichtbarer, kontrastreicher Scrollbalken der (auf Mobile horizontal scrollbaren)
+     Reisen-Leiste: dezenter Thumb (Sepia) auf hellem Track, statt der kaum sichtbaren
+     Default-Scrollbar auf dem sandfarbenen Hintergrund. */
+  .trip-tabs { scrollbar-width: thin; scrollbar-color: var(--c-ink-soft) var(--c-line); }
+  .trip-tabs::-webkit-scrollbar { height: 6px; }
+  .trip-tabs::-webkit-scrollbar-track { background: var(--c-line); border-radius: 3px; }
+  .trip-tabs::-webkit-scrollbar-thumb { background: var(--c-ink-soft); border-radius: 3px; }
+  .trip-tabs::-webkit-scrollbar-thumb:hover { background: var(--c-ink); }
   .map-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; align-items: start; }
   .map-box { border-radius: var(--radius-sm); overflow: hidden; position: relative; height: 420px; }
   /* Admin-only Kartenstil-Vorschau (fluechtig, kein Writeback). Fuer normale
@@ -2291,85 +2299,6 @@ function lbStep(dir) {
   if (slides[target]) track.scrollTo({ left: slides[target].offsetLeft, behavior: 'smooth' });
 }
 
-/* Macht ein Element horizontal wischbar (Touch).
-   onLeft  = nach links gewischt  -> "nächstes"
-   onRight = nach rechts gewischt -> "vorheriges"
-   Eine Mindeststrecke verhindert, dass ein Tippen als Wisch zählt.
-   Vertikales Scrollen bleibt möglich (wir reagieren nur auf überwiegend
-   horizontale Bewegungen). */
-function attachSwipe(el, onLeft, onRight) {
-  if (!el) return;
-  var x0 = null, y0 = null, t0 = 0;
-  el.addEventListener('touchstart', function(e){
-    if (!e.touches || !e.touches.length) return;
-    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now();
-  }, { passive: true });
-  el.addEventListener('touchend', function(e){
-    if (x0 === null) return;
-    var t = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0] : null;
-    if (!t) { x0 = null; return; }
-    var dx = t.clientX - x0;
-    var dy = t.clientY - y0;
-    var dt = Date.now() - t0;
-    x0 = null; y0 = null;
-    // Mindeststrecke 40px, überwiegend horizontal, nicht zu langsam
-    if (Math.abs(dx) < 40) return;
-    if (Math.abs(dx) < Math.abs(dy) * 1.4) return; // eher vertikal -> ignorieren
-    if (dt > 800) return;
-    if (dx < 0) { if (onLeft) onLeft(); }
-    else { if (onRight) onRight(); }
-  }, { passive: true });
-
-  // --- Trackpad / Magic Mouse: horizontale Wheel-Geste (Gesten-Ende-Modell) ---
-  // Zwei-Finger-Wisch / Magic-Mouse-Wisch erzeugen wheel-Events mit deltaX.
-  // Vertikales Scrollen (deltaY dominant) lassen wir in Ruhe.
-  //
-  // Erkenntnisse aus Live-Messung auf echtem Trackpad/Magic Mouse:
-  //   1. Das Geraet feuert viele winzige Events (|deltaX| ~1-3) sehr dicht (Luecken
-  //      meist 2-30ms), eine EINZELNE Geste ist also ein langer, dichter Strom.
-  //   2. Ein fester Cooldown (300ms) ist KUERZER als so eine Geste -> nach Ablauf
-  //      sammelt die noch laufende Bewegung erneut bis zur Schwelle -> es blaettert
-  //      mehrere Bilder pro Wisch. Cooldown taugt also nicht als Trenner.
-  //   3. Es gibt keinen sauberen Marker fuer "neue Geste" (Zeit/Staerke ueberlappen mit
-  //      Momentum). ABER es gibt einen verlaesslichen Marker fuer GESTEN-ENDE: hoert man
-  //      auf zu wischen (Finger steht/hebt), STOPPEN die Events -> echte Stille.
-  //
-  // Modell: EIN Schritt pro Geste, Sperre bis zum Gesten-Ende.
-  //   * Akkumuliere |deltaX|; Summe >= WHEEL_THRESH -> EIN Schritt, dann gesperrt.
-  //   * Die Sperre bleibt, SOLANGE die Geste laeuft. Sie wird erst frei, wenn
-  //     WHEEL_END_IDLE_MS lang KEIN Event mehr kam (Geste beendet). Eine durchgehende
-  //     Wischbewegung -- egal wie lang -- gibt damit genau EINEN Schritt.
-  //   * Sicherheitsnetz WHEEL_MAX_LOCK_MS: spaetestens dann wird entsperrt, falls je
-  //     ein Dauerstrom die Stille verhindert -> kann nie dauerhaft haengen (alter Bug).
-  // WHEEL_END_IDLE_MS liegt UEBER den groessten gemessenen Binnenluecken (~99ms), damit
-  // eine Geste nicht faelschlich in mehrere zerfaellt; ein bewusster Folgewisch braucht
-  // also eine kurze Pause (>150ms) -- die entsteht beim Absetzen/Neuansetzen ohnehin.
-  var WHEEL_THRESH = 24;          // Summe |deltaX| fuer EINEN Schritt (auch sanfte Wische erreichen das)
-  var WHEEL_END_IDLE_MS = 150;    // so lange Stille = Geste beendet -> Sperre frei (ueber den ~99ms Binnenluecken)
-  var WHEEL_MAX_LOCK_MS = 1200;   // Sicherheitsnetz: spaetestens dann Sperre frei (nie dauerhaft gesperrt)
-  var accX = 0, locked = false, lockUntil = 0, lastWheelAt = 0;
-  el.addEventListener('wheel', function(e){
-    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return; // eher vertikal -> ignorieren
-    e.preventDefault(); // verhindert Seiten-Horizontalscroll / Zurueck-Geste
-    var now = Date.now();
-    var gap = now - lastWheelAt;
-    // Sperre nur aufheben, wenn die Geste WIRKLICH zu Ende ist: lange Stille seit dem
-    // letzten Event ODER Sicherheits-Cap erreicht. Solange die Geste laeuft -> gesperrt.
-    if (locked && (gap >= WHEEL_END_IDLE_MS || now >= lockUntil)) {
-      locked = false; accX = 0;
-    }
-    lastWheelAt = now;
-    if (locked) return; // mitten in der gesperrten Geste -> Rest (inkl. Momentum) verwerfen
-    if (gap >= WHEEL_END_IDLE_MS) accX = 0; // neue Geste nach Pause -> frisch zaehlen
-    accX += e.deltaX;
-    if (Math.abs(accX) >= WHEEL_THRESH) {
-      if (accX > 0) { if (onLeft) onLeft(); } else { if (onRight) onRight(); }
-      accX = 0;
-      locked = true; lockUntil = now + WHEEL_MAX_LOCK_MS; // gesperrt bis Gesten-Ende (Stille) bzw. Cap
-    }
-  }, { passive: false });
-}
-
 function updateLbNav() {
   var prev = document.getElementById('lbPrev');
   var next = document.getElementById('lbNext');
@@ -3638,7 +3567,13 @@ function wwOpenImage(src, list, title) {
 function setTrip(t) {
   currentTrip = t; currentStop = 0;
   var btns = document.querySelectorAll('#tripTabs button');
-  for (var i = 0; i < btns.length; i++) btns[i].classList.toggle('active', btns[i].getAttribute('data-trip') === t);
+  for (var i = 0; i < btns.length; i++) {
+    var on = btns[i].getAttribute('data-trip') === t;
+    btns[i].classList.toggle('active', on);
+    // Aktiven Tab in der (auf Mobile horizontal scrollbaren) Leiste mittig holen,
+    // damit die gewaehlte Reise nicht ausserhalb des Sichtbereichs liegt.
+    if (on && btns[i].scrollIntoView) btns[i].scrollIntoView({ inline: 'center', block: 'nearest' });
+  }
   renderTrip();
 }
 
@@ -3727,8 +3662,8 @@ function initSite() {
   // Blätter-Pfeile
   document.getElementById('lbPrev').addEventListener('click', function(e){ e.stopPropagation(); lbStep(-1); });
   document.getElementById('lbNext').addEventListener('click', function(e){ e.stopPropagation(); lbStep(1); });
-  // Wischen im Galerie-Modus uebernimmt jetzt nativ die Snap-Bahn (.lb-track) -
-  // kein attachSwipe mehr noetig (Touch/Trackpad/Maus = Browser-Scroll + Snap).
+  // Wischen im Galerie-Modus uebernimmt nativ die Snap-Bahn (.lb-track):
+  // Touch/Trackpad/Maus = Browser-Scroll + Snap.
   // Filmstreifen auf Desktop verlaesslich horizontal scrollbar: Wheel-Delta (horizontal
   // ODER vertikal) auf scrollLeft mappen. Eine klassische Maus liefert nur deltaY -> ohne
   // dieses Mapping liesse sich der Streifen am Desktop gar nicht scrollen. preventDefault
@@ -3778,8 +3713,8 @@ function initSite() {
     });
   })();
 
-  // Stationen sind jetzt eine native scroll-snap-Bahn (.trip-slide) - Touch/Trackpad/Maus
-  // uebernimmt der Browser, die Karte folgt per IntersectionObserver. Kein attachSwipe noetig.
+  // Stationen sind eine native scroll-snap-Bahn (.trip-slide) - Touch/Trackpad/Maus
+  // uebernimmt der Browser, die Karte folgt per IntersectionObserver.
 
   // Kontakt
   document.getElementById('cSend').addEventListener('click', handleSend);
