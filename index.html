@@ -858,8 +858,9 @@
     /* Hero-Texte nicht zu gross auf kleinen Screens */
     .hero-tag { font-size: var(--fs-ui); line-height: 1.5; }
     .map-box { height: 260px; }
-    /* Trip-Tabs horizontal scrollbar statt umbrechen */
-    .trip-tabs { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 6px; }
+    /* Trip-Tabs horizontal scrollbar statt umbrechen; mehr padding-bottom -> Scrollbalken
+       klebt nicht direkt an den Buttons, sondern hat sichtbaren Abstand zur Leiste. */
+    .trip-tabs { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 14px; }
     .trip-tabs button { flex: 0 0 auto; white-space: nowrap; }
     /* Stop-Liste ebenfalls scrollbar */
     .trip-stoplist { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 6px; }
@@ -1477,7 +1478,7 @@ function navigate(page) {
     links[j].classList.toggle('active', links[j].getAttribute('data-nav') === page);
   }
   window.scrollTo(0, 0);
-  if (page === 'trips') renderTrip();
+  if (page === 'trips') { renderTrip(); syncTripTabs(); }   // syncTripTabs erst jetzt -> Seite ist sichtbar, Tab wird mittig gescrollt
   if (page === 'album' && currentAlbum) renderAlbum(currentAlbum);
   // Edit-Stifte für die neue Seite sicherstellen (falls Admin-Modus aktiv)
   if (document.body.classList.contains('ww-is-admin')) {
@@ -3564,16 +3565,29 @@ function wwOpenImage(src, list, title) {
   openLightbox(src);
 }
 
+/* Markiert den aktiven Reise-Tab passend zu currentTrip und holt ihn in der (auf Mobile
+   horizontal scrollbaren) Leiste mittig in den Sichtbereich. Manuelles scrollLeft statt
+   scrollIntoView: zuverlaessig auf iOS und ohne Seiten-Scroll-Nebenwirkung. offsetLeft/
+   clientWidth sind nur belastbar, wenn die Trips-Seite sichtbar ist (sonst 0 -> kein Scroll;
+   navigate() ruft syncTripTabs erneut, sobald die Seite eingeblendet ist). */
+function syncTripTabs() {
+  var tabs = document.getElementById('tripTabs');
+  if (!tabs) return;
+  var btns = tabs.querySelectorAll('button');
+  var active = null;
+  for (var i = 0; i < btns.length; i++) {
+    var on = btns[i].getAttribute('data-trip') === currentTrip;
+    btns[i].classList.toggle('active', on);
+    if (on) active = btns[i];
+  }
+  if (!active || !tabs.clientWidth) return;
+  var left = active.offsetLeft - (tabs.clientWidth / 2) + (active.clientWidth / 2);
+  tabs.scrollLeft = Math.max(0, left);
+}
+
 function setTrip(t) {
   currentTrip = t; currentStop = 0;
-  var btns = document.querySelectorAll('#tripTabs button');
-  for (var i = 0; i < btns.length; i++) {
-    var on = btns[i].getAttribute('data-trip') === t;
-    btns[i].classList.toggle('active', on);
-    // Aktiven Tab in der (auf Mobile horizontal scrollbaren) Leiste mittig holen,
-    // damit die gewaehlte Reise nicht ausserhalb des Sichtbereichs liegt.
-    if (on && btns[i].scrollIntoView) btns[i].scrollIntoView({ inline: 'center', block: 'nearest' });
-  }
+  syncTripTabs();
   renderTrip();
 }
 
