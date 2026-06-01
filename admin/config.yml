@@ -297,6 +297,11 @@ collections:
     widget: image
     required: false
     hint: Großes Bild oben. JPG/PNG bis ca. 10 MB.
+  - name: youtube_url
+    label: YouTube-URL
+    widget: string
+    required: false
+    hint: "https://www.youtube.com/watch?v=..."
   - name: excerpt_de
     label: Anriss / Vorschautext
     widget: text
@@ -451,6 +456,16 @@ collections:
         name: image
         label: Bild
         widget: image
+    - name: video
+      label: Video (Loop-Clip)
+      widget: file
+      required: false
+      hint: "MP4 oder WebM, max. ~15 s, vorher komprimieren (Mac: QuickTime → Als MP4 exportieren)"
+    - name: youtube_url
+      label: YouTube-URL
+      widget: string
+      required: false
+      hint: "https://www.youtube.com/watch?v=..."
     - name: english
       label: 🌐 Englische Version (dieser Station)
       widget: object
