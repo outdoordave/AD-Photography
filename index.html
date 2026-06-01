@@ -3574,7 +3574,7 @@ function wwOpenImage(src, list, title) {
    scrollIntoView: zuverlaessig auf iOS und ohne Seiten-Scroll-Nebenwirkung. offsetLeft/
    clientWidth sind nur belastbar, wenn die Trips-Seite sichtbar ist (sonst 0 -> kein Scroll;
    navigate() ruft syncTripTabs erneut, sobald die Seite eingeblendet ist). */
-function syncTripTabs() {
+function syncTripTabs(smooth) {
   var tabs = document.getElementById('tripTabs');
   if (!tabs) return;
   var btns = tabs.querySelectorAll('button');
@@ -3585,13 +3585,16 @@ function syncTripTabs() {
     if (on) active = btns[i];
   }
   if (!active || !tabs.clientWidth) return;
-  var left = active.offsetLeft - (tabs.clientWidth / 2) + (active.clientWidth / 2);
-  tabs.scrollLeft = Math.max(0, left);
+  var left = Math.max(0, active.offsetLeft - (tabs.clientWidth / 2) + (active.clientWidth / 2));
+  // smooth beim Tab-Klick (sanftes, Apple-artiges Gleiten zum gewaehlten Tab), instant beim
+  // Einblenden der Seite (sonst sichtbares Nachziehen direkt nach dem Seitenwechsel).
+  if (smooth && tabs.scrollTo) tabs.scrollTo({ left: left, behavior: 'smooth' });
+  else tabs.scrollLeft = left;
 }
 
 function setTrip(t) {
   currentTrip = t; currentStop = 0;
-  syncTripTabs();
+  syncTripTabs(true);
   renderTrip();
 }
 
