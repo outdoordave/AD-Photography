@@ -477,6 +477,23 @@
     .lightbox { padding: 20px 12px 96px; }
   }
 
+  /* Querformat auf dem Handy (niedriger Viewport): 78dvh Bild + ~84px Filmstreifen +
+     108px Reserve passen nicht uebereinander -> Bild und Streifen quetschen sich.
+     max-height:500px grenzt bewusst gegen Desktop-Landscape (hohe Viewports) ab. Bild +
+     Track auf ~52dvh, Streifen/Thumbs auf die kleinere Mobile-Groesse (50px -> 70px hoch),
+     Pfeil-Mitte auf die neue halbe Track-Hoehe, Reserve unter dem Bild entsprechend kleiner. */
+  @media (orientation: landscape) and (max-height: 500px) {
+    .lightbox { padding: 12px 12px 84px; }
+    .lightbox .lb-inner { margin-bottom: calc(90px + env(safe-area-inset-bottom, 0px)); }
+    .lightbox .ph { height: 52vh; height: 52dvh; }
+    .lightbox.lb-gallery .lb-track { height: 52vh; height: 52dvh; }
+    .lb-nav { top: 26vh; top: 26dvh; }   /* halbe Track-Hoehe (52dvh) -> auf Bildmitte */
+    .lb-filmstrip .lb-thumb { width: 50px; height: 50px; }
+    .lb-filmstrip::before, .lb-filmstrip::after { flex-basis: calc(50% - 33px); }  /* 50px-Thumb mittig (wie Portrait-Mobile) */
+    .lb-strip-marker { height: 70px; }                       /* 10 + 50 + 10 */
+    .lb-strip-marker::before { width: 54px; height: 54px; }  /* Innenloch = 50px */
+  }
+
   /* ============ STORIES LIST ============ */
   .stories-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
   .story-card { background: var(--c-bg-alt); border-radius: var(--radius-sm); overflow: hidden; cursor: pointer; border: 1px solid var(--c-line); transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease); display: flex; flex-direction: column; }
