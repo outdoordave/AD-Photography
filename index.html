@@ -859,8 +859,12 @@
     .hero-tag { font-size: var(--fs-ui); line-height: 1.5; }
     .map-box { height: 260px; }
     /* Trip-Tabs horizontal scrollbar statt umbrechen; mehr padding-bottom -> Scrollbalken
-       klebt nicht direkt an den Buttons, sondern hat sichtbaren Abstand zur Leiste. */
-    .trip-tabs { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 14px; }
+       klebt nicht direkt an den Buttons, sondern hat sichtbaren Abstand zur Leiste.
+       justify-content:flex-start (statt des Basis-center): bei mehr Tabs als Breite wuerde
+       center den ueberlaufenden Inhalt mittig schieben -> der erste Tab landet links
+       ausserhalb und ist NICHT scrollbar (scrollLeft kann nicht negativ). flex-start haelt
+       die Leiste links buendig -> Standard-Reise (erster Tab) bleibt sichtbar/erreichbar. */
+    .trip-tabs { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 14px; }
     .trip-tabs button { flex: 0 0 auto; white-space: nowrap; }
     /* Stop-Liste ebenfalls scrollbar */
     .trip-stoplist { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 6px; }
