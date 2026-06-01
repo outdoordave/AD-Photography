@@ -447,7 +447,7 @@ collections:
       label: Video (Loop-Clip)
       widget: file
       required: false
-      hint: "MP4 oder WebM, max. ~15 s, vorher komprimieren (Mac: QuickTime → Als MP4 exportieren)"
+      hint: "Kurzer Clip, läuft stumm in Endlosschleife. Vorher komprimieren (Mac: QuickTime/HandBrake, iPhone: z.B. CapCut), Ziel ~1080p unter 5 MB. Längere Videos → YouTube-URL unten."
     - name: youtube_url
       label: YouTube-URL
       widget: string
