@@ -1213,7 +1213,7 @@
 </main>
 
 <footer>
-  <div class="footer-logo"><img id="wwFooterLogo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==" alt="Wide & Wild"></div>
+  <div class="footer-logo"><img id="wwFooterLogo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==" alt="Wide & Wild" loading="lazy"></div>
   <div class="footer-nav">
     <a href="#home" data-nav="home" data-de="Start" data-en="Home">Start</a>
     <a href="#portfolio" data-nav="portfolio" data-de="Portfolio" data-en="Portfolio">Portfolio</a>
@@ -2439,7 +2439,7 @@ function mdToHtml(md) {
     t = t.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function(_,alt,url){
       // Pfad normalisieren (CMS-Uploads liegen unter /uploads/)
       var fixedUrl = (/^(https?:|data:)/i.test(url) || url.charAt(0) === '/') ? url : '/' + url;
-      return '<img src="' + fixedUrl + '" alt="' + alt + '">';
+      return '<img src="' + fixedUrl + '" alt="' + alt + '" loading="lazy">';
     });
     t = t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
     t = t.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
@@ -4019,6 +4019,7 @@ function applySiteTexts() {
         var im = document.createElement('img');
         im.className = 'ww-person-img';
         im.alt = '';
+        im.loading = 'lazy';   // About-Seite, unterhalb des Folds -> erst bei Bedarf laden
         im.onerror = function(){ this.style.display = 'none'; };
         pel.appendChild(im);
         existing = im;
