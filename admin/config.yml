@@ -78,7 +78,7 @@ collections:
 - name: portfolio
   label: 🖼️ Portfolio – Alben
   label_singular: Album
-  description: Alle Portfolio-Alben. Ein Album = ein Ordner mit Fotos. Mehrere Fotos auf einmal hochladen mit Strg/Cmd+Klick im Datei-Dialog.
+  description: Ein Album = ein Ordner mit Fotos.
   folder: content/albums
   create: true
   extension: json
@@ -176,7 +176,7 @@ collections:
   - name: list
     label: Highlight-Fotos (Startseite)
     file: content/highlights.json
-    description: Zentrale Auswahl der Highlight-Fotos für die „Momentaufnahmen" auf der Startseite. Album-übergreifend – einmal auswählen, fertig.
+    description: Highlight-Fotos für die „Momentaufnahmen" auf der Startseite. Album-übergreifend.
     fields:
     - name: images
       label: Highlight-Fotos
@@ -196,7 +196,7 @@ collections:
   - name: gallery_sort
     label: 🖼️ Portfolio-Sortierung
     file: content/gallery-settings.json
-    description: Steuert, welche Sortier-Knöpfe über der Portfolio erscheinen (Alben / Neueste / A–Z). Mindestens einer sollte an sein.
+    description: Welche Sortier-Knöpfe im Portfolio erscheinen. Mindestens einer an.
     fields:
     - name: show_album
       label: „Alben" anzeigen (nach Alben gruppiert)
@@ -216,13 +216,13 @@ collections:
   - name: stories_visibility
     label: 📖 Stories-Sichtbarkeit
     file: content/stories-settings.json
-    description: Steuert, ob der Stories-Bereich auf der Webseite sichtbar ist. Wenn aus, ist auch der Reiter ausgeblendet.
+    description: Stories-Bereich auf der Website ein- oder ausblenden.
     fields:
     - name: show_stories
       label: 📖 Stories-Bereich auf der Webseite anzeigen?
       widget: boolean
       default: false
-      hint: Aus = Stories-Reiter und Hero-Button werden auf der Webseite versteckt. Bestehende Stories bleiben im CMS erhalten.
+      hint: Aus = Reiter und Hero-Button versteckt. Stories bleiben im CMS erhalten.
   - name: appearance
     label: 🎨 Darstellung & Logo
     file: content/appearance-settings.json
@@ -232,22 +232,22 @@ collections:
       label: Logo (für Navigation & Titelbild)
       widget: image
       required: false
-      hint: Wird oben in der Navigation und – falls aktiviert – groß über dem Titelbild (Hero) angezeigt. Beide nutzen dasselbe Logo. Leer lassen, um das fest eingebaute Logo zu behalten.
+      hint: Erscheint in der Navigation und (optional) über dem Titelbild. Leer = eingebautes Logo.
     - name: show_hero_logo
       label: Logo über dem Titelbild anzeigen?
       widget: boolean
       default: true
-      hint: Aus = das große Logo über dem Hero-Bild auf der Startseite wird ausgeblendet. Das Logo in der Navigation bleibt davon unberührt.
+      hint: Aus = großes Logo über dem Titelbild verborgen. Navigation bleibt.
     - name: show_discover
       label: „Entdecken“-Bereich auf der Startseite anzeigen?
       widget: boolean
       default: true
-      hint: Der Bereich „Wonach uns gerade ist“ direkt unter „Aktuell“. Aus = wird auf der Startseite ausgeblendet.
+      hint: Der Bereich „Wonach uns gerade ist“ unter „Aktuell“.
     - name: gallery_loop
       label: Galerie-Umlauf (nach dem letzten Bild zurück zum ersten)?
       widget: boolean
       default: true
-      hint: An = in der Vollbild-Galerie springen Pfeile/Pfeiltasten vom letzten Bild zurück zum ersten (und umgekehrt). Freies Wischen stoppt weiterhin am Ende.
+      hint: An = Pfeile springen vom letzten Bild zurück zum ersten.
 
 # === 📖 Stories / Beiträge ===
 - name: stories
@@ -490,19 +490,6 @@ collections:
       default: 1
       required: false
       hint: Nur relevant wenn angepinnt. Kleine Zahl = weiter oben. Bei gleicher Zahl entscheidet das Datum.
-  - name: album_hint
-    label: 🖼️ Verknüpftes Album
-    widget: object
-    collapsed: false
-    required: false
-    hint: 'Wenn ein Album zu dieser Reise gehört (in der Portfolio unter "Gehört zu Reise" einstellen), erscheint auf der Reise-Seite automatisch ein Link "Mehr Fotos im Album X". Diese Verknüpfung wird im Album gepflegt, nicht hier.'
-    fields:
-    - name: _info
-      label: Hinweis
-      widget: string
-      required: false
-      default: 'Album-Verknüpfung wird im Portfolio-Album eingestellt'
-      hint: Dieses Feld ist nur ein Hinweis. Die Verknüpfung selbst stellst du in der Portfolio beim jeweiligen Album ein (Dropdown "Gehört zu Reise").
   - name: gallery_block
     label: 🖼️ Reise-Portfolio (Reisefazit)
     widget: object
@@ -710,7 +697,7 @@ collections:
   - name: home_intro
     label: Intro-Block
     file: content/home-intro.json
-    description: Der Textblock unter dem Titelbild („Zwei Blickwinkel …" mit Beschreibung). Getrennt vom großen Kopfbereich.
+    description: Textblock unter dem Titelbild („Zwei Blickwinkel …").
     fields:
     - name: subline
       label: Überschrift
