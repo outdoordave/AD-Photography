@@ -801,6 +801,11 @@
   .ww-trip-gallery-title { font-size: var(--fs-title); font-weight: var(--fw-semibold); margin: 40px 0 4px; }
   .ww-station-photos { column-count: 2; column-gap: 8px; margin-top: 12px; }
   .ww-station-photos img { width: 100%; border-radius: var(--radius-sm); margin-bottom: 8px; display: block; break-inside: avoid; cursor: pointer; }
+  /* Optionaler Stations-Loop-Clip: gleiche Rundung/Breite wie die Stationsbilder. */
+  .ww-station-video { width: 100%; border-radius: var(--radius-sm); display: block; margin-top: 12px; }
+  /* Responsiver YouTube-Embed (16:9), in Stationen UND Stories genutzt. */
+  .yt-embed { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; margin-top: 16px; }
+  .yt-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; border-radius: var(--radius-sm); }
   @media (max-width: 700px) { .ww-masonry { column-count: 2; } .ww-station-photos { column-count: 2; } }
   @media (max-width: 480px) { .ww-masonry { column-count: 1; } .ww-station-photos { column-count: 1; } }
   .ww-hero-tools { top: 90px; right: 20px; z-index: 60; }
@@ -2499,6 +2504,7 @@ function buildStory(data, bodyFallback) {
   return {
     phC1: '#8a9a7e', phC2: '#3a4a38', img: 'mountains',
     photo: coverPhoto,
+    youtube: data.youtube_url || '',   // optionale YouTube-URL (sprachunabhaengig)
     date: data.date || '',
     dateKey: dateSortKey(data.date),
     de: {
@@ -2840,6 +2846,7 @@ function renderStory(i) {
     '</div>' +
     '<div class="reader-body">';
   html += d.bodyHtml || '';
+  html += wwYouTubeEmbed(s.youtube);   // optionaler YouTube-Embed am Ende des Beitrags (im zentrierten reader-body)
   html += '</div>';
   var prevL = currentLang === 'de' ? 'Vorherige' : 'Previous';
   var nextL = currentLang === 'de' ? 'Nächste' : 'Next';
@@ -2920,6 +2927,8 @@ function buildTrip(data) {
       name: s.name, lat: sLat, lon: sLon,
       photo: s.photo || '',
       photos: photos,
+      video: normalizePath(s.video || ''),   // optionaler Loop-Clip (CMS file-Feld)
+      youtube: s.youtube_url || '',          // optionale YouTube-URL (externer Link, kein normalizePath)
       de: { date: s.date_de || '', t: s.title_de || s.name, txt: s.text_de || '' },
       en: hasEN
         ? { date: sDateEn || s.date_de || '', t: sTitleEn || s.title_de || s.name, txt: sTextEn || s.text_de || '' }
@@ -3457,6 +3466,22 @@ function wwActivateStop(idx) {
   }
 }
 
+/* Extrahiert die 11-stellige YouTube-Video-ID aus den gaengigen URL-Formaten
+   (watch?v=, youtu.be/, embed/, shorts/). Leerer String, wenn nichts passt. */
+function wwYouTubeId(url) {
+  if (!url) return '';
+  var m = String(url).match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : '';
+}
+/* Responsiver YouTube-Embed-Block (nocookie-Domain). Leerer String ohne gueltige ID,
+   sodass eine leere/fehlerhafte URL einfach nichts rendert. */
+function wwYouTubeEmbed(url) {
+  var id = wwYouTubeId(url);
+  if (!id) return '';
+  return '<div class="yt-embed"><iframe src="https://www.youtube-nocookie.com/embed/' + id +
+    '" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>';
+}
+
 /* Baut den Inhalt EINER Station (frueher renderStopDetail, jetzt pro Slide). */
 function buildStopHTML(s, idx, total) {
   var d = s[currentLang];
@@ -3469,6 +3494,12 @@ function buildStopHTML(s, idx, total) {
     }
     photosHtml += '</div>';
   }
+  // Optionaler Loop-Clip (stummgeschaltet -> Autoplay auf Mobile erlaubt) nach den Fotos.
+  var videoHtml = s.video
+    ? '<video class="ww-station-video" src="' + s.video + '" autoplay muted loop playsinline preload="metadata"></video>'
+    : '';
+  // Optionaler YouTube-Embed am Ende der Station (leerer String ohne gueltige URL).
+  var ytHtml = wwYouTubeEmbed(s.youtube);
   return '<div class="ww-editable" style="position:relative">' +
     '<div class="step">' + stepLabel + '</div>' +   // Pfeile sitzen jetzt als Overlay im .trip-detail-wrap (ausserhalb der Snap-Slides)
     '<h3>' + d.t + '</h3>' +
@@ -3476,6 +3507,8 @@ function buildStopHTML(s, idx, total) {
     wwMediaBox(s.c1, s.c2, s.img, s.photo) +
     '<p>' + d.txt + '</p>' +
     photosHtml +
+    videoHtml +
+    ytHtml +
     wwToolbar({ edit: { coll: 'trips', slug: currentTrip } }) +
     '</div>';
 }
