@@ -409,13 +409,6 @@ collections:
     summary: '{{fields.name}}'
     hint: Ort suchen eingeben, aus Dropdown wählen, Koordinaten werden automatisch gefüllt.
     fields:
-    - name: location
-      label: 📍 Ort (Karte mit Suche)
-      widget: map
-      type: Point
-      decimals: 6
-      required: false
-      hint: Ort oben im Suchfeld eingeben und auswählen ODER direkt auf die Karte klicken. Der Punkt wird automatisch gespeichert. Bestehende Reisen zeigen ihren Ort bereits an.
     - name: name
       label: Ort (Anzeigename)
       widget: string
@@ -432,6 +425,13 @@ collections:
       widget: string
       required: false
       hint: z.B. 28. Sept - 01. Okt
+    - name: location
+      label: 📍 Ort auf der Karte
+      widget: map
+      type: Point
+      decimals: 6
+      required: false
+      hint: Ort ins Suchfeld tippen und auswählen – oder direkt auf die Karte tippen.
     - name: photo
       label: Titelbild der Station (optional)
       widget: image
