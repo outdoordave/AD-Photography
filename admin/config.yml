@@ -60,13 +60,10 @@ collections:
       hint: JPG/PNG bis ca. 10 MB.
     - name: slideshow
       label: Diashow-Bilder
-      widget: list
+      widget: image
+      multiple: true
       required: false
-      summary: '{{fields.img}}'
-      field:
-        name: img
-        label: Bild
-        widget: image
+      hint: Mehrere auf einmal auswählen oder per Drag & Drop.
     - name: video
       label: Video (MP4)
       widget: file
@@ -113,14 +110,10 @@ collections:
     hint: 'Optional: ein, zwei Sätze, die unter dem Album-Titel erscheinen.'
   - name: photos
     label: Fotos
-    widget: list
-    label_singular: Foto
+    widget: image
+    multiple: true
     required: false
-    hint: 'Mehrere Bilder auf einmal: im Datei-Dialog mit Strg/Cmd mehrere markieren – oder per Drag & Drop ziehen. Highlights für die Startseite werden jetzt zentral im Menü „⭐ Highlights" gepflegt, nicht mehr hier pro Foto.'
-    field:
-      name: image
-      label: Bild
-      widget: image
+    hint: Mehrere auf einmal auswählen oder per Drag & Drop. Reihenfolge per Ziehen.
   - name: linked_trip
     label: Gehört zu Reise (optional)
     widget: relation
@@ -187,13 +180,10 @@ collections:
     fields:
     - name: images
       label: Highlight-Fotos
-      widget: list
+      widget: image
+      multiple: true
       required: false
-      hint: '„Bild hinzufügen" klicken → im Medien-Fenster ein bereits hochgeladenes Foto auswählen (oder ein neues hochladen). Reihenfolge per Ziehen änderbar. Diese Bilder erscheinen zufällig in den Momentaufnahmen auf der Startseite.'
-      field:
-        name: image
-        label: Foto
-        widget: image
+      hint: Mehrere auf einmal auswählen oder bereits hochgeladene aus der Mediathek. Reihenfolge per Ziehen.
 
 # === ⚙️ Einstellungen (kleine Schalter, gebündelt) ===
 # Bündelt die selten gebrauchten Schalter in EINEM Menü statt mehrerer:
@@ -449,13 +439,10 @@ collections:
       hint: Dieses Bild wird zugeschnitten als Vorschau gezeigt. Wähle eins, dessen Bildmitte gut aussieht.
     - name: photos
       label: Weitere Bilder dieser Station (optional)
-      widget: list
+      widget: image
+      multiple: true
       required: false
-      hint: Beliebig viele Fotos. Werden als Portfolio unter der Station gezeigt, NICHT zugeschnitten.
-      field:
-        name: image
-        label: Bild
-        widget: image
+      hint: Mehrere auf einmal auswählen oder per Drag & Drop. Werden unter der Station gezeigt, nicht zugeschnitten.
     - name: video
       label: Video (Loop-Clip)
       widget: file
