@@ -3,6 +3,11 @@ node_modules/
 dist/
 .astro/
 
+# Tina (generierte Artefakte)
+tina/__generated__/
+tina/tina-lock.json
+public/admin/
+
 # Lokaler Upload-Zugang (Symlink -> ../../uploads) nur fuer die Vorschau.
 # Produktive Upload-Auslieferung wird in Schritt 6 (Deploy) entschieden.
 public/uploads

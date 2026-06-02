@@ -17,6 +17,7 @@ const stories = defineCollection({
     excerpt_en: z.string().default(''),
     body_en: z.string().default(''),
     youtube_url: z.string().optional().default(''),
+    gallery: z.array(z.string()).optional().default([]),
   }),
 });
 

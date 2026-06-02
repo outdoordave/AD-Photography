@@ -1,62 +1,54 @@
 ---
-// Story-Reader DE ('/stories/<slug>'). Markup identisch zu renderStory() in
-// index.html: reader-hero (Cover/Platzhalter) + reader-body (mdToHtml + YouTube)
-// + reader-nav (Vorherige/Naechste). Reihenfolge: neueste zuerst.
-import { getCollection } from 'astro:content';
+// Story-Reader DE ('/stories/<slug>'). Editierbare Felder laufen als kleine
+// React-Insel (Tina Live-Vorschau); reader-nav bleibt Astro.
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { toSortedStories, wwYouTubeEmbed, normalizePath, type StoryViewWithSlug } from '../../lib/stories';
-import PhPlaceholder from '../../components/PhPlaceholder.astro';
+import StoryReaderContent from '../../components/StoryReaderContent.tsx';
+import { client } from '../../../tina/__generated__/client';
+import { buildStory } from '../../lib/stories';
 
 export async function getStaticPaths() {
-  const entries = await getCollection('stories');
-  const stories = toSortedStories(entries.map((e) => ({ slug: e.slug, data: e.data })));
-  return stories.map((s, i) => ({
-    params: { slug: s.slug },
-    props: {
-      story: s,
-      prev: stories[i - 1] ?? null,
-      next: stories[i + 1] ?? null,
-    },
-  }));
+  const conn = await client.queries.storyConnection();
+  const nodes = (conn.data.storyConnection?.edges ?? []).map((e: any) => e?.node).filter(Boolean);
+  const sorted = [...nodes].sort((a: any, b: any) => (b.date || '').localeCompare(a.date || ''));
+  return sorted.map((node: any, i: number) => {
+    const prevNode = sorted[i - 1] ?? null;
+    const nextNode = sorted[i + 1] ?? null;
+    return {
+      params: { slug: node._sys.filename },
+      props: {
+        prev: prevNode ? { slug: prevNode._sys.filename, title: buildStory(prevNode).de.title } : null,
+        next: nextNode ? { slug: nextNode._sys.filename, title: buildStory(nextNode).de.title } : null,
+      },
+    };
+  });
 }
 
-interface Props {
-  story: StoryViewWithSlug;
-  prev: StoryViewWithSlug | null;
-  next: StoryViewWithSlug | null;
-}
-const { story, prev, next } = Astro.props;
-const d = story.de;
-const cover = story.photo ? normalizePath(story.photo) : '';
-const ytHtml = wwYouTubeEmbed(story.youtube);
+const { slug } = Astro.params;
+const { prev, next } = Astro.props as {
+  prev: { slug: string; title: string } | null;
+  next: { slug: string; title: string } | null;
+};
+const res = await client.queries.story({ relativePath: `${slug}.md` });
+const title = buildStory(res.data.story as any).de.title;
 ---
-<BaseLayout title={`${d.title} — Wide & Wild`} lang="de">
+<BaseLayout title={`${title} — Wide & Wild`} lang="de">
   <div id="page-story">
-    <div class="reader-hero">
-      {cover ? (
-        <img class="reader-cover-img" src={cover} alt="" />
-      ) : (
-        <PhPlaceholder c1="#8a9a7e" c2="#3a4a38" imgKey="mountains" />
-      )}
-      <div class="reader-hero-inner">
-        <div class="meta">{d.cat}</div>
-        <h1>{d.title}</h1>
-      </div>
-    </div>
-
-    <div class="reader-body">
-      <Fragment set:html={d.bodyHtml} />
-      <Fragment set:html={ytHtml} />
-    </div>
+    <StoryReaderContent
+      client:load
+      query={res.query}
+      variables={res.variables}
+      data={res.data}
+      lang="de"
+    />
 
     <div class="reader-nav">
       {prev ? (
-        <a href={`/stories/${prev.slug}`}><span class="dir">← Vorherige</span>{prev.de.title}</a>
+        <a href={`/stories/${prev.slug}`}><span class="dir">← Vorherige</span>{prev.title}</a>
       ) : (
         <button disabled><span class="dir">← Vorherige</span>—</button>
       )}
       {next ? (
-        <a class="next" href={`/stories/${next.slug}`}><span class="dir">Nächste →</span>{next.de.title}</a>
+        <a class="next" href={`/stories/${next.slug}`}><span class="dir">Nächste →</span>{next.title}</a>
       ) : (
         <button class="next" disabled><span class="dir">Nächste →</span>—</button>
       )}
