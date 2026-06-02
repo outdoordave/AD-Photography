@@ -2,6 +2,7 @@
 // Eine Story-Karte (Liste). Markup identisch zu renderStories() in index.html.
 // Statt JS-Klick ist die ganze Karte ein <a> auf die Story-Seite.
 import { normalizePath, type StoryViewWithSlug } from '../lib/stories';
+import PhPlaceholder from './PhPlaceholder.astro';
 
 interface Props {
   story: StoryViewWithSlug;
@@ -20,7 +21,7 @@ const cover = story.photo ? normalizePath(story.photo) : '';
       <img src={cover} alt="" loading="lazy" />
     </div>
   ) : (
-    <div class="ph" style="--ph-c1:#8a9a7e; --ph-c2:#3a4a38;"></div>
+    <PhPlaceholder c1="#8a9a7e" c2="#3a4a38" imgKey="mountains" />
   )}
   <div class="body">
     <div class="meta">{d.cat}</div>

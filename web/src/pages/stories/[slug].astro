@@ -5,6 +5,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { toSortedStories, wwYouTubeEmbed, normalizePath, type StoryViewWithSlug } from '../../lib/stories';
+import PhPlaceholder from '../../components/PhPlaceholder.astro';
 
 export async function getStaticPaths() {
   const entries = await getCollection('stories');
@@ -35,7 +36,7 @@ const ytHtml = wwYouTubeEmbed(story.youtube);
       {cover ? (
         <img class="reader-cover-img" src={cover} alt="" />
       ) : (
-        <div class="ph" style="--ph-c1:#8a9a7e; --ph-c2:#3a4a38;"></div>
+        <PhPlaceholder c1="#8a9a7e" c2="#3a4a38" imgKey="mountains" />
       )}
       <div class="reader-hero-inner">
         <div class="meta">{d.cat}</div>
