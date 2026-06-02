@@ -35,7 +35,7 @@ wenn sie konkret drankommt (Schritt A). Grobe Risiko-Einschätzung aus `STATUS.m
 
 | # | Funktion | Risiko | Stufe | Capability-Lock-Status |
 |---|---|---|---|---|
-| 1 | Stories (Liste + Reader, DE/EN, YouTube) | 🟡 | 1 | ⬜ offen |
+| 1 | Stories (Liste + Reader, DE/EN, YouTube) | 🟡 | 1 | 🔄 gebaut (Schritt 4), Freigabe ausstehend — Sektion unten |
 | 2 | Galerie / Alben (3 Sortiermodi, Auto-Diashow) | 🟡/🔴 | 2 | ⬜ offen |
 | 3 | Lightbox + Filmstreifen (Snap, Gesten, Marker) | 🔴 | 2 | ⬜ offen |
 | 4 | Reise-Stationen (Snap-Bahn + IntersectionObserver) | 🔴 | 3 | ⬜ offen |
@@ -81,5 +81,80 @@ _Stand A (extrahiert): YYYY-MM-DD · B (bestätigt): — · D (verglichen): —_
 
 ---
 
-_Noch keine Funktion extrahiert — die erste Detail-Sektion entsteht, sobald die
-jeweilige Funktion im Bauplan drankommt (Schritt A des Capability-Locks)._
+## Stories (Liste + Reader, DE/EN)
+_Stand A (extrahiert): 2026-06-02 · B (Design/Mountains bestätigt): 2026-06-02 · D (verglichen): Build fertig, Gesamt-Freigabe ausstehend (Nutzer prüft DE/EN)_
+
+Quelle im echten Code: `renderStories` (2566), `renderStory` (2847),
+`buildStory` (2513), `mdToHtml` (2434), `wwYouTubeEmbed` (3495),
+`wwMediaBox`/`phAttrs` (1604/1583), `ILLUS` (1264), `pickEN`/`pickHasEN` (1541/1551).
+Neubau: `web/src/` (lib/stories.ts, lib/illus.ts, components/StoryCard.astro,
+components/PhPlaceholder.astro, pages/index.astro, pages/en/index.astro,
+pages/stories/[slug].astro, pages/en/stories/[slug].astro, styles/global.css).
+
+### A — Soll-Fähigkeiten (eingefroren)
+**Liste**
+1. Stories als Karten in 3-Spalten-Grid (`.stories-grid`), mobil 1 Spalte.
+2. Reihenfolge **neueste zuerst** (Datum absteigend, wie `build-indexes.js`).
+3. Karte zeigt: Medienbox (Cover-Foto **oder** `mountains`-Illustrations-Platzhalter),
+   Kategorie (`.meta`), Titel (`h3`), Anriss (`.excerpt`), Read-Label
+   („Weiterlesen"/„Read more") mit `→`.
+4. Ganze Karte klickbar → öffnet die Story.
+5. Hover: Karte hebt an + Schatten; Read-Pfeil wandert.
+
+**Reader**
+6. Hero: Cover als `<img class="reader-cover-img">` wenn `cover` gesetzt, sonst
+   Platzhalter mit `mountains`-Illustration (Verlaufs-Himmel, Sonne mit Strahlen,
+   Berge, gepunktete Linie).
+7. Hero-Verlaufs-Überblendung nach unten (`reader-hero::before`).
+8. Hero-Inner: Kategorie (`.meta`) + Titel (`h1`).
+9. Body aus Markdown via `mdToHtml`, Sonderfälle **identisch**:
+   (a) Pullquote aus `>`-Block · (b) `#`/`##`→`h2`, `###`→`h3` · (c) Listen `-`/`*`
+   und `1.` · (d) Bilder `![]()`→`<img loading="lazy">` + Pfad-Normalisierung ·
+   (e) Inline `**fett**`/`*kursiv*`/`~~~~`/`[Link]`(target=_blank,rel=noopener) ·
+   (f) Raw-HTML-Block unverändert · (g) Dropcap auf 1. Absatz (CSS first-letter).
+10. Optionaler YouTube-Embed am Body-Ende (nocookie, 16:9), nur bei gültiger ID.
+11. Vor/Zurück-Navigation (`.reader-nav`) mit Titel der Nachbar-Story; Ränder disabled.
+12. Body-Bilder als klickbare Lightbox-Gruppe (Blättern/Wischen).
+
+**Querschnitt**
+13. DE/EN: bei `has_english` EN-Felder, sonst Fallback auf DE; Datum lokalisiert;
+    Read-/Nav-Labels sprachabhängig.
+14. In-Page-Admin: Edit-Stifte/Toolbar auf Karten + Reader → Sprung ins CMS.
+
+### B — Nutzer-Bestätigung
+- [x] Design-System + `mountains`-Illustration vom Nutzer als deckungsgleich
+      bestätigt (2026-06-02).
+- [ ] **Gesamt-Freigabe** Schritt 4: ausstehend — Nutzer prüft noch die **DE/EN-
+      Umschaltung** an einer zweisprachigen Story (englischer Text, nicht nur Layout).
+
+### C — Neubau (Astro)
+- Reines Astro (Build-Zeit-Rendering), **keine** React-Insel (kommt minimal in
+  Schritt 5 für Tina). Helfer als 1:1-TS-Port (`lib/stories.ts`), ILLUS byte-identisch
+  (`lib/illus.ts`).
+
+### D — Abhak-Vergleich (alt auf `main` vs. neu auf Branch)
+| # | Fähigkeit | Status | Anmerkung |
+|---|---|---|---|
+| 1 | 3-Spalten-Grid / mobil 1 Spalte | ✅ | CSS aus index.html übernommen |
+| 2 | Neueste zuerst | ✅ | Datum absteigend, geprüft (utah→yellowstone→yosemite) |
+| 3 | Karte: Medienbox/meta/title/excerpt/read | ✅ | Markup wie `renderStories` |
+| 4 | Karte klickbar | ✅ | als `<a>` (statt JS-Klick) |
+| 5 | Hover anheben/Schatten/Pfeil | ✅ | |
+| 6 | Hero Cover/Platzhalter (mountains) | ✅ | nachgezogen, deckungsgleich bestätigt |
+| 7 | Hero-Verlaufs-Überblendung | ✅ | |
+| 8 | Hero meta + h1 | ✅ | |
+| 9 | `mdToHtml`-Sonderfälle (a–g) | ✅ | 1:1-Port; Pullquote/Dropcap im Build verifiziert |
+| 10 | YouTube-Embed | ✅ | Code identisch (aktuell hat keine Story eine URL) |
+| 11 | Vor/Zurück-Navigation | ⚠️ | funktional + optisch identisch, aber echte `<a>`-Links statt JS-Buttons (CSS-Selektor auf `a` erweitert) |
+| 12 | Body-Bilder-Lightbox | ❌ | **bewusst nicht in Stufe 1** — Lightbox folgt in Stufe 2; Bilder zeigen nur `cursor: zoom-in`. (Die 3 Stories haben keine Inline-Bilder.) |
+| 13 | DE/EN-Umschaltung | ⏳ | Logik 1:1 portiert; **Nutzer-Verifikation des EN-Texts ausstehend** |
+| 14 | In-Page-Admin-Stifte | ❌ | **bewusst nicht portiert** — wird in Schritt 5 durch Tina ersetzt |
+
+**Zusätzliche Abweichungen (benannt, nicht verschwiegen):**
+- Listen-Header-Texte (Kicker/H1/Intro) sind faithful **hartkodiert**; live kommen
+  sie aus CMS-Settings (`pagetitles.*`) — spätere Settings-Anbindung offen.
+- Uploads lokal via gitignored Symlink `web/public/uploads`; produktive
+  Auslieferung wird in Schritt 6 entschieden.
+
+- [ ] Nutzer hat Seite-an-Seite verglichen und „Schritt 4 fertig portiert"
+      bestätigt am: ____
