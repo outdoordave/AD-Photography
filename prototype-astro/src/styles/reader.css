@@ -1,0 +1,72 @@
+/* Aus der echten index.html uebernommen, damit die Vorschau realistisch aussieht.
+   Nur der fuer den Story-Reader noetige Teil (Design-Tokens + .reader-*). */
+:root {
+  --c-bg: #f4ede1;
+  --c-bg-alt: #ebe1d1;
+  --c-ink: #2e2418;
+  --c-ink-soft: #6e5e49;
+  --c-line: #d8cab2;
+  --c-accent: #a7672f;
+  --c-accent-dk: #834e1f;
+  --c-gold: #b08a4f;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Mulish', -apple-system, BlinkMacSystemFont, sans-serif;
+  --fs-label: .75rem;
+  --fs-ui: .875rem;
+  --fs-lead: 1.125rem;
+  --fs-title: 1.5rem;
+  --fs-title-lg: 1.875rem;
+  --fs-display: clamp(2rem, 5vw, 3.75rem);
+  --radius-sm: 8px;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-base: 250ms;
+  --tracking-wide: 0.08em;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --ar-media: 16 / 10;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--c-bg);
+  color: var(--c-ink);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Story-Reader (1:1 aus index.html) ---- */
+.reader-hero { position: relative; min-height: 60vh; display: flex; align-items: flex-end; background: var(--c-bg-alt); }
+.reader-hero .reader-cover-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.reader-hero::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, var(--c-bg) 1%, rgba(244,237,225,0.1) 45%, transparent); }
+.reader-hero-inner { position: relative; z-index: 2; max-width: 760px; margin: 0 auto; width: 100%; padding: 0 24px 36px; }
+.reader-hero-inner .meta { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 12px; }
+.reader-hero-inner h1 { font-family: var(--font-display); font-size: var(--fs-display); font-weight: var(--fw-medium); line-height: 1.08; margin: 0; }
+
+.reader-body { max-width: 720px; margin: 0 auto; padding: 40px 24px 30px; }
+.reader-body p { font-size: var(--fs-lead); line-height: 1.85; margin-bottom: 24px; color: #4a3d2c; }
+.reader-body p:first-of-type::first-letter { font-family: var(--font-display); font-size: var(--fs-display); font-weight: var(--fw-semibold); float: left; line-height: 0.8; padding: 6px 12px 0 0; color: var(--c-accent); }
+.reader-body h2 { font-family: var(--font-display); font-size: var(--fs-title-lg); font-weight: var(--fw-semibold); line-height: 1.2; margin: 44px 0 16px; color: var(--c-ink); }
+.reader-body h3 { font-family: var(--font-display); font-size: var(--fs-title); font-weight: var(--fw-semibold); line-height: 1.25; margin: 36px 0 12px; color: var(--c-ink); }
+.reader-body ul, .reader-body ol { font-size: var(--fs-lead); line-height: 1.85; margin: 0 0 24px 26px; color: #4a3d2c; }
+.reader-body li { margin-bottom: 8px; }
+.reader-body a { color: var(--c-accent-dk); text-decoration: underline; text-underline-offset: 2px; }
+.reader-body blockquote { font-family: var(--font-display); font-size: var(--fs-title-lg); font-weight: var(--fw-medium); font-style: italic; line-height: 1.35; color: var(--c-accent); border-left: 3px solid var(--c-gold); padding-left: 24px; margin: 40px 0; }
+.reader-body img { max-width: 100%; max-height: 540px; width: auto; height: auto; object-fit: cover; border-radius: var(--radius-sm); margin: 38px auto; display: block; }
+
+/* Demo-Galerie (nur Prototyp) */
+.proto-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 30px 0; }
+.proto-gallery img { width: 100%; aspect-ratio: 3/2; object-fit: cover; border-radius: var(--radius-sm); margin: 0; }
+
+/* YouTube-Embed (16:9, wie auf der echten Seite) */
+.yt-embed { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; margin: 30px 0; }
+.yt-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; border-radius: var(--radius-sm); }
+
+/* Mini-Story-Liste auf der Startseite des Prototyps */
+.proto-list { max-width: 720px; margin: 0 auto; padding: 60px 24px; }
+.proto-list h1 { font-family: var(--font-display); font-weight: var(--fw-medium); }
+.proto-list a { display: block; padding: 18px 0; border-bottom: 1px solid var(--c-line); color: var(--c-ink); text-decoration: none; font-size: var(--fs-lead); }
+.proto-list a:hover { color: var(--c-accent); }
+.proto-note { background: var(--c-bg-alt); border: 1px solid var(--c-line); border-radius: var(--radius-sm); padding: 16px 18px; font-size: var(--fs-ui); color: var(--c-ink-soft); margin-bottom: 30px; }

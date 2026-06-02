@@ -1,0 +1,12 @@
+# Prototyp-Abhaengigkeiten & Build-Artefakte NICHT committen
+node_modules/
+dist/
+.astro/
+
+# Tina-generierte Dateien (werden von `tinacms dev` automatisch erzeugt)
+tina/__generated__/
+admin/
+public/admin/
+
+# OS
+.DS_Store

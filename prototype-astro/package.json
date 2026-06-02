@@ -1,0 +1,25 @@
+{
+  "name": "ad-photography-prototype-stories",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Isolierter Astro+TinaCMS-Prototyp NUR fuer die Stories-Sektion. Beruehrt die Live-Website (index.html) nicht.",
+  "scripts": {
+    "dev": "tinacms dev -c \"astro dev\"",
+    "build": "tinacms build && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/react": "^3.6.2",
+    "astro": "^4.15.9",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tinacms": "^2.2.9"
+  },
+  "devDependencies": {
+    "@tinacms/cli": "^1.6.4",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0"
+  }
+}
