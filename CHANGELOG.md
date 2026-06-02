@@ -1,0 +1,67 @@
+# CHANGELOG — AD-Photography
+
+Chronologische Historie aller Änderungen. **Nur ergänzen** (neueste oben).
+Den aktuellen Gesamtstand zeigt `STATUS.md`.
+
+**Format für neue Einträge:**
+```
+## YYYY-MM-DD HH:MM — <Kurztitel>
+- was geändert
+- betroffene Dateien
+- Commit: <hash> (mehrere mit Komma)
+```
+
+> Hinweis: Die Einträge unterhalb wurden **rückwirkend rekonstruiert** — Datum/
+> Uhrzeit stammen aus `git log` (echte Commit-Zeitstempel), die Kurzbeschreibungen
+> aus den Commit-Messages. Verwandte Commits sind gruppiert.
+
+---
+
+## 2026-06-02 16:29 — Astro + TinaCMS Stories-Prototyp (isoliert)
+- Eigenständiger Evaluierungs-Prototyp (Astro + React + TinaCMS lokal), **nur** Stories,
+  zum Erleben von Live-Vorschau + Drag-&-Drop. Berührt die Live-Seite nicht.
+- Betroffen: `prototype-astro/**` (neu)
+- Commit: `9fbd78a`
+
+## 2026-06-01 21:02–21:06 — CMS-Vereinfachung (Minimalismus) + Multi-Bild-Upload
+- Foto-Listen auf `multiple:true`-Image-Widget (mehrere Bilder auf einmal/Drag&Drop);
+  Karten-Feld der Station nach unten + Label/Hint gekürzt; Video-Hint präzisiert;
+  `album_hint`-Pseudofeld entfernt, wortreiche Hints/Descriptions gekürzt.
+- Betroffen: `admin/config.yml`
+- Commit: `de2d591`, `63210d2`, `3bd5585`, `7236fb7`
+
+## 2026-06-01 20:44–20:50 — Performance: Lazy-Loading + Bild-Cleanup
+- `loading="lazy"` für restliche Below-the-fold-Bilder (Story-Body, Footer-Logo,
+  About-Foto); 2 verwaiste Legacy-Monster-JPGs entfernt (~13,8 MB).
+- Betroffen: `index.html`, `uploads/img_6111.jpg` + `uploads/a7406508.jpg` (gelöscht)
+- Commit: `9091619`, `ed69c63`
+
+## 2026-06-01 20:06–20:28 — Video + YouTube (Stationen & Stories) + Querformat-Lightbox
+- CMS-Felder `video` + `youtube_url` für Stops/Stories; Frontend: Video-Loop +
+  YouTube-Embed (nocookie); `@media (orientation:landscape)`-Layout für die Lightbox.
+- Betroffen: `admin/config.yml`, `index.html`
+- Commit: `ff3a9da`, `d1aee01`, `bb4734c`
+
+## 2026-06-01 19:57 — Base64-Logos entfernt (~720 KB)
+- Drei inline Base64-PNG-Logos durch transparenten Platzhalter ersetzt; Logo kommt zur
+  Laufzeit aus dem CMS (`applyBranding`). `index.html` 1.0M → ~303K.
+- Betroffen: `index.html`
+- Commit: `f91fd33`
+
+## 2026-06-01 19:31–19:44 — Mobile Reise-Tabs: Zentrierung, Scrollbar, Cleanup
+- Aktiven Tab zuverlässig zentrieren (iOS), `justify-content:flex-start` (erster Tab
+  erreichbar), smooth Scroll beim Klick, Scrollbar-Kontrast; toten `attachSwipe` entfernt.
+- Betroffen: `index.html`
+- Commit: `4f46f5b`, `dd643da`, `f839700`, `6c04bcc`
+
+## 2026-05-31 20:38–23:24 — Lightbox-Filmstreifen (Desktop), Expand-Symbol, Marker
+- Filmstreifen auf Desktop scrollbar (Flex-Spacer statt Padding), flüssiges Wandern wie
+  iPhone-Mediathek, Trackpad nativ + entprellt; Lightbox-Marker mobil zentriert;
+  Expand-Symbol auf Stations-/Galerie-/Album-Bildern; Lupen-Cursor → Hand;
+  CMS „Zur Website"-Action-Button.
+- Betroffen: `index.html`, `admin/index.html`
+- Commit: `6781467`, `2ec6c95`, `cd98d25`, `9fa58ad`, `82e952f`, `7aa5ac8`, `42f34d6`,
+  `e07ed35`, `e6c14a6`, `fb3468f`
+
+> Zwischendrin liegen CMS-Inhalts-Saves von David (z. B. `7255ae4`, `59db11b`, `4b58f87`
+> „Update Einstellungen/Reise") und Merge-Commits — keine Code-Änderungen, hier ausgelassen.
