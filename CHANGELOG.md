@@ -17,6 +17,17 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-02 19:23 — Capability-Lock-Verfahren verankert + Umbau-Branch gestartet
+- Branch `astro-umbau` von `main` angelegt (Stufe-1-Umbau: Stories auf Astro+Tina;
+  `main` bleibt unangetastet/live). Schritt 0 des Bauplans (Branch + Bestandsaufnahme,
+  3 Stories, Feld-Inkonsistenzen erfasst) — kein Code, nur Branch + Analyse.
+- Verbindliches **Capability-Lock**-Verfahren (4 Schritte: Extrahieren → Bestätigen →
+  Bauen → Abhak-Vergleich) in `CLAUDE.md` verankert; `CAPABILITIES.md` neu angelegt
+  (Kopf, Status-Legende, Funktions-Warteschlange, Sektions-Vorlage). Noch keine
+  Funktion extrahiert.
+- Betroffen: `CLAUDE.md`, `CAPABILITIES.md` (neu)
+- Commit: `cfd7a69`  (Branch `astro-umbau`, nicht `main`)
+
 ## 2026-06-02 16:29 — Astro + TinaCMS Stories-Prototyp (isoliert)
 - Eigenständiger Evaluierungs-Prototyp (Astro + React + TinaCMS lokal), **nur** Stories,
   zum Erleben von Live-Vorschau + Drag-&-Drop. Berührt die Live-Seite nicht.

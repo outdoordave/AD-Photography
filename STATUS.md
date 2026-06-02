@@ -1,7 +1,12 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-02** · letzter Commit `9fbd78a` · Diese Datei wird bei jeder
-> Session **überschrieben** (Momentaufnahme, nie veraltet). Historie → `CHANGELOG.md`.
+> **Stand: 2026-06-02 19:23** · letzter Commit `cfd7a69` (Branch `astro-umbau`) ·
+> Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
+> veraltet). Historie → `CHANGELOG.md`.
+>
+> ⚙️ **Aktiver Umbau:** Branch `astro-umbau` (Stufe 1 = Stories auf Astro+Tina).
+> `main` bleibt unangetastet/live. Verbindlich beim Umbau: **Capability-Lock**
+> (s. `CLAUDE.md` + `CAPABILITIES.md`) — keine Funktion darf verloren gehen.
 
 ---
 
@@ -99,6 +104,16 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   Push-Status im Zweifel per `curl` gegen die Live-Seite prüfen, nicht blind `git rev-list`.
 
 ## 5. Offene Punkte / Restposten
+- **Umbau Stufe 1 (Stories → Astro+Tina) läuft auf Branch `astro-umbau`:**
+  Schritt 0 erledigt (Branch + Bestandsaufnahme). **Nächster Schritt: 1 — Astro-
+  Grundgerüst** (wartet auf „weiter"). Bestandsaufnahme: 3 Stories, Body-Speicherung
+  inkonsistent — DE-Body teils Markdown-Body/teils Frontmatter `body_de` (utah
+  widersprüchlich), **EN-Body in Frontmatter `body_en`**; in Schritt 3/4 sauber
+  vereinheitlichen (Markdown-Body hält nur eine Sprache → DE/EN-Strategie nötig).
+- **Capability-Lock ist Pflicht** bei jeder portierten Funktion (s. `CAPABILITIES.md`);
+  „fertig" entscheidet der Nutzer per Seite-an-Seite-Vergleich, nicht Claude.
+- **Stray-Datei:** leere `package-lock.json` im Root (versehentlich, untracked) —
+  David löscht sie bei Gelegenheit; landet in keinem Commit.
 - **Noch nicht gepusht (lokal):** mehrere Commits seit dem letzten Push — David pusht
   gebündelt. Vor Abschluss prüfen: `git log origin/main..HEAD`.
 - **Noch zu testen (live):** `d1aee01` (Video/YouTube in Station+Story), `bb4734c`
@@ -116,8 +131,11 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 - **Favorit: TinaCMS** (bleibt git-basiert/kostenlos, Inhalte als Markdown im Repo,
   Live-Update + Drag-&-Drop für Text/Bilder). **Alternative: Sanity** (mächtiger
   Presentation-Modus/Page-Building, aber gehostete DB + Vendor-Lock-in).
-- **Plan: gestufter Umbau, beginnend mit Stories.** Erster **isolierter Prototyp** liegt in
-  `/prototype-astro/` (Astro+Tina, nur Stories) — zum Erleben von Live-Vorschau + Drag-&-Drop.
+- **Plan: gestufter Umbau, beginnend mit Stories.** Prototyp (`/prototype-astro/`) vom
+  Nutzer getestet & abgenommen → **Entscheidung: Stufe 1 produktiv bauen.** Läuft auf
+  Branch `astro-umbau` nach festem Bauplan (Schritt 0–6); aktuell nach Schritt 0.
+- **Capability-Lock verankert** (`CLAUDE.md` + `CAPABILITIES.md`): 4-Schritt-Verfahren
+  (Extrahieren → Bestätigen → Bauen → Abhaken) sichert „keine Funktion verlieren".
 - **Erkenntnis:** Der große Aufwand liegt **nicht** im CMS, sondern im Neubau der
   🔴-Funktionen (MapLibre-Karte, Lightbox/Filmstreifen) — die profitieren von keiner
   Live-Vorschau und sind das eigentliche Risiko für „keine Funktion verlieren".
