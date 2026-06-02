@@ -1,0 +1,64 @@
+---
+// Story-Reader DE ('/stories/<slug>'). Markup identisch zu renderStory() in
+// index.html: reader-hero (Cover/Platzhalter) + reader-body (mdToHtml + YouTube)
+// + reader-nav (Vorherige/Naechste). Reihenfolge: neueste zuerst.
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { toSortedStories, wwYouTubeEmbed, normalizePath, type StoryViewWithSlug } from '../../lib/stories';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('stories');
+  const stories = toSortedStories(entries.map((e) => ({ slug: e.slug, data: e.data })));
+  return stories.map((s, i) => ({
+    params: { slug: s.slug },
+    props: {
+      story: s,
+      prev: stories[i - 1] ?? null,
+      next: stories[i + 1] ?? null,
+    },
+  }));
+}
+
+interface Props {
+  story: StoryViewWithSlug;
+  prev: StoryViewWithSlug | null;
+  next: StoryViewWithSlug | null;
+}
+const { story, prev, next } = Astro.props;
+const d = story.de;
+const cover = story.photo ? normalizePath(story.photo) : '';
+const ytHtml = wwYouTubeEmbed(story.youtube);
+---
+<BaseLayout title={`${d.title} — Wide & Wild`} lang="de">
+  <div id="page-story">
+    <div class="reader-hero">
+      {cover ? (
+        <img class="reader-cover-img" src={cover} alt="" />
+      ) : (
+        <div class="ph" style="--ph-c1:#8a9a7e; --ph-c2:#3a4a38;"></div>
+      )}
+      <div class="reader-hero-inner">
+        <div class="meta">{d.cat}</div>
+        <h1>{d.title}</h1>
+      </div>
+    </div>
+
+    <div class="reader-body">
+      <Fragment set:html={d.bodyHtml} />
+      <Fragment set:html={ytHtml} />
+    </div>
+
+    <div class="reader-nav">
+      {prev ? (
+        <a href={`/stories/${prev.slug}`}><span class="dir">← Vorherige</span>{prev.de.title}</a>
+      ) : (
+        <button disabled><span class="dir">← Vorherige</span>—</button>
+      )}
+      {next ? (
+        <a class="next" href={`/stories/${next.slug}`}><span class="dir">Nächste →</span>{next.de.title}</a>
+      ) : (
+        <button class="next" disabled><span class="dir">Nächste →</span>—</button>
+      )}
+    </div>
+  </div>
+</BaseLayout>

@@ -3,6 +3,10 @@ node_modules/
 dist/
 .astro/
 
+# Lokaler Upload-Zugang (Symlink -> ../../uploads) nur fuer die Vorschau.
+# Produktive Upload-Auslieferung wird in Schritt 6 (Deploy) entschieden.
+public/uploads
+
 # Logs / OS
 npm-debug.log*
 .DS_Store

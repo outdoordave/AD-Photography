@@ -1,13 +1,24 @@
 ---
-// Test-Route EN ('/en/'). Beweist, dass die DE/EN-Routing-Struktur greift.
-// Keine Inhalts-/Body-Entscheidung hier — die faellt in Schritt 3.
+// Stories list EN ('/en/'). Header texts faithful from index.html (#page-stories).
+import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import StoryCard from '../../components/StoryCard.astro';
+import { toSortedStories } from '../../lib/stories';
+
+const entries = await getCollection('stories');
+const stories = toSortedStories(entries.map((e) => ({ slug: e.slug, data: e.data })));
 ---
-<BaseLayout title="Wide & Wild — Astro scaffold (step 1)" lang="en">
-  <main>
-    <h1>Astro scaffold is up ✅</h1>
-    <p>Stage 1, step 1: empty shell + test route. No design, no content yet.</p>
-    <p>DE/EN routing is prepared: this page = EN (<code>/en/</code>),
-       German variant at <a href="/">/</a>.</p>
-  </main>
+<BaseLayout title="Stories from the road — Wide & Wild" lang="en">
+  <section>
+    <div class="wrap">
+      <div class="page-title">
+        <div class="kicker">Travel stories</div>
+        <h1>Stories from the road</h1>
+        <p>What happened between the photos — the good, the exhausting, and the pretty funny moments.</p>
+      </div>
+      <div class="stories-grid">
+        {stories.map((s) => <StoryCard story={s} lang="en" base="/en" />)}
+      </div>
+    </div>
+  </section>
 </BaseLayout>

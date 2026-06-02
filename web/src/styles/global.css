@@ -153,11 +153,13 @@ section { padding: 84px 0; }
 .reader-body img:hover { transform: scale(1.01); }
 .reader-body u { text-decoration: underline; text-underline-offset: 2px; }
 .reader-nav { max-width: 720px; margin: 0 auto; padding: 24px; display: flex; justify-content: space-between; gap: 16px; }
-.reader-nav button { background: var(--c-bg-alt); border: 1px solid var(--c-line); color: var(--c-ink); padding: 14px 20px; border-radius: var(--radius-sm); cursor: pointer; font-size: var(--fs-ui); font-weight: var(--fw-semibold); transition: background var(--dur-base) var(--ease); flex: 1; text-align: left; }
-.reader-nav button:hover:not(:disabled) { background: var(--c-line); }
+/* Astro-Anpassung: Vor/Zurueck sind echte Links (<a>) statt JS-Buttons.
+   Selektoren auf button UND a erweitert -> Optik identisch zur Live-Seite. */
+.reader-nav button, .reader-nav a { background: var(--c-bg-alt); border: 1px solid var(--c-line); color: var(--c-ink); padding: 14px 20px; border-radius: var(--radius-sm); cursor: pointer; font-size: var(--fs-ui); font-weight: var(--fw-semibold); transition: background var(--dur-base) var(--ease); flex: 1; text-align: left; display: block; }
+.reader-nav button:hover:not(:disabled), .reader-nav a:hover { background: var(--c-line); }
 .reader-nav button:disabled { opacity: 0.4; cursor: default; }
-.reader-nav button.next { text-align: right; }
-.reader-nav button .dir { display: block; font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); margin-bottom: 4px; }
+.reader-nav button.next, .reader-nav a.next { text-align: right; }
+.reader-nav button .dir, .reader-nav a .dir { display: block; font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); margin-bottom: 4px; }
 
 /* ---------- YouTube-Embed (16:9) ---------- */
 .yt-embed { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; margin-top: 16px; }

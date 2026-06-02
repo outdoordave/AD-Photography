@@ -1,13 +1,24 @@
 ---
-// Test-Route DE (Wurzel '/'). Noch keine echten Inhalte — nur Beweis,
-// dass das Geruest lokal startet. Echte Stories ab Schritt 3/4.
+// Stories-Liste DE ('/'). Header-Texte faithful aus index.html (#page-stories).
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import StoryCard from '../components/StoryCard.astro';
+import { toSortedStories } from '../lib/stories';
+
+const entries = await getCollection('stories');
+const stories = toSortedStories(entries.map((e) => ({ slug: e.slug, data: e.data })));
 ---
-<BaseLayout title="Wide & Wild — Astro-Geruest (Schritt 1)">
-  <main>
-    <h1>Astro-Grundgeruest steht ✅</h1>
-    <p>Stufe 1, Schritt 1: leere Huelle + Test-Route. Noch kein Design, keine Inhalte.</p>
-    <p>DE/EN-Routing ist vorbereitet: diese Seite = DE (<code>/</code>),
-       englische Variante unter <a href="/en/">/en/</a>.</p>
-  </main>
+<BaseLayout title="Geschichten von unterwegs — Wide & Wild" lang="de">
+  <section>
+    <div class="wrap">
+      <div class="page-title">
+        <div class="kicker">Reiseberichte</div>
+        <h1>Geschichten von unterwegs</h1>
+        <p>Was zwischen den Bildern passiert ist — die guten, die anstrengenden und die ziemlich lustigen Momente.</p>
+      </div>
+      <div class="stories-grid">
+        {stories.map((s) => <StoryCard story={s} lang="de" base="" />)}
+      </div>
+    </div>
+  </section>
 </BaseLayout>
