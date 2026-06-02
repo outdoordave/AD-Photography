@@ -1,7 +1,8 @@
 ---
-// Leere Layout-Huelle (Stufe 1, Schritt 1).
-// Design-System (Fonts, Farben, Story-Reader-Styles) kommt in Schritt 2,
-// Inhalte ab Schritt 3. Hier bewusst noch KEIN CSS, nur das HTML-Geruest.
+// BaseLayout (Stufe 1, Schritt 2).
+// Globales Design-System aus index.html (Tokens, Reader-Styles) + Fonts.
+// Inhalte ab Schritt 3.
+import '../styles/global.css';
 interface Props {
   title?: string;
   lang?: 'de' | 'en';
@@ -14,6 +15,13 @@ const { title = 'Wide & Wild', lang = 'de' } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
+    <!-- Fonts identisch zur Live-Seite: Fraunces (Display) + Mulish (Body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Mulish:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <slot />
