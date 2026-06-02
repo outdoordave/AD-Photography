@@ -1,4 +1,5 @@
 import { defineConfig } from 'tinacms';
+import BulkPhotoField from './fields/BulkPhotoField';
 
 // LOKALER Modus (clientId/token leer): Tina laeuft ohne Tina-Cloud und liest/
 // schreibt direkt die Markdown-Dateien in src/content/stories. Bilder bleiben
@@ -41,8 +42,15 @@ export default defineConfig({
           // zur Live-Seite). BEWUSST kein Tina-Rich-Text (wuerde Speicherformat +
           // Rendering aendern).
           { type: 'string', name: 'body_de', label: 'Haupttext (Markdown)', ui: { component: 'textarea' } },
-          // --- Galerie (Bilder, per Drag & Drop sortierbar) ---
-          { type: 'image', name: 'gallery', label: 'Galerie (Drag & Drop sortierbar)', list: true },
+          // --- Galerie: eigenes Bulk-Upload-Feld (mehrere Fotos auf einmal,
+          //     Auto-WebP @2400px, Sortieren per Drag & Drop) ---
+          {
+            type: 'image',
+            name: 'gallery',
+            label: 'Galerie (Mehrfach-Upload, Auto-WebP)',
+            list: true,
+            ui: { component: BulkPhotoField },
+          },
           // --- Optionales Video ---
           { type: 'string', name: 'youtube_url', label: 'YouTube-URL (optional)' },
           // --- Englische Version ---
