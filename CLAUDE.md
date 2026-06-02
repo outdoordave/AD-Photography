@@ -31,6 +31,42 @@
 7. **Cloudflare-Cache:** nach Deploy mit **Strg/Cmd+F5** (Hard Reload) testen; bei
    „ist das online?"-Zweifeln per `curl` gegen `aandd-photography.pages.dev` prüfen.
 
+## Capability-Lock (Pflicht bei JEDER portierten/neu gebauten Funktion)
+> **Oberste Umbau-Regel:** Beim schrittweisen Umbau (Single-File `index.html` →
+> Astro + TinaCMS, Branch `astro-umbau`, `main` bleibt live) darf **KEINE
+> bestehende Funktion verloren gehen oder sich für Besucher anders verhalten.**
+> Die Website bleibt optisch **und** funktional identisch — nur der darunter
+> liegende Code wird neu strukturiert.
+
+Für **jede** Funktion, die portiert/neu gebaut wird — besonders die 🔴-Brocken
+(Lightbox/Filmstreifen, MapLibre-Karte, Reise-Stationen, Galerie/Album-Diashow,
+Hero-Umschalter, Wisch-/Trackpad-Gesten) — gilt verbindlich dieses 4-Schritt-
+Verfahren. Ergebnisse werden in **`CAPABILITIES.md`** festgehalten (eine Sektion
+pro Funktion, mit Datum):
+
+1. **A — Fähigkeiten extrahieren (VOR dem Neubau).** Den bestehenden Code der
+   Funktion in `index.html` **vollständig** lesen und eine **nummerierte,
+   vollständige** Fähigkeiten-Liste erstellen — jedes Verhalten einzeln, inkl.
+   feiner Details (z. B. Lightbox: Öffnen/Schließen, Einzelbild vs. Galerie,
+   Filmstreifen-Zentrierung, Snap, Wheel/Trackpad/Touch, Blätter-Pfeile,
+   Umlauf-Option, Tastatur, Expand-Affordanz; Karte: 5 Stile, Marker, flyTo,
+   USA/Alaska-Projektion, Sprach-Labels). Die in `STATUS.md` erfasste
+   Funktions-Inventur als Ausgangspunkt nehmen und hier auf Detail-Ebene aus
+   dem **echten Code** verfeinern. Eintrag in `CAPABILITIES.md`.
+2. **B — Nutzer bestätigt.** Die Liste dem Nutzer **vor** dem Bauen vorlegen und
+   fragen, ob sie vollständig ist. Erst nach Bestätigung weiterbauen. Die
+   bestätigte Liste ist ab dann die **eingefrorene Soll-Vorgabe**.
+3. **C — Neu bauen.** Funktion in Astro nachbauen mit dem Ziel: **jede Zeile**
+   der Liste erfüllt. Verhalten **1:1**, nicht „ähnlich".
+4. **D — Abhak-Vergleich (NACH dem Neubau).** Die eingefrorene Liste Punkt für
+   Punkt durchgehen und in `CAPABILITIES.md` je Punkt dokumentieren:
+   **✅ identisch / ⚠️ leicht abweichend** (mit Beschreibung) **/ ❌ fehlt noch**.
+   Bei ⚠️/❌: **benennen, nicht verschweigen.** Dem Nutzer als Vergleichs-
+   Checkliste vorlegen. Eine Funktion gilt **erst dann als „fertig portiert"**,
+   wenn der Nutzer nach eigenem **Seite-an-Seite-Vergleich** (alt auf `main`
+   vs. neu auf Branch-Vorschau) zustimmt. **Nicht Claude entscheidet „fertig",
+   sondern der Nutzer.**
+
 ## VERBINDLICHE REGEL — am Ende JEDER Session mit Änderungen
 > Wenn du in einer Session etwas geändert (committet) hast, **bevor du abschließt**:
 > 1. **`CHANGELOG.md`** um einen neuen Eintrag ergänzen: **Datum + Uhrzeit**,
@@ -44,4 +80,6 @@
 ## Wo nachschauen
 - **STATUS.md** — aktueller Stand: Architektur, Inhalte, Funktions-Inventur,
   bekannte Fallen, offene Punkte, strategische Entscheidung.
+- **CAPABILITIES.md** — Capability-Lock-Listen je Funktion (Soll-Fähigkeiten +
+  Abhak-Vergleich alt vs. neu). Pflicht-Dokument beim Umbau (s. o.).
 - **CHANGELOG.md** — chronologische Historie aller Änderungen.
