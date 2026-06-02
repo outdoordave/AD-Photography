@@ -1,0 +1,21 @@
+---
+// Leere Layout-Huelle (Stufe 1, Schritt 1).
+// Design-System (Fonts, Farben, Story-Reader-Styles) kommt in Schritt 2,
+// Inhalte ab Schritt 3. Hier bewusst noch KEIN CSS, nur das HTML-Geruest.
+interface Props {
+  title?: string;
+  lang?: 'de' | 'en';
+}
+const { title = 'Wide & Wild', lang = 'de' } = Astro.props;
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

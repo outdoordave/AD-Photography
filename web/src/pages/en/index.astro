@@ -1,0 +1,13 @@
+---
+// Test-Route EN ('/en/'). Beweist, dass die DE/EN-Routing-Struktur greift.
+// Keine Inhalts-/Body-Entscheidung hier — die faellt in Schritt 3.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Wide & Wild — Astro scaffold (step 1)" lang="en">
+  <main>
+    <h1>Astro scaffold is up ✅</h1>
+    <p>Stage 1, step 1: empty shell + test route. No design, no content yet.</p>
+    <p>DE/EN routing is prepared: this page = EN (<code>/en/</code>),
+       German variant at <a href="/">/</a>.</p>
+  </main>
+</BaseLayout>
