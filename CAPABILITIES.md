@@ -35,7 +35,7 @@ wenn sie konkret drankommt (Schritt A). Grobe Risiko-Einschätzung aus `STATUS.m
 
 | # | Funktion | Risiko | Stufe | Capability-Lock-Status |
 |---|---|---|---|---|
-| 1 | Stories (Liste + Reader, DE/EN, YouTube) | 🟡 | 1 | 🔄 gebaut (Schritt 4), Freigabe ausstehend — Sektion unten |
+| 1 | Stories (Liste + Reader, DE/EN, YouTube) | 🟡 | 1 | ✅ Schritt 4 freigegeben (2026-06-02) — Sektion unten. Tina-Anbindung (Schritt 5) folgt. |
 | 2 | Galerie / Alben (3 Sortiermodi, Auto-Diashow) | 🟡/🔴 | 2 | ⬜ offen |
 | 3 | Lightbox + Filmstreifen (Snap, Gesten, Marker) | 🔴 | 2 | ⬜ offen |
 | 4 | Reise-Stationen (Snap-Bahn + IntersectionObserver) | 🔴 | 3 | ⬜ offen |
@@ -147,7 +147,7 @@ pages/stories/[slug].astro, pages/en/stories/[slug].astro, styles/global.css).
 | 10 | YouTube-Embed | ✅ | Code identisch (aktuell hat keine Story eine URL) |
 | 11 | Vor/Zurück-Navigation | ⚠️ | funktional + optisch identisch, aber echte `<a>`-Links statt JS-Buttons (CSS-Selektor auf `a` erweitert) |
 | 12 | Body-Bilder-Lightbox | ❌ | **bewusst nicht in Stufe 1** — Lightbox folgt in Stufe 2; Bilder zeigen nur `cursor: zoom-in`. (Die 3 Stories haben keine Inline-Bilder.) |
-| 13 | DE/EN-Umschaltung | ⏳ | Logik 1:1 portiert; **Nutzer-Verifikation des EN-Texts ausstehend** |
+| 13 | DE/EN-Umschaltung | ✅ | Nutzer hat EN-Story geprüft (Titel/Kategorie/Dropcap/Pullquote/Body vollständig), 2026-06-02 |
 | 14 | In-Page-Admin-Stifte | ❌ | **bewusst nicht portiert** — wird in Schritt 5 durch Tina ersetzt |
 
 **Zusätzliche Abweichungen (benannt, nicht verschwiegen):**
@@ -156,5 +156,5 @@ pages/stories/[slug].astro, pages/en/stories/[slug].astro, styles/global.css).
 - Uploads lokal via gitignored Symlink `web/public/uploads`; produktive
   Auslieferung wird in Schritt 6 entschieden.
 
-- [ ] Nutzer hat Seite-an-Seite verglichen und „Schritt 4 fertig portiert"
-      bestätigt am: ____
+- [x] Nutzer hat Seite-an-Seite verglichen und **„Schritt 4 freigegeben"**
+      bestätigt am: 2026-06-02 (Design, Mountains-Illustration, DE/EN-Umschaltung).
