@@ -1,0 +1,113 @@
+# IDEEN.md — Verbesserungs-Vorschläge (Abhak-Liste)
+
+Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatismus.**
+
+> **Standing Rule:** Es wird **NICHTS umgesetzt**, bis David den Punkt **im
+> jeweiligen Bauschritt konkret freigibt** — auch „freigegeben" hier heißt nur
+> „darf in den zugeordneten Schritt einfließen", nicht „jetzt bauen".
+> Geschmack-Leitlinie: **einfach, übersichtlich, intuitiv, apple-like.**
+
+**Typ:**
+- **(A)** = Besucher sehen *exakt wie live*, nur sauberer im Code/Workflow. Capability-Lock unberührt.
+- **(B)** = bewusste Abweichung gegenüber der Live-Seite (sichtbar oder im Verhalten).
+- CMS-Editor-Ideen betreffen Besucher gar nicht (außerhalb des Besucher-Capability-Locks);
+  Ausnahme markiert, wenn sich die **Daten-Form** ändert (Reader muss dann passen).
+
+**Status:** `offen` · `freigegeben` (für den zugeordneten Schritt) · `umgesetzt`
+
+---
+
+## 1. CMS / Tina-Editor
+
+### C1 · Stationsfelder gruppieren  — (A, Datenstruktur-Implikation)
+- **Status:** freigegeben · **Zugeordnet:** Reisen-Bau — **von Anfang an mitdenken**
+- **Was:** Felder einer Station in „Inhalt" / „📍 Ort" / „Medien" / „🌐 English" bündeln statt ~10 flacher Felder.
+- **Warum besser:** übersichtlich, apple-like; eine Station erschlägt heute mit flacher Feldliste.
+- **Aufwand:** niedrig · **Capability-Lock:** ändert die JSON-Verschachtelung → der neue Reader muss dazu passen (wird ohnehin neu gebaut).
+
+### C2 · Live-Vorschau der Station beim Tippen — (B, reine Editor-Verbesserung)
+- **Status:** freigegeben · **Zugeordnet:** Reisen-Bau
+- **Was:** beim Bearbeiten einer Station aktualisiert sich die Reader-Vorschau live (wie bei Stories).
+- **Warum besser:** Sveltia hat **keine** Live-Vorschau (`registerPreviewTemplate` dort inaktiv) — größter spürbarer Komfortgewinn.
+- **Aufwand:** mittel (Teil des Insel-Baus) · **Capability-Lock:** Besucher unberührt.
+
+### C3 · Ortssuche-Feld mit Mini-Karte — (A)
+- **Status:** freigegeben · **Zugeordnet:** Reisen-Bau (ist zugleich der empfohlene Prototyp)
+- **Was:** eigenes Tina-Feld: Ort tippen → Nominatim-Treffer → Punkt auf Mini-Karte justierbar; speichert GeoJSON-Point (kompatibel zu `pickStopCoord`).
+- **Warum besser:** bildet Sveltias eingebautes `widget: map` 1:1 nach, mit klarer Trefferliste.
+- **Aufwand:** mittel · **Capability-Lock:** gleiche Fähigkeit wie live.
+
+### C4 · EN-Felder einklappen/ausblenden, wenn „Englisch aus" — (B, Editor-UX)
+- **Status:** freigegeben · **Zugeordnet:** Reisen-Bau (Querschnitt, s. C6)
+- **Was:** EN-Felder per Tina-Conditional ausblenden, solange `has_english` aus ist.
+- **Warum besser:** weniger Rauschen bei einsprachigen Inhalten.
+- **Aufwand:** niedrig · **Capability-Lock:** Besucher unberührt.
+
+### C5 · Ein einheitliches Foto-Feld überall — (A)
+- **Status:** freigegeben · **Zugeordnet:** Reisen-Bau — **von Anfang an mitdenken** (Wiederverwendung)
+- **Was:** das bestehende Bulk-WebP-Feld (`web/tina/fields/BulkPhotoField.tsx`) für Cover, Stationsbilder, Reisegalerie, Hero-Slideshow nutzen.
+- **Warum besser:** konsistente Upload-/Sortier-/WebP-Erfahrung in allen Sektionen statt mehrerer Widgets.
+- **Aufwand:** niedrig (wiederverwenden) · **Capability-Lock:** Funktion gleich, nur einheitlich.
+
+### C6 · Einheitliche Bausteine über alle Sektionen — (A, Querschnitt-Prinzip)
+- **Status:** freigegeben · **Zugeordnet:** **Querschnitt** (Stories/Reisen/Alben) — als Prinzip in jedem Bau beachten
+- **Was:** gleiches DE/EN-Muster, gleiches Foto-Feld, gleiche Datums-/Hilfetext-Konventionen überall.
+- **Warum besser:** CMS „aus einem Guss", weniger Sonderfälle, leichter wartbar.
+- **Aufwand:** mittel (einmalig) · **Capability-Lock:** strukturell, Besucher unberührt.
+
+### C7 · Knappe, einheitliche Hilfetexte + sinnvolle Defaults — (A)
+- **Status:** freigegeben · **Zugeordnet:** Reisen-Bau (und je Sektion)
+- **Was:** Sveltias gute, knappe Hints übernehmen; Defaults wie `map_style=liberty`, festes Datumsformat.
+- **Warum besser:** intuitiver, weniger Rückfragen.
+- **Aufwand:** niedrig · **Capability-Lock:** Besucher unberührt.
+
+---
+
+## 2. Website selbst
+
+### W1 · Performance durch die Architektur — (A, inhärent)
+- **Status:** läuft automatisch mit dem Umbau · **Zugeordnet:** ergibt sich aus Astro (kein eigener Punkt)
+- **Was:** Code-Splitting pro Route, Inseln nur wo nötig, kein 4338-Zeilen-Monolith.
+- **Warum besser:** schnelleres Laden (v. a. mobil) — **ohne** sichtbare Änderung.
+- **Aufwand:** inhärent · **Capability-Lock:** gleicher Look, bessere Auslieferung.
+
+### W3 · Responsive Bilder (srcset) — (B, Perf)
+- **Status:** offen (zugeordnet, **nicht** isoliert vorgezogen) · **Zugeordnet:** Bild-Pipeline → Reisen-/Alben-Bau bzw. Schritt 6
+- **Was:** aus den schon erzeugten WebPs beim Build kleine Varianten + `srcset`.
+- **Warum besser:** spürbar weniger Datenlast auf Handys; gibt's heute nicht.
+- **Aufwand:** mittel · **Capability-Lock:** Look identisch, nur Auslieferung.
+
+### W2 · `prefers-reduced-motion` respektieren — (B, additiv)
+- **Status:** freigegeben (klein) · **Zugeordnet:** **beim jeweiligen Sektions-Bau mitnehmen** (Hero, Scroll-Pfeil, fadeUp)
+- **Was:** Animationen bei „Bewegung reduzieren" abschalten/dämpfen.
+- **Warum besser:** apple-typische Rücksicht; nimmt nichts weg.
+- **Aufwand:** sehr niedrig · **Capability-Lock:** additiv.
+
+### W4 · Alt-Texte aus Bildunterschriften befüllen — (B, additiv)
+- **Status:** freigegeben (klein) · **Zugeordnet:** **beim jeweiligen Sektions-Bau mitnehmen**
+- **Was:** statt vieler `alt=""` die vorhandenen Captions als Alt-Text nutzen.
+- **Warum besser:** Zugänglichkeit + SEO, kostet im CMS quasi nichts.
+- **Aufwand:** niedrig · **Capability-Lock:** additiv.
+
+### W5 · Kontaktformular wirklich versenden — (B, schließt fehlende Funktion)
+- **Status:** offen — **eigenständiges Vorhaben, David terminiert separat**
+- **Was:** `handleSend` (heute nur Vorschau, kein echter Versand) an einen Gratis-Dienst hängen (z. B. Formspree/Cloudflare).
+- **Warum besser:** macht eine aktuell **fehlende** Funktion echt.
+- **Aufwand:** niedrig–mittel · **Capability-Lock:** schließt Lücke, nimmt nichts weg.
+
+---
+
+## 3. Bewusst weggelassen (Stand jetzt)
+
+- **Seitenübergänge / Astro View Transitions** — kollidieren leicht mit den Inseln
+  (Karte/Lightbox); die Seite hat schon eine dezente `pageIn`-Animation. Aufwand/
+  Risiko nicht wert. **Verworfen** (kann später neu bewertet werden).
+- **Jede Design-Änderung** (Fraunces/Mulish, Erdtöne, Illustrationen, Dropcap,
+  Pullquote, Lightbox-/Karten-/Wisch-Mechanik) — **Design bleibt 1:1.** „Anders"
+  ist hier nicht „besser". 1:1 portieren, nicht neu erfinden.
+
+---
+
+_Quelle der Ideen: tiefe Live-Code-Analyse (siehe `ANALYSE-Reisen.md`) + Bau von
+Stufe 1 (Stories) und dem Foto-Upload-Feld. Pflege: Status pro Punkt aktualisieren,
+sobald David ihn im jeweiligen Schritt freigibt/umsetzt._
