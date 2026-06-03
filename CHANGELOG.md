@@ -17,6 +17,39 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-02 22:10 — Regel „Live-Wahrheit zuerst" verankert (nur Doku)
+- Neue verbindliche Regel: vor jedem Neubau UND vor jeder Machbarkeits-Aussage
+  zuerst die echte Live-Umsetzung prüfen (Funktion + Inhalt; inkl. wie Sveltia es
+  löst); nie aus Allgemeinwissen „geht nicht" behaupten. Anlass: falsche Behauptung
+  „WebP geht in Safari nicht" (Sveltia macht es längst via jSquash).
+- Verankert: eigener Abschnitt in `CLAUDE.md` + als Vorstufe **Schritt 0** im
+  Capability-Lock (vor A). Kurzverweise in `CAPABILITIES.md` + `STATUS.md`.
+- Betroffen: `CLAUDE.md`, `CAPABILITIES.md` (`3df0065`); `STATUS.md`, `CHANGELOG.md`
+  (dieser Doku-Commit)
+
+## 2026-06-02 20:00–22:00 — Stufe-1 Foto-Upload-Feld (Bulk + WebP/JPEG, dnd-kit)
+- Eigenes Tina-Galerie-Feld `web/tina/fields/BulkPhotoField.tsx`: Mehrfach-Upload
+  (Button / Drag-Ablage / ganzer Ordner), Auto-Verkleinern auf 2400px, Konvertierung
+  (WebP, sonst JPEG-Fallback — Safari kann kein natives canvas-WebP), git-basiert
+  nach `/uploads` (directory:'' aus Store-Quellcode verifiziert), apple-like
+  Sortierung via @dnd-kit. WebP-Reduktion empirisch verifiziert (−91 %).
+- Offen/freigegeben: jSquash (WASM) für WebP auf jedem Browser (wie Sveltia).
+- Betroffen: `web/tina/**`, `web/package.json` (+@dnd-kit), `web/src/styles/global.css`
+- Commits: `abdde39`, `e3eb729`, `511d300`, `e682811`
+
+## 2026-06-02 19:30–20:00 — Stufe-1 Schritte 1–5: Stories auf Astro + TinaCMS
+- **Schritt 1:** Astro-Grundgerüst in `web/` (Astro 4 + React, i18n DE=/ EN=/en/).
+- **Schritt 2:** Design-System aus `index.html` 1:1 nach `web/src/styles/global.css`.
+- **Schritt 3:** 3 Stories migriert (Option A: `body_de/body_en` im Frontmatter);
+  utah aufgeräumt (Test-Text raus, langer Body als Haupttext).
+- **Schritt 4:** Content-Collection + Liste/Reader, 1:1-`mdToHtml`-Port, Mountains-
+  Illustration (ILLUS byte-identisch); vom Nutzer freigegeben (Design + DE/EN).
+- **Schritt 5:** TinaCMS lokal angebunden (Live-Vorschau, kleine React-Insel,
+  `gallery`-Feld). CAPABILITIES.md: Stories-Sektion + Schritt-4-Freigabe.
+- Betroffen: `web/**` (neu), `CAPABILITIES.md`
+- Commits: `b12c9f2`, `609b0df`, `17267e9`, `4da438a`, `3591a51`, `4558c39`,
+  `d31f650`, `75a7e2f`
+
 ## 2026-06-02 19:23 — Capability-Lock-Verfahren verankert + Umbau-Branch gestartet
 - Branch `astro-umbau` von `main` angelegt (Stufe-1-Umbau: Stories auf Astro+Tina;
   `main` bleibt unangetastet/live). Schritt 0 des Bauplans (Branch + Bestandsaufnahme,

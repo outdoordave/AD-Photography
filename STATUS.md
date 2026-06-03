@@ -1,12 +1,14 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-02 19:23** · letzter Commit `cfd7a69` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-02 22:10** · letzter Commit `511d300` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
-> ⚙️ **Aktiver Umbau:** Branch `astro-umbau` (Stufe 1 = Stories auf Astro+Tina).
-> `main` bleibt unangetastet/live. Verbindlich beim Umbau: **Capability-Lock**
-> (s. `CLAUDE.md` + `CAPABILITIES.md`) — keine Funktion darf verloren gehen.
+> ⚙️ **Aktiver Umbau:** Branch `astro-umbau` (Stufe 1 = Stories auf Astro+Tina,
+> in `web/`). `main` bleibt unangetastet/live. Verbindlich beim Umbau:
+> **Capability-Lock** + Vorstufe **„Live-Wahrheit zuerst"** (erst echten
+> Live-Code prüfen, nie aus Allgemeinwissen „geht nicht" behaupten) — beides in
+> `CLAUDE.md`; je eine Funktion in `CAPABILITIES.md`.
 
 ---
 
@@ -104,14 +106,25 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   Push-Status im Zweifel per `curl` gegen die Live-Seite prüfen, nicht blind `git rev-list`.
 
 ## 5. Offene Punkte / Restposten
-- **Umbau Stufe 1 (Stories → Astro+Tina) läuft auf Branch `astro-umbau`:**
-  Schritt 0 erledigt (Branch + Bestandsaufnahme). **Nächster Schritt: 1 — Astro-
-  Grundgerüst** (wartet auf „weiter"). Bestandsaufnahme: 3 Stories, Body-Speicherung
-  inkonsistent — DE-Body teils Markdown-Body/teils Frontmatter `body_de` (utah
-  widersprüchlich), **EN-Body in Frontmatter `body_en`**; in Schritt 3/4 sauber
-  vereinheitlichen (Markdown-Body hält nur eine Sprache → DE/EN-Strategie nötig).
-- **Capability-Lock ist Pflicht** bei jeder portierten Funktion (s. `CAPABILITIES.md`);
-  „fertig" entscheidet der Nutzer per Seite-an-Seite-Vergleich, nicht Claude.
+- **Umbau Stufe 1 (Stories → Astro+Tina) in `web/`:** Schritte 0–5 **erledigt &
+  freigegeben** — Grundgerüst, Design-System, Inhalte migriert (Option A:
+  `body_de/body_en` im Frontmatter), Liste + Reader (1:1-`mdToHtml`-Port,
+  Mountains-Illustration), Tina lokal angebunden (Live-Vorschau, kleine
+  React-Insel). DE/EN vom Nutzer geprüft. Stories-Sektion in `CAPABILITIES.md`
+  als „Schritt 4 freigegeben" dokumentiert.
+- **Eigenes Tina-Galerie-Feld** (`web/tina/fields/BulkPhotoField.tsx`): Mehrfach-
+  Upload (Datei-Button / Drag-Ablage / ganzer Ordner), Auto-Verkleinern auf
+  2400px, dnd-kit-Sortierung. **WebP-Encoding offen:** Safari kann kein natives
+  canvas-WebP → aktuell JPEG-Fallback; **freigegeben & ausstehend: jSquash (WASM)
+  einbauen** → WebP auf jedem Browser (wie Sveltia es macht). **NÄCHSTER Bau-Schritt.**
+- **Danach: Schritt 6** (Bauplan) — kostenloser Cloudflare-Vorschau-Deploy +
+  Backend-Entscheidung (Tina Cloud Free / self-host / nur lokal editieren).
+  ⚠️ `tinacms build` (Produktion) braucht Tina-Cloud/Self-Host; `tinacms dev`
+  (lokal) läuft. Statischer `astro build` allein scheitert an den Tina-Client-Seiten.
+- **Capability-Lock + „Live-Wahrheit zuerst"** sind Pflicht bei jeder Funktion
+  (s. `CLAUDE.md`/`CAPABILITIES.md`); „fertig" entscheidet der Nutzer.
+- **Lokaler Upload-Symlink** `web/public/uploads → ../../uploads` (gitignored) für
+  die Vorschau; produktive Upload-Auslieferung → Schritt 6.
 - **Stray-Datei:** leere `package-lock.json` im Root (versehentlich, untracked) —
   David löscht sie bei Gelegenheit; landet in keinem Commit.
 - **Noch nicht gepusht (lokal):** mehrere Commits seit dem letzten Push — David pusht
@@ -131,11 +144,15 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 - **Favorit: TinaCMS** (bleibt git-basiert/kostenlos, Inhalte als Markdown im Repo,
   Live-Update + Drag-&-Drop für Text/Bilder). **Alternative: Sanity** (mächtiger
   Presentation-Modus/Page-Building, aber gehostete DB + Vendor-Lock-in).
-- **Plan: gestufter Umbau, beginnend mit Stories.** Prototyp (`/prototype-astro/`) vom
-  Nutzer getestet & abgenommen → **Entscheidung: Stufe 1 produktiv bauen.** Läuft auf
-  Branch `astro-umbau` nach festem Bauplan (Schritt 0–6); aktuell nach Schritt 0.
-- **Capability-Lock verankert** (`CLAUDE.md` + `CAPABILITIES.md`): 4-Schritt-Verfahren
-  (Extrahieren → Bestätigen → Bauen → Abhaken) sichert „keine Funktion verlieren".
+- **Plan: gestufter Umbau, beginnend mit Stories.** Prototyp vom Nutzer abgenommen →
+  **Stufe 1 wird produktiv gebaut** (in `web/`, Bauplan Schritt 0–6); aktuell nach
+  Schritt 5 (Tina). Offen vor Schritt 6: jSquash-WebP im Galerie-Feld.
+- **Capability-Lock + „Live-Wahrheit zuerst" verankert** (`CLAUDE.md` +
+  `CAPABILITIES.md`): Schritt 0 (echte Live-Umsetzung prüfen, inkl. Sveltia-Lösung)
+  + A–D (Extrahieren → Bestätigen → Bauen → Abhaken) sichern „keine Funktion verlieren".
+- **Offene Foto-Frage geklärt:** Bulk-Upload + WebP sind mit Tina machbar (eigenes
+  Feld gebaut); WebP-auf-Safari via jSquash wie bei Sveltia. Kosten: 0 € (lokal/
+  git-basiert; Tina-Cloud-Bezahltarife werden gemieden).
 - **Erkenntnis:** Der große Aufwand liegt **nicht** im CMS, sondern im Neubau der
   🔴-Funktionen (MapLibre-Karte, Lightbox/Filmstreifen) — die profitieren von keiner
   Live-Vorschau und sind das eigentliche Risiko für „keine Funktion verlieren".
