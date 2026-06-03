@@ -2,15 +2,16 @@ import { defineConfig } from 'tinacms';
 import BulkPhotoField from './fields/BulkPhotoField';
 import LocationSearchField from './fields/LocationSearchField';
 
-// Tina-Cloud-Anbindung ueber Umgebungsvariablen (KEINE Secrets im Code):
-//   TINA_CLIENT_ID  -> oeffentliche Projekt-ID aus app.tina.io
-//   TINA_TOKEN      -> read-only Token aus app.tina.io (GEHEIM!)
-//   TINA_BRANCH     -> Git-Branch, den Tina bearbeitet (Default: astro-umbau)
-// Sind CLIENT_ID/TOKEN NICHT gesetzt (z. B. am Mac ohne .env), faellt Tina
-// automatisch in den LOKALEN Modus zurueck: laeuft ohne Tina-Cloud und liest/
-// schreibt direkt die Markdown-Dateien in src/content/stories. Bilder bleiben
-// git-basiert unter public/uploads (Symlink -> ../../uploads, also Repo-/uploads).
-const clientId = process.env.TINA_CLIENT_ID || '';
+// Tina-Cloud-Anbindung:
+//   clientId + branch sind OEFFENTLICH (clientId steht ohnehin im Browser-Bundle).
+//   Daher fest verdrahtet als Fallback -> der Build haengt fuer diese beiden NICHT
+//   mehr an Umgebungsvariablen. Hintergrund: Auf Cloudflare laeuft `tinacms build`
+//   als pkg-Binary, die die Custom-Env-Variablen beim Config-Laden nicht zuverlaessig
+//   sieht; ausserdem filtert Tina beim Bundeln process.env auf TINA_PUBLIC_/NEXT_PUBLIC_.
+//   Der TOKEN bleibt GEHEIM und kommt ausschliesslich aus der Umgebung (TINA_TOKEN) —
+//   niemals im Repo. Ist TINA_TOKEN leer (z. B. am Mac ohne .env), laeuft Tina im
+//   LOKALEN Modus (liest/schreibt direkt die Markdown-Dateien in src/content/stories).
+const clientId = process.env.TINA_CLIENT_ID || 'defa5b44-687f-478c-a647-bad7355aedd3';
 const token = process.env.TINA_TOKEN || '';
 const branch = process.env.TINA_BRANCH || 'astro-umbau';
 
