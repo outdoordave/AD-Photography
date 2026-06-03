@@ -3,6 +3,11 @@ node_modules/
 dist/
 .astro/
 
+# Secrets / lokale Umgebung — NIEMALS committen (nur .env.example ist erlaubt)
+.env
+.env.*
+!.env.example
+
 # Tina (generierte Artefakte)
 tina/__generated__/
 tina/tina-lock.json

@@ -2,13 +2,22 @@ import { defineConfig } from 'tinacms';
 import BulkPhotoField from './fields/BulkPhotoField';
 import LocationSearchField from './fields/LocationSearchField';
 
-// LOKALER Modus (clientId/token leer): Tina laeuft ohne Tina-Cloud und liest/
+// Tina-Cloud-Anbindung ueber Umgebungsvariablen (KEINE Secrets im Code):
+//   TINA_CLIENT_ID  -> oeffentliche Projekt-ID aus app.tina.io
+//   TINA_TOKEN      -> read-only Token aus app.tina.io (GEHEIM!)
+//   TINA_BRANCH     -> Git-Branch, den Tina bearbeitet (Default: astro-umbau)
+// Sind CLIENT_ID/TOKEN NICHT gesetzt (z. B. am Mac ohne .env), faellt Tina
+// automatisch in den LOKALEN Modus zurueck: laeuft ohne Tina-Cloud und liest/
 // schreibt direkt die Markdown-Dateien in src/content/stories. Bilder bleiben
 // git-basiert unter public/uploads (Symlink -> ../../uploads, also Repo-/uploads).
+const clientId = process.env.TINA_CLIENT_ID || '';
+const token = process.env.TINA_TOKEN || '';
+const branch = process.env.TINA_BRANCH || 'astro-umbau';
+
 export default defineConfig({
-  branch: 'astro-umbau',
-  clientId: '',
-  token: '',
+  branch,
+  clientId,
+  token,
   build: {
     outputFolder: 'admin',
     publicFolder: 'public',
