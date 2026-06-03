@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-02 22:40** · letzter Commit `ebea477` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-03** · letzter Commit `06ba334` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -9,6 +9,11 @@
 > **Capability-Lock** + Vorstufe **„Live-Wahrheit zuerst"** (erst echten
 > Live-Code prüfen, nie aus Allgemeinwissen „geht nicht" behaupten) — beides in
 > `CLAUDE.md`; je eine Funktion in `CAPABILITIES.md`.
+>
+> 📍 **Gerade:** Schritt 6 (Deploy/Backend) läuft. Entscheidung **Tina Cloud Free**
+> getroffen, Free-Limits offiziell verifiziert (`SETUP-TinaCloud.md`). **Teil A
+> (ENV-Anbindung) gebaut & committet (`06ba334`).** Wartet auf David: Konto/
+> Repo-Verbindung/Tokens/Cloudflare-Deploy (Secrets macht David selbst).
 
 ---
 
@@ -118,11 +123,36 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   **WebP via jSquash (WASM, WASM vom CDN/unpkg) → WebP auf JEDEM Browser inkl.
   Safari** (wie Sveltia); Fallback: natives canvas-WebP → JPEG (nie PNG). Im
   Editor verifiziert (Selbsttest „jSquash bereit"); **Safari-Praxistest durch
-  Nutzer noch ausstehend.**
-- **Danach: Schritt 6** (Bauplan) — kostenloser Cloudflare-Vorschau-Deploy +
-  Backend-Entscheidung (Tina Cloud Free / self-host / nur lokal editieren).
+  Nutzer bestanden** (Fotos landen als `.webp`).
+- **🔴-Brocken als isolierte Prototypen abgenommen** (alle vom Nutzer freigegeben):
+  - **MapLibre-Karten-Insel + Stationen-Snap-Bahn** (`web/src/components/TripMapProto.tsx`),
+    Test `/proto-karte` — Karte + Wischen auf Safari geprüft (Prüfpunkt „Karten-/
+    Wisch-Timing identisch" in `CAPABILITIES.md`).
+  - **Tina-Ortssuche-Feld (Nominatim)** (`web/tina/fields/LocationSearchField.tsx`) —
+    speichert GeoJSON-Point-String wie Sveltias `widget:map`; vom Nutzer getestet.
+  - **Lightbox + Filmstreifen** (`web/src/components/Lightbox.tsx`, Test `/proto-lightbox`)
+    — Capability-Lock A–D, Safari-Abnahme „wie das Original". 29-Punkt-Soll-Liste
+    in `CAPABILITIES.md` ✅.
+- **Schritt 6 (Deploy/Backend) — LÄUFT:** Entscheidung **Tina Cloud Free** (David:
+  Online-Editor fürs iPad nötig; Option „nur lokal" ausgeschlossen). Free-Limits
+  offiziell verifiziert (`SETUP-TinaCloud.md`): 2 Nutzer, unbegrenzte Dokumente,
+  repo-basierte Bilder NICHT unter 100-MB-Asset-Cap → dauerhaft gratis für 2 Personen.
+  - **Teil A gebaut (`06ba334`):** `web/tina/config.ts` liest clientId/token/branch
+    aus `process.env` (`TINA_CLIENT_ID`/`TINA_TOKEN`/`TINA_BRANCH`); ohne Werte
+    lokaler Modus. `web/.env.example` (nur Namen). `web/.gitignore` sperrt `.env*`.
+  - **Wartet auf David (Secrets selbst):** app.tina.io-Konto, Repo `outdoordave/
+    AD-Photography` verbinden (Branch `astro-umbau`), Token holen, Alexandra einladen,
+    Cloudflare-Branch-Deploy (Root `web`, Build `npm run build`, Output `dist`) + ENV setzen.
   ⚠️ `tinacms build` (Produktion) braucht Tina-Cloud/Self-Host; `tinacms dev`
   (lokal) läuft. Statischer `astro build` allein scheitert an den Tina-Client-Seiten.
+- **Bestätigte Bau-Reihenfolge (nach Schritt 6):** Stories online → Gear → Über uns
+  → Kontakt (W5) → Reisen-Vollausbau (C1–C7) → Galerie/Alben (nutzt Lightbox) →
+  Startseite → Cutover (Branch→`main`) → Nach-dem-Umbau-Audit.
+- **Planungs-/Analyse-Dokumente im Repo:** `BAUPLAN-Gesamt.md` (Alben/Lightbox-Analyse
+  + Gesamtplan), `ANALYSE-Reisen.md` (MapLibre/Stationen/Nominatim; projectUSA/Alaska/
+  ensureXY = toter Legacy-Code), `IDEEN.md` (C1–C7 CMS, W1–W6 Website, „Nach dem Umbau"
+  inkl. Datenschutz), `ENTSCHEIDUNG-Deploy.md` (3 Deploy-Optionen), `SETUP-TinaCloud.md`
+  (verifizierte Free-Limits + Setup-Plan).
 - **Capability-Lock + „Live-Wahrheit zuerst"** sind Pflicht bei jeder Funktion
   (s. `CLAUDE.md`/`CAPABILITIES.md`); „fertig" entscheidet der Nutzer.
 - **Lokaler Upload-Symlink** `web/public/uploads → ../../uploads` (gitignored) für

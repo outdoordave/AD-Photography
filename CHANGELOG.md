@@ -17,6 +17,19 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-03 — Tina-Cloud-Anbindung via ENV vorbereitet (Schritt 6, Teil A)
+- Vorab geprüft: Tina-Cloud-Free-Limits offiziell (tina.io/pricing + Repo-Media-Doku)
+  → 2 Nutzer, unbegrenzte Dokumente, repo-basierte Bilder fallen NICHT unter das
+  100-MB-Asset-Cap → dauerhaft gratis für 2 Personen. Dokumentiert in `SETUP-TinaCloud.md`.
+- `web/tina/config.ts`: clientId/token/branch jetzt aus `process.env`
+  (`TINA_CLIENT_ID`/`TINA_TOKEN`/`TINA_BRANCH`); ohne gesetzte Werte automatischer
+  Rückfall in den lokalen Modus (Mac-dev bleibt nutzbar).
+- `web/.env.example`: Vorlage nur mit Variablen-NAMEN (keine Werte).
+- `web/.gitignore`: `.env`/`.env.*` gesperrt (nur `.env.example` getrackt) → keine
+  Secrets im Repo. Konto/Tokens/Deploy macht David selbst.
+- Betroffen: `web/tina/config.ts`, `web/.env.example`, `web/.gitignore`
+- Commit: `06ba334` (SETUP-Doku vorab: `93a9a27`)
+
 ## 2026-06-02 22:40 — WebP auf jedem Browser via jSquash (Foto-Upload-Feld)
 - Nach der neuen Regel zuerst Live-Wahrheit geprüft: Sveltia macht WebP auf Safari
   via **jSquash**; `admin/config.yml` = webp/Q85/Breite 2400. 1:1 nachgebaut.
