@@ -7,9 +7,16 @@ Branch `astro-umbau`) die **oberste Regel**:
 > verhalten.** Die Website bleibt optisch **und** funktional identisch — nur der
 > darunterliegende Code wird neu strukturiert.
 
-Pro Funktion gibt es **eine Sektion** (mit Datum), die das in `CLAUDE.md`
-verankerte **4-Schritt-Verfahren** dokumentiert:
+> **Vorstufe „Live-Wahrheit zuerst" (Schritt 0, ZWINGEND):** Erst die echte
+> Live-Umsetzung analysieren (Funktion **und** Inhalt; falls relevant auch wie
+> Sveltia es löst), nie aus Allgemeinwissen „geht nicht" behaupten. Vollständige
+> Regel → `CLAUDE.md`, Abschnitt „Live-Wahrheit zuerst".
 
+Pro Funktion gibt es **eine Sektion** (mit Datum), die das in `CLAUDE.md`
+verankerte Verfahren (**Schritt 0 + A–D**) dokumentiert:
+
+- **0 — Live-Wahrheit:** belegte Analyse der Live-Umsetzung (Code-Fundstellen),
+  inkl. CMS-Lösung (Sveltia), falls relevant — **vor** A.
 - **A — Extrahieren:** nummerierte, vollständige Fähigkeiten-Liste aus dem
   echten `index.html`-Code (Detail-Ebene, feiner als die Inventur in `STATUS.md`).
 - **B — Bestätigt:** Datum, an dem der Nutzer die Liste als **eingefrorene

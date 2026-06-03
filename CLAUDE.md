@@ -31,6 +31,32 @@
 7. **Cloudflare-Cache:** nach Deploy mit **Strg/Cmd+F5** (Hard Reload) testen; bei
    „ist das online?"-Zweifeln per `curl` gegen `aandd-photography.pages.dev` prüfen.
 
+## Live-Wahrheit zuerst (Pflicht vor jedem Neubau UND vor jeder Machbarkeits-Aussage)
+> **Goldene Regel:** Bevor du für irgendeine Funktion/Sektion etwas neu baust
+> **ODER** behauptest, etwas sei „nicht möglich" / „geht nicht" / „eine
+> Einschränkung" — sieh ZUERST im echten Live-Code nach, wie es **tatsächlich**
+> gelöst ist. Die Live-Seite ist die Wahrheit, nicht dein Allgemeinwissen.
+
+1. **Zwingend zuerst die echte Live-Umsetzung analysieren** — sowohl **Funktion**
+   als auch **Inhalt**: `index.html`, `content/`, `admin/config.yml`, Build-Skripte
+   (`build-indexes.js`), der Cloudflare-Worker. Was kann die Live-Seite genau, wie
+   ist es technisch gelöst, welche Felder/Daten gibt es?
+2. **Nie aus Allgemeinwissen behaupten, etwas ginge nicht.** Wenn die Live-Seite
+   es kann, **KANN es gehen** — finde heraus **WIE** sie es macht (inkl. wie das
+   aktuelle CMS **Sveltia** es löst) und bilde genau das nach.
+3. **Die Astro/Tina-Version muss exakt dieselben Funktionen und denselben Inhalt
+   liefern wie Live.** Abweichungen nur mit ausdrücklicher Freigabe des Nutzers —
+   und dann dokumentiert (in `CAPABILITIES.md`).
+4. **Muss etwas in der neuen Architektur wirklich anders gelöst werden,** leg dem
+   Nutzer die **belegte Live-Analyse vor (Code-Fundstellen)** und erkläre warum —
+   statt es als „geht nicht" abzutun.
+
+> **Mahnbeispiel (echter Fehler):** „WebP geht in Safari nicht" — behauptet aus
+> Allgemeinwissen. Falsch: Die Live-Seite (Sveltia) macht WebP in Safari längst,
+> über die **jSquash**-WASM-Bibliothek. Erst der Blick in Sveltias Lösung brachte
+> die Wahrheit. **So ein Irrtum ist bei den 🔴-Brocken (Reisen, Alben, Karte,
+> Lightbox) teuer — deshalb diese Regel.**
+
 ## Capability-Lock (Pflicht bei JEDER portierten/neu gebauten Funktion)
 > **Oberste Umbau-Regel:** Beim schrittweisen Umbau (Single-File `index.html` →
 > Astro + TinaCMS, Branch `astro-umbau`, `main` bleibt live) darf **KEINE
@@ -40,10 +66,16 @@
 
 Für **jede** Funktion, die portiert/neu gebaut wird — besonders die 🔴-Brocken
 (Lightbox/Filmstreifen, MapLibre-Karte, Reise-Stationen, Galerie/Album-Diashow,
-Hero-Umschalter, Wisch-/Trackpad-Gesten) — gilt verbindlich dieses 4-Schritt-
-Verfahren. Ergebnisse werden in **`CAPABILITIES.md`** festgehalten (eine Sektion
-pro Funktion, mit Datum):
+Hero-Umschalter, Wisch-/Trackpad-Gesten) — gilt verbindlich dieses Verfahren
+(**Schritt 0 + A–D**). Ergebnisse werden in **`CAPABILITIES.md`** festgehalten
+(eine Sektion pro Funktion, mit Datum):
 
+0. **0 — Live-Wahrheit prüfen (Vorstufe, ZWINGEND vor A).** Gemäß der Regel
+   „**Live-Wahrheit zuerst**" (s. o.): Die Extraktion muss aus dem **echten
+   Live-Code** kommen — Funktion **und** Inhalt. Falls relevant, auch **wie das
+   aktuelle CMS (Sveltia) es löst** (wie beim WebP-Fall: Sveltia nutzt jSquash).
+   Keine Machbarkeits-Aussage und kein Bau, bevor die Live-Umsetzung verstanden
+   ist. Belege (Code-Fundstellen) gehören in den `CAPABILITIES.md`-Eintrag.
 1. **A — Fähigkeiten extrahieren (VOR dem Neubau).** Den bestehenden Code der
    Funktion in `index.html` **vollständig** lesen und eine **nummerierte,
    vollständige** Fähigkeiten-Liste erstellen — jedes Verhalten einzeln, inkl.
