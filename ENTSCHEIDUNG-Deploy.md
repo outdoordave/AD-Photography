@@ -85,3 +85,74 @@ Fotoseite nicht, solange (a) gratis das Gleiche (online editieren) bietet.
 > Kurz: **(c) ist die freieste/robusteste Basis und deckt „überwiegend lokal vom Mac"
 > perfekt ab; (a) ist der einfache, gratis Schalter zu Online-Editing, wenn ihr ihn
 > wollt.** Entscheidung liegt bei David.
+
+---
+
+# UPDATE (2026-06-02): Neue harte Anforderung → (c) raus, nur (a) vs. (b)
+
+**Trennung Code vs. Inhalt:**
+- **Code** (Website bauen/anpassen): David, lokal am Mac. Unkritisch.
+- **Inhalt** (Stories, Reisen, Bilder): **David UND Alexandra**.
+
+**Neue Pflicht:** Alexandra arbeitet überwiegend vom **iPad** (iPhone als Notfall, mal
+ein Foto). → Der Editor **muss online im Browser** erreichbar sein. Ein iPad kann
+**keine Dev-Umgebung** (`npm run dev`) starten. → **Option (c) scheidet aus.**
+
+Verglichen werden nur noch die zwei **Online**-Wege.
+
+## Zuerst die wichtigste Frage: liegen die Inhalte in einer fremden Cloud?
+**Quelle der Wahrheit ist bei BEIDEN unser GitHub-Repo** — jede Änderung ist ein
+**Commit in unser Repo** (Markdown/JSON + Bilder über repo-basierte Medien). Verlassen
+wir den Anbieter, ist alles vollständig in git, mit Historie. **Aber ein ehrlicher
+Unterschied:**
+- **(a) Tina Cloud:** zusätzlich hält Tina auf **ihren Servern** eine **synchronisierte
+  Index-/Arbeitskopie** der Inhalte (damit der Online-Editor schnell ist). Die
+  **maßgebliche** Fassung + Historie bleibt in **unserem** git — aber eine **Kopie liegt
+  bei einem Dritten.** Kein Lock-in (git ist kanonisch), aber es ist eine Kopie.
+- **(b) Self-hosted:** der Index liegt in **unserer eigenen** Datenbank/Infra. **Nichts**
+  liegt bei einem dritten Anbieter. Das ist die **strikteste** Auslegung von „in unserer Hand".
+
+→ **Wenn „keine fremde Cloud" für dich bedeutet ‚gar keine Kopie irgendwo außer bei
+uns', erfüllt das nur (b).** Wenn es bedeutet ‚Quelle + Historie in unserem git, eine
+abgeleitete Index-Kopie beim Dienst ist ok', erfüllen es beide.
+
+## (a) Tina Cloud (Free) vs. (b) Self-hosted — die Detailfragen
+
+| Frage | (a) Tina Cloud Free | (b) Self-hosted |
+|---|---|---|
+| **Git-basiert (Commits in unser Repo)?** | ✅ ja | ✅ ja |
+| **Kopie bei Drittem?** | ⚠️ ja (Index/Arbeitskopie auf Tina-Servern) | ✅ nein (alles bei uns) |
+| **iPad-Browser-Editing** | ✅ Web-App, im iPad-Safari nutzbar (Sidebar+Vorschau; auf iPad ok, iPhone eng) | ✅ identisch (gleiche Web-App) |
+| **Foto-Upload + WebP (jSquash-WASM) mobil** | ✅ läuft auch in iOS-Safari (WASM mobil unterstützt); **große Stapel sind mobil langsam/speicherhungrig → Bulk besser am Mac, einzelne vom iPad ok** | ✅ identisch (Encoding ist client-seitig, Backend-unabhängig) |
+| **Kosten / Free-Tier-Grenzen** | **0 € bis 2 Nutzer** (David + Alexandra passen genau); Editorial-Workflow/Rollen/mehr Nutzer = kostenpflichtig | **0 € möglich**, aber aus **mehreren** Gratis-Tiers zusammengesteckt (DB z. B. MongoDB Atlas ~512 MB / Upstash; Auth; Cloudflare-Functions) — je eigene Limits |
+| **Einrichtungs-Aufwand** | **niedrig–mittel:** Konto, Repo verbinden, `clientId`/`token` als Cloudflare-Env, `tinacms build`. Reader-Seiten bleiben (nutzen schon den Tina-Client) | **hoch:** DB + Auth + GraphQL-Funktion aufsetzen, absichern, **dauerhaft warten** |
+| **Login (wer/wie)** | David = Eigentümer (GitHub-verknüpft); **Alexandra per E-Mail eingeladen, kein GitHub nötig**; beide im Browser unter `/admin` | wir konfigurieren die Auth selbst (z. B. **GitHub-OAuth** — beide haben GitHub — oder E-Mail/Passwort via Auth.js) |
+| **Lock-in / Abhängigkeit** | Online-Editing hängt am Tina-Cloud-Dienst (Verfügbarkeit + Free-Tier-Fortbestand); Content nicht (git) | kein Tina-Cloud-Lock-in; dafür Abhängigkeit von **unserer** Infra, die **wir** betreiben |
+| **Restrisiken** | Free-Tier-Bedingungen/2-Nutzer-Grenze könnten sich ändern; Dienst-Ausfall stoppt Online-Editing (Site + Inhalte bleiben sicher); **Kopie beim Dritten** | Komplexität → mehr kann brechen, **wir** müssen fixen; Auth-Sicherheit + DB-Free-Limits auf unserer Seite |
+
+**Bestätigung:** Bei **beiden** bleiben die Inhalte als **Commits in unserem GitHub-Repo**
+— niemand „besitzt" sie außer uns. Der **einzige** Unterschied: (a) hält zusätzlich eine
+**Arbeitskopie auf Tina-Servern**, (b) nicht.
+
+## Empfehlung (du entscheidest)
+
+**Es hängt allein an deiner Auslegung von „keine fremde Cloud":**
+
+- **Wenn eine abgeleitete Index-Kopie beim Dienst ok ist** (Quelle + Historie sicher in
+  unserem git): **→ (a) Tina Cloud Free.** Erfüllt die iPad-Pflicht, ist **gratis für
+  genau 2 Nutzer**, **niedriger Aufwand**, **keine Ops-Last**, Alexandra loggt sich per
+  E-Mail ein. Für eine kleine 2-Personen-Fotoseite klar die pragmatischste Wahl.
+- **Wenn „nichts darf außer bei uns liegen" eine harte Linie ist:** **→ (b) self-hosted.**
+  Erfüllt das strikt, kostet aber **hohen Einrichtungs- + Dauer-Wartungsaufwand** (wir
+  sind das Ops-Team). Vertretbar nur, wenn dir die „null Kopie woanders"-Eigenschaft
+  **mehr wert ist** als die Einfachheit.
+
+**Mein ehrlicher Rat:** Da iPad-Online-Editing jetzt Pflicht ist und **kostenlos +
+einfach + zuverlässig** zählt, ist **(a) Tina Cloud Free** für euren Fall die sinnvollste
+Wahl — **mit der klaren Einschränkung**, dass dann eine **synchronisierte Kopie eurer
+Inhalte auf Tina-Servern** liegt (Quelle bleibt euer git). **Ist genau das für dich ein
+No-Go**, ist **(b)** der Weg — dann plane ich einen möglichst schlanken, wartungsarmen
+Self-Host-Stack (Cloudflare + MongoDB-Atlas-Free + GitHub-OAuth) und sage dir vorher
+ehrlich, was an Dauer-Pflege auf uns zukommt.
+
+> Noch **nichts gebaut/deployt.** Entscheidung: David.
