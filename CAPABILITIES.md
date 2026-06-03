@@ -45,8 +45,15 @@ wenn sie konkret drankommt (Schritt A). Grobe Risiko-Einschätzung aus `STATUS.m
 | 1 | Stories (Liste + Reader, DE/EN, YouTube) | 🟡 | 1 | ✅ Schritt 4 freigegeben (2026-06-02) — Sektion unten. Tina-Anbindung (Schritt 5) folgt. |
 | 2 | Galerie / Alben (3 Sortiermodi, Auto-Diashow) | 🟡/🔴 | 2 | ⬜ offen |
 | 3 | Lightbox + Filmstreifen (Snap, Gesten, Marker) | 🔴 | 2 | ⬜ offen |
-| 4 | Reise-Stationen (Snap-Bahn + IntersectionObserver) | 🔴 | 3 | ⬜ offen |
-| 5 | MapLibre-Karte (5 Stile, flyTo, USA/Alaska-Projektion, Sprach-Labels) | 🔴🔴 | 3 | ⬜ offen |
+| 4 | Reise-Stationen (Snap-Bahn + IntersectionObserver) | 🔴 | 3 | 🧪 Prototyp ok (`/proto-karte`); Vollausbau offen |
+| 5 | MapLibre-Karte (Stile, flyTo, Sprach-Labels) | 🔴🔴 | 3 | 🧪 Prototyp ok (`/proto-karte`); Vollausbau offen. **Befund: `projectUSA/Alaska/ensureXY` sind toter Legacy-Code (s. `ANALYSE-Reisen.md`) — nicht portieren.** |
+
+> **Vorgemerkte Prüfpunkte für den Reisen-Capability-Lock (Schritt A/D später):**
+> - **Karten-/Wisch-Timing identisch zur Live-Seite** (flyTo-Dauer 600ms, Snap-Gefühl,
+>   Flick-Verhalten) — vom Nutzer beim Prototyp grob ok befunden, aber als eigener
+>   Abhak-Punkt für die Feinjustierung im Vollausbau (Animations-Timing/Geschwindigkeit).
+> - Vollständige Stile (5), `map_style`-Setting, Galerie, Stationsbilder/Video/YouTube,
+>   DE/EN, Stop-Button-Liste, 8s-Stil-Fallback, Marker-Popup-Details.
 | 6 | Hero-Umschalter (Bild/Slideshow/Video) | 🟡 | 3 | ⬜ offen |
 | 7 | Startseite-Blöcke (Aktuell/Entdecken/Momentaufnahmen/Intro) | 🟡 | 3 | ⬜ offen |
 | 8 | Equipment (Gear-Liste) | 🟢 | 3 | ⬜ offen |
