@@ -172,3 +172,116 @@ pages/stories/[slug].astro, pages/en/stories/[slug].astro, styles/global.css).
 
 - [x] Nutzer hat Seite-an-Seite verglichen und **„Schritt 4 freigegeben"**
       bestätigt am: 2026-06-02 (Design, Mountains-Illustration, DE/EN-Umschaltung).
+
+---
+
+## Lightbox + Filmstreifen (gemeinsame Komponente)
+_Stand A (extrahiert): 2026-06-02 · B (bestätigt): — · D (verglichen): Prototyp gebaut, Nutzer-Abnahme (bes. Safari) ausstehend_
+
+Quelle im echten Code: HTML-Markup (1233), CSS (375–495), JS: `openLightbox` (2341),
+`openLightboxGallery` (2172), `buildLbTrack` (2257), `buildFilmstrip` (2190),
+`observeLbSlides` (2278), `setLbCurrent` (2295), `lbCenterStrip` (2214),
+`lbScrollToIndex` (2306), `lbStep` (2314), `lbFilmstripCenterIndex` (2235),
+`lbStripUser` (2250), Wheel-/Touch-/Key-Verdrahtung (3731–3800).
+Neubau (Prototyp): `web/src/components/Lightbox.tsx` + `web/src/pages/proto-lightbox.astro`.
+
+### A — Soll-Fähigkeiten (eingefroren nach Bestätigung)
+**Öffnen / Schließen / Modi**
+1. Öffnen als Vollbild-Overlay (fixed, inset 0, BG `rgba(20,17,12,.94)`, `body` scroll gesperrt).
+2. Schließen: ✕-Button, Klick auf den dunklen Rand (`target===lightbox`), **Esc**.
+3. Zwei Modi: **Einzelbild** (`openLightbox`: Foto/Illustration/URL) vs. **Galerie**
+   (`openLightboxGallery`: Liste + Start-Index + Albumname). Galerie toggelt `lb-gallery`
+   (Bahn an, Einzel-`.ph` aus, Full-Bleed).
+
+**Hauptbild-Bahn (`lb-track`)**
+4. Eine **Snap-Slide je Bild** (`flex 0 0 100%`, `scroll-snap-align: center`, **kein
+   `scroll-snap-stop`** → flüssiges Doppelwischen, kräftiger Flick darf mehrere weiter).
+5. Native horizontale **Scroll-Snap-Bahn** (`x mandatory`, `overscroll-behavior-x: contain`,
+   Scrollbar aus, Höhe **78dvh**, `gap: 28px` nur zwischen Bildern, Bilder `object-fit: contain`).
+6. Beim Öffnen **instant** zur Start-Slide, **dann** Observer verbinden.
+7. **IntersectionObserver** (root=track, Schwelle 0.6) → mittiges Bild = aktiv → `setLbCurrent`.
+8. `lbScrollToIndex` via `offsetLeft`-`scrollTo` (gap-sicher): **smooth** bei Pfeil/Thumb-Klick,
+   **instant** beim Öffnen.
+
+**Filmstreifen (`lb-filmstrip`)**
+9. Ein **Thumb je Bild** (64px, `background cover`, `scroll-snap-align: center`,
+   **`scroll-snap-stop: always`**).
+10. Streifen **fixed unten, um 34px + safe-area angehoben** (aus der iOS-Gesten-Zone),
+    native Snap-Bahn (`x mandatory`, `touch-action: pan-x`, `overscroll contain`).
+11. **Flex-Spacer-Zentrierung** (`::before/::after { flex: 0 0 calc(50% - 40px) }`) statt
+    seitlichem Padding — wegen **WebKit-`scrollWidth`-Bug** (Safari lässt End-Padding bei
+    Flex-Scroll-Containern weg → sonst auf Desktop unscrollbar). Erstes/letztes Thumb mittig erreichbar.
+12. **Feste Mitte-Markierung** (`lb-strip-marker::before`: ortsfester Akzent-Rahmen 68px in
+    der Streifen-Mitte; `box-shadow` dunkelt **nur den Streifen** ab, nicht das Hauptbild;
+    `pointer-events: none`). Thumbs laufen durch den Marker → was mittig steht, ist aktiv
+    (kein wanderndes aktives Thumb).
+13. **Thumb-Klick** → `lbScrollToIndex(idx, true)` (Hauptbild springt smooth).
+14. Aktiver Thumb markiert (`lbMarkThumb`).
+
+**Zwei-Wege-Kopplung + Anti-Rückkopplung (Kernstück)**
+15. **Hauptbahn treibt Streifen:** `setLbCurrent` → `lbCenterStrip(idx)`.
+16. **`lbCenterStrip` Snap-off/on-Trick:** `x mandatory` zieht einen programmatischen
+    `scrollLeft` sofort auf die alte Snap-Grenze zurück → Snap kurz **aus**
+    (`scrollSnapType='none'`), `scrollLeft` setzen, im nächsten **`requestAnimationFrame`**
+    wieder **an** → Thumb zentriert + eingerastet.
+17. **Streifen treibt Hauptbild:** `scroll`-Handler → `lbFilmstripCenterIndex` → Hauptbild
+    **instant** nachziehen.
+18. **Anti-Rückkopplung:** `lbStripUser()` setzt `lbStripActive=true` (180ms Idle) bei echter
+    Streifen-Geste; solange aktiv **pausiert** `lbCenterStrip` (`if !lbStripActive`) → kein
+    Aufschaukeln Hauptbahn↔Streifen.
+
+**Wheel / Trackpad / Touch am Streifen**
+19. **Entprellter Wheel-Handler:** Trackpad-Horizontal (`deltaX≠0`) → **nativ** lassen
+    (Momentum+Snap), nur `lbStripUser`. Klassische Maus (nur `deltaY`) → auf horizontalen
+    `scrollLeft` mappen, **Snap für die Bewegung aus, nach 140ms Stille wieder an**
+    (`preventDefault` bei `deltaY`).
+20. Touch-Drag am Streifen (`touchmove` → `lbStripUser`); `scroll`-Handler hält `lbStripActive`
+    während des Momentums.
+
+**Pfeile / Tastatur / Umlauf**
+21. Blätter-Pfeile (Glas-Kreis mit Blur, `top: 39dvh` = Bildmitte), nur Galerie-Modus mit
+    >1 Bild sichtbar (`lb-hidden` toggle).
+22. `lbStep(dir)`: aktuelle Slide per `offsetLeft`, ±1, `scrollTo` smooth.
+23. **Umlauf-Option** (`gallery_loop`, Default **an**): über die Enden wrappen (modulo); sonst
+    klemmen. Bei Umlauf beide Pfeile durchgehend sichtbar.
+24. **Tastatur:** ←/→ blättern, **Esc** schließt — nur wenn offen + Galerie-Modus.
+
+**Caption / Responsive / Detail**
+25. Caption **„Album · X / Y"** (`lbSetCaption`), folgt dem aktiven Index.
+26. **Mobile ≤640px:** Thumbs 50px, Marker 70px/54px-Loch, Spacer `50%-33px`, Pfeile 44px.
+27. **Querformat-Handy** (`landscape` + `max-height:500px`): Bild/Track 52dvh, Pfeile `top:26dvh`,
+    kleinere Thumbs/Reserve.
+28. `dvh` statt `vh` überall (folgt der Safari-URL-Leiste).
+29. Expand-Affordanz (`zoom-hint::after`) an den Auslöse-Bildern signalisiert „Klick öffnet groß"
+    (gehört zur Bildquelle, nicht zur Lightbox selbst).
+
+### B — Nutzer-Bestätigung
+- [ ] Liste als vollständig bestätigt am: ____ (dann eingefroren). *David darf fehlende Punkte ergänzen.*
+
+### C — Neubau (Astro/React-Insel)
+- Wiederverwendbare Komponente `Lightbox.tsx` (später für Stories/Stationen/Reisen/Alben).
+  Prototyp-Seite `proto-lightbox` mit echtem Album (`content/albums/2024-erste-fotos.json`, 8 Fotos).
+  CSS 1:1 aus `index.html`.
+
+### D — Abhak-Vergleich (nach Neubau) — Prototyp (Chromium-Test; Safari = Nutzer)
+| # | Fähigkeit | Status | Anmerkung |
+|---|---|---|---|
+| 1–3 | Öffnen/Schließen/Modi (Galerie) | ✅ | Overlay, ✕/Rand/Esc, Galerie-Modus geprüft |
+| 4–8 | Hauptbild-Bahn (Snap, Observer, scrollToIndex) | ✅ | Start-Index, Snap-Slides, Observer aktiv |
+| 9–14 | Filmstreifen + Flex-Spacer + Marker | ✅ | Marker zentriert, aktiver Thumb mittig, Spacer macht 1. Thumb mittig (scrollLeft 0) |
+| 15–18 | Zwei-Wege-Kopplung + Anti-Rückkopplung + Snap-Trick | ✅ | Hauptbahn→Streifen **und** Streifen→Hauptbild verifiziert; `scrollSnapType` korrekt restauriert; kein Aufschaukeln |
+| 19–20 | Wheel (entprellt) / Touch am Streifen | ⚠️ | Maus-Wheel→Hauptbild verifiziert; **echtes Trackpad/Touch nur am Gerät** (Nutzer) |
+| 21–22 | Pfeile + `lbStep` | ✅ | schrittweise 0→1→2 verifiziert |
+| 23 | Umlauf (`gallery_loop`) | ⏳ | Code portiert; Wrap an den Enden noch nicht explizit gegengetestet (Nutzer) |
+| 24 | Tastatur ←/→/Esc | ✅ | verdrahtet/geprüft |
+| 25 | Caption „Album · X / Y" | ✅ | folgt Index |
+| 26–28 | Responsive + `dvh` | ⏳ | CSS 1:1 übernommen; **Mobile/Querformat/Safari-URL-Leiste = Nutzer-Test** |
+| 29 | Expand-Affordanz | ⬜ | gehört zur Bildquelle, nicht zur Lightbox-Insel (separat) |
+
+**Ehrlich offen / nur durch Nutzer prüfbar:** das **Filmstreifen-Wisch-Gefühl auf
+Safari** (ein-/mehrfach-Flick, Einrasten, zentrierter Marker), echtes Touch/Trackpad,
+Querformat/`dvh`, Umlauf-Wrap. Genau die heikle Safari-`scrollLeft`/Snap-Sache ist im
+Code 1:1 nachgebaut, aber im Chromium-Test nicht beweisbar.
+
+- [ ] Nutzer hat Seite-an-Seite verglichen (**bes. Filmstreifen-Wischen auf Safari**) und
+      „Prototyp bestanden" bestätigt am: ____
