@@ -1,5 +1,5 @@
 ---
 name: Testsuche
-location: '{"type":"Point","coordinates":[-118.242766,34.053691]}'
+location: '{"type":"Point","coordinates":[-122.407402,37.807556]}'
 ---
 
