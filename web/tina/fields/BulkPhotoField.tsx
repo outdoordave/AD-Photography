@@ -50,8 +50,15 @@ function fmt(bytes: number): string {
     : Math.round(bytes / 1024) + ' KB';
 }
 
-// Ein File -> verkleinertes WebP-File. Gibt zusaetzlich zurueck, ob WebP klappte.
-async function toWebp(file: File): Promise<{ file: File; isWebp: boolean }> {
+const JPEG_QUALITY = 0.82;
+
+function toBlobAsync(canvas: HTMLCanvasElement, type: string, q: number): Promise<Blob | null> {
+  return new Promise((resolve) => canvas.toBlob((b) => resolve(b), type, q));
+}
+
+// Ein File -> verkleinertes WebP-File. Faellt auf optimiertes JPEG zurueck,
+// falls der Browser kein WebP erzeugen kann (z.B. Safari) — NICHT auf PNG.
+async function toOptimized(file: File): Promise<{ file: File; format: 'webp' | 'jpeg' }> {
   const dataUrl = await readAsDataURL(file);
   const img = await loadImage(dataUrl);
   let w = img.naturalWidth || img.width;
@@ -67,14 +74,22 @@ async function toWebp(file: File): Promise<{ file: File; isWebp: boolean }> {
   canvas.height = h;
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Canvas-Context fehlt');
+  // Weisser Hintergrund fuer JPEG (kein Alpha) — verhindert schwarze Flaechen.
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, w, h);
   ctx.drawImage(img, 0, 0, w, h);
-  const blob: Blob = await new Promise((resolve, reject) =>
-    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('Bild-Umwandlung fehlgeschlagen'))), 'image/webp', QUALITY)
-  );
-  const isWebp = blob.type === 'image/webp';
+
+  // 1) WebP versuchen
+  let blob = await toBlobAsync(canvas, 'image/webp', QUALITY);
+  if (blob && blob.type === 'image/webp') {
+    const base = file.name.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]+/g, '-');
+    return { file: new File([blob], `${base}.webp`, { type: 'image/webp' }), format: 'webp' };
+  }
+  // 2) Fallback: explizit JPEG (klein), NICHT der PNG-Standard-Fallback
+  blob = await toBlobAsync(canvas, 'image/jpeg', JPEG_QUALITY);
+  if (!blob) throw new Error('Bild-Umwandlung fehlgeschlagen');
   const base = file.name.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]+/g, '-');
-  const ext = isWebp ? 'webp' : (blob.type.split('/')[1] || 'png');
-  return { file: new File([blob], `${base}.${ext}`, { type: blob.type }), isWebp };
+  return { file: new File([blob], `${base}.jpg`, { type: 'image/jpeg' }), format: 'jpeg' };
 }
 
 const tileBase: React.CSSProperties = {
@@ -126,7 +141,6 @@ const BulkPhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
   const [busy, setBusy] = React.useState(false);
   const [progress, setProgress] = React.useState('');
   const [error, setError] = React.useState('');
-  const [warn, setWarn] = React.useState('');
   const [savings, setSavings] = React.useState('');
   const [dragOver, setDragOver] = React.useState(false);
   const [activeId, setActiveId] = React.useState<string | null>(null);
@@ -148,17 +162,16 @@ const BulkPhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
     if (!files.length) return;
     setBusy(true);
     setError('');
-    setWarn('');
     setSavings('');
     try {
       const converted: File[] = [];
       let origBytes = 0;
       let newBytes = 0;
-      let webpFail = false;
+      let jpegFallback = false;
       for (let i = 0; i < files.length; i++) {
         setProgress(`Konvertiere ${i + 1}/${files.length} …`);
-        const { file, isWebp } = await toWebp(files[i]);
-        if (!isWebp) webpFail = true;
+        const { file, format } = await toOptimized(files[i]);
+        if (format === 'jpeg') jpegFallback = true;
         origBytes += files[i].size;
         newBytes += file.size;
         converted.push(file);
@@ -167,8 +180,8 @@ const BulkPhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
       const media = await cms.media.persist(converted.map((file) => ({ directory: '', file })));
       const newSrcs = media.map((m: any) => m.src).filter(Boolean);
       input.onChange([...value, ...newSrcs]);
-      setSavings(`${converted.length} Foto(s): ${fmt(origBytes)} → ${fmt(newBytes)}`);
-      if (webpFail) setWarn('Dein Browser hat kein WebP erzeugt (Fallback) — Bilder sind evtl. nicht optimal verkleinert. Bitte aktuelles Chrome/Safari nutzen.');
+      const fmtNote = jpegFallback ? ' (als JPEG — dein Browser kann kein WebP)' : ' (WebP)';
+      setSavings(`${converted.length} Foto(s): ${fmt(origBytes)} → ${fmt(newBytes)}${fmtNote}`);
     } catch (e: any) {
       setError(e?.message || 'Upload fehlgeschlagen');
     } finally {
@@ -256,10 +269,9 @@ const BulkPhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
       </div>
 
       {savings ? <div style={{ color: '#2d6a4f', fontSize: 12, marginTop: 8 }}>✓ {savings}</div> : null}
-      {warn ? <div style={{ color: '#a7672f', fontSize: 12, marginTop: 8 }}>{warn}</div> : null}
       {error ? <div style={{ color: '#b00', fontSize: 12, marginTop: 8 }}>{error}</div> : null}
       <div style={{ color: '#6e5e49', fontSize: 12, marginTop: 8 }}>
-        Mehrere Bilder gleichzeitig. Auto-Verkleinerung auf max. 2400px + WebP. Reihenfolge per Ziehen.
+        Mehrere Bilder gleichzeitig. Auto-Verkleinerung auf max. 2400px, gespeichert als WebP (oder JPEG, falls der Browser kein WebP kann). Reihenfolge per Ziehen.
       </div>
     </div>
   );
