@@ -95,6 +95,13 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
 - **Warum besser:** macht eine aktuell **fehlende** Funktion echt.
 - **Aufwand:** niedrig–mittel · **Capability-Lock:** schließt Lücke, nimmt nichts weg.
 
+### W6 · Karte höher/quadratischer im Reisen-Layout — (B, optische Abweichung)
+- **Status:** offen · **Zugeordnet:** Reisen-Vollausbau (David entscheidet im Kontext)
+- **Was:** die Reisen-Karte höher/quadratischer statt heute „1,5fr breit × 420px hoch".
+- **Warum besser:** wirkte im Prototyp sehr breit/flach; mehr Höhe könnte angenehmer sein.
+- **Aufwand:** sehr niedrig (CSS) · **Capability-Lock:** **bewusste Abweichung von Live** —
+  daher (B); nicht vorab im Prototyp ändern, erst im echten Reisen-Layout im Kontext entscheiden.
+
 ---
 
 ## 3. Bewusst weggelassen (Stand jetzt)
