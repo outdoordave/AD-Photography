@@ -17,6 +17,25 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-03 — Astro+Tina LIVE: erster grüner Deploy auf Cloudflare (Schritt 6 ✅)
+- **Vorschau online:** `https://aandd-photography-astro.pages.dev` (eigenes Pages-
+  Projekt, Branch `astro-umbau`; `main`/Live-Seite unberührt). Build grün:
+  `tinacms build` → `astro build` (11 Seiten, Stories DE/EN), 63 Dateien deployed.
+- **Cloudflare-Build-Hürden gelöst (langer Debug):**
+  - `tinacms build` läuft auf Cloudflare als **pkg-Binary**, die Custom-Env beim
+    Config-Laden nicht zuverlässig sieht → **clientId/branch fest verdrahtet**
+    (öffentlich, kein Secret), Token weiter nur aus `TINA_TOKEN`. (`0a34462`)
+  - **Build-Variablen** gehören in Cloudflare in den **Build**-Topf (nicht Runtime/
+    Bindings), Typ **Plaintext**; `NODE_VERSION=22`.
+  - **`tina/tina-lock.json` committet** (war gitignored) — Tina Cloud liest daraus
+    das Schema. (`56cd720`) + Whitespace-Touch zum Re-Index. (`d3a8b2c`)
+  - **Tina Cloud: „Path To Tina Folder = web"** (Monorepo-Unterordner) + Branch
+    `astro-umbau` aktiv **indexiert** (grüner Haken) — sonst „Branch not on TinaCloud".
+- Offen (Nutzer): `/admin`-Login live testen (Site-URL der Pages-Domain in Tina
+  Cloud ergänzen), Edit-Test, iPad-Test (Alexandra).
+- Commits: `0a34462`, `56cd720`, `d3a8b2c` (+ Sammel-Push `cac8b48` mit Inhalten/
+  Uploads vom Nutzer)
+
 ## 2026-06-03 — Tina-Cloud-Anbindung via ENV vorbereitet (Schritt 6, Teil A)
 - Vorab geprüft: Tina-Cloud-Free-Limits offiziell (tina.io/pricing + Repo-Media-Doku)
   → 2 Nutzer, unbegrenzte Dokumente, repo-basierte Bilder fallen NICHT unter das

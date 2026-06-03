@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-03** · letzter Commit `06ba334` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-03** · letzter Commit `d3a8b2c` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -10,10 +10,11 @@
 > Live-Code prüfen, nie aus Allgemeinwissen „geht nicht" behaupten) — beides in
 > `CLAUDE.md`; je eine Funktion in `CAPABILITIES.md`.
 >
-> 📍 **Gerade:** Schritt 6 (Deploy/Backend) läuft. Entscheidung **Tina Cloud Free**
-> getroffen, Free-Limits offiziell verifiziert (`SETUP-TinaCloud.md`). **Teil A
-> (ENV-Anbindung) gebaut & committet (`06ba334`).** Wartet auf David: Konto/
-> Repo-Verbindung/Tokens/Cloudflare-Deploy (Secrets macht David selbst).
+> 📍 **Gerade:** Schritt 6 (Deploy/Backend) **steht — erster grüner Deploy LIVE:**
+> `https://aandd-photography-astro.pages.dev` (Branch `astro-umbau`, `main`
+> unberührt). Tina Cloud Free verbunden, Branch indexiert, Build grün.
+> **Offen (Nutzer-Test):** `/admin`-Login live (Pages-URL noch in Tina Cloud
+> „Site URLs" ergänzen!), Edit-Test, iPad-Test (Alexandra).
 
 ---
 
@@ -133,18 +134,26 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   - **Lightbox + Filmstreifen** (`web/src/components/Lightbox.tsx`, Test `/proto-lightbox`)
     — Capability-Lock A–D, Safari-Abnahme „wie das Original". 29-Punkt-Soll-Liste
     in `CAPABILITIES.md` ✅.
-- **Schritt 6 (Deploy/Backend) — LÄUFT:** Entscheidung **Tina Cloud Free** (David:
-  Online-Editor fürs iPad nötig; Option „nur lokal" ausgeschlossen). Free-Limits
-  offiziell verifiziert (`SETUP-TinaCloud.md`): 2 Nutzer, unbegrenzte Dokumente,
-  repo-basierte Bilder NICHT unter 100-MB-Asset-Cap → dauerhaft gratis für 2 Personen.
-  - **Teil A gebaut (`06ba334`):** `web/tina/config.ts` liest clientId/token/branch
-    aus `process.env` (`TINA_CLIENT_ID`/`TINA_TOKEN`/`TINA_BRANCH`); ohne Werte
-    lokaler Modus. `web/.env.example` (nur Namen). `web/.gitignore` sperrt `.env*`.
-  - **Wartet auf David (Secrets selbst):** app.tina.io-Konto, Repo `outdoordave/
-    AD-Photography` verbinden (Branch `astro-umbau`), Token holen, Alexandra einladen,
-    Cloudflare-Branch-Deploy (Root `web`, Build `npm run build`, Output `dist`) + ENV setzen.
-  ⚠️ `tinacms build` (Produktion) braucht Tina-Cloud/Self-Host; `tinacms dev`
-  (lokal) läuft. Statischer `astro build` allein scheitert an den Tina-Client-Seiten.
+- **Schritt 6 (Deploy/Backend) — ✅ STEHT (erster grüner Deploy):**
+  **Vorschau live:** `https://aandd-photography-astro.pages.dev` (eigenes Pages-
+  Projekt, Branch `astro-umbau`; `main`/Live-Seite unberührt). Build grün:
+  `tinacms build` → `astro build` (11 Seiten), 63 Dateien deployed.
+  - **Backend:** Tina Cloud **Free** (David + Alexandra = 2/2 Nutzer), repo-basierte
+    Medien (nicht unter 100-MB-Cap) → dauerhaft gratis. Free-Limits in `SETUP-TinaCloud.md`.
+  - **Cloudflare Pages** `aandd-photography-astro`: Root `web`, Build `npm run build`,
+    Output `dist`, **Build-Variablen (Plaintext, Build-Topf!):** `TINA_CLIENT_ID`,
+    `TINA_TOKEN` (geheim), `TINA_BRANCH`, `NODE_VERSION=22`.
+  - **config.ts:** clientId/branch fest verdrahtet (öffentlich) — Cloudflare-`tinacms
+    build` läuft als **pkg-Binary**, die Custom-Env beim Config-Laden nicht zuverlässig
+    sieht; Token bleibt geheim aus `TINA_TOKEN`. (`0a34462`)
+  - **`tina/tina-lock.json` committet** (Tina Cloud liest daraus das Schema). (`56cd720`)
+  - **Tina Cloud Configuration:** „Path To Tina Folder = **web**" (Monorepo-Unterordner),
+    Branch `astro-umbau` aktiv **indexiert** (grüner Haken). „separate content repo" = AUS.
+  - **Offen (Nutzer-Test):** `/admin`-Login live — dafür die **Pages-URL noch in Tina
+    Cloud „Site URLs" ergänzen**; dann Edit-Test + iPad-Test (Alexandra).
+  ⚠️ Stolperfallen dokumentiert: Build-Variablen müssen in den **Build**-Topf (nicht
+  Runtime/Bindings); Branch muss in Tina Cloud **indexiert** sein, sonst „Branch not
+  on TinaCloud"; bei Unterordner zwingend „Path To Tina Folder".
 - **Bestätigte Bau-Reihenfolge (nach Schritt 6):** Stories online → Gear → Über uns
   → Kontakt (W5) → Reisen-Vollausbau (C1–C7) → Galerie/Alben (nutzt Lightbox) →
   Startseite → Cutover (Branch→`main`) → Nach-dem-Umbau-Audit.
