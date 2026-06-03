@@ -44,7 +44,7 @@ wenn sie konkret drankommt (Schritt A). Grobe Risiko-Einschätzung aus `STATUS.m
 |---|---|---|---|---|
 | 1 | Stories (Liste + Reader, DE/EN, YouTube) | 🟡 | 1 | ✅ Schritt 4 freigegeben (2026-06-02) — Sektion unten. Tina-Anbindung (Schritt 5) folgt. |
 | 2 | Galerie / Alben (3 Sortiermodi, Auto-Diashow) | 🟡/🔴 | 2 | ⬜ offen |
-| 3 | Lightbox + Filmstreifen (Snap, Gesten, Marker) | 🔴 | 2 | ⬜ offen |
+| 3 | Lightbox + Filmstreifen (Snap, Gesten, Marker) | 🔴 | 2 | 🧪✅ **Prototyp auf Safari abgenommen (2026-06-02)** — „wie das Original". Sektion unten. Vollausbau offen. |
 | 4 | Reise-Stationen (Snap-Bahn + IntersectionObserver) | 🔴 | 3 | 🧪 Prototyp ok (`/proto-karte`); Vollausbau offen |
 | 5 | MapLibre-Karte (Stile, flyTo, Sprach-Labels) | 🔴🔴 | 3 | 🧪 Prototyp ok (`/proto-karte`); Vollausbau offen. **Befund: `projectUSA/Alaska/ensureXY` sind toter Legacy-Code (s. `ANALYSE-Reisen.md`) — nicht portieren.** |
 
@@ -278,10 +278,10 @@ Neubau (Prototyp): `web/src/components/Lightbox.tsx` + `web/src/pages/proto-ligh
 | 26–28 | Responsive + `dvh` | ⏳ | CSS 1:1 übernommen; **Mobile/Querformat/Safari-URL-Leiste = Nutzer-Test** |
 | 29 | Expand-Affordanz | ⬜ | gehört zur Bildquelle, nicht zur Lightbox-Insel (separat) |
 
-**Ehrlich offen / nur durch Nutzer prüfbar:** das **Filmstreifen-Wisch-Gefühl auf
-Safari** (ein-/mehrfach-Flick, Einrasten, zentrierter Marker), echtes Touch/Trackpad,
-Querformat/`dvh`, Umlauf-Wrap. Genau die heikle Safari-`scrollLeft`/Snap-Sache ist im
-Code 1:1 nachgebaut, aber im Chromium-Test nicht beweisbar.
+**Safari-Abnahme (2026-06-02):** Nutzer hat den Prototyp auf **Safari** Seite-an-Seite
+getestet — **Filmstreifen-Wischen/Einrasten/zentrierter Marker „einwandfrei, wie das
+Original"**. Damit sind die ⚠️/⏳-Punkte (echtes Touch/Trackpad, Safari-`scrollLeft`/
+Snap, `dvh`/Querformat) **bestätigt**. (Umlauf-Wrap im Vollausbau noch final mitprüfen.)
 
-- [ ] Nutzer hat Seite-an-Seite verglichen (**bes. Filmstreifen-Wischen auf Safari**) und
-      „Prototyp bestanden" bestätigt am: ____
+- [x] Nutzer hat Seite-an-Seite verglichen (**bes. Filmstreifen-Wischen auf Safari**) und
+      **„Prototyp bestanden"** bestätigt am: **2026-06-02** — „wie das Original".
