@@ -172,6 +172,29 @@ section { padding: 84px 0; }
 .yt-embed { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; margin-top: 16px; }
 .yt-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; border-radius: var(--radius-sm); }
 
+/* ============ GEAR / EQUIPMENT (schmaler Listenstil) — 1:1 aus index.html ============ */
+.gear-list { max-width: 620px; margin: 0 auto; }
+.gear-cat { margin-bottom: 40px; }
+.gear-cat h3 {
+  font-family: var(--font-display); font-size: var(--fs-ui); font-weight: var(--fw-semibold);
+  letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent);
+  padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid var(--c-line);
+}
+.gear-row {
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 11px 2px; border-bottom: 1px solid rgba(176,138,79,0.12);
+}
+.gear-row:last-child { border-bottom: none; }
+.gear-row .gr-name { font-size: var(--fs-body); font-weight: var(--fw-semibold); color: var(--c-ink); }
+.gear-row a.gr-name { color: var(--c-ink); text-decoration: none; transition: color var(--dur-base) var(--ease); }
+.gear-row a.gr-name:hover { color: var(--c-accent); }
+.gear-row a.gr-name::after { content: " ↗"; font-size: var(--fs-label); color: var(--c-accent); opacity: 0.7; }
+.gear-row .gr-brand { font-size: var(--fs-label); color: var(--c-ink-soft); margin-left: auto; white-space: nowrap; }
+@media (max-width: 620px) {
+  .gear-row { flex-wrap: wrap; gap: 2px 12px; }
+  .gear-row .gr-brand { margin-left: 0; flex-basis: 100%; }
+}
+
 /* ---------- Responsive (aus index.html) ---------- */
 @media (max-width: 860px) {
   .stories-grid { grid-template-columns: 1fr; gap: 20px; }

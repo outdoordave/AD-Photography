@@ -1,0 +1,33 @@
+---
+// Gear-Liste 1:1 aus index.html (renderGear): pro Kategorie eine Ueberschrift,
+// pro Item Name links + Marke rechts. Name mit gueltigem Link -> <a> (neuer Tab,
+// rel=noopener) + " ↗" (per CSS ::after); ohne Link -> schlichter <span>.
+import { groupGear, safeUrl, type GearItem } from '../lib/gear';
+
+interface Props {
+  items: GearItem[];
+  lang?: 'de' | 'en';
+}
+const { items, lang = 'de' } = Astro.props;
+const groups = groupGear(items);
+---
+<div class="gear-list">
+  {groups.map((g) => (
+    <div class="gear-cat">
+      <h3>{lang === 'en' ? g.en : g.de}</h3>
+      {g.items.map((it) => {
+        const href = safeUrl(it.link);
+        return (
+          <div class="gear-row">
+            {href ? (
+              <a class="gr-name" href={href} target="_blank" rel="noopener">{it.name}</a>
+            ) : (
+              <span class="gr-name">{it.name}</span>
+            )}
+            <span class="gr-brand">{it.brand}</span>
+          </div>
+        );
+      })}
+    </div>
+  ))}
+</div>

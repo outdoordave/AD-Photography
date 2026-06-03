@@ -1,0 +1,70 @@
+{
+  "items": [
+    {
+      "name": "Sony A7 IV",
+      "brand": "Sony",
+      "category": "cameras",
+      "link": "https://www.sony.de/interchangeable-lens-cameras/products/ilce-7m4"
+    },
+    {
+      "name": "Tamron 28-75mm f/2.8",
+      "brand": "Tamron",
+      "category": "lenses",
+      "link": "https://www.tamron.eu/de-DE/p/db2ec492-cf19-4919-9bc2-5535499dfce8/28-75mm-f28-di-iii-vxd-g2"
+    },
+    {
+      "name": "Tamron 150-500mm f/5-6.7",
+      "brand": "Tamron",
+      "category": "lenses",
+      "link": "https://www.tamron.eu/de-DE/p/f07fcebd-783f-4d2c-9b90-638cabb264b9/150-500mm-f5-67-di-iii-vc-vxd"
+    },
+    {
+      "name": "DJI Air 2S",
+      "brand": "DJI",
+      "category": "drones",
+      "link": "https://www.dji.com/de/support/product/air-2s"
+    },
+    {
+      "name": "DJI Osmo Action 4",
+      "brand": "DJI",
+      "category": "drones",
+      "link": "https://www.dji.com/de/osmo-action-4?site=brandsite&from=landing_page"
+    },
+    {
+      "name": "iPhone 15 Pro Max",
+      "brand": "Apple",
+      "category": "phone",
+      "link": ""
+    },
+    {
+      "name": "Travel Tripod Aluminium",
+      "brand": "Peak Design",
+      "category": "tripod",
+      "link": "https://www.peakdesign.com/eu/products/travel-tripod?Tripod+Type=Aluminum"
+    },
+    {
+      "name": "Southwest 2400 (Schwarz) tall",
+      "brand": "Hyperlite Mountain Gear",
+      "category": "backpack",
+      "link": "https://hyperlitemountaingear.com/products/southwest"
+    },
+    {
+      "name": "WhisperLite Universal",
+      "brand": "MSR",
+      "category": "cooking",
+      "link": "https://cascadedesigns.com/de-eu/products/whisperlite-universal"
+    },
+    {
+      "name": "Alpha Pot 2L",
+      "brand": "Sea to Summit",
+      "category": "cooking",
+      "link": "https://seatosummit.eu/de/products/frontier-ultralight-pot?variant=54962072813947"
+    },
+    {
+      "name": "Frontier Pfanne 8\"",
+      "brand": "Sea to Summit",
+      "category": "cooking",
+      "link": "https://seatosummit.eu/de/products/frontier-ultralight-pan"
+    }
+  ]
+}

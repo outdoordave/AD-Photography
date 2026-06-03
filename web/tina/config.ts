@@ -72,6 +72,94 @@ export default defineConfig({
           { type: 'string', name: 'body_en', label: 'Body (EN, Markdown)', ui: { component: 'textarea' } },
         ],
       },
+      // --- Equipment / Gear: Liste (gear.json) ---
+      {
+        name: 'gear',
+        label: '🎒 Equipment – Liste',
+        path: 'src/data',
+        format: 'json',
+        match: { include: 'gear' }, // nur src/data/gear.json
+        ui: {
+          // Eine einzige Datei -> kein Anlegen/Loeschen ueber Tina.
+          allowedActions: { create: false, delete: false },
+        },
+        fields: [
+          {
+            type: 'object',
+            name: 'items',
+            label: 'Ausrüstung',
+            list: true,
+            ui: {
+              itemProps: (item: any) => ({
+                label: item?.name
+                  ? `${item.name}${item.brand ? ' — ' + item.brand : ''}`
+                  : 'Neues Ausrüstungsteil',
+              }),
+            },
+            fields: [
+              { type: 'string', name: 'name', label: 'Name', required: true, description: 'z. B. Sony A7 IV' },
+              { type: 'string', name: 'brand', label: 'Marke', description: 'z. B. Sony' },
+              {
+                type: 'string',
+                name: 'category',
+                label: 'Kategorie',
+                description: 'Bestimmt, unter welcher Überschrift das Teil erscheint.',
+                // Dropdown statt Freitext: kein Vertippen, keine erfundenen Kategorien.
+                options: [
+                  { value: 'cameras', label: 'Kameras (Cameras)' },
+                  { value: 'lenses', label: 'Objektive (Lenses)' },
+                  { value: 'drones', label: 'Drohne & Action (Drone & Action)' },
+                  { value: 'phone', label: 'Smartphone (Phone)' },
+                  { value: 'tripod', label: 'Stativ (Tripod)' },
+                  { value: 'backpack', label: 'Rucksack (Backpack)' },
+                  { value: 'cooking', label: 'Kochen & Camp (Cooking & Camp)' },
+                ],
+              },
+              { type: 'string', name: 'link', label: 'Link (optional)', description: 'Volle URL (https://…). Leer lassen = kein Link.' },
+            ],
+          },
+        ],
+      },
+      // --- Equipment / Gear: Seitentexte (gear-text.json), DE/EN ---
+      {
+        name: 'gear_text',
+        label: '🎒 Equipment – Seitentext',
+        path: 'src/data',
+        format: 'json',
+        match: { include: 'gear-text' }, // nur src/data/gear-text.json
+        ui: {
+          allowedActions: { create: false, delete: false },
+        },
+        fields: [
+          {
+            type: 'object',
+            name: 'kicker',
+            label: 'Mini-Titel (Kicker)',
+            fields: [
+              { type: 'string', name: 'de', label: 'Deutsch' },
+              { type: 'string', name: 'en', label: 'Englisch' },
+            ],
+          },
+          {
+            type: 'object',
+            name: 'title',
+            label: 'Titel',
+            fields: [
+              { type: 'string', name: 'de', label: 'Deutsch' },
+              { type: 'string', name: 'en', label: 'Englisch' },
+            ],
+          },
+          {
+            type: 'object',
+            name: 'intro',
+            label: 'Beschreibung',
+            fields: [
+              { type: 'string', name: 'de', label: 'Deutsch', ui: { component: 'textarea' } },
+              { type: 'string', name: 'en', label: 'Englisch', ui: { component: 'textarea' } },
+            ],
+          },
+        ],
+      },
       // --- PROTOTYP: isolierte Test-Collection fuer das Ortssuche-Feld ---
       {
         name: 'proto_ort',

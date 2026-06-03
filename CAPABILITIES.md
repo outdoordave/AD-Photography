@@ -285,3 +285,51 @@ Snap, `dvh`/Querformat) **bestätigt**. (Umlauf-Wrap im Vollausbau noch final mi
 
 - [x] Nutzer hat Seite-an-Seite verglichen (**bes. Filmstreifen-Wischen auf Safari**) und
       **„Prototyp bestanden"** bestätigt am: **2026-06-02** — „wie das Original".
+
+---
+
+# Gear / Equipment (Stufe 2) — Capability-Lock
+
+**Schritt 0 (Live-Wahrheit):** Quelle = echter Code: `index.html` (`GEAR_CATS`,
+`buildGearFromItems`, `loadGear`, `renderGear`, CSS Z. 701–721), `content/gear.json`,
+`content/text-gear.json`, `admin/config.yml` (equipment + gear_text).
+**Schritt B:** Liste vom Nutzer bestätigt am **2026-06-03** („Liste passt, nichts vermisst");
+Entscheidung: `category` als **Dropdown** (7 feste Werte) statt Freitext.
+
+## Eingefrorene Soll-Liste (21 Punkte) + Abhak-Vergleich (Schritt D, 2026-06-03)
+
+| # | Fähigkeit | Status | Notiz (neue Umsetzung) |
+|---|---|---|---|
+| 1 | Datenquelle flache Item-Liste (name/brand/category/link) | ✅ | `src/data/gear.json` (1:1 migriert) |
+| 2 | 7 feste Kategorien mit DE/EN-Label | ✅ | `src/lib/gear.ts` `GEAR_CATS` 1:1 |
+| 3 | Kategorie-Reihenfolge = Anzeige (nicht alphabetisch) | ✅ | HTML verifiziert: Cameras→…→Cooking |
+| 4 | Leere Kategorien ausgeblendet | ✅ | `groupGear` filtert `length>0` |
+| 5 | Items in gear.json-Reihenfolge | ✅ | keine Sortierung |
+| 6 | Unbekannte/fehlende category fällt raus | ✅ | exakter Filter — **+ Dropdown verhindert Tippfehler** |
+| 7 | Liste max-width 620px, zentriert | ✅ | CSS 1:1 in `global.css` |
+| 8 | `<h3>` Akzent/UPPERCASE/letter-spacing/Unterstrich | ✅ | CSS 1:1 |
+| 9 | Name links, Marke rechts (rechtsbündig) | ✅ | verifiziert |
+| 10 | Letzte Zeile pro Kategorie: keine Trennlinie | ✅ | `:last-child` 1:1 |
+| 11 | Name mit Link → `<a>` neuer Tab/`rel=noopener` + „↗" | ✅ | HTML + CSS `::after` verifiziert |
+| 12 | Name ohne Link → schlichter `<span>`, kein Pfeil | ✅ | iPhone (leerer Link) verifiziert |
+| 13 | Marke immer sichtbar (nowrap) | ✅ | CSS 1:1 |
+| 14 | Mobile <620px: Zeile umbricht, Marke eigene Zeile | ✅ | Media-Query 1:1 |
+| 15 | Kicker/Titel/Intro aus `gear-text.json` (DE/EN) | ✅ | `src/data/gear-text.json` + Seiten |
+| 16 | Sinnvolle Defaults | ✅ | 1:1 aus `text-gear.json` migriert |
+| 17 | DE/EN-Umschaltung (Labels + Kopf-Texte) | ✅ | `/gear` (DE) + `/en/gear` (EN), `lang`-Prop |
+| 18 | Sicherheit: HTML-Escape + nur http(s)-Links | ✅ | Astro-Auto-Escape (`&quot;`/`&amp;`) + `safeUrl()` |
+| 19 | Fallback wenn gear.json nicht ladbar | ⚠️ | **Anders/entfällt:** Astro backt Daten beim Build statisch ein → kein Runtime-Fetch, kein Fehlerfall. Sichtbares Ergebnis identisch (Daten immer da). |
+| 20 | CMS: Gear-Liste (name/brand/category/link) | ✅ | Tina-Collection `gear` (Kategorie = Dropdown) |
+| 21 | CMS: Seitentext kicker/title/intro DE/EN | ✅ | Tina-Collection `gear_text` |
+
+**Bewusst NICHT 1:1 (Architektur, mit Nutzer abgestimmt):**
+- In-Page-Admin-Overlay (Edit-Stifte, „+ Neuer Eintrag") → ersetzt durch Tina-Editor.
+- **Hinweis (⚠️ klein):** Gear nutzt statischen JSON-Import, **keine** Tina-In-Editor-
+  Live-Vorschau wie Stories. Editieren funktioniert (Tina → Save → Commit → Rebuild →
+  live); Besucher-Ergebnis identisch. Live-Vorschau später optional nachrüstbar.
+
+**CMS-Ideen mitgenommen:** C6/C7 (einheitliche Hilfetexte/Hints an allen Feldern:
+Name „z. B. Sony A7 IV", Link „Volle URL (https://…)…", Kategorie-Beschreibung).
+C5 (Foto-Feld) **nicht relevant** — Gear hat keine Bilder.
+
+- [ ] Nutzer hat Gear Seite-an-Seite (Live vs. `…-astro.pages.dev/gear`) verglichen und abgenommen.

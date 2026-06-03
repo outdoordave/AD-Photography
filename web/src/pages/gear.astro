@@ -1,0 +1,20 @@
+---
+// Equipment-Seite DE ('/gear'). Aufbau 1:1 wie #page-gear in index.html:
+// page-title (Kicker/Titel/Intro aus gear-text.json) + gruppierte Gear-Liste.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GearList from '../components/GearList.astro';
+import gear from '../data/gear.json';
+import text from '../data/gear-text.json';
+---
+<BaseLayout title="Equipment — Wide & Wild" lang="de">
+  <section>
+    <div class="wrap">
+      <div class="page-title">
+        <div class="kicker">{text.kicker.de}</div>
+        <h1>{text.title.de}</h1>
+        <p>{text.intro.de}</p>
+      </div>
+      <GearList items={gear.items} lang="de" />
+    </div>
+  </section>
+</BaseLayout>

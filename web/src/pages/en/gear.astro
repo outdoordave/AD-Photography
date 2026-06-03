@@ -1,0 +1,19 @@
+---
+// Equipment page EN ('/en/gear'). Same structure as the DE page, English labels.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GearList from '../../components/GearList.astro';
+import gear from '../../data/gear.json';
+import text from '../../data/gear-text.json';
+---
+<BaseLayout title="Gear — Wide & Wild" lang="en">
+  <section>
+    <div class="wrap">
+      <div class="page-title">
+        <div class="kicker">{text.kicker.en}</div>
+        <h1>{text.title.en}</h1>
+        <p>{text.intro.en}</p>
+      </div>
+      <GearList items={gear.items} lang="en" />
+    </div>
+  </section>
+</BaseLayout>
