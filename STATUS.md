@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-03** · letzter Commit `d3a8b2c` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-03** · letzter Commit `efb565e` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -154,9 +154,13 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   ⚠️ Stolperfallen dokumentiert: Build-Variablen müssen in den **Build**-Topf (nicht
   Runtime/Bindings); Branch muss in Tina Cloud **indexiert** sein, sonst „Branch not
   on TinaCloud"; bei Unterordner zwingend „Path To Tina Folder".
-- **Bestätigte Bau-Reihenfolge (nach Schritt 6):** Stories online → Gear → Über uns
-  → Kontakt (W5) → Reisen-Vollausbau (C1–C7) → Galerie/Alben (nutzt Lightbox) →
-  Startseite → Cutover (Branch→`main`) → Nach-dem-Umbau-Audit.
+- **Bestätigte Bau-Reihenfolge (nach Schritt 6):** Stories ✅ → **Gear ✅ (gebaut,
+  wartet auf Nutzer-Abnahme)** → Über uns → Kontakt (W5) → Reisen-Vollausbau (C1–C7)
+  → Galerie/Alben (nutzt Lightbox) → Startseite → Cutover (Branch→`main`) → Audit.
+- **Gear (Stufe 2) gebaut** (`efb565e`): `/gear` + `/en/gear`, Daten in `src/data/`,
+  Logik in `src/lib/gear.ts`, `GearList.astro`, `.gear-*`-CSS 1:1. Tina-Collections
+  `gear` (Kategorie-Dropdown) + `gear_text`. Capability-Lock D: 21/21 ✅, 1× ⚠️
+  (Runtime-Fallback entfällt, da statisch eingebacken). **Offen:** Seite-an-Seite-Abnahme.
 - **Planungs-/Analyse-Dokumente im Repo:** `BAUPLAN-Gesamt.md` (Alben/Lightbox-Analyse
   + Gesamtplan), `ANALYSE-Reisen.md` (MapLibre/Stationen/Nominatim; projectUSA/Alaska/
   ensureXY = toter Legacy-Code), `IDEEN.md` (C1–C7 CMS, W1–W6 Website, „Nach dem Umbau"
