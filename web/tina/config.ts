@@ -1,5 +1,6 @@
 import { defineConfig } from 'tinacms';
 import BulkPhotoField from './fields/BulkPhotoField';
+import LocationSearchField from './fields/LocationSearchField';
 
 // LOKALER Modus (clientId/token leer): Tina laeuft ohne Tina-Cloud und liest/
 // schreibt direkt die Markdown-Dateien in src/content/stories. Bilder bleiben
@@ -59,6 +60,23 @@ export default defineConfig({
           { type: 'string', name: 'category_en', label: 'Category (EN)' },
           { type: 'string', name: 'excerpt_en', label: 'Excerpt (EN)', ui: { component: 'textarea' } },
           { type: 'string', name: 'body_en', label: 'Body (EN, Markdown)', ui: { component: 'textarea' } },
+        ],
+      },
+      // --- PROTOTYP: isolierte Test-Collection fuer das Ortssuche-Feld ---
+      {
+        name: 'proto_ort',
+        label: 'PROTOTYP · Ortssuche',
+        path: 'src/content/proto',
+        format: 'md',
+        fields: [
+          { type: 'string', name: 'name', label: 'Name (Test)', isTitle: true, required: true },
+          {
+            type: 'string',
+            name: 'location',
+            label: '📍 Ort auf der Karte',
+            // Speichert GeoJSON-Point-String wie Sveltias widget:map (pickStopCoord-kompatibel)
+            ui: { component: LocationSearchField },
+          },
         ],
       },
     ],
