@@ -10,8 +10,9 @@ dist/
 
 # Tina (generierte Artefakte)
 tina/__generated__/
-tina/tina-lock.json
 public/admin/
+# tina-lock.json MUSS committet werden: Tina Cloud liest daraus das Schema,
+# um den Branch zu indexieren (sonst „No branches found" / Branch not indexed).
 
 # Lokaler Upload-Zugang (Symlink -> ../../uploads) nur fuer die Vorschau.
 # Produktive Upload-Auslieferung wird in Schritt 6 (Deploy) entschieden.
