@@ -17,6 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-02 22:40 — WebP auf jedem Browser via jSquash (Foto-Upload-Feld)
+- Nach der neuen Regel zuerst Live-Wahrheit geprüft: Sveltia macht WebP auf Safari
+  via **jSquash**; `admin/config.yml` = webp/Q85/Breite 2400. 1:1 nachgebaut.
+- jSquash (@jsquash/webp) als primärer Encoder → WebP in jedem Browser inkl. Safari.
+  WASM per `locateFile` vom CDN (unpkg) geladen (im Tina-Bundle 404te sie). Fallback:
+  natives canvas-WebP → JPEG. Mount-Selbsttest; im Editor verifiziert.
+- Betroffen: `web/tina/fields/BulkPhotoField.tsx`, `web/package.json` (+@jsquash/webp)
+- Commit: `ebea477`
+
 ## 2026-06-02 22:10 — Regel „Live-Wahrheit zuerst" verankert (nur Doku)
 - Neue verbindliche Regel: vor jedem Neubau UND vor jeder Machbarkeits-Aussage
   zuerst die echte Live-Umsetzung prüfen (Funktion + Inhalt; inkl. wie Sveltia es

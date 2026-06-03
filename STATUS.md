@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-02 22:10** · letzter Commit `511d300` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-02 22:40** · letzter Commit `ebea477` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -114,9 +114,11 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   als „Schritt 4 freigegeben" dokumentiert.
 - **Eigenes Tina-Galerie-Feld** (`web/tina/fields/BulkPhotoField.tsx`): Mehrfach-
   Upload (Datei-Button / Drag-Ablage / ganzer Ordner), Auto-Verkleinern auf
-  2400px, dnd-kit-Sortierung. **WebP-Encoding offen:** Safari kann kein natives
-  canvas-WebP → aktuell JPEG-Fallback; **freigegeben & ausstehend: jSquash (WASM)
-  einbauen** → WebP auf jedem Browser (wie Sveltia es macht). **NÄCHSTER Bau-Schritt.**
+  Breite ≤2400px @Q85 (exakt wie `admin/config.yml`), dnd-kit-Sortierung.
+  **WebP via jSquash (WASM, WASM vom CDN/unpkg) → WebP auf JEDEM Browser inkl.
+  Safari** (wie Sveltia); Fallback: natives canvas-WebP → JPEG (nie PNG). Im
+  Editor verifiziert (Selbsttest „jSquash bereit"); **Safari-Praxistest durch
+  Nutzer noch ausstehend.**
 - **Danach: Schritt 6** (Bauplan) — kostenloser Cloudflare-Vorschau-Deploy +
   Backend-Entscheidung (Tina Cloud Free / self-host / nur lokal editieren).
   ⚠️ `tinacms build` (Produktion) braucht Tina-Cloud/Self-Host; `tinacms dev`
