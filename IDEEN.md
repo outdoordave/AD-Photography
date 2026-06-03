@@ -108,6 +108,83 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
 
 ---
 
+## 4. Nach dem Umbau (geparkt — Status: alle Punkte `offen`)
+
+> **Bewusst KEINE aktuellen Aufgaben.** Nur geparkt, damit sie nicht untergehen.
+> Anzugehen, **wenn der Umbau steht** — dann aus dem **dann aktuellen Code**
+> (echter Befund statt Vermutung). Nichts hiervon jetzt umsetzen.
+
+### 4.1 Aufräumen / Ordnung
+- **Status:** offen · **„Inventur nach dem Umzug"**
+- Tote Code-Reste entfernen — u. a. der bereits gefundene **Legacy-Karten-Code
+  `projectUSA`/`projectAlaska`/`ensureXY`/`USA_PATH`/`ALASKA_PATH`** (s. `ANALYSE-Reisen.md`),
+  auskommentierter **Decap-Fallback**, **ungenutzte Bild-Assets** in `/uploads`.
+- Prüfen, ob **weitere ungenutzte Funktionen/Dateien** aus der alten `index.html`
+  übrig sind (erst sinnvoll, wenn alles portiert ist).
+
+### 4.2 Stabilität
+- **Status:** offen
+- **Automatischer Check beim Deploy:** baut die Seite sauber, laden die wichtigsten
+  Seiten (Start, eine Story, Reisen, Galerie)? → verhindert, dass ein kaputter
+  Commit still live geht.
+- **CAPABILITIES-Prüfpunkte dauerhaft festhalten** (s. `CAPABILITIES.md`), damit
+  spätere Änderungen nicht unbemerkt eine Funktion brechen (z. B. „Karten-/Wisch-
+  Timing", „mdToHtml-Sonderfälle").
+
+### 4.3 Datensicherheit
+- **Status:** offen
+- Klären, ob ein **Backup der Bilder (`/uploads`) AUSSERHALB von GitHub** existiert
+  (zweiter Ort: externe Platte/Cloud). Git hält die Historie, aber bei einem
+  Foto-Projekt schadet ein zweites, unabhängiges Backup nicht.
+
+### 4.4 Datenschutz — **PRÜFEN / mit Fachkundigem klären**
+> ⚠️ **KEINE Rechtsberatung — nur Hinweise.** Standort Deutschland → DSGVO +
+> Impressumspflicht. Im Zweifel Fachkundige hinzuziehen.
+
+**Inhaltliche Punkte (prüfen):**
+- **Externe CDNs, die Besucher-IPs an Dritte übertragen könnten:** Google Fonts
+  (Fraunces/Mulish), MapLibre/unpkg, jSquash. Prüfen, ob man **Fonts und ggf. Libs
+  SELBST hostet** (Astro kann Fonts lokal bündeln). *Google Fonts direkt von Google
+  war in DE schon abmahngefährdet.*
+- **Impressum + Datenschutzerklärung** vorhanden/aktuell? (in DE praktisch Pflicht
+  für öffentliche Seiten).
+- Wenn das **Kontaktformular (W5)** künftig echt Daten verschickt: datenschutz­konform
+  gestalten (wohin gehen die Daten? Einwilligung nötig?).
+- **Hinweis:** Die **Nominatim-Ortssuche** ist **nur im CMS** aktiv (betrifft Besucher
+  nicht) → datenschutzrechtlich **unkritischer** als die öffentlich ladenden CDNs.
+
+**Technische Selbstprüfung (kostenlos, kannst du selbst machen):**
+- **Webbkoll** (`dataskydd.net/webbkoll`) — zeigt, welche externen Verbindungen/
+  Dritt-Dienste die Seite aufbaut (Google Fonts, CDNs …) + grundlegende Datenschutz-Aspekte.
+- **Cookie-/Tracker-Scanner** (z. B. **CookieYes**) — zeigt gesetzte Cookies und
+  eingebundene Tracker.
+- **Zweck:** schwarz auf weiß sehen, was die öffentliche Seite an Dritte überträgt,
+  **bevor** man rechtlich prüft.
+
+**Rechtliche Prüfung:**
+- **Generatoren** für Impressum + Datenschutzerklärung wie **eRecht24**
+  (`e-recht24.de`) — für kleine/private Seiten oft ausreichend, teils kostenlos.
+- Für **Rechtssicherheit** (v. a. bei kommerzieller Absicht): **Fachanwalt für
+  IT-/Medienrecht** oder spezialisierter Datenschutz-Dienstleister. Kein Online-Tool
+  ersetzt das.
+
+**Wichtiger Grundsatz (Klarstellung):**
+- Die **Domain-Endung** (`.de` vs `.com` vs andere) ändert an den Pflichten
+  **praktisch NICHTS.** Maßgeblich sind **Standort des Betreibers (Deutschland)** und
+  **Publikum (EU)** → DSGVO + Impressumspflicht gelten **unabhängig von der Endung.**
+  Eine `.com`-Domain umgeht deutsches Recht **NICHT.**
+- Der **einzige** relevante Unterschied einer eigenen Domain (egal welche Endung)
+  ggü. `.pages.dev` ist **TECHNISCH:** Zugang zu **Cloudflares Bild-Optimierung**
+  (srcset/Handy-Bilder, **W3**) — das gehört zur **Bild-Pipeline**, nicht zum Datenschutz.
+
+### 4.5 Empfehlung
+- **Status:** offen
+- Wenn der Umbau steht: einen gezielten **„Aufräumen + Stabilität + Datenschutz"-Audit**
+  aus dem **dann aktuellen Code** machen (echter Befund statt Vermutung) — und die
+  Datenschutz-Punkte mit Fachkundigem absichern.
+
+---
+
 _Quelle der Ideen: tiefe Live-Code-Analyse (siehe `ANALYSE-Reisen.md`) + Bau von
 Stufe 1 (Stories) und dem Foto-Upload-Feld. Pflege: Status pro Punkt aktualisieren,
 sobald David ihn im jeweiligen Schritt freigibt/umsetzt._
