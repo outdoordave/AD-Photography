@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-03 — Gear: zwei CMS-Einträge zusammengelegt + Live-Vorschau
+- Auf Nutzer-Wunsch: die zwei Gear-Menüpunkte (Liste + Seitentext) zu **einem**
+  Eintrag „🎒 Equipment" zusammengeführt (`gear.json` enthält jetzt kicker/title/
+  intro + items); `gear-text.json` + `GearList.astro` entfernt.
+- **Tina-Live-Vorschau wie Stories**: `GearContent.tsx` (React-Insel, `useTina` +
+  `tinaField`), Seiten holen Daten über den Tina-Client, Router → `/gear`.
+- Lokal verifiziert (`npm run dev`): `/gear` + `/en/gear` rendern 1:1 mit
+  `data-tina-field`. `tina-lock.json` neu generiert. `index.html` unberührt.
+- Commit: `146d120`
+
 ## 2026-06-03 — Gear/Equipment 1:1 portiert (Stufe 2, Capability-Lock C+D)
 - **Sektion 2 der Bau-Reihenfolge gebaut** (nach Stories). Live-Analyse (Schritt 0+A)
   → Nutzer bestätigt (B) → 1:1 nachgebaut (C) → Abhak-Vergleich (D): **21/21 ✅**,

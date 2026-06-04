@@ -324,9 +324,13 @@ Entscheidung: `category` als **Dropdown** (7 feste Werte) statt Freitext.
 
 **Bewusst NICHT 1:1 (Architektur, mit Nutzer abgestimmt):**
 - In-Page-Admin-Overlay (Edit-Stifte, „+ Neuer Eintrag") → ersetzt durch Tina-Editor.
-- **Hinweis (⚠️ klein):** Gear nutzt statischen JSON-Import, **keine** Tina-In-Editor-
-  Live-Vorschau wie Stories. Editieren funktioniert (Tina → Save → Commit → Rebuild →
-  live); Besucher-Ergebnis identisch. Live-Vorschau später optional nachrüstbar.
+
+**Nachgerüstet auf Nutzer-Wunsch (2026-06-03):**
+- **Ein** CMS-Menüpunkt „🎒 Equipment" (Texte + Liste in `gear.json`) statt zwei.
+- **Tina-Live-Vorschau wie Stories**: `GearContent.tsx` (React-Insel, `useTina` +
+  `tinaField`/Klick-ins-Feld), Seiten holen Daten über den Tina-Client, Router → `/gear`.
+  (Der frühere ⚠️-Punkt „keine Live-Vorschau" ist damit erledigt.) Besucher-Ergebnis
+  unverändert (Capability-A-konform). Commit `146d120`.
 
 **CMS-Ideen mitgenommen:** C6/C7 (einheitliche Hilfetexte/Hints an allen Feldern:
 Name „z. B. Sony A7 IV", Link „Volle URL (https://…)…", Kategorie-Beschreibung).

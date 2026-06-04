@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-03** · letzter Commit `efb565e` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-03** · letzter Commit `146d120` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -157,10 +157,12 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 - **Bestätigte Bau-Reihenfolge (nach Schritt 6):** Stories ✅ → **Gear ✅ (gebaut,
   wartet auf Nutzer-Abnahme)** → Über uns → Kontakt (W5) → Reisen-Vollausbau (C1–C7)
   → Galerie/Alben (nutzt Lightbox) → Startseite → Cutover (Branch→`main`) → Audit.
-- **Gear (Stufe 2) gebaut** (`efb565e`): `/gear` + `/en/gear`, Daten in `src/data/`,
-  Logik in `src/lib/gear.ts`, `GearList.astro`, `.gear-*`-CSS 1:1. Tina-Collections
-  `gear` (Kategorie-Dropdown) + `gear_text`. Capability-Lock D: 21/21 ✅, 1× ⚠️
-  (Runtime-Fallback entfällt, da statisch eingebacken). **Offen:** Seite-an-Seite-Abnahme.
+- **Gear (Stufe 2) gebaut** (`efb565e`, dann `146d120`): `/gear` + `/en/gear`,
+  `src/lib/gear.ts`, `.gear-*`-CSS 1:1. Capability-Lock D: 21/21 ✅. **Nachgerüstet
+  (`146d120`):** beide CMS-Einträge zu **einem** „🎒 Equipment" (`gear.json`:
+  kicker/title/intro + items) zusammengelegt + **Tina-Live-Vorschau wie Stories**
+  (`GearContent.tsx`, `useTina`/`tinaField`, Router → `/gear`). **Offen:** Seite-an-
+  Seite-Abnahme durch Nutzer.
 - **Planungs-/Analyse-Dokumente im Repo:** `BAUPLAN-Gesamt.md` (Alben/Lightbox-Analyse
   + Gesamtplan), `ANALYSE-Reisen.md` (MapLibre/Stationen/Nominatim; projectUSA/Alaska/
   ensureXY = toter Legacy-Code), `IDEEN.md` (C1–C7 CMS, W1–W6 Website, „Nach dem Umbau"
