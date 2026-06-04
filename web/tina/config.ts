@@ -321,7 +321,9 @@ export default defineConfig({
         label: '🧭 Reisen',
         path: 'src/data/trips',
         format: 'json',
-        ui: { router: () => '/trips' },
+        // Kein Router -> Klick auf eine Reise oeffnet direkt das Formular (Reisen
+        // hat keine In-Page-Live-Vorschau; mit Router landet man in der leeren
+        // Visual-Editing-Ansicht "nothing to edit").
         fields: [
           {
             type: 'string', name: 'editor_language', label: 'Sprache',
@@ -366,7 +368,7 @@ export default defineConfig({
         path: 'src/data',
         format: 'json',
         match: { include: 'trips-settings' },
-        ui: { allowedActions: { create: false, delete: false }, router: () => '/trips' },
+        ui: { allowedActions: { create: false, delete: false } },
         fields: [
           {
             type: 'string', name: 'editor_language', label: 'Sprache',
