@@ -1,0 +1,200 @@
+{
+  "order": 3,
+  "title": {
+    "de": "Süden 2025 · Atlanta → Austin",
+    "en": "South 2025 · Atlanta → Austin"
+  },
+  "date": "2025-09-01",
+  "meta": {
+    "de": "September 2025 · der amerikanische Süden",
+    "en": "September 2025 · the American South"
+  },
+  "summary": {
+    "de": "Eine Reise durch den Süden: von Atlanta über Savannah und die Strände Floridas bis hinüber nach New Orleans und Austin.",
+    "en": "A journey through the South: from Atlanta via Savannah and Florida's beaches over to New Orleans and Austin."
+  },
+  "upcoming": false,
+  "stops": [
+    {
+      "name": "Atlanta",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-84.39,33.75]}",
+      "title": {
+        "de": "Atlanta",
+        "en": "Atlanta"
+      },
+      "date": {
+        "de": "Tag 1",
+        "en": "Day 1"
+      },
+      "text": {
+        "de": "Start im Süden mit dem ersten Buc-ee's-Stopp.",
+        "en": "Start in the South with the first Buc-ee's stop."
+      },
+      "photo": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    },
+    {
+      "name": "Savannah",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-81.09,32.08]}",
+      "title": {
+        "de": "Savannah",
+        "en": "Savannah"
+      },
+      "date": {
+        "de": "Tag 2",
+        "en": "Day 2"
+      },
+      "text": {
+        "de": "Die historische Altstadt unter spanischem Moos.",
+        "en": "The historic old town beneath Spanish moss."
+      },
+      "photo": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    },
+    {
+      "name": "Miami",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-80.19,25.76]}",
+      "title": {
+        "de": "Miami",
+        "en": "Miami"
+      },
+      "date": {
+        "de": "Tag 3–4",
+        "en": "Day 3–4"
+      },
+      "text": {
+        "de": "Art-déco, Strände und das pulsierende South Beach.",
+        "en": "Art deco, beaches and vibrant South Beach."
+      },
+      "photo": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    },
+    {
+      "name": "Key West",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-81.78,24.56]}",
+      "title": {
+        "de": "Key West",
+        "en": "Key West"
+      },
+      "date": {
+        "de": "Tag 5",
+        "en": "Day 5"
+      },
+      "text": {
+        "de": "Der südlichste Punkt der USA über den Overseas Highway.",
+        "en": "The southernmost point of the USA via the Overseas Highway."
+      },
+      "photo": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    },
+    {
+      "name": "Everglades",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-80.9,25.29]}",
+      "title": {
+        "de": "Everglades",
+        "en": "Everglades"
+      },
+      "date": {
+        "de": "Tag 6",
+        "en": "Day 6"
+      },
+      "text": {
+        "de": "Alligatoren und Airboats im subtropischen Sumpf.",
+        "en": "Alligators and airboats in the subtropical swamp."
+      },
+      "photo": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    },
+    {
+      "name": "Tampa",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-82.46,27.95]}",
+      "title": {
+        "de": "Tampa",
+        "en": "Tampa"
+      },
+      "date": {
+        "de": "Tag 7",
+        "en": "Day 7"
+      },
+      "text": {
+        "de": "Golfküste und die Dolphin Research Center.",
+        "en": "Gulf coast and the Dolphin Research Center."
+      },
+      "photo": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    },
+    {
+      "name": "Destin",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-86.5,30.39]}",
+      "title": {
+        "de": "Destin",
+        "en": "Destin"
+      },
+      "date": {
+        "de": "Tag 8",
+        "en": "Day 8"
+      },
+      "text": {
+        "de": "Türkisblaues Wasser am Golf von Mexiko.",
+        "en": "Turquoise water on the Gulf of Mexico."
+      },
+      "photo": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    },
+    {
+      "name": "New Orleans",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-90.07,29.95]}",
+      "title": {
+        "de": "New Orleans",
+        "en": "New Orleans"
+      },
+      "date": {
+        "de": "Tag 9–10",
+        "en": "Day 9–10"
+      },
+      "text": {
+        "de": "Jazz, French Quarter und kreolische Küche.",
+        "en": "Jazz, the French Quarter and Creole cuisine."
+      },
+      "photo": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    },
+    {
+      "name": "Austin",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-97.74,30.27]}",
+      "title": {
+        "de": "Austin",
+        "en": "Austin"
+      },
+      "date": {
+        "de": "Tag 11",
+        "en": "Day 11"
+      },
+      "text": {
+        "de": "Endstation Texas mit Livemusik und dem YETI-Flagshipstore.",
+        "en": "Final stop Texas with live music and the YETI flagship store."
+      },
+      "photo": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    }
+  ],
+  "gallery": []
+}

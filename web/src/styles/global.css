@@ -240,13 +240,75 @@ section { padding: 84px 0; }
 .btn.dark { background: var(--c-ink); }
 .btn.dark:hover { background: #000; }
 
+/* ============ REISEN / TRIPS — 1:1 aus index.html ============ */
+.trip-tabs { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 36px 0 30px; }
+.trip-tabs button { background: transparent; border: 1px solid var(--c-line); color: var(--c-ink-soft); padding: 10px 24px; border-radius: var(--radius-lg); font-size: var(--fs-ui); font-weight: var(--fw-bold); letter-spacing: var(--tracking-slight); cursor: pointer; transition: all var(--dur-base) var(--ease); }
+.trip-tabs button:hover { border-color: var(--c-accent); color: var(--c-accent); }
+.trip-tabs button.active { background: var(--c-accent); border-color: var(--c-accent); color: #fff; }
+.trip-tabs { scrollbar-width: thin; scrollbar-color: var(--c-ink-soft) var(--c-line); }
+.trip-tabs::-webkit-scrollbar { height: 6px; }
+.trip-tabs::-webkit-scrollbar-track { background: var(--c-line); border-radius: 3px; }
+.trip-tabs::-webkit-scrollbar-thumb { background: var(--c-ink-soft); border-radius: 3px; }
+.trip-tabs::-webkit-scrollbar-thumb:hover { background: var(--c-ink); }
+
+.trip-summary { max-width: 720px; margin: 0 auto 10px; text-align: center; }
+.trip-summary .meta { font-size: var(--fs-label); letter-spacing: var(--tracking-slight); color: var(--c-accent); font-weight: var(--fw-bold); text-transform: uppercase; margin-bottom: 10px; }
+.trip-summary p { color: var(--c-ink-soft); font-size: var(--fs-lead); }
+
+.map-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; align-items: start; }
+.map-box { border-radius: var(--radius-sm); overflow: hidden; position: relative; height: 420px; }
+.map-box .maplibregl-map { height: 100%; border-radius: var(--radius-sm); z-index: 1; }
+.map-box .maplibregl-canvas-container { z-index: 1; }
+.map-box .maplibregl-control-container { z-index: 3; }
+.maplibregl-popup-content { background: var(--c-dark); color: var(--c-dark-ink); border-radius: var(--radius-sm); box-shadow: 0 4px 16px rgba(0,0,0,.4); border: none; padding: 10px 14px; font-family: var(--font-body); }
+.maplibregl-popup-tip { border-top-color: var(--c-dark) !important; border-bottom-color: var(--c-dark) !important; }
+.maplibregl-popup-close-button { color: #f0c9a8; font-size: var(--fs-lead); padding: 2px 6px; }
+.ww-popup-name { font-size: var(--fs-ui); font-weight: var(--fw-bold); color: #f0c9a8; margin: 0 0 2px; }
+.ww-popup-date { font-size: var(--fs-label); color: #9a8c76; margin: 0; }
+
+.trip-detail-wrap { position: relative; min-width: 0; overflow: hidden; }
+.trip-detail { background: var(--c-bg-alt); border: 1px solid var(--c-line); border-radius: var(--radius-sm); min-height: 320px; position: relative; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.trip-detail::-webkit-scrollbar { display: none; }
+.trip-slide { flex: 0 0 100%; box-sizing: border-box; padding: 28px; scroll-snap-align: center; }
+.trip-detail .step { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 8px; }
+.trip-detail h3 { font-family: var(--font-display); font-size: var(--fs-title-lg); font-weight: var(--fw-medium); margin-bottom: 8px; }
+.trip-detail .date { font-size: var(--fs-label); color: var(--c-ink-soft); margin-bottom: 16px; }
+.trip-detail .ph { aspect-ratio: var(--ar-media); border-radius: var(--radius-sm); margin-bottom: 16px; }
+.trip-slide .ww-photo { cursor: pointer; }
+.trip-detail p { font-size: var(--fs-ui); color: var(--c-ink-soft); line-height: 1.7; }
+.stop-arrow { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; width: 34px; height: 34px; cursor: pointer; border: none; background: transparent; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.6), 0 0 2px rgba(0,0,0,.55); font-size: var(--fs-title-lg); line-height: 1; display: flex; align-items: center; justify-content: center; padding-bottom: 3px; transition: opacity var(--dur-base) var(--ease); }
+.stop-arrow-prev { left: 8px; }
+.stop-arrow-next { right: 8px; }
+.stop-arrow::before { content: ""; position: absolute; inset: -5px; }
+.stop-arrow:hover { opacity: .65; }
+
+.ww-station-photos { column-count: 2; column-gap: 8px; margin-top: 12px; }
+.ww-station-photos img { width: 100%; border-radius: var(--radius-sm); margin-bottom: 8px; display: block; break-inside: avoid; cursor: pointer; }
+.ww-station-video { width: 100%; border-radius: var(--radius-sm); display: block; margin-top: 12px; }
+
+.trip-stoplist { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.trip-stoplist button { background: var(--c-bg); border: 1px solid var(--c-line); border-radius: var(--radius-lg); padding: 6px 14px; font-size: var(--fs-label); font-weight: var(--fw-semibold); cursor: pointer; color: var(--c-ink-soft); transition: all var(--dur-base) var(--ease); }
+.trip-stoplist button:hover, .trip-stoplist button.active { background: var(--c-accent); color: #fff; border-color: var(--c-accent); }
+
+.trip-album-link { margin: 24px 0; padding: 16px 20px; background: var(--c-bg-alt); border-left: 3px solid var(--c-accent); border-radius: var(--radius-sm); display: inline-flex; align-items: center; gap: 12px; cursor: pointer; transition: background var(--dur-fast) var(--ease); }
+.trip-album-link:hover { background: var(--c-line); }
+.trip-album-link .lbl { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); }
+.trip-album-link .arrow { color: var(--c-accent); font-weight: var(--fw-bold); }
+
 /* ---------- Responsive (aus index.html) ---------- */
 @media (max-width: 860px) {
   .stories-grid { grid-template-columns: 1fr; gap: 20px; }
   .about-grid { grid-template-columns: 1fr; }
   .contact-grid { grid-template-columns: 1fr; gap: 30px; }
+  .map-layout { grid-template-columns: 1fr; }
+  .trip-tabs { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 14px; }
+  .trip-tabs button { flex: 0 0 auto; white-space: nowrap; }
+  .trip-stoplist { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 6px; }
+  .trip-stoplist button { flex: 0 0 auto; white-space: nowrap; }
   section { padding: 56px 0; }
 }
+@media (max-width: 700px) { .map-box { height: 300px; } }
+@media (max-width: 480px) { .ww-station-photos { column-count: 1; } }
 @media (max-width: 480px) {
   .wrap { padding: 0 18px; }
 }

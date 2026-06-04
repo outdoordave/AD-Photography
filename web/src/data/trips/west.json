@@ -1,0 +1,200 @@
+{
+  "order": 2,
+  "title": {
+    "de": "Westen 2024 · SF-Runde",
+    "en": "West 2024 · SF loop"
+  },
+  "date": "2024-06-01",
+  "meta": {
+    "de": "2024 · ~5.500 km · die große Westküsten-Runde",
+    "en": "2024 · ~3,400 mi · the grand West Coast loop"
+  },
+  "summary": {
+    "de": "Die ultimative Westküsten-Schleife: von San Francisco über LA und Las Vegas zu den großen Nationalparks — Zion, Yellowstone, Yosemite — und zurück.",
+    "en": "The ultimate West Coast loop: from San Francisco via LA and Las Vegas to the great national parks — Zion, Yellowstone, Yosemite — and back."
+  },
+  "upcoming": false,
+  "stops": [
+    {
+      "name": "San Francisco",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-122.42,37.77]}",
+      "title": {
+        "de": "San Francisco",
+        "en": "San Francisco"
+      },
+      "date": {
+        "de": "Tag 1–2",
+        "en": "Day 1–2"
+      },
+      "text": {
+        "de": "Start der großen Runde in der Stadt am Pazifik.",
+        "en": "Start of the grand loop in the city by the Pacific."
+      },
+      "photo": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    },
+    {
+      "name": "Morro Bay",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-120.85,35.37]}",
+      "title": {
+        "de": "Morro Bay",
+        "en": "Morro Bay"
+      },
+      "date": {
+        "de": "Tag 3",
+        "en": "Day 3"
+      },
+      "text": {
+        "de": "Ein Stopp an der Küste mit den spielenden Ottern und dem markanten Felsen.",
+        "en": "A stop on the coast with playing otters and the striking rock."
+      },
+      "photo": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    },
+    {
+      "name": "Los Angeles",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-118.24,34.05]}",
+      "title": {
+        "de": "Los Angeles",
+        "en": "Los Angeles"
+      },
+      "date": {
+        "de": "Tag 4–5",
+        "en": "Day 4–5"
+      },
+      "text": {
+        "de": "Die Stadt der Engel auf dem Weg nach Süden.",
+        "en": "The City of Angels on the way south."
+      },
+      "photo": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    },
+    {
+      "name": "San Diego",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-117.16,32.72]}",
+      "title": {
+        "de": "San Diego",
+        "en": "San Diego"
+      },
+      "date": {
+        "de": "Tag 6",
+        "en": "Day 6"
+      },
+      "text": {
+        "de": "Der südlichste Punkt der Reise, bevor es ostwärts ging.",
+        "en": "The southernmost point of the trip before heading east."
+      },
+      "photo": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    },
+    {
+      "name": "Las Vegas",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-115.14,36.17]}",
+      "title": {
+        "de": "Las Vegas",
+        "en": "Las Vegas"
+      },
+      "date": {
+        "de": "Tag 7–8",
+        "en": "Day 7–8"
+      },
+      "text": {
+        "de": "Zwischenstopp in der Wüstenmetropole.",
+        "en": "A stopover in the desert metropolis."
+      },
+      "photo": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    },
+    {
+      "name": "Zion",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-113.03,37.3]}",
+      "title": {
+        "de": "Zion",
+        "en": "Zion"
+      },
+      "date": {
+        "de": "Tag 9",
+        "en": "Day 9"
+      },
+      "text": {
+        "de": "Die roten Felswände des Zion National Park.",
+        "en": "The red cliffs of Zion National Park."
+      },
+      "photo": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    },
+    {
+      "name": "Yellowstone",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-110.59,44.43]}",
+      "title": {
+        "de": "Yellowstone",
+        "en": "Yellowstone"
+      },
+      "date": {
+        "de": "Tag 10–12",
+        "en": "Day 10–12"
+      },
+      "text": {
+        "de": "Geysire, Bisons und heiße Quellen im ältesten Nationalpark der Welt.",
+        "en": "Geysers, bison and hot springs in the world's oldest national park."
+      },
+      "photo": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    },
+    {
+      "name": "Lake Tahoe",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-120.03,39.1]}",
+      "title": {
+        "de": "Lake Tahoe",
+        "en": "Lake Tahoe"
+      },
+      "date": {
+        "de": "Tag 13",
+        "en": "Day 13"
+      },
+      "text": {
+        "de": "Der kristallklare Bergsee in der Sierra Nevada.",
+        "en": "The crystal-clear mountain lake in the Sierra Nevada."
+      },
+      "photo": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    },
+    {
+      "name": "Yosemite",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-119.54,37.87]}",
+      "title": {
+        "de": "Yosemite",
+        "en": "Yosemite"
+      },
+      "date": {
+        "de": "Tag 14–15",
+        "en": "Day 14–15"
+      },
+      "text": {
+        "de": "Tunnel View, Half Dome und die Geisterstadt Bodie als krönender Abschluss.",
+        "en": "Tunnel View, Half Dome and the ghost town of Bodie as the crowning finale."
+      },
+      "photo": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    }
+  ],
+  "gallery": []
+}
