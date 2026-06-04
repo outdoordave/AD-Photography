@@ -315,6 +315,80 @@ export default defineConfig({
           { type: 'object', name: 'form_note', label: 'Formular — Hinweis darunter', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
         ],
       },
+      // --- Reisen: jede Reise ein Eintrag (Mehrfach-Collection wie Stories) ---
+      {
+        name: 'reisen',
+        label: '🧭 Reisen',
+        path: 'src/data/trips',
+        format: 'json',
+        ui: { router: () => '/trips' },
+        fields: [
+          {
+            type: 'string', name: 'editor_language', label: 'Sprache',
+            description: 'Schalter: nur Deutsch — oder Deutsch + Englisch. Gilt für alle Felder. (Nur Anzeige im Editor.)',
+            ui: { component: EnglishToggle },
+          },
+          { type: 'number', name: 'order', label: 'Reihenfolge (Tab)', description: 'Kleinere Zahl = weiter links in den Reise-Tabs.' },
+          { type: 'object', name: 'title', label: 'Reise-Titel (Tab)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'string', name: 'date', label: 'Datum (YYYY-MM-DD)', description: 'Für Sortierung/Meta.' },
+          { type: 'object', name: 'meta', label: 'Meta-Zeile (Datum · km · …)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'summary', label: 'Zusammenfassung', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'boolean', name: 'upcoming', label: 'Kommende Reise? (zeigt „bald ✦")' },
+          {
+            type: 'object', name: 'stops', label: 'Stationen', list: true,
+            ui: { itemProps: (i: any) => ({ label: i?.name || 'Neue Station' }) },
+            fields: [
+              { type: 'string', name: 'name', label: 'Name (kurz – für Marker & Liste)', required: true, description: 'z. B. San Francisco' },
+              { type: 'string', name: 'location', label: '📍 Ort auf der Karte', description: 'Suchen & auf der Karte feinjustieren.', ui: { component: LocationSearchField } },
+              { type: 'object', name: 'title', label: 'Stations-Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'date', label: 'Datum/Zeitraum', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'text', label: 'Text', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'image', name: 'photo', label: 'Titelbild (Auto-WebP)', ui: { component: SinglePhotoField } },
+              { type: 'image', name: 'photos', label: 'Weitere Fotos (Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
+              { type: 'string', name: 'video', label: 'Video-Loop (optional)', description: 'Pfad zu /uploads/… — Video vorher lokal komprimieren (HandBrake/CapCut).' },
+              { type: 'string', name: 'youtube', label: 'YouTube-URL (optional)' },
+            ],
+          },
+          {
+            type: 'object', name: 'gallery', label: '„Reisefazit"-Galerie (optional)', list: true,
+            ui: { itemProps: (i: any) => ({ label: i?.image ? i.image.split('/').pop() : 'Neues Bild' }) },
+            fields: [
+              { type: 'image', name: 'image', label: 'Bild (Auto-WebP)', ui: { component: SinglePhotoField } },
+              { type: 'object', name: 'caption', label: 'Bildunterschrift', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+            ],
+          },
+        ],
+      },
+      // --- Reisen: Seiten-Einstellungen (Texte + Karten-Stil) ---
+      {
+        name: 'reisen_settings',
+        label: '🧭 Reisen – Einstellungen',
+        path: 'src/data',
+        format: 'json',
+        match: { include: 'trips-settings' },
+        ui: { allowedActions: { create: false, delete: false }, router: () => '/trips' },
+        fields: [
+          {
+            type: 'string', name: 'editor_language', label: 'Sprache',
+            description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
+            ui: { component: EnglishToggle },
+          },
+          { type: 'object', name: 'kicker', label: 'Mini-Titel (Kicker)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'title', label: 'Seiten-Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'intro', label: 'Einleitung', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          {
+            type: 'string', name: 'map_style', label: 'Karten-Stil',
+            description: 'Stil der MapLibre-Karte (OpenFreeMap).',
+            options: [
+              { value: 'liberty', label: 'Liberty (Standard)' },
+              { value: 'positron', label: 'Positron (hell/minimal)' },
+              { value: 'bright', label: 'Bright' },
+              { value: 'fiord', label: 'Fiord (gedeckt)' },
+              { value: 'dark', label: 'Dark' },
+            ],
+          },
+        ],
+      },
       // --- PROTOTYP: isolierte Test-Collection fuer das Ortssuche-Feld ---
       {
         name: 'proto_ort',

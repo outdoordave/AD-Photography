@@ -1,9 +1,10 @@
 ---
-// Reisen DE ('/trips'). Stufe 5a: Reisen statisch aus src/data/trips/ geladen +
-// in der TripsContent-Insel gerendert. (Tina-Anbindung folgt in Stufe 5b/5c.)
+// Reisen DE ('/trips'). Reisen statisch aus src/data/trips/ (via Tina-Collection
+// „🧭 Reisen" editierbar); Seitentexte + Karten-Stil aus trips-settings.json.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TripsContent from '../components/TripsContent.tsx';
-import { sortTrips, type RawTrip } from '../lib/trips';
+import { sortTrips, tl, type RawTrip } from '../lib/trips';
+import settings from '../data/trips-settings.json';
 
 const modules = import.meta.glob('../data/trips/*.json', { eager: true });
 const raw = Object.entries(modules).map(([path, mod]) => ({
@@ -11,15 +12,16 @@ const raw = Object.entries(modules).map(([path, mod]) => ({
   data: ((mod as any).default || mod) as RawTrip,
 }));
 const trips = sortTrips(raw);
-const mapStyle = 'liberty';
+const s = settings as any;
+const mapStyle = s.map_style || 'liberty';
 ---
-<BaseLayout title="Unsere Roadtrips — Wide & Wild" lang="de">
+<BaseLayout title={`${tl(s.title, 'de') || 'Reisen'} — Wide & Wild`} lang="de">
   <section>
     <div class="wrap">
       <div class="page-title">
-        <div class="kicker">Reisen</div>
-        <h1>Unsere Roadtrips</h1>
-        <p>Tausende Kilometer, unzählige Stopps. Tippe auf eine Station, um zu sehen, was wir dort erlebt haben.</p>
+        <div class="kicker">{tl(s.kicker, 'de')}</div>
+        <h1>{tl(s.title, 'de')}</h1>
+        <p>{tl(s.intro, 'de')}</p>
       </div>
       <TripsContent client:load trips={trips} lang="de" mapStyle={mapStyle} />
     </div>

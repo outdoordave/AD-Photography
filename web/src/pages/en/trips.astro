@@ -2,7 +2,8 @@
 // Trips page EN ('/en/trips'). Same data as the DE page, English labels.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TripsContent from '../../components/TripsContent.tsx';
-import { sortTrips, type RawTrip } from '../../lib/trips';
+import { sortTrips, tl, type RawTrip } from '../../lib/trips';
+import settings from '../../data/trips-settings.json';
 
 const modules = import.meta.glob('../../data/trips/*.json', { eager: true });
 const raw = Object.entries(modules).map(([path, mod]) => ({
@@ -10,15 +11,16 @@ const raw = Object.entries(modules).map(([path, mod]) => ({
   data: ((mod as any).default || mod) as RawTrip,
 }));
 const trips = sortTrips(raw);
-const mapStyle = 'liberty';
+const s = settings as any;
+const mapStyle = s.map_style || 'liberty';
 ---
-<BaseLayout title="Our road trips — Wide & Wild" lang="en">
+<BaseLayout title={`${tl(s.title, 'en') || 'Trips'} — Wide & Wild`} lang="en">
   <section>
     <div class="wrap">
       <div class="page-title">
-        <div class="kicker">Trips</div>
-        <h1>Our road trips</h1>
-        <p>Thousands of miles, countless stops. Tap a station to see what we got up to there.</p>
+        <div class="kicker">{tl(s.kicker, 'en')}</div>
+        <h1>{tl(s.title, 'en')}</h1>
+        <p>{tl(s.intro, 'en')}</p>
       </div>
       <TripsContent client:load trips={trips} lang="en" mapStyle={mapStyle} />
     </div>
