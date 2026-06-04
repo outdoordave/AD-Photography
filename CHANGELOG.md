@@ -17,6 +17,13 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-04 — Über uns CMS: auto-wachsende Felder + globaler Englisch-Schalter
+- Felder wachsen mit dem Text (auto-resize); Klapp-Konstrukt entfernt (behebt zu
+  kleine Felder + nicht-scrollbares „Nirvana"). Neuer Apple-Schalter oben
+  (`EnglishToggle`/`englishStore`): Standard NUR Deutsch; an → englische Felder
+  global. Reiner Editor-Schalter (schreibt nichts in den Inhalt). Besucher-Seite
+  1:1. Commit: `f948196`
+
 ## 2026-06-04 — Über uns CMS: DE/EN-Felder als inline aufklappbare Dropdowns
 - Auf Nutzer-Wunsch: DE/EN-Felder klappen jetzt **inline auf** (Dropdown) statt eine
   Tina-**Unterseite** zu öffnen. Neues `BilingualField`/`BilingualTextField`
