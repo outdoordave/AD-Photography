@@ -1,10 +1,17 @@
 {
   "editor_language": "de",
-  "name": { "de": "Firsts", "en": "" },
-  "note": { "de": "Erstes Album, mit einigen unserer Werke", "en": "" },
+  "name": "Firsts",
+  "name_en": "",
+  "note": {
+    "de": "Erstes Album, mit einigen unserer Werke",
+    "en": ""
+  },
   "date": "2024-01-01",
   "linked_trip": "",
-  "pin": { "highlight": false, "highlight_order": 1 },
+  "pin": {
+    "highlight": false,
+    "highlight_order": 1
+  },
   "photos": [
     "/uploads/a7406420.jpg",
     "/uploads/img_5916-3.jpg",

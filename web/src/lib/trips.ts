@@ -18,7 +18,8 @@ export type RawStop = {
 };
 export type RawTrip = {
   order?: number;
-  title?: Bi;
+  title?: string;
+  title_en?: string;
   date?: string;
   meta?: Bi;
   summary?: Bi;
@@ -43,6 +44,12 @@ export function pickCoord(location: string | undefined, which: 'lat' | 'lon'): n
 export function tl(b: Bi | undefined, lang: Lang): string {
   if (!b) return '';
   return lang === 'en' ? b.en || b.de || '' : b.de || '';
+}
+
+// Reise-Anzeigename (title = DE/isTitle, title_en = optionale EN-Variante).
+export function tripTitle(d: { title?: string; title_en?: string } | undefined, lang: Lang): string {
+  if (!d) return '';
+  return lang === 'en' ? d.title_en || d.title || '' : d.title || '';
 }
 
 export type ViewStop = {

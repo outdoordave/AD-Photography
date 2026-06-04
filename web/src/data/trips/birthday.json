@@ -1,9 +1,7 @@
 {
   "order": 1,
-  "title": {
-    "de": "Geburtstag 2023 · West-Runde",
-    "en": "Birthday 2023 · West loop"
-  },
+  "title": "Geburtstag 2023 · West-Runde",
+  "title_en": "Birthday 2023 · West loop",
   "date": "2023-09-01",
   "meta": {
     "de": "September–Oktober 2023 · 18 Tage · der große Westen",

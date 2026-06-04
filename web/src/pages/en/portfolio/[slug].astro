@@ -13,7 +13,7 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const res = await client.queries.alben({ relativePath: `${slug}.json` });
 const data = res.data.alben as any;
-const name = (data?.name?.en || data?.name?.de) || 'Album';
+const name = (data?.name_en || data?.name) || 'Album';
 ---
 <BaseLayout title={`${name} — Wide & Wild`} lang="en">
   <section>

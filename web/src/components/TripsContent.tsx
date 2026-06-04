@@ -4,7 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { useTina, tinaField } from 'tinacms/dist/react';
 import Lightbox, { type LbPhoto } from './Lightbox';
 import { normalizePath, wwYouTubeEmbed } from './../lib/stories';
-import { viewStops, tl, sortTrips, type RawTrip, type Lang, type ViewStop } from '../lib/trips';
+import { viewStops, tl, tripTitle, sortTrips, type RawTrip, type Lang, type ViewStop } from '../lib/trips';
 
 // Reisen-Insel (Vollausbau, 1:1 aus index.html): Reise-Tabs, Reise-Kopf, MapLibre-
 // Karte (Marker/flyTo/fitBounds/Sprach-Labels), Stationen-Snap-Bahn + Observer +
@@ -277,7 +277,7 @@ export default function TripsContent(props: Props) {
     <>
       <div className="trip-tabs" id="tripTabs">
         {trips.map((tp, i) => {
-          let label = tl(tp.data.title, lang) || tp.slug;
+          let label = tripTitle(tp.data, lang) || tp.slug;
           if (tp.data.upcoming && label.indexOf('✦') === -1) label += lang === 'de' ? ' · bald ✦' : ' · soon ✦';
           return (
             <button key={tp.slug} className={i === tripIdx ? 'active' : ''} data-tina-field={tinaField(tp.data as any, 'title')} onClick={() => setTripIdx(i)}>{label}</button>

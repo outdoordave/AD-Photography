@@ -149,7 +149,7 @@ export default function GalleryContent(props: Props) {
   const [mode, setMode] = React.useState<GalleryMode>(visible[0] || 'album');
   const [lb, setLb] = React.useState<LbState>(null);
 
-  const albName = (a: { data: RawAlbum }) => tl(a.data.name, lang);
+  const albName = (a: { data: RawAlbum }) => (lang === 'en' ? a.data.name_en || a.data.name : a.data.name) || '';
 
   function openAlbumLightbox(photos: ViewPhoto[], start: number, name: string) {
     if (!photos.length) return;

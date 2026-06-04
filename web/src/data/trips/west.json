@@ -1,9 +1,7 @@
 {
   "order": 2,
-  "title": {
-    "de": "Westen 2024 · SF-Runde",
-    "en": "West 2024 · SF loop"
-  },
+  "title": "Westen 2024 · SF-Runde",
+  "title_en": "West 2024 · SF loop",
   "date": "2024-06-01",
   "meta": {
     "de": "2024 · ~5.500 km · die große Westküsten-Runde",

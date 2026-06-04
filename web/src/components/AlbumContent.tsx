@@ -17,7 +17,7 @@ export default function AlbumContent(props: Props) {
   const alb = ((data as any)?.alben || {}) as RawAlbum;
 
   const photos = React.useMemo(() => albumPhotos(alb), [alb]);
-  const name = tl(alb.name, lang);
+  const name = (lang === 'en' ? alb.name_en || alb.name : alb.name) || '';
   const note = tl(alb.note, lang);
   const [lb, setLb] = React.useState<{ photos: LbPhoto[]; start: number } | null>(null);
 

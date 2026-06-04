@@ -1,9 +1,7 @@
 {
   "order": 3,
-  "title": {
-    "de": "Süden 2025 · Atlanta → Austin",
-    "en": "South 2025 · Atlanta → Austin"
-  },
+  "title": "Süden 2025 · Atlanta → Austin",
+  "title_en": "South 2025 · Atlanta → Austin",
   "date": "2025-09-01",
   "meta": {
     "de": "September 2025 · der amerikanische Süden",

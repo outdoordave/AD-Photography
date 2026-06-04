@@ -6,7 +6,8 @@ export type Lang = 'de' | 'en';
 export type Bi = { de?: string; en?: string };
 
 export type RawAlbum = {
-  name?: Bi;
+  name?: string;
+  name_en?: string;
   note?: Bi;
   date?: string;
   linked_trip?: string;
@@ -22,6 +23,12 @@ export type GalleryMode = 'album' | 'chronological' | 'alphabetical';
 export function tl(b: Bi | undefined, lang: Lang): string {
   if (!b) return '';
   return lang === 'en' ? b.en || b.de || '' : b.de || '';
+}
+
+// Album-Anzeigename (Name = DE/isTitle, name_en = optionale EN-Variante).
+export function albName(d: { name?: string; name_en?: string } | undefined, lang: Lang): string {
+  if (!d) return '';
+  return lang === 'en' ? d.name_en || d.name || '' : d.name || '';
 }
 
 // Stabile Pseudo-Farbpalette aus einem String (Foto-Pfad) -> Platzhalter ohne Bildladung.
@@ -66,7 +73,7 @@ export function linkedAlbumsByTrip(data: any): Record<string, { slug: string; na
     const node = e && e.node;
     const lt = node && node.linked_trip;
     if (typeof lt === 'string' && lt && node._sys && node._sys.filename) {
-      out[lt] = { slug: node._sys.filename, name: (node.name || {}) as Bi };
+      out[lt] = { slug: node._sys.filename, name: { de: node.name || '', en: node.name_en || '' } };
     }
   }
   return out;
