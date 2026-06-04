@@ -1,0 +1,74 @@
+---
+// Globale Navigation (1:1 aus index.html <header><nav>): Sticky Header, Logo→Home,
+// 7 Links (aktiver markiert), DE/EN-Umschalter (echte /en-Routen statt JS), Burger
+// (mobil). Stories-Link nur wenn showStories. In BaseLayout auf jeder Seite.
+interface Props {
+  lang: 'de' | 'en';
+  pathname: string;
+  logo?: string;
+  showStories?: boolean;
+}
+const { lang, pathname, logo = '', showStories = false } = Astro.props;
+
+const NAV = [
+  { key: 'home', de: 'Start', en: 'Home', href: '/' },
+  { key: 'portfolio', de: 'Portfolio', en: 'Portfolio', href: '/portfolio' },
+  { key: 'stories', de: 'Stories', en: 'Stories', href: '/stories', storiesOnly: true },
+  { key: 'trips', de: 'Reisen', en: 'Trips', href: '/trips' },
+  { key: 'gear', de: 'Equipment', en: 'Gear', href: '/gear' },
+  { key: 'about', de: 'Über uns', en: 'About', href: '/about' },
+  { key: 'contact', de: 'Kontakt', en: 'Contact', href: '/contact' },
+];
+
+const isEn = lang === 'en';
+// Pfad ohne trailing Slash; '/en'-Präfix abtrennen -> „bare" Pfad (sprachneutral).
+const path = pathname.replace(/\/+$/, '') || '/';
+const bare = isEn ? (path.replace(/^\/en/, '') || '/') : path;
+const section = bare === '/' ? 'home' : '/' + bare.split('/')[1];
+
+// Ziel der DE/EN-Knöpfe: dieselbe Seite in der anderen Sprache.
+const deHref = bare;
+const enHref = bare === '/' ? '/en/' : '/en' + bare;
+
+const prefix = isEn ? '/en' : '';
+const linkHref = (href: string) => (href === '/' ? (isEn ? '/en/' : '/') : prefix + href);
+const isActive = (item: (typeof NAV)[number]) =>
+  item.key === 'home' ? section === 'home' : item.href === section;
+const logoSrc = logo && logo.charAt(0) !== '/' && !/^https?:/.test(logo) ? '/' + logo : logo;
+---
+<header>
+  <nav class="nav">
+    <a class="nav-logo" href={isEn ? '/en/' : '/'} aria-label="Wide & Wild — Start">
+      {logoSrc ? <img src={logoSrc} alt="Wide & Wild Logo" /> : <strong>Wide &amp; Wild</strong>}
+    </a>
+    <div class="nav-links" id="navLinks">
+      {NAV.filter((i) => !i.storiesOnly || showStories).map((i) => (
+        <a href={linkHref(i.href)} class={isActive(i) ? 'active' : ''}>{isEn ? i.en : i.de}</a>
+      ))}
+      <div class="lang-toggle">
+        <a href={deHref} class={!isEn ? 'active' : ''}>DE</a>
+        <a href={enHref} class={isEn ? 'active' : ''}>EN</a>
+      </div>
+    </div>
+    <button class="burger" id="burger" aria-label="Menü" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+</header>
+
+<script>
+  const burger = document.getElementById('burger');
+  const links = document.getElementById('navLinks');
+  burger?.addEventListener('click', () => {
+    const open = links?.classList.toggle('open');
+    burger.classList.toggle('open', !!open);
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  links?.querySelectorAll('a').forEach((a) =>
+    a.addEventListener('click', () => {
+      links.classList.remove('open');
+      burger?.classList.remove('open');
+      burger?.setAttribute('aria-expanded', 'false');
+    })
+  );
+</script>

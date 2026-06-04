@@ -1,0 +1,36 @@
+---
+// Globaler Footer (1:1 aus index.html <footer>): Logo + 7 Footer-Links + Copyright
+// (mit Admin-Link → /admin) + Untertitel. Stories-Link nur wenn showStories.
+interface Props {
+  lang: 'de' | 'en';
+  logo?: string;
+  showStories?: boolean;
+}
+const { lang, logo = '', showStories = false } = Astro.props;
+const isEn = lang === 'en';
+const prefix = isEn ? '/en' : '';
+
+const NAV = [
+  { de: 'Start', en: 'Home', href: '/' },
+  { de: 'Portfolio', en: 'Portfolio', href: '/portfolio' },
+  { de: 'Stories', en: 'Stories', href: '/stories', storiesOnly: true },
+  { de: 'Reisen', en: 'Trips', href: '/trips' },
+  { de: 'Equipment', en: 'Gear', href: '/gear' },
+  { de: 'Über uns', en: 'About', href: '/about' },
+  { de: 'Kontakt', en: 'Contact', href: '/contact' },
+];
+const linkHref = (href: string) => (href === '/' ? (isEn ? '/en/' : '/') : prefix + href);
+const logoSrc = logo && logo.charAt(0) !== '/' && !/^https?:/.test(logo) ? '/' + logo : logo;
+---
+<footer>
+  {logoSrc ? <div class="footer-logo"><img src={logoSrc} alt="Wide & Wild" loading="lazy" /></div> : null}
+  <div class="footer-nav">
+    {NAV.filter((i) => !i.storiesOnly || showStories).map((i) => (
+      <a href={linkHref(i.href)}>{isEn ? i.en : i.de}</a>
+    ))}
+  </div>
+  <div class="fnote">
+    <div>© 2026 Alexandra Apostel &amp; David Bastisch · <a class="ww-admin-link" href="/admin">Admin</a></div>
+    <div>Travel &amp; Outdoor Photography</div>
+  </div>
+</footer>

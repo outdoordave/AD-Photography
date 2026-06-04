@@ -453,6 +453,21 @@ export default defineConfig({
           },
         ],
       },
+      // --- Darstellung: globale Optik (Logo + Sichtbarkeits-Schalter) ---
+      {
+        name: 'darstellung',
+        label: '🎨 Darstellung',
+        path: 'src/data',
+        format: 'json',
+        match: { include: 'appearance-settings' },
+        ui: { allowedActions: { create: false, delete: false } },
+        fields: [
+          { type: 'image', name: 'logo', label: 'Logo (Nav / Hero / Footer)', ui: { component: SinglePhotoField } },
+          { type: 'boolean', name: 'show_hero_logo', label: 'Logo im Hero zeigen?' },
+          { type: 'boolean', name: 'show_discover', label: '„Entdecken"-Bereich auf der Startseite zeigen?' },
+          { type: 'boolean', name: 'show_stories', label: 'Stories zeigen? (Nav-Link, Footer, Startseiten-Teaser)' },
+        ],
+      },
       // --- PROTOTYP: isolierte Test-Collection fuer das Ortssuche-Feld ---
       {
         name: 'proto_ort',

@@ -3,11 +3,18 @@
 // Globales Design-System aus index.html (Tokens, Reader-Styles) + Fonts.
 // Inhalte ab Schritt 3.
 import '../styles/global.css';
+import SiteNav from '../components/SiteNav.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import appearance from '../data/appearance-settings.json';
 interface Props {
   title?: string;
   lang?: 'de' | 'en';
 }
 const { title = 'Wide & Wild', lang = 'de' } = Astro.props;
+const ap = appearance as any;
+const logo = ap.logo || '';
+const showStories = ap.show_stories === true;
+const pathname = Astro.url.pathname;
 ---
 <!doctype html>
 <html lang={lang}>
@@ -24,6 +31,10 @@ const { title = 'Wide & Wild', lang = 'de' } = Astro.props;
     />
   </head>
   <body>
-    <slot />
+    <SiteNav lang={lang} pathname={pathname} logo={logo} showStories={showStories} />
+    <main id="main">
+      <slot />
+    </main>
+    <SiteFooter lang={lang} logo={logo} showStories={showStories} />
   </body>
 </html>
