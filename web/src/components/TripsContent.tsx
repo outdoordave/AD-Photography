@@ -44,28 +44,37 @@ export default function TripsContent(props: Props) {
     );
   }, [data]);
 
-  // Tab-Vorauswahl per ?trip=<slug> (Live-Vorschau springt zur geklickten Reise).
-  const initialIdx = React.useMemo(() => {
-    if (typeof window === 'undefined') return 0;
-    const want = new URLSearchParams(window.location.search).get('trip');
-    if (!want) return 0;
-    const i = trips.findIndex((t) => t.slug === want);
-    return i >= 0 ? i : 0;
-  }, [trips]);
-
   // Start immer bei 0 (gleich auf Server + Client -> kein Hydration-Mismatch);
-  // die ?trip=-Vorauswahl wird erst nach dem Mount im Effect nachgezogen.
+  // die ?trip=-Auswahl wird per URL-Sync (unten) nachgezogen.
   const [tripIdx, setTripIdx] = React.useState(0);
   const [active, setActive] = React.useState(0);
   const [lb, setLb] = React.useState<{ photos: LbPhoto[]; start: number } | null>(null);
 
-  const appliedInitial = React.useRef(false);
+  // Laeuft die Seite in Tinas Vorschau-Iframe? Dann ist der Editor-Sync aktiv;
+  // die oeffentliche Seite bleibt voellig unberuehrt.
+  const inEditorRef = React.useRef(false);
+
+  // Tab folgt der URL (?trip=<slug>): Tina wechselt die Reise per pushState OHNE
+  // Remount -> einmal lesen + auf popstate hoeren + im Editor kurz pollen (faengt die
+  // SPA-Navigation, fuer die es kein popstate gibt). Auf der Live-Seite kein Polling.
   React.useEffect(() => {
-    if (!appliedInitial.current && trips.length) {
-      appliedInitial.current = true;
-      if (initialIdx !== 0) setTripIdx(initialIdx);
-    }
-  }, [initialIdx, trips.length]);
+    let inEditor = false;
+    try { inEditor = window.self !== window.top; } catch { inEditor = true; }
+    inEditorRef.current = inEditor;
+    const syncFromUrl = () => {
+      const want = new URLSearchParams(window.location.search).get('trip');
+      if (!want) return;
+      const i = trips.findIndex((t) => t.slug === want);
+      if (i >= 0) setTripIdx((prev) => (prev === i ? prev : i));
+    };
+    syncFromUrl();
+    window.addEventListener('popstate', syncFromUrl);
+    const id = inEditor ? window.setInterval(syncFromUrl, 400) : 0;
+    return () => {
+      window.removeEventListener('popstate', syncFromUrl);
+      if (id) window.clearInterval(id);
+    };
+  }, [trips]);
 
   const trip: any = trips[tripIdx]?.data || {};
   const rawStops: any[] = Array.isArray(trip.stops) ? trip.stops : [];
@@ -80,6 +89,7 @@ export default function TripsContent(props: Props) {
   const stopsRef = React.useRef<ViewStop[]>(stops);
   const ioRef = React.useRef<IntersectionObserver | null>(null);
   const coordSigRef = React.useRef('');
+  const editSyncTimerRef = React.useRef<number | null>(null);
 
   // Signatur der karten-relevanten Stop-Daten (Koordinaten + Marker-/Popup-Texte).
   // Aendert sie sich (Ortssuche, Titel, Datum, Name), werden in der Live-Vorschau die
@@ -134,11 +144,26 @@ export default function TripsContent(props: Props) {
     map.fitBounds(bounds, { padding: 50, duration: 600 });
   }
 
+  // Im Editor: aktive Station als Klick an Tina melden -> das Formular oeffnet genau
+  // diese Station (Scroll-Folgen statt manuellem Klick). Debounce: nur die Station, auf
+  // der man landet, nicht jede beim Vorbeiscrollen. Auf der Live-Seite passiert nichts.
+  function syncEditorToStop(idx: number) {
+    if (!inEditorRef.current) return;
+    if (editSyncTimerRef.current) window.clearTimeout(editSyncTimerRef.current);
+    editSyncTimerRef.current = window.setTimeout(() => {
+      const track = trackRef.current;
+      if (!track) return;
+      const el = track.querySelector<HTMLElement>('.trip-slide[data-sidx="' + idx + '"] h3[data-tina-field]');
+      if (el) el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+    }, 200);
+  }
+
   function activateStop(idx: number) {
     if (idx === activeRef.current) return;
     activeRef.current = idx;
     setActive(idx);
     drawMarkers();
+    syncEditorToStop(idx);
     const map = mapRef.current;
     const s = stopsRef.current[idx];
     if (map && readyRef.current && s && s.lat != null && s.lon != null) {
