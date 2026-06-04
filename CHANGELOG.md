@@ -17,6 +17,13 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-04 — Über uns: Personen als aufklappbare Tina-Liste (Editier-Komfort)
+- Auf Nutzer-Wunsch: Person 1/2 von zwei Einzel-Objekten zu **einer Liste „Personen"**
+  zusammengefasst → im Tina-Editor **zwei zuklappbare Einträge** (Name als Titel) statt
+  vieler Unterpunkte. **Besucher-Seite 1:1 unverändert** (Eintrag 1=links/desert,
+  2=rechts/coast). `about.json` persons-Array; `AboutContent` liest `about.persons[idx]`.
+- Commit: `d224cf4`
+
 ## 2026-06-04 — Über uns 1:1 portiert (Stufe 3, konsolidiert + Live-Vorschau)
 - Sektion 3 gebaut: `/about` + `/en/about` (Wrapper `#page-about`), `AboutContent.tsx`
   (React-Insel, `useTina` + `tinaField` — auch verschachtelt `person1.name`).
