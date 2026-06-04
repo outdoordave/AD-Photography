@@ -10,11 +10,11 @@
 > Live-Code prüfen, nie aus Allgemeinwissen „geht nicht" behaupten) — beides in
 > `CLAUDE.md`; je eine Funktion in `CAPABILITIES.md`.
 >
-> 📍 **Gerade:** Schritt 6 (Deploy/Backend) **steht — erster grüner Deploy LIVE:**
-> `https://aandd-photography-astro.pages.dev` (Branch `astro-umbau`, `main`
-> unberührt). Tina Cloud Free verbunden, Branch indexiert, Build grün.
-> **Offen (Nutzer-Test):** `/admin`-Login live (Pages-URL noch in Tina Cloud
-> „Site URLs" ergänzen!), Edit-Test, iPad-Test (Alexandra).
+> 📍 **Gerade:** Deploy/Backend steht (Tina Cloud Free, live auf
+> `https://aandd-photography-astro.pages.dev`, `main` unberührt). Sektionen
+> portiert: **Stories ✅, Gear ✅ (abgenommen), Über uns ✅ gebaut** (konsolidiert
+> + Live-Vorschau + Inline-Dropdown-Felder; **wartet auf Seite-an-Seite-Abnahme**).
+> **Als Nächstes:** Kontakt (W5). Leitprinzip: eine Sektion = ein Tina-Menüpunkt.
 
 ---
 
