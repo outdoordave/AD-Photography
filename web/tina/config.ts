@@ -580,23 +580,6 @@ export default defineConfig({
           { type: 'boolean', name: 'show_stories', label: 'Stories zeigen? (Nav-Link, Footer, Startseiten-Teaser)' },
         ],
       },
-      // --- PROTOTYP: isolierte Test-Collection fuer das Ortssuche-Feld ---
-      {
-        name: 'proto_ort',
-        label: 'PROTOTYP · Ortssuche',
-        path: 'src/content/proto',
-        format: 'md',
-        fields: [
-          { type: 'string', name: 'name', label: 'Name (Test)', isTitle: true, required: true },
-          {
-            type: 'string',
-            name: 'location',
-            label: '📍 Ort auf der Karte',
-            // Speichert GeoJSON-Point-String wie Sveltias widget:map (pickStopCoord-kompatibel)
-            ui: { component: LocationSearchField },
-          },
-        ],
-      },
     ],
   },
 });
