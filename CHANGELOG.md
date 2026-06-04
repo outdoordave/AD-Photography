@@ -17,6 +17,21 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-04 — Startseite Etappe 1: Nav-Shell (Header/Footer/DE-EN)
+- **Capability-Lock 0/A/B (`<dieser>`):** N1–N10 aus Live-`<header>/<footer>` extrahiert +
+  eingefroren. Nutzer-Entscheid: Stories **ausgeblendet** (`show_stories=false`, CMS-schaltbar),
+  Footer-Admin-Link **→ `/admin`**. Startseite wird in 4 Etappen gebaut (Nav-Shell → Hero →
+  Teaser → Intro/Social).
+- **Bau (`6a0a717`):** `SiteNav.astro` + `SiteFooter.astro` in `BaseLayout` (Slot jetzt in
+  `<main>`). Sticky Header (Logo→Home, 7 Links, aktiver markiert), **DE/EN-Umschalter** →
+  gleiche Seite in `/en` (echte Routen statt Live-`applyLang`-JS), Burger-Slide-in (mobil).
+  Footer (Logo + 7 Links + Copyright + Admin→`/admin`). `appearance-settings.json` migriert
+  (logo/show_hero_logo/show_discover/show_stories) + Tina „🎨 Darstellung". Nav/Footer-CSS 1:1.
+- **In-Page-Edit-Stifte bewusst NICHT portiert** (Tina-Visual-Editing ersetzt sie).
+- **Capability-Lock D:** N1–N10 ✅ (aktiv/DE-EN/Stories-versteckt im HTML verifiziert).
+  `astro build` grün (30 Seiten). `/` zeigt noch die Stories-Liste (Home-Inhalt folgt Etappe 2/3).
+- **Offen:** Abnahme; Hero/Teaser/Intro+Social. `index.html` unberührt.
+
 ## 2026-06-04 — Galerie/Alben portiert (Stufe 6, 🔴 letzter großer Brocken)
 - **Capability-Lock 0/A/B (`9c1e178`, `4418426`):** Soll-Liste **A1–A17** aus echtem Live-Code
   extrahiert + eingefroren; URL **`/portfolio`**; Home-Teaser (Momentaufnahmen/Neueste/Entdecken)

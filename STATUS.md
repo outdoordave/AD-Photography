@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-04** · letzter Commit `450e8cf` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-04** · letzter Commit `6a0a717` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -13,11 +13,11 @@
 > 📍 **Gerade:** Deploy/Backend steht (Tina Cloud Free, live auf
 > `https://aandd-photography-astro.pages.dev`, `main` unberührt). Portiert:
 > **Stories ✅, Gear ✅, Über uns ✅, Kontakt ✅** (abgenommen), **Reisen ✅** (gebaut,
-> editierbar, Live-Vorschau; „passt erstmal"), **Galerie/Alben ✅ gebaut** (🔴 Modi/Karten-
-> Diashow/Lightbox/Album-Unterseite/Reise-Album-Link; `astro build` grün, **wartet auf
-> Abnahme**). **Als Nächstes:** Startseite (inkl. Home-Teaser Momentaufnahmen/Neueste/
-> Entdecken + Highlights-CMS). Offen separat: Kontaktformular-Senden (W5),
-> Reisen-Vorschau-Feinschliff.
+> editierbar, Live-Vorschau; „passt erstmal"), **Galerie/Alben ✅ abgenommen**. **Startseite
+> in Arbeit** (4 Etappen): **1 Nav-Shell ✅ gebaut** (Header/Menü/Footer/DE-EN/Burger in
+> BaseLayout, wartet auf Abnahme); **2 Hero ← als Nächstes**, 3 Home-Teaser
+> (Momentaufnahmen/Neueste/Entdecken + Highlights-CMS), 4 Intro/Social. Offen separat:
+> Kontaktformular-Senden (W5), Reisen-Vorschau-Feinschliff.
 
 ---
 
@@ -158,8 +158,13 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   Runtime/Bindings); Branch muss in Tina Cloud **indexiert** sein, sonst „Branch not
   on TinaCloud"; bei Unterordner zwingend „Path To Tina Folder".
 - **Bestätigte Bau-Reihenfolge (nach Schritt 6):** Stories ✅ → Gear ✅ → Über uns ✅
-  → Kontakt ✅ → Reisen ✅ → **Galerie/Alben ✅ (gebaut, wartet auf Abnahme)** →
-  **Startseite ← als Nächstes** (inkl. Home-Teaser + Highlights-CMS) → Cutover → Audit.
+  → Kontakt ✅ → Reisen ✅ → Galerie/Alben ✅ (abgenommen) → **Startseite (in Arbeit):
+  1 Nav-Shell ✅ → 2 Hero ← als Nächstes → 3 Home-Teaser → 4 Intro/Social** → Cutover → Audit.
+- **Startseite Etappe 1 (Nav-Shell) — gebaut (`6a0a717`):** `SiteNav.astro` + `SiteFooter.astro`
+  in `BaseLayout` (Slot in `<main>`): Sticky Header (Logo→Home, 7 Links, aktiver markiert,
+  Stories-Link nur bei `show_stories`), DE/EN-Umschalter → gleiche Seite in `/en` (echte Routen),
+  Burger (mobil). Footer (Logo + Links + Copyright + Admin→`/admin`). `appearance-settings.json`
+  + Tina „🎨 Darstellung". CSS 1:1. Capability-Lock D: N1–N10 ✅. **Offen:** Abnahme.
 - **Galerie/Alben (Stufe 6) — gebaut (`450e8cf`):**
   - **Seiten** `/portfolio` (+`/en`) + Album-Unterseite `/portfolio/<slug>` (+`/en`).
     `GalleryContent.tsx`: Modus-Leiste (Alben/Neueste/A–Z, Sichtbarkeit aus Einstellungen),

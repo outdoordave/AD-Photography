@@ -591,7 +591,27 @@ N10 **In `BaseLayout`** → erscheint auf **allen** Seiten; ersetzt das aktuelle
 **Bewusst NICHT portiert:** In-Page-Admin-Overlay (Edit-Stifte, `wwEnterAdmin`) — Tina-Visual-
 Editing ersetzt es vollständig.
 
-## Etappe 1 — B: Nutzer-Bestätigung
-- [ ] Liste N1–N10 vollständig?
-- [ ] Stories sichtbar schalten? (Live: standardmäßig AUS; wir haben Stories aber gebaut/abgenommen.)
-- [ ] Footer-Admin-Link → `/admin` (Tina) ok?
+## Etappe 1 — B: Nutzer-Bestätigung (2026-06-04)
+- [x] **N1–N10 eingefroren** (Nutzer „Ja, einfrieren & bauen").
+- [x] **Stories ausgeblendet** wie Live (`show_stories=false`, via CMS schaltbar).
+- [x] **Footer-Admin-Link → `/admin`** (Tina).
+
+## Etappe 1 — C: Neubau (Astro) — 2026-06-04
+`SiteNav.astro` + `SiteFooter.astro` in `BaseLayout` (Slot jetzt in `<main>`),
+`appearance-settings.json` migriert + Tina „🎨 Darstellung". CSS 1:1 in `global.css`.
+
+## Etappe 1 — D: Abhak-Vergleich (nach Neubau)
+- ✅ N1 Sticky Header (Blur + untere Linie, z über Inhalt).
+- ✅ N2 Logo (CMS) → Home.
+- ✅ N3 7 Links mit korrekten DE/EN-URLs (im HTML verifiziert).
+- ✅ N4 aktiver Link (Accent + Unterstrich) — `/trips`→Reisen, `/portfolio`→Portfolio, `/`→Start.
+- ✅ N5 Stories-Link nur bei `show_stories` (aktuell aus → versteckt, verifiziert).
+- ✅ N6 DE/EN → gleiche Seite in anderer Sprache (`/trips` ↔ `/en/trips`, verifiziert).
+- ✅ N7 Burger (mobil Slide-in von rechts, X-Animation, schließt bei Link-Klick).
+- ✅ N8 Footer (Logo + 7 Links + Copyright + Admin → `/admin` + Untertitel).
+- ✅ N9 `appearance-settings` + „🎨 Darstellung" (Logo + Schalter).
+- ✅ N10 in `BaseLayout` → alle Seiten (`astro build` grün, 30 Seiten).
+- ⚠️ Hinweis: `/` zeigt noch die Stories-Liste (echter Home-Inhalt folgt Etappe 2/3);
+  aktiver „Start"-Link stimmt bereits.
+
+- [ ] Nutzer hat Nav-Shell Seite-an-Seite verglichen und abgenommen.
