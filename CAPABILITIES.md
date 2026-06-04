@@ -615,3 +615,32 @@ Editing ersetzt es vollständig.
   aktiver „Start"-Link stimmt bereits.
 
 - [ ] Nutzer hat Nav-Shell Seite-an-Seite verglichen und abgenommen.
+
+## Etappe 2: Hero — Schritt 0 (Live-Wahrheit)
+- `renderHero` (3084): Modi `image`/`random`(Slideshow 5 s Überblendung)/`video`
+  (autoplay/loop/muted/playsinline + `video_poster`); kein Medium → Verlauf-Platzhalter.
+- Markup `.hero` (943–966): `hero-media`, `hero-logo` (`wwHeroLogo`, versteckt via
+  `ww-hide-hero-logo`/`show_hero_logo`), `hero-tag` (Headline), `hero-cta` (2 Buttons),
+  `scroll-hint` (↓), `hero-rip` (Inline-SVG Trockenpinsel-Kante). CSS 181–220, Buttons 222–228.
+- Daten: `home.json` (`mode/image/slideshow[]/video/video_poster`), Texte `home-texts.json`
+  (`hero.headline/cta_portfolio/cta_stories`, DE/EN). Logo aus `appearance.logo`.
+
+## Etappe 2 — A: Soll-Fähigkeiten (eingefroren nach Bestätigung)
+H1 Vollflächiger Hero (min-height 90vh, mobil 80; dunkler Verlauf als Fallback + Overlay).
+H2 **Medien-Umschalter** (CMS `mode`): **image** (Einzelbild), **random** (Slideshow,
+   Überblenden alle 5 s), **video** (autoplay/loop/muted/playsinline + optional Poster);
+   kein Medium → Verlauf-Platzhalter.
+H3 **Hero-Logo** mittig (CMS-Logo), nur bei `show_hero_logo`; fadeUp + Drop-Shadow.
+H4 **Headline** (`hero.headline`, DE/EN) + **2 CTAs**: „Portfolio ansehen" → `/portfolio`
+   (primär), „Reiseberichte lesen" → `/stories` (ghost, **nur wenn Stories sichtbar**);
+   gestaffelte fadeUp-Animation.
+H5 **Scroll-Hinweis** (↓, bob-Animation).
+H6 **„Rip"-SVG** (Trockenpinsel-Kante) am Unterrand in Seitenfarbe (`--c-bg`).
+H7 **CMS „🏠 Startseite"** (ein Menüpunkt): `mode`/Bild/Slideshow/Video/Poster + Hero-Texte
+   (Headline + CTA-Labels). Intro/Social kommen in Etappe 4 in dasselbe Dokument.
+H8 **`index.astro` wird zur echten Startseite** (Hero); die bisherige Stories-Liste wandert
+   nach `/stories` (+`/en/stories`), damit sie (wenn aktiviert) erreichbar bleibt.
+
+## Etappe 2 — B: Nutzer-Bestätigung
+- [ ] H1–H8 vollständig zum Einfrieren & Bauen?
+- [ ] Video-Feld als Pfad + Hinweis „lokal komprimieren" (wie bei Reisen) ok?
