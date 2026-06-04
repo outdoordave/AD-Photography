@@ -17,6 +17,26 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-04 — Reisen: Live-Vorschau (Visual Editing) + Karte live
+- **Router bei Reisen wieder aktiv** (vorher entfernt, weil ohne `useTina` „nothing
+  to edit"): `reisen`-Collection → `/trips?trip=<slug>`. `tina/config.ts`. Commit folgt unten.
+- **`/trips` + `/en/trips` auf `reisenConnection`** (Tina-Client) statt `import.meta.glob`
+  umgestellt → Daten kommen live über `useTina`. `TripsContent.tsx`: leitet Reisen aus der
+  Connection ab (sortiert), Tab-Vorauswahl per `?trip=` (im Effect → kein Hydration-Mismatch),
+  `data-tina-field` auf Tabs/Meta/Summary/Stationen (Titel/Datum/Text/Foto)/Galerie →
+  Klick auf der Seite springt zum Feld + Live-Update beim Tippen. Commit `e2048c9`.
+- **Karte live:** zweiter Effekt zeichnet Marker neu, sobald sich karten-relevante
+  Stop-Daten ändern (Ortssuche/Titel/Datum/Name, per Signatur erkannt) — ohne Bahn/aktive
+  Station/Viewport zurückzusetzen. Commit `96a3e67`.
+- **Bekannt/Hosting (kein Code-Bug):** Frisch hochgeladene Bilder erscheinen in der
+  **Online**-Vorschau erst nach Save+Deploy (repo-basierte Git-Medien, statisches Hosting);
+  **lokal** (`npm run dev`) sofort sichtbar. Text/Karte sind überall live.
+- **Gemerkt für später (Feinschliff):** Stations-Durchscrollen/Snap im schmalen
+  Vorschau-Iframe muss noch geradegezogen werden.
+- Inhaltliche CMS-Test-Edits des Nutzers (`alaska2026.json`: Foto + Station „Anchorage";
+  `contact.json`) bewusst NICHT in diese Commits genommen — gehören dem Nutzer.
+- `index.html` unberührt.
+
 ## 2026-06-04 — Reisen portiert (Stufe 5, 🔴🔴 größter Brocken)
 - **5a (Gerüst, Besucher-Teil vom Nutzer abgenommen):** 5 Reisen migriert
   (`content/trips` → `web/src/data/trips`, sauberes `{de,en}`-Schema). `TripsContent.tsx`

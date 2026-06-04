@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-04** · letzter Commit `4dbf7b5` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-04** · letzter Commit `96a3e67` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -12,10 +12,11 @@
 >
 > 📍 **Gerade:** Deploy/Backend steht (Tina Cloud Free, live auf
 > `https://aandd-photography-astro.pages.dev`, `main` unberührt). Portiert:
-> **Stories ✅, Gear ✅, Über uns ✅, Kontakt ✅** (abgenommen), **Reisen ✅ gebaut**
-> (🔴🔴 Karte+Stationen 5a vom Nutzer abgenommen, Tina-Anbindung 5b; **gesamt wartet
-> auf Abnahme**). **Als Nächstes:** Galerie/Alben (🔴 Lightbox + verknüpftes Album).
-> Offen separat: Kontaktformular-Senden (W5), Reisen-Album-Link (greift ab Galerie).
+> **Stories ✅, Gear ✅, Über uns ✅, Kontakt ✅** (abgenommen), **Reisen ✅ gebaut +
+> editierbar + Live-Vorschau** (🔴🔴 Karte+Stationen 5a abgenommen; 5b Tina-Anbindung
+> inkl. Visual-Editing/Router; Nutzer: „passt erstmal"). **Als Nächstes:** Galerie/Alben
+> (🔴 Lightbox + verknüpftes Album). Offen separat: Kontaktformular-Senden (W5),
+> Reisen-Album-Link (greift ab Galerie), Reisen-Vorschau-Feinschliff (s. u.).
 
 ---
 
@@ -156,8 +157,27 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   Runtime/Bindings); Branch muss in Tina Cloud **indexiert** sein, sonst „Branch not
   on TinaCloud"; bei Unterordner zwingend „Path To Tina Folder".
 - **Bestätigte Bau-Reihenfolge (nach Schritt 6):** Stories ✅ → Gear ✅ → Über uns ✅
-  (alle abgenommen) → **Kontakt ✅ (gebaut, wartet auf Abnahme)** → **Reisen-Vollausbau
-  (C1–C7) ← als Nächstes** → Galerie/Alben (nutzt Lightbox) → Startseite → Cutover → Audit.
+  → Kontakt ✅ (alle gebaut) → **Reisen ✅ (gebaut, editierbar, Live-Vorschau; „passt
+  erstmal")** → **Galerie/Alben (nutzt Lightbox) ← als Nächstes** → Startseite → Cutover → Audit.
+- **Reisen (Stufe 5) — gebaut, editierbar, mit Live-Vorschau:**
+  - **Besucher-Seite** `/trips` + `/en/trips` (`TripsContent.tsx`): Tabs, Karte (MapLibre,
+    Marker/flyTo/fitBounds/Sprach-Labels), Stationen-Snap-Bahn + Pfeile, volle Stations-
+    Karten (Titelbild/Text/Fotos→Lightbox/Video/YouTube), Stop-Liste, „Reisefazit". 5a vom
+    Nutzer abgenommen.
+  - **CMS:** EIN Hauptmenü „🧭 Reisen" (jede Reise editier-/anlegbar) + „🧭 Reisen –
+    Einstellungen". Editieren bestätigt (Nutzer legte Test-Station „Anchorage" an).
+  - **Live-Vorschau (`e2048c9`, `96a3e67`):** `/trips` zieht Daten via `useTina`
+    (`reisenConnection`); Router `→ /trips?trip=<slug>`; `data-tina-field` auf
+    Tabs/Meta/Summary/Stationen/Galerie (Klick→Feld, Text live). Karte zeichnet Marker
+    bei Orts-/Titel-Edit live neu (Signatur-Guard, kein Sprung bei Fliesstext).
+  - **Bekannt / Hosting (kein Bug):** Frisch hochgeladene Bilder erscheinen **online**
+    erst nach Save+Deploy (repo-basierte Git-Medien + statisches Hosting); **lokal**
+    (`npm run dev`) sofort. Text/Karte überall live.
+  - **Feinschliff für später (gemerkt):** Stations-Durchscrollen/Snap im schmalen
+    Vorschau-Iframe noch geradeziehen. Optional (Nutzer-Entscheid offen): Stationen als
+    Inline-Dropdown statt Tina-Standard-Unterpanel (großer Eigenbau).
+  - **Capability-Lock D:** Besucher-Seite 5a abgenommen; Gesamt-Abnahme (Seite-an-Seite)
+    steht noch aus, Nutzer aktuell „passt erstmal".
 - **Kontakt (Stufe 4) gebaut** (`2980036`): `/contact` + `/en/contact`, `ContactContent.tsx`,
   `socialIcons.ts` (10 Kanal-Icons), Formular als **Vorschau** (kein echter Versand, 1:1).
   EIN Tina-Eintrag „✉️ Kontakt" (Englisch-Schalter, Kanal-Dropdown). Capability-Lock D:
