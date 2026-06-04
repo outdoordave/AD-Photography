@@ -12,10 +12,10 @@
 >
 > 📍 **Gerade:** Deploy/Backend steht (Tina Cloud Free, live auf
 > `https://aandd-photography-astro.pages.dev`, `main` unberührt). Portiert:
-> **Stories ✅, Gear ✅, Über uns ✅** (alle abgenommen), **Kontakt ✅ gebaut**
-> (konsolidiert + Live-Vorschau + Englisch-Schalter; **wartet auf Abnahme**).
-> **Als Nächstes:** Reisen (🔴 großer Brocken: MapLibre + Stationen). Leitprinzip:
-> eine Sektion = ein Tina-Menüpunkt. Offen separat: echtes Kontaktformular-Senden (W5).
+> **Stories ✅, Gear ✅, Über uns ✅, Kontakt ✅** (abgenommen), **Reisen ✅ gebaut**
+> (🔴🔴 Karte+Stationen 5a vom Nutzer abgenommen, Tina-Anbindung 5b; **gesamt wartet
+> auf Abnahme**). **Als Nächstes:** Galerie/Alben (🔴 Lightbox + verknüpftes Album).
+> Offen separat: Kontaktformular-Senden (W5), Reisen-Album-Link (greift ab Galerie).
 
 ---
 
