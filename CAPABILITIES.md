@@ -641,6 +641,22 @@ H7 **CMS „🏠 Startseite"** (ein Menüpunkt): `mode`/Bild/Slideshow/Video/Pos
 H8 **`index.astro` wird zur echten Startseite** (Hero); die bisherige Stories-Liste wandert
    nach `/stories` (+`/en/stories`), damit sie (wenn aktiviert) erreichbar bleibt.
 
-## Etappe 2 — B: Nutzer-Bestätigung
-- [ ] H1–H8 vollständig zum Einfrieren & Bauen?
-- [ ] Video-Feld als Pfad + Hinweis „lokal komprimieren" (wie bei Reisen) ok?
+## Etappe 2 — B: Nutzer-Bestätigung (2026-06-04)
+- [x] **H1–H8 eingefroren** (Nutzer „1, einfrieren & bauen"). Video-Feld = Pfad + Hinweis.
+- Nutzer fragte nach **Profi-Politur-Ideen** → kommen als optionales Menü NACH dem 1:1-Bau.
+
+## Etappe 2 — C: Neubau (Astro) — 2026-06-04
+`HomeHero.astro` (+ Slideshow-Skript + Rip-SVG), `home-settings.json` + Tina „🏠 Startseite",
+`index.astro`/`en/index.astro` = Hero, Stories-Liste → `/stories`(+`/en`). CSS 1:1 in `global.css`.
+
+## Etappe 2 — D: Abhak-Vergleich (nach Neubau)
+- ✅ H1 Vollflächiger Hero (90vh, Verlauf + Overlay).
+- ✅ H2 Medien-Umschalter (image/random-Slideshow 5 s/video + Poster; sonst Verlauf) — im HTML verifiziert (Einzelbild).
+- ✅ H3 Hero-Logo mittig (nur bei `show_hero_logo`), fadeUp.
+- ✅ H4 Headline (DE/EN) + CTAs (Portfolio; Stories-ghost nur bei `show_stories` → aktuell versteckt, verifiziert).
+- ✅ H5 Scroll-Pfeil (bob). ✅ H6 Rip-SVG (Seitenfarbe). 
+- ✅ H7 CMS „🏠 Startseite" (Medien + Hero-Texte).
+- ✅ H8 `index.astro` = Hero; Stories-Liste → `/stories` (+`/en`, Cards verifiziert). `astro build` grün (32 Seiten).
+
+- [ ] Nutzer hat Hero Seite-an-Seite verglichen und abgenommen.
+- [ ] Profi-Politur-Ideen: Nutzer wählt (separat dokumentiert).
