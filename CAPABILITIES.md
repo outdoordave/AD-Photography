@@ -377,4 +377,8 @@ Entscheidungen: (a) Namen **editierbar**, (b) Foto = **Auto-WebP-Upload**, (c) R
 **⚠️ kleiner Hinweis:** Foto-Fallback zeigt die Illustration (wie Live `has-illus`),
 ohne Namens-Overlay. Da beide Personen Fotos haben, aktuell nicht sichtbar.
 
-- [ ] Nutzer hat Über uns Seite-an-Seite (Live vs. `…-astro.pages.dev/about`) verglichen und abgenommen.
+- [x] Nutzer hat Über uns **abgenommen am 2026-06-04** („passt für mich!"). Inkl. CMS-
+      Verfeinerungen: EIN konsolidierter Eintrag, Personen als aufklappbare Liste,
+      DE/EN-Felder inline (auto-wachsend), globaler Apple-Englisch-Schalter (Standard
+      nur Deutsch). Besucher-Seite 1:1. **Feinschliff (Optik Editor) später vorgemerkt.**
+      **Über uns gilt als fertig portiert.** ✅
