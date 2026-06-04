@@ -339,3 +339,42 @@ C5 (Foto-Feld) **nicht relevant** — Gear hat keine Bilder.
 - [x] Nutzer hat Gear Seite-an-Seite (Live vs. `…-astro.pages.dev/gear`) verglichen und
       **abgenommen am 2026-06-04** („passt, next!") — inkl. zusammengelegtem CMS-Eintrag
       + Live-Vorschau. **Gear gilt als fertig portiert.** ✅
+
+---
+
+# Über uns (Stufe 3) — Capability-Lock
+
+**Schritt 0 (Live-Wahrheit):** echter Code — `index.html` (#page-about, .about-band,
+.person/.role/.bio/.gear, .home-intro/.divider-orn, Personen-Foto-Injektion),
+`content/about.json`, `admin/config.yml` (ueber_uns).
+**Schritt B:** Liste vom Nutzer bestätigt **2026-06-04** („alles. a b und c") +
+Entscheidungen: (a) Namen **editierbar**, (b) Foto = **Auto-WebP-Upload**, (c) Route **/about**.
+
+## Soll-Liste + Abhak-Vergleich (Schritt D, 2026-06-04)
+
+| # | Fähigkeit | Status | Notiz |
+|---|---|---|---|
+| 1 | Seitenkopf Kicker/Titel/Einleitung (DE/EN) | ✅ | `about.json` + AboutContent |
+| 2 | Dunkler `about-band`, 2-Spalten-Grid | ✅ | `#page-about .about-band` 1:1 |
+| 3 | Zwei Personen-Karten, feste Reihenfolge | ✅ | person1/person2 |
+| 4 | „Warum die USA?"-Block (home-intro, h2 + ✦ + Text) | ✅ | `divider-orn` 1:1 |
+| 5 | Foto: hochgeladen → Bild; sonst Illustration | ✅ | desert/coast + Original-Farben; Bild via `ww-person-img` |
+| 6 | Name (war fest verdrahtet) | ✅ | jetzt **editierbar** (Entscheidung a), Default = Originalnamen |
+| 7 | Rolle (uppercase/Akzent), Bio, Gear-Zeile | ✅ | Typo/Farben 1:1 |
+| 8 | Gear-Zeile = freier Text, NICHT mit Equipment verknüpft | ✅ | 1:1 (eigenständig pflegbar) |
+| 9 | Styles Personen-Karten 1:1 (dunkel, Rahmen, Padding) | ✅ | `global.css` |
+| 10 | Mobile <860px → 1 Spalte | ✅ | Media-Query 1:1 |
+| 11 | DE/EN-Umschaltung aller Texte | ✅ | `/about` + `/en/about` |
+| 12 | Datenquelle `about.json` (alle DE/EN + 2 Fotos) | ✅ | verschachtelt migriert |
+
+**Konsolidiert + Live-Vorschau (Leitprinzip):**
+- **EIN** Tina-Eintrag „📄 Über uns" (Kopf + je Person Name/Rolle/Bio/Gear/Foto + „Warum die USA?").
+- **Live-Vorschau** (AboutContent.tsx, `useTina` + `tinaField` — auch verschachtelt
+  `person1.name`), Router → `/about`.
+- **Personen-Foto = neues `SinglePhotoField`** (Auto-WebP, Q85, ≤2400px). WebP-Logik
+  in `webpEncode.ts` ausgelagert → BulkPhotoField nutzt sie identisch weiter.
+
+**⚠️ kleiner Hinweis:** Foto-Fallback zeigt die Illustration (wie Live `has-illus`),
+ohne Namens-Overlay. Da beide Personen Fotos haben, aktuell nicht sichtbar.
+
+- [ ] Nutzer hat Über uns Seite-an-Seite (Live vs. `…-astro.pages.dev/about`) verglichen und abgenommen.

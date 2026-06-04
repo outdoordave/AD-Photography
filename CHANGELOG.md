@@ -17,6 +17,19 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-04 — Über uns 1:1 portiert (Stufe 3, konsolidiert + Live-Vorschau)
+- Sektion 3 gebaut: `/about` + `/en/about` (Wrapper `#page-about`), `AboutContent.tsx`
+  (React-Insel, `useTina` + `tinaField` — auch verschachtelt `person1.name`).
+- Daten `src/data/about.json` (verschachtelt: Kopf + 2 Personen + „Warum die USA?").
+- CSS `.about-band`/`.person`/`.divider-orn`/`.home-intro` 1:1 in `global.css`,
+  Mobile 1-spaltig; Foto-Fallback-Illustration (desert/coast) mit Original-Farben.
+- **EIN** Tina-Eintrag „📄 Über uns" (Leitprinzip): Kopf, je Person Name (jetzt
+  editierbar)/Rolle/Bio/Gear-Zeile/Foto, „Warum die USA?"; Router → `/about`.
+- **Neues `SinglePhotoField`** (Einzelfoto, Auto-WebP); WebP-Logik in geteiltes
+  `webpEncode.ts` ausgelagert → `BulkPhotoField` nutzt sie identisch weiter.
+- Capability-Lock D: 12/12 ✅ (1× ⚠️ Foto-Fallback ohne Namens-Overlay, da Fotos da).
+  Lokal verifiziert (`npm run dev`). `index.html` unberührt. Commit: `323b5b3`.
+
 ## 2026-06-03 — Gear: zwei CMS-Einträge zusammengelegt + Live-Vorschau
 - Auf Nutzer-Wunsch: die zwei Gear-Menüpunkte (Liste + Seitentext) zu **einem**
   Eintrag „🎒 Equipment" zusammengeführt (`gear.json` enthält jetzt kicker/title/

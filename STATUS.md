@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-03** · letzter Commit `146d120` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-04** · letzter Commit `323b5b3` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -154,9 +154,14 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   ⚠️ Stolperfallen dokumentiert: Build-Variablen müssen in den **Build**-Topf (nicht
   Runtime/Bindings); Branch muss in Tina Cloud **indexiert** sein, sonst „Branch not
   on TinaCloud"; bei Unterordner zwingend „Path To Tina Folder".
-- **Bestätigte Bau-Reihenfolge (nach Schritt 6):** Stories ✅ → **Gear ✅ (gebaut,
-  wartet auf Nutzer-Abnahme)** → Über uns → Kontakt (W5) → Reisen-Vollausbau (C1–C7)
-  → Galerie/Alben (nutzt Lightbox) → Startseite → Cutover (Branch→`main`) → Audit.
+- **Bestätigte Bau-Reihenfolge (nach Schritt 6):** Stories ✅ → Gear ✅ (abgenommen
+  2026-06-04) → **Über uns ✅ (gebaut, wartet auf Nutzer-Abnahme)** → Kontakt (W5) →
+  Reisen-Vollausbau (C1–C7) → Galerie/Alben (nutzt Lightbox) → Startseite → Cutover → Audit.
+- **Über uns (Stufe 3) gebaut** (`323b5b3`): `/about` + `/en/about`, `AboutContent.tsx`
+  (Live-Vorschau, verschachteltes `tinaField`), `about.json`, About-CSS 1:1. **EIN**
+  Tina-Eintrag „📄 Über uns" (Namen editierbar). **Neues `SinglePhotoField`** (Einzelfoto
+  Auto-WebP); WebP-Logik in `webpEncode.ts` ausgelagert (von BulkPhotoField mitgenutzt).
+  Capability-Lock D: 12/12 ✅. **Offen:** Seite-an-Seite-Abnahme.
 - **🧭 Leitprinzip CMS-Struktur (Nutzer-Vorgabe 2026-06-03, verbindlich):** Beim
   Portieren **jeder** Sektion die in Sveltia getrennten Collections (Seitentext +
   Inhalt + Settings) zu **EINEM** Tina-Menüpunkt je Sektion zusammenfassen — **keine**
