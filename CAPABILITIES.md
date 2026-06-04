@@ -558,4 +558,4 @@ Aus Live-Code extrahiert (Schritt 0/A vorab erledigt, damit nichts verloren geht
 - ✅ A16 Lightbox = abgenommene `Lightbox.tsx` (Gruppe = Album, `loop` an).
 - ✅ A17 CMS „🖼️ Alben" + „🖼️ Galerie – Einstellungen" (je ein Menüpunkt, Leitprinzip).
 
-- [ ] Nutzer hat Galerie/Alben Seite-an-Seite (Live vs. `…pages.dev/portfolio`) verglichen und abgenommen.
+- [x] **Abgenommen (Nutzer „PASST!", 2026-06-04).** A15-Ziel (Album-Unterseite) mit ok.

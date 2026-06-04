@@ -172,8 +172,9 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   - **A15 Reise→Album-Link** verdrahtet: `linked_trip === Reise` → „Mehr Fotos im Album" →
     `/portfolio/<slug>` (⚠️ Album-Unterseite statt ganze Galerie wie Live — bewusst).
   - **Capability-Lock D:** A1–A17 ✅ (A3 Modus-Live-Switch + A15 Ziel ⚠️ dokumentiert).
-  - **Offen:** Seite-an-Seite-Abnahme. Highlights/Momentaufnahmen/Neueste/Entdecken =
-    Startseite (Analyse in `CAPABILITIES.md` vorab erledigt).
+    **Vom Nutzer abgenommen („PASST!", 2026-06-04).**
+  - **Offen:** Highlights/Momentaufnahmen/Neueste/Entdecken = Startseite (Analyse in
+    `CAPABILITIES.md` vorab erledigt).
 - **Reisen (Stufe 5) — gebaut, editierbar, mit Live-Vorschau:**
   - **Besucher-Seite** `/trips` + `/en/trips` (`TripsContent.tsx`): Tabs, Karte (MapLibre,
     Marker/flyTo/fitBounds/Sprach-Labels), Stationen-Snap-Bahn + Pfeile, volle Stations-
