@@ -1,8 +1,8 @@
 {
   "order": 5,
   "title": {
-    "de": "Alaska 2026 · bald ✦",
-    "en": "Alaska 2026 · soon ✦"
+    "de": "Alaska 2026 · soon",
+    "en": "Alaska 2026 · soon"
   },
   "date": "2026-10-01",
   "meta": {
@@ -33,7 +33,8 @@
       "photo": "/uploads/img_0206.jpg",
       "photos": [
         "/uploads/img_5273.jpg",
-        "/uploads/img_1418-2.jpg"
+        "/uploads/img_1418-2.jpg",
+        "/uploads/IMG_5534.webp"
       ],
       "video": "",
       "youtube": ""
@@ -217,6 +218,10 @@
       "photos": [],
       "video": "",
       "youtube": ""
+    },
+    {
+      "name": "ANC",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-149.894852,61.216313]}"
     }
   ],
   "gallery": []
