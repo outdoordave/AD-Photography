@@ -664,3 +664,31 @@ H8 **`index.astro` wird zur echten Startseite** (Hero); die bisherige Stories-Li
   **stärkerer Verlauf** (Text-Pop), **edle Headline** (Fraunces, größer), **Scroll-Cue**
   (animierter Hinweis). `prefers-reduced-motion` respektiert. Aus = 1:1-Live-Look.
   **Bewusste, dokumentierte Abweichung vom Live-Stand (vom Nutzer gewünscht).**
+
+## Etappe 3: Home-Teaser + Intro — Schritt 0/A
+Live-Markup Home (977–1029): Intro-Block (`home-intro`), Momentaufnahmen (`random-box`),
+Aktuell (`latest-grid`), Entdecken (`teaser-grid`, `data-discover-only`). Render-Funktionen
+`renderRandomMoments` (2129), `renderLatest` (2655), `renderDiscover` (2591). Texte
+`home-texts.json` (`sections.*`) + `home-intro.json` (`subline/subtext`).
+
+**A — Soll-Fähigkeiten (eingefroren nach Bestätigung):**
+T1 **Intro-Block**: Subline (h2) + ✦ (`divider-orn`) + Subtext (DE/EN). [Social-Row → Etappe 4.]
+T2 **Momentaufnahmen** (Kicker „Portfolio", Titel „Momentaufnahmen/Moments"): bis **6** Bilder —
+   Highlight-Fotos (aus „⭐ Highlights") in Album-Reihenfolge, sonst Zufalls-Mix aller Album-Fotos;
+   Klick → **Lightbox**-Gruppe der gezeigten (React-Insel).
+T3 **Aktuell** (Kicker „Aktuell/Latest", Titel „Frisch aus dem Westen/Fresh from the West"):
+   **Top 3** aus Stories (nur wenn `show_stories`) + Reisen (keine `upcoming`, mit Titel) +
+   Alben (mit Datum), nach Datum absteigend; Karte = Tag (Neuer Beitrag/Neue Reise/Neues Album) +
+   Titel + Meta; Klick → Story/Reise/Galerie.
+T4 **Entdecken** (Kicker „Entdecken/Explore", Titel „Wonach uns gerade ist/What we're drawn to"):
+   **3 Teaser** aus Highlight-Fotos + Alben + vergangenen Reisen; Klick → Inhalt. Nur wenn
+   `show_discover`. (Leerer Pool → keine Sektion.)
+T5 **Highlights-CMS „⭐ Highlights"** (`highlights.json`: Foto-Liste Auto-WebP) → speist T2 + T4.
+T6 **Texte ins CMS „🏠 Startseite"** (Intro `subline/subtext` + Sektion-Kicker/Titel) — Leitprinzip.
+T7 **CSS 1:1**: `.random-box`/`.item .label`, `.latest-grid`/`.latest-card`, `.teaser-grid`/`.teaser`/`.ov`.
+⚠️ **Zufall:** Live mischt pro Aufruf (`Math.random`); Astro statisch → **deterministisch beim Build**
+   (keine Pro-Aufruf-Mischung). Optional später Client-Shuffle.
+
+**B — Nutzer-Bestätigung:**
+- [ ] T1–T7 einfrieren & bauen? „⭐ Highlights" als eigener Menüpunkt (wie Live) ok?
+- [ ] Deterministischer Zufall (beim Build) ok, oder später Client-Shuffle?
