@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-04** · letzter Commit `2b369bb` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-04** · letzter Commit `8ea67c2` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -15,9 +15,8 @@
 > **Stories ✅, Gear ✅, Über uns ✅, Kontakt ✅** (abgenommen), **Reisen ✅** (gebaut,
 > editierbar, Live-Vorschau; „passt erstmal"), **Galerie/Alben ✅ abgenommen**. **Startseite
 > in Arbeit** (4 Etappen): **1 Nav-Shell ✅ gebaut** (Header/Menü/Footer/DE-EN/Burger in
-> BaseLayout); **2 Hero ✅**, **3 Home-Teaser ✅ gebaut** (Intro + Momentaufnahmen + Aktuell +
-> Entdecken + „⭐ Highlights"-CMS; `/` komplett); **4 Intro-Social-Row ← als Nächstes** (Insta-Links).
-> Offen separat:
+> BaseLayout); **2 Hero ✅**, **3 Home-Teaser ✅**, **4 Social-Row ✅** → **Startseite vollständig**.
+> **Alle großen Sektionen portiert.** **Als Nächstes: Gesamt-Abnahme + Cutover + Audit.** Offen separat:
 > Kontaktformular-Senden (W5), Reisen-Vorschau-Feinschliff.
 
 ---
@@ -160,7 +159,9 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   on TinaCloud"; bei Unterordner zwingend „Path To Tina Folder".
 - **Bestätigte Bau-Reihenfolge (nach Schritt 6):** Stories ✅ → Gear ✅ → Über uns ✅
   → Kontakt ✅ → Reisen ✅ → Galerie/Alben ✅ (abgenommen) → **Startseite (in Arbeit):
-  1 Nav-Shell ✅ → 2 Hero ✅ → 3 Home-Teaser ✅ → 4 Intro-Social-Row ← als Nächstes** → Cutover → Audit.
+  1 Nav-Shell ✅ → 2 Hero ✅ → 3 Home-Teaser ✅ → 4 Social-Row ✅** → **Cutover ← als Nächstes → Audit.**
+- **Startseite Etappe 4 (Social-Row) — gebaut (`8ea67c2`):** `insta-row` im Intro (Alexandra/David),
+  `socialUrl()` in `socialIcons.ts`, CMS-Social-Liste im „🏠 Startseite". **Startseite vollständig.**
 - **Startseite Etappe 3 (Home-Teaser) — gebaut (`2b369bb`):** `lib/home.ts` + `HomeIntro.astro`,
   `HomeMoments.tsx` (Lightbox), `HomeLatest.astro`, `HomeDiscover.tsx`; alle Sektionen auf `/`(+`/en`).
   CMS „⭐ Highlights" + Intro/Sektion-Texte im „🏠 Startseite". Zufall = Client-Shuffle. D: T1–T7 ✅.

@@ -706,3 +706,12 @@ T7 **CSS 1:1**: `.random-box`/`.item .label`, `.latest-grid`/`.latest-card`, `.t
 - ⚠️ Entdecken-Foto-Klick: führt zu `/portfolio` (Live: Einzelbild-Lightbox) — bewusst vereinfacht.
 - ⚠️ Zufall jetzt Client-Shuffle statt Build-deterministisch (vom Nutzer gewünscht).
 - [ ] Nutzer hat Etappe 3 verglichen und abgenommen. `astro build` grün (32 Seiten).
+
+## Etappe 4: Intro-Social-Row — gebaut (`8ea67c2`)
+- **S1** Social-Links im Intro (1:1 aus `renderHeroSocial`): `insta-row` mit Alexandra/David
+  (`@a3_flow`/`@davidbastisch`), Icon + Profil-URL. ✅ (im HTML verifiziert)
+- **S2** `socialUrl()` in `socialIcons.ts` (instagram/tiktok/youtube/facebook/x). ✅
+- **S3** CMS: Social-Liste (Plattform-Auswahl + Username) im „🏠 Startseite"-Intro. ✅
+- **Damit ist die Startseite vollständig** (Hero + Intro + Momentaufnahmen + Aktuell + Entdecken
+  + Social). Capability-Lock D: S1–S3 ✅. **Offen:** Gesamt-Abnahme der Startseite.
+- [ ] Nutzer hat die komplette Startseite Seite-an-Seite verglichen und abgenommen.
