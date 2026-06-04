@@ -1,19 +1,22 @@
 ---
-// Equipment page EN ('/en/gear'). Same structure as the DE page, English labels.
+// Equipment page EN ('/en/gear'). Same Tina-Client data as the DE page, English labels.
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import GearList from '../../components/GearList.astro';
-import gear from '../../data/gear.json';
-import text from '../../data/gear-text.json';
+import GearContent from '../../components/GearContent.tsx';
+import { client } from '../../../tina/__generated__/client';
+
+const res = await client.queries.gear({ relativePath: 'gear.json' });
+const title = (res.data.gear as any)?.title?.en || 'Gear';
 ---
-<BaseLayout title="Gear — Wide & Wild" lang="en">
+<BaseLayout title={`${title} — Wide & Wild`} lang="en">
   <section>
     <div class="wrap">
-      <div class="page-title">
-        <div class="kicker">{text.kicker.en}</div>
-        <h1>{text.title.en}</h1>
-        <p>{text.intro.en}</p>
-      </div>
-      <GearList items={gear.items} lang="en" />
+      <GearContent
+        client:load
+        query={res.query}
+        variables={res.variables}
+        data={res.data}
+        lang="en"
+      />
     </div>
   </section>
 </BaseLayout>

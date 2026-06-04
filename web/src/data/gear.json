@@ -1,4 +1,16 @@
 {
+  "kicker": {
+    "de": "Equipment",
+    "en": "Gear"
+  },
+  "title": {
+    "de": "Womit wir fotografieren",
+    "en": "What we shoot with"
+  },
+  "intro": {
+    "de": "Unsere Ausrüstung auf einen Blick — sortiert nach Kategorie. Was wir draußen wirklich dabeihaben.",
+    "en": "Our gear at a glance — sorted by category. What we actually carry out there."
+  },
   "items": [
     {
       "name": "Sony A7 IV",

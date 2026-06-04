@@ -72,18 +72,49 @@ export default defineConfig({
           { type: 'string', name: 'body_en', label: 'Body (EN, Markdown)', ui: { component: 'textarea' } },
         ],
       },
-      // --- Equipment / Gear: Liste (gear.json) ---
+      // --- Equipment / Gear: EIN Eintrag (Seitentexte + Liste) mit Live-Vorschau ---
       {
         name: 'gear',
-        label: '🎒 Equipment – Liste',
+        label: '🎒 Equipment',
         path: 'src/data',
         format: 'json',
         match: { include: 'gear' }, // nur src/data/gear.json
         ui: {
           // Eine einzige Datei -> kein Anlegen/Loeschen ueber Tina.
           allowedActions: { create: false, delete: false },
+          // „Seite öffnen" / Live-Vorschau -> /gear
+          router: () => '/gear',
         },
         fields: [
+          // --- Seitenkopf-Texte (DE/EN) ---
+          {
+            type: 'object',
+            name: 'kicker',
+            label: 'Mini-Titel (Kicker)',
+            fields: [
+              { type: 'string', name: 'de', label: 'Deutsch' },
+              { type: 'string', name: 'en', label: 'Englisch' },
+            ],
+          },
+          {
+            type: 'object',
+            name: 'title',
+            label: 'Titel',
+            fields: [
+              { type: 'string', name: 'de', label: 'Deutsch' },
+              { type: 'string', name: 'en', label: 'Englisch' },
+            ],
+          },
+          {
+            type: 'object',
+            name: 'intro',
+            label: 'Beschreibung',
+            fields: [
+              { type: 'string', name: 'de', label: 'Deutsch', ui: { component: 'textarea' } },
+              { type: 'string', name: 'en', label: 'Englisch', ui: { component: 'textarea' } },
+            ],
+          },
+          // --- Ausrüstungs-Liste ---
           {
             type: 'object',
             name: 'items',
@@ -116,46 +147,6 @@ export default defineConfig({
                 ],
               },
               { type: 'string', name: 'link', label: 'Link (optional)', description: 'Volle URL (https://…). Leer lassen = kein Link.' },
-            ],
-          },
-        ],
-      },
-      // --- Equipment / Gear: Seitentexte (gear-text.json), DE/EN ---
-      {
-        name: 'gear_text',
-        label: '🎒 Equipment – Seitentext',
-        path: 'src/data',
-        format: 'json',
-        match: { include: 'gear-text' }, // nur src/data/gear-text.json
-        ui: {
-          allowedActions: { create: false, delete: false },
-        },
-        fields: [
-          {
-            type: 'object',
-            name: 'kicker',
-            label: 'Mini-Titel (Kicker)',
-            fields: [
-              { type: 'string', name: 'de', label: 'Deutsch' },
-              { type: 'string', name: 'en', label: 'Englisch' },
-            ],
-          },
-          {
-            type: 'object',
-            name: 'title',
-            label: 'Titel',
-            fields: [
-              { type: 'string', name: 'de', label: 'Deutsch' },
-              { type: 'string', name: 'en', label: 'Englisch' },
-            ],
-          },
-          {
-            type: 'object',
-            name: 'intro',
-            label: 'Beschreibung',
-            fields: [
-              { type: 'string', name: 'de', label: 'Deutsch', ui: { component: 'textarea' } },
-              { type: 'string', name: 'en', label: 'Englisch', ui: { component: 'textarea' } },
             ],
           },
         ],

@@ -1,20 +1,23 @@
 ---
-// Equipment-Seite DE ('/gear'). Aufbau 1:1 wie #page-gear in index.html:
-// page-title (Kicker/Titel/Intro aus gear-text.json) + gruppierte Gear-Liste.
+// Equipment-Seite DE ('/gear'). Daten via Tina-Client (Live-Vorschau-fähig wie
+// Stories); Render in der GearContent-Insel. Aufbau wie #page-gear in index.html.
 import BaseLayout from '../layouts/BaseLayout.astro';
-import GearList from '../components/GearList.astro';
-import gear from '../data/gear.json';
-import text from '../data/gear-text.json';
+import GearContent from '../components/GearContent.tsx';
+import { client } from '../../tina/__generated__/client';
+
+const res = await client.queries.gear({ relativePath: 'gear.json' });
+const title = (res.data.gear as any)?.title?.de || 'Equipment';
 ---
-<BaseLayout title="Equipment — Wide & Wild" lang="de">
+<BaseLayout title={`${title} — Wide & Wild`} lang="de">
   <section>
     <div class="wrap">
-      <div class="page-title">
-        <div class="kicker">{text.kicker.de}</div>
-        <h1>{text.title.de}</h1>
-        <p>{text.intro.de}</p>
-      </div>
-      <GearList items={gear.items} lang="de" />
+      <GearContent
+        client:load
+        query={res.query}
+        variables={res.variables}
+        data={res.data}
+        lang="de"
+      />
     </div>
   </section>
 </BaseLayout>
