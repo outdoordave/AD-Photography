@@ -33,11 +33,13 @@ const discover = buildDiscover({ albums, trips, highlights: hlImages, lang, pref
 
 const s = h.sections || {};
 const intro = h.intro || {};
+const socialShow = h.social_show || {};
+const socialList = intro.social || [];
 ---
 <BaseLayout title="Wide & Wild — Travel & Outdoor Photography" lang="en">
-  <HomeHero hero={h.hero} logo={ap.logo} showHeroLogo={ap.show_hero_logo !== false} showStories={showStories} lang="en" />
+  <HomeHero hero={h.hero} logo={ap.logo} showHeroLogo={ap.show_hero_logo !== false} showStories={showStories} lang="en" social={socialList} showSocial={socialShow.hero === true} />
 
-  <HomeIntro subline={tl(intro.subline, lang)} subtext={tl(intro.subtext, lang)} social={intro.social || []} />
+  <HomeIntro subline={tl(intro.subline, lang)} subtext={tl(intro.subtext, lang)} social={socialList} showSocial={socialShow.intro !== false} />
 
   {moments.length > 0 && (
     <section style="padding-top:0;">

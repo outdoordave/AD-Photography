@@ -33,6 +33,7 @@
       { "platform": "instagram", "username": "davidbastisch" }
     ]
   },
+  "social_show": { "intro": true, "hero": false, "footer": false },
   "sections": {
     "gallery_kicker": { "de": "Portfolio", "en": "Portfolio" },
     "gallery_title": { "de": "Momentaufnahmen", "en": "Moments" },

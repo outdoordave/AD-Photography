@@ -609,3 +609,6 @@ footer .fnote .ww-admin-link:hover { color: #f0c9a8; opacity: 1; }
 .insta-link:hover { border-color: var(--c-accent); color: var(--c-accent); transform: translateY(-2px); }
 .insta-link .ig-ic { display: inline-flex; align-items: center; }
 .insta-link .ig-ic svg { width: 18px; height: 18px; vertical-align: middle; }
+.insta-row.on-dark .insta-link { background: rgba(240,229,212,0.08); border-color: rgba(240,229,212,0.2); color: #f0e5d4; }
+.insta-row.on-dark .insta-link:hover { border-color: #f0c9a8; color: #f0c9a8; }
+.hero-social { position: relative; z-index: 2; margin-top: 22px; }

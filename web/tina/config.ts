@@ -542,6 +542,15 @@ export default defineConfig({
               { type: 'object', name: 'discover_title', label: 'Entdecken — Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
             ],
           },
+          {
+            type: 'object', name: 'social_show', label: 'Social-Links anzeigen — wo?',
+            description: 'Wo die Instagram-Links (aus dem Intro-Block) erscheinen. Standard: nur Intro (wie Live).',
+            fields: [
+              { type: 'boolean', name: 'intro', label: 'Im Intro-Block (unter dem Hero)' },
+              { type: 'boolean', name: 'hero', label: 'Im Hero (unter den Buttons)' },
+              { type: 'boolean', name: 'footer', label: 'Im Footer (auf jeder Seite)' },
+            ],
+          },
         ],
       },
       // --- Highlights: album-übergreifende Lieblingsfotos (speisen die Home-Teaser) ---

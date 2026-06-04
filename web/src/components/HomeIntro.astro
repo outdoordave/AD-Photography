@@ -3,9 +3,9 @@
 // + ✦ + Text + Social-Links (Insta etc.).
 import { socialIcon, socialUrl } from '../lib/socialIcons';
 interface Social { platform?: string; username?: string; }
-interface Props { subline?: string; subtext?: string; social?: Social[]; }
-const { subline = '', subtext = '', social = [] } = Astro.props;
-const links = (social || []).filter((s) => s && s.username);
+interface Props { subline?: string; subtext?: string; social?: Social[]; showSocial?: boolean; }
+const { subline = '', subtext = '', social = [], showSocial = true } = Astro.props;
+const links = showSocial ? (social || []).filter((s) => s && s.username) : [];
 ---
 <section>
   <div class="wrap">

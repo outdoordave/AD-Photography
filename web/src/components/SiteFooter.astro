@@ -1,14 +1,18 @@
 ---
 // Globaler Footer (1:1 aus index.html <footer>): Logo + 7 Footer-Links + Copyright
 // (mit Admin-Link → /admin) + Untertitel. Stories-Link nur wenn showStories.
+import { socialIcon, socialUrl } from '../lib/socialIcons';
 interface Props {
   lang: 'de' | 'en';
   logo?: string;
   showStories?: boolean;
+  social?: { platform?: string; username?: string }[];
+  showSocial?: boolean;
 }
-const { lang, logo = '', showStories = false } = Astro.props;
+const { lang, logo = '', showStories = false, social = [], showSocial = false } = Astro.props;
 const isEn = lang === 'en';
 const prefix = isEn ? '/en' : '';
+const socialLinks = showSocial ? (social || []).filter((s) => s && s.username) : [];
 
 const NAV = [
   { de: 'Start', en: 'Home', href: '/' },
@@ -29,6 +33,16 @@ const logoSrc = logo && logo.charAt(0) !== '/' && !/^https?:/.test(logo) ? '/' +
       <a href={linkHref(i.href)}>{isEn ? i.en : i.de}</a>
     ))}
   </div>
+  {socialLinks.length > 0 && (
+    <div class="insta-row on-dark" style="margin-top:6px; margin-bottom:22px;">
+      {socialLinks.map((s) => (
+        <a class="insta-link" href={socialUrl(s.platform, s.username!)} target="_blank" rel="noopener">
+          <span class="ig-ic" set:html={socialIcon(s.platform || 'instagram')} />
+          @{s.username}
+        </a>
+      ))}
+    </div>
+  )}
   <div class="fnote">
     <div>© 2026 Alexandra Apostel &amp; David Bastisch · <a class="ww-admin-link" href="/admin">Admin</a></div>
     <div>Travel &amp; Outdoor Photography</div>
