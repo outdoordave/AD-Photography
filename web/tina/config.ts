@@ -2,6 +2,7 @@ import { defineConfig } from 'tinacms';
 import BulkPhotoField from './fields/BulkPhotoField';
 import SinglePhotoField from './fields/SinglePhotoField';
 import { BilingualField, BilingualTextField } from './fields/BilingualField';
+import EnglishToggle from './fields/EnglishToggle';
 import LocationSearchField from './fields/LocationSearchField';
 
 // Tina-Cloud-Anbindung:
@@ -165,7 +166,15 @@ export default defineConfig({
           router: () => '/about',
         },
         fields: [
-          // --- Seitenkopf (DE/EN inline aufklappbar, keine Unterseite) ---
+          // --- Sprach-Schalter (nur Editor, nichts wird gespeichert) ---
+          {
+            type: 'string',
+            name: 'editor_language',
+            label: 'Sprache',
+            description: 'Schalter: nur Deutsch — oder Deutsch + Englisch anzeigen. Gilt für alle Felder. (Nur Anzeige im Editor.)',
+            ui: { component: EnglishToggle },
+          },
+          // --- Seitenkopf (Deutsch direkt; Englisch erscheint bei Schalter „an") ---
           {
             type: 'object', name: 'kicker', label: 'Mini-Titel (Kicker)',
             ui: { component: BilingualField },
