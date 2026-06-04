@@ -527,4 +527,35 @@ Aus Live-Code extrahiert (Schritt 0/A vorab erledigt, damit nichts verloren geht
   EIN „⭐ Highlights"-Menüpunkt bauen (Foto-Liste). pin.highlight am Album ≠ Foto-Highlight:
   `pin` steuert Galerie-Sortierung, `highlights.json` steuert die Home-Teaser.
 
-(Schritt C/D der Galerie folgen jetzt beim Bau.)
+## C — Neubau (Astro) — gebaut 2026-06-04
+`lib/albums.ts`, Inseln `GalleryContent.tsx` + `AlbumContent.tsx`, Seiten `/portfolio`
+(+`/en`) + `/portfolio/<slug>` (+`/en`), CSS 1:1 in `global.css`. Daten: 2 Alben migriert,
+`gallery-settings.json`. `astro build` grün (30 Seiten).
+
+## D — Abhak-Vergleich (nach Neubau)
+- ✅ A1 Seitenkopf (Kicker/Titel/Intro, DE/EN aus `gallery-settings`).
+- ✅ A2 Modus-Leiste (Alben/Neueste/A–Z, EN-Labels, aktiver markiert).
+- ✅ A3 Modus-Sichtbarkeit (Knopf aus → weg; ≤1 → Leiste weg; alles aus → Fallback „Alben").
+  ⚠️ Live-Umschalten der Modi im CMS wirkt erst nach Reload (Einstellungen kommen als
+  statischer Import, nicht via useTina) — Besucher-Verhalten identisch.
+- ✅ A4 Album-Modus 2 Spalten (mobil 1).
+- ✅ A5 Album-Karte (Titel + → + Anzahl-Badge + Notiz).
+- ✅ A6 Auto-Diashow (Snap-Bahn, Autoplay 4 s, am Ende instant zu 0, ‹/›-Pfeile, Stopp bei
+  pointerdown/horizontalem Wheel, nur >1 Foto).
+- ✅ A7 Klick (kein Wisch) auf Diashow → Lightbox ab aktuell zentriertem Bild.
+- ✅ A8 Klick auf Album-Titel → Album-Unterseite (Pfeil-Affordanz; als `<a>` jetzt auch
+  echter Link/Mittelklick). Toter In-Place-Toggle bewusst weggelassen.
+- ✅ A9 Flach-Modi (Neueste = Datum absteigend; A–Z = Name; dann Foto-Index).
+- ✅ A10 Kachel (Platzhalter-Palette + Bild + Hover-Streifen mit Albumname).
+- ✅ A11 Kachel-Klick → Lightbox des Albums ab dem Bild.
+- ✅ A12 Album-Unterseite (Kicker „Album" + Name + Notiz + Kachel-Grid → Lightbox).
+- ✅ A13 Sortierung (angepinnt zuerst → highlight_order → Datum absteigend, = build-indexes.js).
+- ✅ A14 DE/EN (Englisch-Schalter; Labels Album/Modi/„Mehr Fotos…").
+- ⚠️ A15 Reise→Album-Link: vorhanden, zeigt aber jetzt auf **die Album-Unterseite**
+  `/portfolio/<slug>` statt (wie Live) auf die ganze Galerie — passt zum Link-Text
+  „Mehr Fotos im Album" und nutzt die neue Route. **Bewusste Verbesserung, dem Nutzer
+  vorgelegt.**
+- ✅ A16 Lightbox = abgenommene `Lightbox.tsx` (Gruppe = Album, `loop` an).
+- ✅ A17 CMS „🖼️ Alben" + „🖼️ Galerie – Einstellungen" (je ein Menüpunkt, Leitprinzip).
+
+- [ ] Nutzer hat Galerie/Alben Seite-an-Seite (Live vs. `…pages.dev/portfolio`) verglichen und abgenommen.

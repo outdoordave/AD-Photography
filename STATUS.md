@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-04** · letzter Commit `99be405` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-04** · letzter Commit `450e8cf` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -12,11 +12,12 @@
 >
 > 📍 **Gerade:** Deploy/Backend steht (Tina Cloud Free, live auf
 > `https://aandd-photography-astro.pages.dev`, `main` unberührt). Portiert:
-> **Stories ✅, Gear ✅, Über uns ✅, Kontakt ✅** (abgenommen), **Reisen ✅ gebaut +
-> editierbar + Live-Vorschau** (🔴🔴 Karte+Stationen 5a abgenommen; 5b Tina-Anbindung
-> inkl. Visual-Editing/Router; Nutzer: „passt erstmal"). **Als Nächstes:** Galerie/Alben
-> (🔴 Lightbox + verknüpftes Album). Offen separat: Kontaktformular-Senden (W5),
-> Reisen-Album-Link (greift ab Galerie), Reisen-Vorschau-Feinschliff (s. u.).
+> **Stories ✅, Gear ✅, Über uns ✅, Kontakt ✅** (abgenommen), **Reisen ✅** (gebaut,
+> editierbar, Live-Vorschau; „passt erstmal"), **Galerie/Alben ✅ gebaut** (🔴 Modi/Karten-
+> Diashow/Lightbox/Album-Unterseite/Reise-Album-Link; `astro build` grün, **wartet auf
+> Abnahme**). **Als Nächstes:** Startseite (inkl. Home-Teaser Momentaufnahmen/Neueste/
+> Entdecken + Highlights-CMS). Offen separat: Kontaktformular-Senden (W5),
+> Reisen-Vorschau-Feinschliff.
 
 ---
 
@@ -157,8 +158,22 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   Runtime/Bindings); Branch muss in Tina Cloud **indexiert** sein, sonst „Branch not
   on TinaCloud"; bei Unterordner zwingend „Path To Tina Folder".
 - **Bestätigte Bau-Reihenfolge (nach Schritt 6):** Stories ✅ → Gear ✅ → Über uns ✅
-  → Kontakt ✅ (alle gebaut) → **Reisen ✅ (gebaut, editierbar, Live-Vorschau; „passt
-  erstmal")** → **Galerie/Alben (nutzt Lightbox) ← als Nächstes** → Startseite → Cutover → Audit.
+  → Kontakt ✅ → Reisen ✅ → **Galerie/Alben ✅ (gebaut, wartet auf Abnahme)** →
+  **Startseite ← als Nächstes** (inkl. Home-Teaser + Highlights-CMS) → Cutover → Audit.
+- **Galerie/Alben (Stufe 6) — gebaut (`450e8cf`):**
+  - **Seiten** `/portfolio` (+`/en`) + Album-Unterseite `/portfolio/<slug>` (+`/en`).
+    `GalleryContent.tsx`: Modus-Leiste (Alben/Neueste/A–Z, Sichtbarkeit aus Einstellungen),
+    Album-Karten mit Auto-Diashow (Snap/Autoplay 4 s/Pfeile/Klick→Lightbox), Flach-Modi,
+    Kacheln (Platzhalter + Hover-Name). `AlbumContent.tsx`: Kicker/Name/Notiz + Kachel-Grid.
+    `lib/albums.ts` (paletteFromString, sortAlbums = build-indexes.js, linkedAlbumsByTrip).
+  - **CMS:** „🖼️ Alben" (Name/Notiz DE/EN, Datum, `linked_trip`, `pin{highlight,order}`,
+    Fotos Auto-WebP) + „🖼️ Galerie – Einstellungen" (Texte + 3 Modus-Schalter). Router →
+    `/portfolio/<slug>` (Live-Vorschau). Daten: 2 Alben migriert + `gallery-settings.json`.
+  - **A15 Reise→Album-Link** verdrahtet: `linked_trip === Reise` → „Mehr Fotos im Album" →
+    `/portfolio/<slug>` (⚠️ Album-Unterseite statt ganze Galerie wie Live — bewusst).
+  - **Capability-Lock D:** A1–A17 ✅ (A3 Modus-Live-Switch + A15 Ziel ⚠️ dokumentiert).
+  - **Offen:** Seite-an-Seite-Abnahme. Highlights/Momentaufnahmen/Neueste/Entdecken =
+    Startseite (Analyse in `CAPABILITIES.md` vorab erledigt).
 - **Reisen (Stufe 5) — gebaut, editierbar, mit Live-Vorschau:**
   - **Besucher-Seite** `/trips` + `/en/trips` (`TripsContent.tsx`): Tabs, Karte (MapLibre,
     Marker/flyTo/fitBounds/Sprach-Labels), Stationen-Snap-Bahn + Pfeile, volle Stations-
