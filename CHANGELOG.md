@@ -23,6 +23,8 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   Social-Liste (Plattform + Username) im „🏠 Startseite"-Intro. CSS 1:1. `astro build` grün.
 - **Startseite damit vollständig** (Hero + Intro + Momentaufnahmen + Aktuell + Entdecken + Social).
   Alle großen Sektionen portiert → als Nächstes **Cutover/Audit**. `index.html` unberührt.
+- **Social-Platzierung (`75ffe57`):** Insta-Links jetzt wahlweise in **Intro / Hero / Footer**,
+  je per CMS-Schalter („🏠 Startseite → Social-Links anzeigen — wo?"). Standard: nur Intro (wie Live).
 
 ## 2026-06-04 — Startseite Etappe 3: Home-Teaser + Intro (+ Bilder-Fixes)
 - **Bilder online (zwei Fixes):** `copy-uploads.mjs` im Build (Wurzel-`/uploads` → `web/dist`)

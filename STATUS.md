@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-04** · letzter Commit `8ea67c2` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-04** · letzter Commit `75ffe57` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
