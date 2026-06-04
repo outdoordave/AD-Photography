@@ -336,4 +336,6 @@ Entscheidung: `category` als **Dropdown** (7 feste Werte) statt Freitext.
 Name „z. B. Sony A7 IV", Link „Volle URL (https://…)…", Kategorie-Beschreibung).
 C5 (Foto-Feld) **nicht relevant** — Gear hat keine Bilder.
 
-- [ ] Nutzer hat Gear Seite-an-Seite (Live vs. `…-astro.pages.dev/gear`) verglichen und abgenommen.
+- [x] Nutzer hat Gear Seite-an-Seite (Live vs. `…-astro.pages.dev/gear`) verglichen und
+      **abgenommen am 2026-06-04** („passt, next!") — inkl. zusammengelegtem CMS-Eintrag
+      + Live-Vorschau. **Gear gilt als fertig portiert.** ✅
