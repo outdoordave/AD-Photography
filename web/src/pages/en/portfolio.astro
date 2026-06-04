@@ -1,0 +1,31 @@
+---
+// Gallery EN ('/en/portfolio'). Same albums via albenConnection, English labels.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GalleryContent from '../../components/GalleryContent.tsx';
+import { tl } from '../../lib/albums';
+import settings from '../../data/gallery-settings.json';
+import { client } from '../../../tina/__generated__/client';
+
+const res = await client.queries.albenConnection({ first: 1000 });
+const s = settings as any;
+const modes = s.modes || { album: true, chronological: false, alphabetical: false };
+---
+<BaseLayout title={`${tl(s.title, 'en') || 'Portfolio'} — Wide & Wild`} lang="en">
+  <section>
+    <div class="wrap">
+      <div class="page-title">
+        <div class="kicker">{tl(s.kicker, 'en')}</div>
+        <h1>{tl(s.title, 'en')}</h1>
+        <p>{tl(s.intro, 'en')}</p>
+      </div>
+      <GalleryContent
+        client:load
+        query={res.query}
+        variables={res.variables}
+        data={res.data}
+        lang="en"
+        modes={modes}
+      />
+    </div>
+  </section>
+</BaseLayout>

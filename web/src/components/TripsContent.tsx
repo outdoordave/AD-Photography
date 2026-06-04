@@ -14,7 +14,8 @@ import { viewStops, tl, sortTrips, type RawTrip, type Lang, type ViewStop } from
 // Daten via useTina (reisenConnection) -> LIVE-Vorschau: Edits im CMS erscheinen
 // sofort; data-tina-field = Klick auf der Seite springt zum passenden Feld.
 
-type Props = { query: string; variables: object; data: any; lang: Lang; mapStyle?: string; initialSlug?: string };
+type LinkedAlbum = { slug: string; name: { de?: string; en?: string } };
+type Props = { query: string; variables: object; data: any; lang: Lang; mapStyle?: string; initialSlug?: string; linkedAlbums?: Record<string, LinkedAlbum> };
 
 function setMapLanguage(map: maplibregl.Map, lang: Lang) {
   if (!map.isStyleLoaded()) return;
@@ -287,7 +288,19 @@ export default function TripsContent(props: Props) {
       <div className="trip-summary">
         <div className="meta" data-tina-field={tinaField(trip, 'meta')}>{tl(trip.meta, lang)}</div>
         <p data-tina-field={tinaField(trip, 'summary')}>{tl(trip.summary, lang)}</p>
-        {/* Verknüpftes Album: kommt mit der Galerie/Alben-Sektion (linked_trip). */}
+        {/* Verknüpftes Album (linked_trip === aktuelle Reise) -> Link zur Album-Unterseite. */}
+        {(() => {
+          const la = props.linkedAlbums?.[trips[tripIdx]?.slug || ''];
+          if (!la) return null;
+          const albName = lang === 'en' ? (la.name?.en || la.name?.de || '') : (la.name?.de || '');
+          return (
+            <a className="trip-album-link" href={`${lang === 'en' ? '/en' : ''}/portfolio/${la.slug}`}>
+              <span className="lbl">{lang === 'de' ? 'Mehr Fotos im Album' : 'More photos in album'}</span>
+              <strong>{albName}</strong>
+              <span className="arrow">→</span>
+            </a>
+          );
+        })()}
       </div>
 
       <div className="map-layout">

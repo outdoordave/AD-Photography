@@ -4,10 +4,13 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TripsContent from '../../components/TripsContent.tsx';
 import { tl } from '../../lib/trips';
+import { linkedAlbumsByTrip } from '../../lib/albums';
 import settings from '../../data/trips-settings.json';
 import { client } from '../../../tina/__generated__/client';
 
 const res = await client.queries.reisenConnection({ first: 100 });
+const albRes = await client.queries.albenConnection({ first: 1000 });
+const linkedAlbums = linkedAlbumsByTrip(albRes.data);
 const s = settings as any;
 const mapStyle = s.map_style || 'liberty';
 ---
@@ -26,6 +29,7 @@ const mapStyle = s.map_style || 'liberty';
         data={res.data}
         lang="en"
         mapStyle={mapStyle}
+        linkedAlbums={linkedAlbums}
       />
     </div>
   </section>

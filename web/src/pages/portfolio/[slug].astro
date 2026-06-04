@@ -1,0 +1,24 @@
+---
+// Album-Unterseite DE ('/portfolio/<slug>'). Ein Album via Tina-Client -> Live-
+// Vorschau (Ziel von Tinas Router). getStaticPaths über alle Alben.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AlbumContent from '../../components/AlbumContent.tsx';
+import { client } from '../../../tina/__generated__/client';
+
+export async function getStaticPaths() {
+  const conn = await client.queries.albenConnection({ first: 1000 });
+  const edges = (conn.data.albenConnection?.edges || []).filter(Boolean);
+  return edges.map((e: any) => ({ params: { slug: e.node._sys.filename } }));
+}
+
+const { slug } = Astro.params;
+const res = await client.queries.alben({ relativePath: `${slug}.json` });
+const name = (res.data.alben as any)?.name?.de || 'Album';
+---
+<BaseLayout title={`${name} — Wide & Wild`} lang="de">
+  <section>
+    <div class="wrap">
+      <AlbumContent client:load query={res.query} variables={res.variables} data={res.data} lang="de" />
+    </div>
+  </section>
+</BaseLayout>

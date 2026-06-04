@@ -57,6 +57,21 @@ export function albumPhotos(a: RawAlbum): ViewPhoto[] {
   return out;
 }
 
+// Map Reise-Slug -> verknüpftes Album (für den „Mehr Fotos im Album"-Link auf der
+// Reisen-Seite). Aus den Album-Daten (linked_trip-Feld) gebaut.
+export function linkedAlbumsByTrip(data: any): Record<string, { slug: string; name: Bi }> {
+  const out: Record<string, { slug: string; name: Bi }> = {};
+  const edges = (data && data.albenConnection && data.albenConnection.edges) || [];
+  for (const e of edges) {
+    const node = e && e.node;
+    const lt = node && node.linked_trip;
+    if (typeof lt === 'string' && lt && node._sys && node._sys.filename) {
+      out[lt] = { slug: node._sys.filename, name: (node.name || {}) as Bi };
+    }
+  }
+  return out;
+}
+
 // Album-Sortierung wie build-indexes.js: angepinnte (pin.highlight) zuerst nach
 // highlight_order (aufsteigend), dann nach Datum absteigend (neueste oben).
 export function sortAlbums<T extends { slug: string; data: RawAlbum }>(list: T[]): T[] {
