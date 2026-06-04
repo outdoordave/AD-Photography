@@ -237,10 +237,16 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   (verifizierte Free-Limits + Setup-Plan).
 - **Capability-Lock + „Live-Wahrheit zuerst"** sind Pflicht bei jeder Funktion
   (s. `CLAUDE.md`/`CAPABILITIES.md`); „fertig" entscheidet der Nutzer.
-- **Upload-Auslieferung gelöst:** lokal Symlink `web/public/uploads → ../../uploads`
-  (gitignored, Vorschau); **im Deploy** kopiert `web/scripts/copy-uploads.mjs` (im
-  `build`-Script) das Wurzel-`/uploads` nach `web/public/uploads` → Bilder landen in
-  `web/dist` und werden auf Cloudflare ausgeliefert (vorher 404). Commit beim Nav-Shell-Block.
+- **Bild-Auslieferung im Deploy — zwei Fixes:**
+  1. **Dateien in den Build:** `web/scripts/copy-uploads.mjs` (im `build`-Script) kopiert das
+     Wurzel-`/uploads` nach `web/public/uploads` (auf Cloudflare; lokal Symlink). Bilder landen
+     in `web/dist`.
+  2. **Pfad-Rewrite:** Tina Cloud schreibt `image`-Feld-Werte beim Build auf `https://assets.tina.io/
+     <projectId>/<datei>` um (Query-getriebene Inseln: Galerie/Alben/Reisen/Über-uns) → 404.
+     `normalizePath` biegt diese URLs wieder auf `/uploads/<datei>`. Hero/Logo betroffen NICHT
+     (statischer JSON-Import). Lokal unverändert.
+  ⚠️ **2 echte fehlende Dateien** (nicht im Git): `IMG_5534.webp` (CMS-Test, lokal uncommittet) +
+  `IMG_5618.webp` (Story Utah, fehlt ganz) → bleiben „?" bis hochgeladen/entfernt.
 - **Stray-Datei:** leere `package-lock.json` im Root (versehentlich, untracked) —
   David löscht sie bei Gelegenheit; landet in keinem Commit.
 - **Noch nicht gepusht (lokal):** mehrere Commits seit dem letzten Push — David pusht
