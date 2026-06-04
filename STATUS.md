@@ -157,6 +157,12 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 - **Bestätigte Bau-Reihenfolge (nach Schritt 6):** Stories ✅ → **Gear ✅ (gebaut,
   wartet auf Nutzer-Abnahme)** → Über uns → Kontakt (W5) → Reisen-Vollausbau (C1–C7)
   → Galerie/Alben (nutzt Lightbox) → Startseite → Cutover (Branch→`main`) → Audit.
+- **🧭 Leitprinzip CMS-Struktur (Nutzer-Vorgabe 2026-06-03, verbindlich):** Beim
+  Portieren **jeder** Sektion die in Sveltia getrennten Collections (Seitentext +
+  Inhalt + Settings) zu **EINEM** Tina-Menüpunkt je Sektion zusammenfassen — **keine**
+  Vielzahl fast gleich benannter Reiter. Wo sinnvoll: Tina-Live-Vorschau (`useTina` +
+  `tinaField` + Router) wie bei Stories/Gear. **Vorbild: Gear** (`146d120`). Gilt für
+  Über uns, Kontakt, Reisen, Galerie, Startseite usw.
 - **Gear (Stufe 2) gebaut** (`efb565e`, dann `146d120`): `/gear` + `/en/gear`,
   `src/lib/gear.ts`, `.gear-*`-CSS 1:1. Capability-Lock D: 21/21 ✅. **Nachgerüstet
   (`146d120`):** beide CMS-Einträge zu **einem** „🎒 Equipment" (`gear.json`:
