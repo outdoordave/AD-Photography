@@ -11,10 +11,11 @@
 > `CLAUDE.md`; je eine Funktion in `CAPABILITIES.md`.
 >
 > 📍 **Gerade:** Deploy/Backend steht (Tina Cloud Free, live auf
-> `https://aandd-photography-astro.pages.dev`, `main` unberührt). Sektionen
-> portiert: **Stories ✅, Gear ✅ (abgenommen), Über uns ✅ gebaut** (konsolidiert
-> + Live-Vorschau + Inline-Dropdown-Felder; **wartet auf Seite-an-Seite-Abnahme**).
-> **Als Nächstes:** Kontakt (W5). Leitprinzip: eine Sektion = ein Tina-Menüpunkt.
+> `https://aandd-photography-astro.pages.dev`, `main` unberührt). Portiert:
+> **Stories ✅, Gear ✅, Über uns ✅** (alle abgenommen), **Kontakt ✅ gebaut**
+> (konsolidiert + Live-Vorschau + Englisch-Schalter; **wartet auf Abnahme**).
+> **Als Nächstes:** Reisen (🔴 großer Brocken: MapLibre + Stationen). Leitprinzip:
+> eine Sektion = ein Tina-Menüpunkt. Offen separat: echtes Kontaktformular-Senden (W5).
 
 ---
 
@@ -154,9 +155,13 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   ⚠️ Stolperfallen dokumentiert: Build-Variablen müssen in den **Build**-Topf (nicht
   Runtime/Bindings); Branch muss in Tina Cloud **indexiert** sein, sonst „Branch not
   on TinaCloud"; bei Unterordner zwingend „Path To Tina Folder".
-- **Bestätigte Bau-Reihenfolge (nach Schritt 6):** Stories ✅ → Gear ✅ (abgenommen
-  2026-06-04) → **Über uns ✅ (gebaut, wartet auf Nutzer-Abnahme)** → Kontakt (W5) →
-  Reisen-Vollausbau (C1–C7) → Galerie/Alben (nutzt Lightbox) → Startseite → Cutover → Audit.
+- **Bestätigte Bau-Reihenfolge (nach Schritt 6):** Stories ✅ → Gear ✅ → Über uns ✅
+  (alle abgenommen) → **Kontakt ✅ (gebaut, wartet auf Abnahme)** → **Reisen-Vollausbau
+  (C1–C7) ← als Nächstes** → Galerie/Alben (nutzt Lightbox) → Startseite → Cutover → Audit.
+- **Kontakt (Stufe 4) gebaut** (`2980036`): `/contact` + `/en/contact`, `ContactContent.tsx`,
+  `socialIcons.ts` (10 Kanal-Icons), Formular als **Vorschau** (kein echter Versand, 1:1).
+  EIN Tina-Eintrag „✉️ Kontakt" (Englisch-Schalter, Kanal-Dropdown). Capability-Lock D:
+  12/12 ✅. **Offen separat:** echtes Formular-Senden (Dienst + Datenschutz, „W5").
 - **Über uns (Stufe 3) gebaut** (`323b5b3`): `/about` + `/en/about`, `AboutContent.tsx`
   (Live-Vorschau, verschachteltes `tinaField`), `about.json`, About-CSS 1:1. **EIN**
   Tina-Eintrag „📄 Über uns" (Namen editierbar). **Neues `SinglePhotoField`** (Einzelfoto
