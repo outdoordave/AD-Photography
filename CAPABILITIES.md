@@ -415,4 +415,6 @@ Schalter + auto-Felder + Kanal-Typ-Dropdown, (c) Route `/contact`.
 auto-wachsende Felder, Kanal-Typ als Dropdown, Live-Vorschau, Router → `/contact`).
 **Offen / eigener Schritt:** echtes Formular-Versenden (Dienst + Datenschutz) — „W5", später.
 
-- [ ] Nutzer hat Kontakt Seite-an-Seite (Live vs. `…-astro.pages.dev/contact`) verglichen und abgenommen.
+- [x] Nutzer hat Kontakt **abgenommen am 2026-06-04** („passt!"). CMS-Edit verifiziert
+      (Nutzer hat über Tina einen 3. Kanal ergänzt). **Kontakt gilt als fertig portiert.** ✅
+      (Echtes Formular-Senden „W5" bleibt offen — eigener Schritt.)
