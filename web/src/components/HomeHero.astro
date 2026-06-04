@@ -34,7 +34,8 @@ const pol = hero.polish || {};
 const pKen = pol.ken_burns !== false;
 const pScrim = pol.scrim !== false;
 const pBig = pol.big_headline !== false;
-const pScroll = pol.scroll_indicator !== false;
+// Scroll-Hinweis-Stil: 'line' (Standard) | 'arrow' | 'mouse' | 'none'.
+const scrollStyle = pol.scroll_style || (pol.scroll_indicator === false ? 'arrow' : 'line');
 const heroClass = [
   'hero',
   hasMedia ? 'has-media' : '',
@@ -72,10 +73,12 @@ const heroClass = [
     {showStories ? <a class="btn ghost" href={`${prefix}/stories`}>{ctaS}</a> : null}
   </div>
 
-  {pScroll ? (
-    <div class="scroll-cue" aria-hidden="true"></div>
-  ) : (
+  {scrollStyle === 'arrow' ? (
     <div class="scroll-hint">↓</div>
+  ) : scrollStyle === 'mouse' ? (
+    <div class="scroll-mouse" aria-hidden="true"></div>
+  ) : scrollStyle === 'none' ? null : (
+    <div class="scroll-cue" aria-hidden="true"></div>
   )}
 
   <svg class="hero-rip" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">

@@ -16,7 +16,7 @@
       "ken_burns": true,
       "scrim": true,
       "big_headline": true,
-      "scroll_indicator": true
+      "scroll_style": "line"
     }
   }
 }

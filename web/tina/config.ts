@@ -493,7 +493,16 @@ export default defineConfig({
                   { type: 'boolean', name: 'ken_burns', label: 'Langsamer Bild-Zoom (Ken-Burns)' },
                   { type: 'boolean', name: 'scrim', label: 'Stärkerer Verlauf (Text hebt sich ab)' },
                   { type: 'boolean', name: 'big_headline', label: 'Große, edle Überschrift (Display-Schrift)' },
-                  { type: 'boolean', name: 'scroll_indicator', label: 'Eleganter Scroll-Hinweis' },
+                  {
+                    type: 'string', name: 'scroll_style', label: 'Scroll-Hinweis (Stil)',
+                    description: 'Welcher Hinweis unten im Hero zum Weiterscrollen.',
+                    options: [
+                      { value: 'line', label: 'Linie (elegant)' },
+                      { value: 'arrow', label: 'Pfeil ↓ (klassisch / wie Live)' },
+                      { value: 'mouse', label: 'Maus (Puls)' },
+                      { value: 'none', label: 'Keiner' },
+                    ],
+                  },
                 ],
               },
             ],

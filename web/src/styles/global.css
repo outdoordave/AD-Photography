@@ -560,7 +560,13 @@ footer .fnote .ww-admin-link:hover { color: #f0c9a8; opacity: 1; }
 @keyframes scrolldrop { 0% { transform: translateY(-110%); } 100% { transform: translateY(230%); } }
 @media (max-width: 640px) { .scroll-cue { bottom: 56px; height: 38px; } }
 
+/* Scroll-Hinweis: Maus mit pulsendem Rad */
+.scroll-mouse { position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%); z-index: 3; width: 26px; height: 42px; border: 2px solid rgba(240,217,191,0.6); border-radius: 14px; }
+.scroll-mouse::after { content: ""; position: absolute; left: 50%; top: 8px; width: 4px; height: 8px; border-radius: 2px; background: #f0d9bf; transform: translateX(-50%); animation: mousewheel 1.6s ease-in-out infinite; }
+@keyframes mousewheel { 0% { opacity: 0; transform: translateX(-50%) translateY(0); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateX(-50%) translateY(13px); } }
+@media (max-width: 640px) { .scroll-mouse { bottom: 54px; } }
+
 @media (prefers-reduced-motion: reduce) {
   .hero.polish-kenburns .hero-img, .hero.polish-kenburns .hero-slide { animation: none; }
-  .scroll-cue::after { animation: none; }
+  .scroll-cue::after, .scroll-mouse::after { animation: none; }
 }
