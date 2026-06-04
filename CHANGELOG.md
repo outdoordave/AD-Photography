@@ -28,12 +28,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 - **Karte live:** zweiter Effekt zeichnet Marker neu, sobald sich karten-relevante
   Stop-Daten ändern (Ortssuche/Titel/Datum/Name, per Signatur erkannt) — ohne Bahn/aktive
   Station/Viewport zurückzusetzen. Commit `96a3e67`.
-- **Tab- & Station-Sync (`87f4be5`):** Reise-Tab verfolgt jetzt `?trip=<slug>` über Tinas
-  pushState-Navigation (popstate + Editor-Polling 400 ms) → die im CMS gewählte Reise wird
-  auch angezeigt (vorher hing es auf Tab 0). Beim Durchscrollen meldet die aktive Station
-  einen Klick an ihr `data-tina-field` → Tina öffnet **genau diese Station** im Formular
-  (debounced 200 ms). Beides nur im Vorschau-Iframe (`window.self !== window.top`),
-  Live-Seite unverändert.
+- **Tab- & Station-Sync (`87f4be5`, ersetzt durch `99be405`):** Erst über `?trip=`-Query +
+  Polling — verworfen, weil **Tina Query-Strings im Router ignoriert** (Vorschau hing auf
+  Tab 0). **Finale Lösung (`99be405`):** echte **Pfad-Route `/trips/<slug>`**
+  (`src/pages/trips/[slug].astro`, `getStaticPaths` über `reisenConnection`); Router der
+  `reisen`-Collection → `/trips/<slug>`. Tab kommt aus `initialSlug`-Prop (Hydration-sicher)
+  → die im CMS gewählte Reise wird zuverlässig angezeigt. **Station-Sync:** `.trip-slide`
+  trägt jetzt das **Item**-`data-tina-field` → Scrollen öffnet die **GANZE Station**
+  (Titel/Datum/Text/Bilder), nicht nur das Titel-Unterfeld; debounced 200 ms, nur im
+  Vorschau-Iframe. Öffentliche `/trips` unverändert (Tab 0, kein Sync).
 - **Bekannt/Hosting (kein Code-Bug):** Frisch hochgeladene Bilder erscheinen in der
   **Online**-Vorschau erst nach Save+Deploy (repo-basierte Git-Medien, statisches Hosting);
   **lokal** (`npm run dev`) sofort sichtbar. Text/Karte sind überall live.
