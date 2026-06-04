@@ -394,6 +394,65 @@ export default defineConfig({
           },
         ],
       },
+      // --- Alben: jedes Album ein Eintrag (Mehrfach-Collection wie Reisen) ---
+      {
+        name: 'alben',
+        label: '🖼️ Alben',
+        path: 'src/data/albums',
+        format: 'json',
+        // Router -> Live-Vorschau der Album-Unterseite /portfolio/<slug> (useTina).
+        ui: {
+          router: ({ document }: any) => `/portfolio/${document._sys.filename}`,
+        },
+        fields: [
+          {
+            type: 'string', name: 'editor_language', label: 'Sprache',
+            description: 'Nur Deutsch — oder Deutsch + Englisch. Gilt für alle Felder. (Nur Anzeige im Editor.)',
+            ui: { component: EnglishToggle },
+          },
+          { type: 'object', name: 'name', label: 'Album-Name', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'note', label: 'Notiz (optional)', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'string', name: 'date', label: 'Datum (YYYY-MM-DD)', description: 'Für Sortierung „Neueste" und die Galerie-Reihenfolge.' },
+          { type: 'string', name: 'linked_trip', label: 'Verknüpfte Reise (Slug, optional)', description: 'Slug einer Reise (Dateiname ohne .json, z. B. „florida"). Dann zeigt diese Reise einen „Mehr Fotos im Album"-Link.' },
+          {
+            type: 'object', name: 'pin', label: 'In der Galerie anheften',
+            description: 'Angeheftete Alben stehen in der Galerie vorne.',
+            fields: [
+              { type: 'boolean', name: 'highlight', label: 'Anheften?' },
+              { type: 'number', name: 'highlight_order', label: 'Reihenfolge (kleiner = weiter vorne)' },
+            ],
+          },
+          { type: 'image', name: 'photos', label: 'Fotos (Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
+        ],
+      },
+      // --- Galerie: Seiten-Einstellungen (Texte + Sortier-Modi) ---
+      {
+        name: 'galerie_settings',
+        label: '🖼️ Galerie – Einstellungen',
+        path: 'src/data',
+        format: 'json',
+        match: { include: 'gallery-settings' },
+        ui: { allowedActions: { create: false, delete: false } },
+        fields: [
+          {
+            type: 'string', name: 'editor_language', label: 'Sprache',
+            description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
+            ui: { component: EnglishToggle },
+          },
+          { type: 'object', name: 'kicker', label: 'Mini-Titel (Kicker)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'title', label: 'Seiten-Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'intro', label: 'Einleitung', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          {
+            type: 'object', name: 'modes', label: 'Sichtbare Sortier-Modi',
+            description: 'Welche Sortier-Knöpfe Besucher sehen. Ist nur einer (oder keiner) an, wird die Leiste versteckt und „Alben" als Standard genutzt.',
+            fields: [
+              { type: 'boolean', name: 'album', label: 'Alben (Karten)' },
+              { type: 'boolean', name: 'chronological', label: 'Neueste (flach, nach Datum)' },
+              { type: 'boolean', name: 'alphabetical', label: 'A–Z (flach, nach Name)' },
+            ],
+          },
+        ],
+      },
       // --- PROTOTYP: isolierte Test-Collection fuer das Ortssuche-Feld ---
       {
         name: 'proto_ort',
