@@ -17,6 +17,19 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-04 — CMS aufgeräumt (Test-Reste, Reihenfolge, Anzeigenamen)
+- **A (`cec1ee1`):** Test-Reste raus — `proto_ort`-Collection, `album-proto.json`/`trip-proto.json`,
+  `src/content/proto/`, Seiten `proto-karte`/`proto-lightbox`/`stilprobe`.
+- **B (`ed66655`):** Collections in **Nav-Reihenfolge** (links→rechts = oben→unten): Startseite →
+  Alben → Galerie-Einstellungen → Stories → Reisen → Reisen-Einstellungen → Equipment → Über uns →
+  Kontakt → Highlights → Darstellung.
+- **C (`eb663e8`):** **Anzeigenamen** in der CMS-Liste — Reise-`title` & Album-`name` von
+  `{de,en}`-Objekt auf **String** (DE, `isTitle`/`required`) + `*_en` umgestellt → Tina zeigt jetzt
+  den echten Reise-/Album-Namen als Label (Dateiname klein darunter) statt überall „🧭 Reisen"/
+  Dateiname. Daten migriert (5 Reisen + 2 Alben); Helfer `albName()`/`tripTitle()`; alle Lese-Stellen
+  umgestellt. `astro build` grün (29 Seiten, 3 Test-Seiten entfernt).
+- ⚠️ **Schema geändert** → nach dem Push **astro-umbau auf Tina Cloud neu indexieren** (Re-Index).
+
 ## 2026-06-04 — Startseite Etappe 4: Social-Links (Startseite komplett)
 - **`8ea67c2`:** Social-Links im Intro-Block (1:1 aus `renderHeroSocial`): `insta-row` mit
   Alexandra/David (`@a3_flow`/`@davidbastisch`). `socialUrl()` in `socialIcons.ts`. CMS:
