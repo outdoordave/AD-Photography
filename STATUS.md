@@ -232,8 +232,10 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   (verifizierte Free-Limits + Setup-Plan).
 - **Capability-Lock + „Live-Wahrheit zuerst"** sind Pflicht bei jeder Funktion
   (s. `CLAUDE.md`/`CAPABILITIES.md`); „fertig" entscheidet der Nutzer.
-- **Lokaler Upload-Symlink** `web/public/uploads → ../../uploads` (gitignored) für
-  die Vorschau; produktive Upload-Auslieferung → Schritt 6.
+- **Upload-Auslieferung gelöst:** lokal Symlink `web/public/uploads → ../../uploads`
+  (gitignored, Vorschau); **im Deploy** kopiert `web/scripts/copy-uploads.mjs` (im
+  `build`-Script) das Wurzel-`/uploads` nach `web/public/uploads` → Bilder landen in
+  `web/dist` und werden auf Cloudflare ausgeliefert (vorher 404). Commit beim Nav-Shell-Block.
 - **Stray-Datei:** leere `package-lock.json` im Root (versehentlich, untracked) —
   David löscht sie bei Gelegenheit; landet in keinem Commit.
 - **Noch nicht gepusht (lokal):** mehrere Commits seit dem letzten Push — David pusht
