@@ -44,6 +44,11 @@ export interface StoryViewWithSlug extends StoryView {
 // --- Pfad normalisieren (CMS-Bilder liegen unter /uploads/) ---
 export function normalizePath(p: string): string {
   if (!p) return '';
+  // Tina Cloud schreibt bei image-Feldern den gespeicherten /uploads-Pfad auf seine
+  // Media-CDN-URL um (https://assets.tina.io/<projectId>/<datei>). Unsere Bilder liegen
+  // aber repo-basiert in /uploads -> diese URLs wieder auf /uploads/<datei> zurueckbiegen.
+  const tina = p.match(/^https?:\/\/assets\.tina\.io\/[^/]+\/(.+)$/i);
+  if (tina) return '/uploads/' + tina[1];
   if (/^(https?:|data:)/i.test(p)) return p;
   if (p.charAt(0) !== '/') return '/' + p;
   return p;
