@@ -1,16 +1,13 @@
 ---
-// Trips page EN ('/en/trips'). Same data as the DE page, English labels.
+// Trips page EN ('/en/trips'). Same data as DE via Tina-Client (reisenConnection),
+// English labels. Live-preview-fähig in der TripsContent-Insel.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TripsContent from '../../components/TripsContent.tsx';
-import { sortTrips, tl, type RawTrip } from '../../lib/trips';
+import { tl } from '../../lib/trips';
 import settings from '../../data/trips-settings.json';
+import { client } from '../../../tina/__generated__/client';
 
-const modules = import.meta.glob('../../data/trips/*.json', { eager: true });
-const raw = Object.entries(modules).map(([path, mod]) => ({
-  slug: path.split('/').pop()!.replace('.json', ''),
-  data: ((mod as any).default || mod) as RawTrip,
-}));
-const trips = sortTrips(raw);
+const res = await client.queries.reisenConnection({ first: 100 });
 const s = settings as any;
 const mapStyle = s.map_style || 'liberty';
 ---
@@ -22,7 +19,14 @@ const mapStyle = s.map_style || 'liberty';
         <h1>{tl(s.title, 'en')}</h1>
         <p>{tl(s.intro, 'en')}</p>
       </div>
-      <TripsContent client:load trips={trips} lang="en" mapStyle={mapStyle} />
+      <TripsContent
+        client:load
+        query={res.query}
+        variables={res.variables}
+        data={res.data}
+        lang="en"
+        mapStyle={mapStyle}
+      />
     </div>
   </section>
 </BaseLayout>

@@ -321,9 +321,12 @@ export default defineConfig({
         label: '🧭 Reisen',
         path: 'src/data/trips',
         format: 'json',
-        // Kein Router -> Klick auf eine Reise oeffnet direkt das Formular (Reisen
-        // hat keine In-Page-Live-Vorschau; mit Router landet man in der leeren
-        // Visual-Editing-Ansicht "nothing to edit").
+        // Router -> Live-Vorschau: Klick auf eine Reise oeffnet /trips mit aktivem
+        // Tab dieser Reise (?trip=<slug>). Die Trips-Seite nutzt useTina, daher
+        // greift Visual-Editing (Klick auf der Seite springt zum Feld + Live-Update).
+        ui: {
+          router: ({ document }: any) => `/trips?trip=${document._sys.filename}`,
+        },
         fields: [
           {
             type: 'string', name: 'editor_language', label: 'Sprache',

@@ -1,18 +1,20 @@
 import React from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { useTina, tinaField } from 'tinacms/dist/react';
 import Lightbox, { type LbPhoto } from './Lightbox';
 import { normalizePath, wwYouTubeEmbed } from './../lib/stories';
-import { viewStops, tl, type RawTrip, type Lang, type ViewStop } from '../lib/trips';
+import { viewStops, tl, sortTrips, type RawTrip, type Lang, type ViewStop } from '../lib/trips';
 
 // Reisen-Insel (Vollausbau, 1:1 aus index.html): Reise-Tabs, Reise-Kopf, MapLibre-
 // Karte (Marker/flyTo/fitBounds/Sprach-Labels), Stationen-Snap-Bahn + Observer +
 // Pfeile (entkoppelt), volle Stations-Karten (Titelbild/Text/Fotos→Lightbox/Video/
 // YouTube), Stop-Liste, „Reisefazit"-Galerie. Karte/Stationen aus dem abgenommenen
 // Prototyp (TripMapProto), erweitert auf mehrere Reisen.
+// Daten via useTina (reisenConnection) -> LIVE-Vorschau: Edits im CMS erscheinen
+// sofort; data-tina-field = Klick auf der Seite springt zum passenden Feld.
 
-type TripEntry = { slug: string; data: RawTrip };
-type Props = { trips: TripEntry[]; lang: Lang; mapStyle?: string };
+type Props = { query: string; variables: object; data: any; lang: Lang; mapStyle?: string };
 
 function setMapLanguage(map: maplibregl.Map, lang: Lang) {
   if (!map.isStyleLoaded()) return;
@@ -28,13 +30,46 @@ function setMapLanguage(map: maplibregl.Map, lang: Lang) {
   }
 }
 
-export default function TripsContent({ trips, lang, mapStyle }: Props) {
+export default function TripsContent(props: Props) {
+  const { lang, mapStyle } = props;
+  const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
+
+  // Reisen aus der Connection ableiten (live), nach order/Datum sortiert.
+  const trips = React.useMemo(() => {
+    const edges = (data as any)?.reisenConnection?.edges || [];
+    return sortTrips(
+      edges
+        .filter(Boolean)
+        .map((e: any) => ({ slug: e?.node?._sys?.filename || '', data: (e?.node || {}) as RawTrip }))
+    );
+  }, [data]);
+
+  // Tab-Vorauswahl per ?trip=<slug> (Live-Vorschau springt zur geklickten Reise).
+  const initialIdx = React.useMemo(() => {
+    if (typeof window === 'undefined') return 0;
+    const want = new URLSearchParams(window.location.search).get('trip');
+    if (!want) return 0;
+    const i = trips.findIndex((t) => t.slug === want);
+    return i >= 0 ? i : 0;
+  }, [trips]);
+
+  // Start immer bei 0 (gleich auf Server + Client -> kein Hydration-Mismatch);
+  // die ?trip=-Vorauswahl wird erst nach dem Mount im Effect nachgezogen.
   const [tripIdx, setTripIdx] = React.useState(0);
   const [active, setActive] = React.useState(0);
   const [lb, setLb] = React.useState<{ photos: LbPhoto[]; start: number } | null>(null);
 
-  const trip = trips[tripIdx]?.data || {};
-  const stops: ViewStop[] = React.useMemo(() => viewStops(trip, lang), [tripIdx, lang]);
+  const appliedInitial = React.useRef(false);
+  React.useEffect(() => {
+    if (!appliedInitial.current && trips.length) {
+      appliedInitial.current = true;
+      if (initialIdx !== 0) setTripIdx(initialIdx);
+    }
+  }, [initialIdx, trips.length]);
+
+  const trip: any = trips[tripIdx]?.data || {};
+  const rawStops: any[] = Array.isArray(trip.stops) ? trip.stops : [];
+  const stops: ViewStop[] = React.useMemo(() => viewStops(trip, lang), [trip, lang]);
 
   const mapElRef = React.useRef<HTMLDivElement | null>(null);
   const mapRef = React.useRef<maplibregl.Map | null>(null);
@@ -207,14 +242,14 @@ export default function TripsContent({ trips, lang, mapStyle }: Props) {
           let label = tl(tp.data.title, lang) || tp.slug;
           if (tp.data.upcoming && label.indexOf('✦') === -1) label += lang === 'de' ? ' · bald ✦' : ' · soon ✦';
           return (
-            <button key={tp.slug} className={i === tripIdx ? 'active' : ''} onClick={() => setTripIdx(i)}>{label}</button>
+            <button key={tp.slug} className={i === tripIdx ? 'active' : ''} data-tina-field={tinaField(tp.data as any, 'title')} onClick={() => setTripIdx(i)}>{label}</button>
           );
         })}
       </div>
 
       <div className="trip-summary">
-        <div className="meta">{tl(trip.meta, lang)}</div>
-        <p>{tl(trip.summary, lang)}</p>
+        <div className="meta" data-tina-field={tinaField(trip, 'meta')}>{tl(trip.meta, lang)}</div>
+        <p data-tina-field={tinaField(trip, 'summary')}>{tl(trip.summary, lang)}</p>
         {/* Verknüpftes Album: kommt mit der Galerie/Alben-Sektion (linked_trip). */}
       </div>
 
@@ -228,19 +263,20 @@ export default function TripsContent({ trips, lang, mapStyle }: Props) {
             {stops.map((s, i) => {
               const cover = s.photo ? normalizePath(s.photo) : '';
               const yt = wwYouTubeEmbed(s.youtube);
+              const rs = rawStops[i];
               return (
                 <div className="trip-slide" data-sidx={i} key={i}>
                   <div className="step">{stepWord}{i + 1}/{stops.length}</div>
-                  <h3>{s.title}</h3>
-                  <div className="date">{s.date}</div>
+                  <h3 data-tina-field={rs ? tinaField(rs, 'title') : undefined}>{s.title}</h3>
+                  <div className="date" data-tina-field={rs ? tinaField(rs, 'date') : undefined}>{s.date}</div>
                   {cover ? (
-                    <div className="ph ww-photo" style={{ aspectRatio: 'var(--ar-media)' }} onClick={() => openStopLightbox(s, 0)}>
+                    <div className="ph ww-photo" style={{ aspectRatio: 'var(--ar-media)' }} data-tina-field={rs ? tinaField(rs, 'photo') : undefined} onClick={() => openStopLightbox(s, 0)}>
                       <img src={cover} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--radius-sm)' }} />
                     </div>
                   ) : (
-                    <div className="ph" style={{ aspectRatio: 'var(--ar-media)' }} />
+                    <div className="ph" style={{ aspectRatio: 'var(--ar-media)' }} data-tina-field={rs ? tinaField(rs, 'photo') : undefined} />
                   )}
-                  <p>{s.text}</p>
+                  <p data-tina-field={rs ? tinaField(rs, 'text') : undefined}>{s.text}</p>
                   {s.photos.length ? (
                     <div className="ww-station-photos">
                       {s.photos.map((p, pi) => (
@@ -274,9 +310,10 @@ export default function TripsContent({ trips, lang, mapStyle }: Props) {
 
       {Array.isArray(trip.gallery) && trip.gallery.length ? (
         <div className="story-gallery" style={{ marginTop: 30 }}>
-          {trip.gallery.map((g, i) => (
+          {trip.gallery.map((g: any, i: number) => (
             <img key={i} src={normalizePath(g.image)} alt={tl(g.caption, lang)} loading="lazy"
-              onClick={() => setLb({ photos: trip.gallery!.map((x) => ({ photo: normalizePath(x.image) })), start: i })} />
+              data-tina-field={tinaField(g, 'image')}
+              onClick={() => setLb({ photos: trip.gallery.map((x: any) => ({ photo: normalizePath(x.image) })), start: i })} />
           ))}
         </div>
       ) : null}
