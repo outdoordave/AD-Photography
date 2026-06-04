@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-04** · letzter Commit `793bd10` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-04** · letzter Commit `2b369bb` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -15,9 +15,9 @@
 > **Stories ✅, Gear ✅, Über uns ✅, Kontakt ✅** (abgenommen), **Reisen ✅** (gebaut,
 > editierbar, Live-Vorschau; „passt erstmal"), **Galerie/Alben ✅ abgenommen**. **Startseite
 > in Arbeit** (4 Etappen): **1 Nav-Shell ✅ gebaut** (Header/Menü/Footer/DE-EN/Burger in
-> BaseLayout); **2 Hero ✅ gebaut** (Bild/Slideshow/Video, Logo, Headline, CTAs, Rip-Kante;
-> `/` ist jetzt der Hero, Stories-Liste → `/stories`); **3 Home-Teaser ← als Nächstes**
-> (Momentaufnahmen/Neueste/Entdecken + Highlights-CMS), 4 Intro/Social. Offen separat:
+> BaseLayout); **2 Hero ✅**, **3 Home-Teaser ✅ gebaut** (Intro + Momentaufnahmen + Aktuell +
+> Entdecken + „⭐ Highlights"-CMS; `/` komplett); **4 Intro-Social-Row ← als Nächstes** (Insta-Links).
+> Offen separat:
 > Kontaktformular-Senden (W5), Reisen-Vorschau-Feinschliff.
 
 ---
@@ -160,7 +160,11 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   on TinaCloud"; bei Unterordner zwingend „Path To Tina Folder".
 - **Bestätigte Bau-Reihenfolge (nach Schritt 6):** Stories ✅ → Gear ✅ → Über uns ✅
   → Kontakt ✅ → Reisen ✅ → Galerie/Alben ✅ (abgenommen) → **Startseite (in Arbeit):
-  1 Nav-Shell ✅ → 2 Hero ✅ → 3 Home-Teaser ← als Nächstes → 4 Intro/Social** → Cutover → Audit.
+  1 Nav-Shell ✅ → 2 Hero ✅ → 3 Home-Teaser ✅ → 4 Intro-Social-Row ← als Nächstes** → Cutover → Audit.
+- **Startseite Etappe 3 (Home-Teaser) — gebaut (`2b369bb`):** `lib/home.ts` + `HomeIntro.astro`,
+  `HomeMoments.tsx` (Lightbox), `HomeLatest.astro`, `HomeDiscover.tsx`; alle Sektionen auf `/`(+`/en`).
+  CMS „⭐ Highlights" + Intro/Sektion-Texte im „🏠 Startseite". Zufall = Client-Shuffle. D: T1–T7 ✅.
+  **Offen:** Abnahme. (Social-Row Etappe 4.)
 - **Startseite Etappe 2 (Hero) — gebaut (`793bd10`):** `HomeHero.astro` (Bild/Slideshow/Video-
   Umschalter, Logo, Headline DE/EN, 2 CTAs, Scroll-Pfeil, Rip-SVG). `index.astro`/`en/index.astro`
   = Startseite; Stories-Liste → `/stories`(+`/en`). `home-settings.json` + Tina „🏠 Startseite".

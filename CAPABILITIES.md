@@ -689,6 +689,20 @@ T7 **CSS 1:1**: `.random-box`/`.item .label`, `.latest-grid`/`.latest-card`, `.t
 ⚠️ **Zufall:** Live mischt pro Aufruf (`Math.random`); Astro statisch → **deterministisch beim Build**
    (keine Pro-Aufruf-Mischung). Optional später Client-Shuffle.
 
-**B — Nutzer-Bestätigung:**
-- [ ] T1–T7 einfrieren & bauen? „⭐ Highlights" als eigener Menüpunkt (wie Live) ok?
-- [ ] Deterministischer Zufall (beim Build) ok, oder später Client-Shuffle?
+**B — Nutzer-Bestätigung (2026-06-04):**
+- [x] **T1–T7 eingefroren** (Nutzer „1, offen für Verbesserungen"). „⭐ Highlights" eigener Menüpunkt.
+- [x] **Zufall: Client-Shuffle** („beim Laden neu mischen, lebendig").
+
+**C — Neubau (Astro) — `2b369bb`:** `lib/home.ts`, `HomeIntro.astro`, `HomeMoments.tsx`,
+`HomeLatest.astro`, `HomeDiscover.tsx`; `index.astro`/`en` zeigen alle Sektionen. `highlights.json`
++ Tina „⭐ Highlights"; Intro/Sektion-Texte ins „🏠 Startseite". Teaser-CSS 1:1.
+
+**D — Abhak-Vergleich:**
+- ✅ T1 Intro (Subline „Zwei Blickwinkel…" + ✦ + Text). [Social-Row → Etappe 4.]
+- ✅ T2 Momentaufnahmen (bis 6 Highlight-/Zufalls-Fotos, Klick→Lightbox; mischt beim Laden).
+- ✅ T3 Aktuell (Top 3 Story/Reise/Album nach Datum; Tag/Titel/Meta; im HTML verifiziert: 3 Karten).
+- ✅ T4 Entdecken (3 Teaser Fotos/Alben/Reisen; mischt beim Laden; nur bei `show_discover`).
+- ✅ T5 „⭐ Highlights"-CMS speist T2/T4. ✅ T6 Texte im „🏠 Startseite". ✅ T7 CSS 1:1.
+- ⚠️ Entdecken-Foto-Klick: führt zu `/portfolio` (Live: Einzelbild-Lightbox) — bewusst vereinfacht.
+- ⚠️ Zufall jetzt Client-Shuffle statt Build-deterministisch (vom Nutzer gewünscht).
+- [ ] Nutzer hat Etappe 3 verglichen und abgenommen. `astro build` grün (32 Seiten).

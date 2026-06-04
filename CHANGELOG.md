@@ -17,6 +17,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-04 — Startseite Etappe 3: Home-Teaser + Intro (+ Bilder-Fixes)
+- **Bilder online (zwei Fixes):** `copy-uploads.mjs` im Build (Wurzel-`/uploads` → `web/dist`)
+  + `normalizePath` biegt Tina-Cloud-URLs (`assets.tina.io/<id>/<datei>`) zurück auf `/uploads/<datei>`
+  (Query-getriebene Inseln zeigten sonst `?`). 2 echt fehlende Dateien bleiben (IMG_5534/IMG_5618).
+- **Etappe 3 (`2b369bb`, Capability-Lock T1–T7):** `lib/home.ts` (buildMoments/Latest/Discover am
+  Build aus Alben/Reisen/Stories + Highlights). `HomeIntro.astro` (Zwischenüberschrift + ✦ + Text),
+  `HomeMoments.tsx` (bis 6, Klick → Lightbox, mischt beim Laden), `HomeLatest.astro` (Top-3 nach
+  Datum), `HomeDiscover.tsx` (3 Teaser, mischt beim Laden). `index.astro`/`en` zeigen alle Sektionen.
+  CMS: „⭐ Highlights" (`highlights.json`) + Intro/Sektion-Texte ins „🏠 Startseite". Teaser-CSS 1:1.
+- **Zufall = Client-Shuffle** (lebendig, vom Nutzer gewünscht). `astro build` grün (32 Seiten).
+- **Offen:** Abnahme; **Etappe 4 (Intro-Social-Row + Footer-Feinschliff)**. `index.html` unberührt.
+
 ## 2026-06-04 — Startseite Etappe 2: Hero + Deploy-Fix (Uploads)
 - **Deploy-Fix (`<vor Hero>`):** `web/scripts/copy-uploads.mjs` im `build`-Script kopiert das
   Wurzel-`/uploads` nach `web/public/uploads` → Bilder landen im Astro-`dist` und werden auf
