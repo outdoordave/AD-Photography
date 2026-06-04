@@ -28,7 +28,11 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   ghost nur bei `show_stories`), Scroll-Pfeil (bob), Rip-SVG, fadeUp-Animationen. `index.astro`
   + `en/index.astro` = echte Startseite; Stories-Liste → `/stories` (+`/en`). `home-settings.json`
   + Tina „🏠 Startseite" (Medien + Hero-Texte). CSS 1:1 in `global.css`. `astro build` grün (32 Seiten).
-- **Offen:** Abnahme; optionale Profi-Politur (Nutzer-Wahl); Etappe 3 Home-Teaser, Etappe 4 Intro/Social.
+- **Profi-Politur (Nutzer „alles, aber CMS-schaltbar"):** 4 Schalter unter „🏠 Startseite →
+  Politur" (Standard an, abschaltbar → 1:1): Ken-Burns-Zoom, stärkerer Verlauf, edle Fraunces-
+  Headline, animierter Scroll-Cue; `prefers-reduced-motion` respektiert. Dokumentierte, gewünschte
+  Abweichung vom Live-Stand.
+- **Offen:** Abnahme; Etappe 3 Home-Teaser, Etappe 4 Intro/Social.
 
 ## 2026-06-04 — Startseite Etappe 1: Nav-Shell (Header/Footer/DE-EN)
 - **Capability-Lock 0/A/B (`<dieser>`):** N1–N10 aus Live-`<header>/<footer>` extrahiert +

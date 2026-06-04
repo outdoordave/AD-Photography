@@ -659,4 +659,8 @@ H8 **`index.astro` wird zur echten Startseite** (Hero); die bisherige Stories-Li
 - ✅ H8 `index.astro` = Hero; Stories-Liste → `/stories` (+`/en`, Cards verifiziert). `astro build` grün (32 Seiten).
 
 - [ ] Nutzer hat Hero Seite-an-Seite verglichen und abgenommen.
-- [ ] Profi-Politur-Ideen: Nutzer wählt (separat dokumentiert).
+- [x] **Profi-Politur gebaut** (Nutzer „alles umsetzen, aber im CMS an-/abwählbar"): 4 Schalter
+  unter „🏠 Startseite → Politur" (Standard an): **Ken-Burns** (langsamer Bild-Zoom),
+  **stärkerer Verlauf** (Text-Pop), **edle Headline** (Fraunces, größer), **Scroll-Cue**
+  (animierter Hinweis). `prefers-reduced-motion` respektiert. Aus = 1:1-Live-Look.
+  **Bewusste, dokumentierte Abweichung vom Live-Stand (vom Nutzer gewünscht).**
