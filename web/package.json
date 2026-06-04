@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "tinacms dev -c \"astro dev\"",
-    "build": "tinacms build -c \"astro build\"",
+    "build": "node scripts/copy-uploads.mjs && tinacms build -c \"astro build\"",
     "astro:dev": "astro dev",
     "astro:build": "astro build",
     "preview": "astro preview",
