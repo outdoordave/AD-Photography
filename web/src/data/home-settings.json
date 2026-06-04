@@ -11,6 +11,12 @@
       "en": "We photograph the American wild — from the ground, from the air, and right in the middle of it all."
     },
     "cta_portfolio": { "de": "Portfolio ansehen", "en": "View portfolio" },
-    "cta_stories": { "de": "Reiseberichte lesen", "en": "Read our stories" }
+    "cta_stories": { "de": "Reiseberichte lesen", "en": "Read our stories" },
+    "polish": {
+      "ken_burns": true,
+      "scrim": true,
+      "big_headline": true,
+      "scroll_indicator": true
+    }
   }
 }

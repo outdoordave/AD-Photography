@@ -545,3 +545,22 @@ footer .fnote .ww-admin-link:hover { color: #f0c9a8; opacity: 1; }
 @keyframes bob { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(8px); } }
 .hero-rip { position: absolute; left: 0; right: 0; bottom: -1px; width: 100%; height: 72px; z-index: 2; color: var(--c-bg); display: block; pointer-events: none; }
 @media (max-width: 640px) { .hero { min-height: 80vh; min-height: 80svh; } .hero-rip { height: 52px; } .scroll-hint { bottom: 64px; } }
+
+/* ---- Hero-Politur (optional, im CMS pro Effekt schaltbar) ---- */
+@keyframes kenburns { from { transform: scale(1.002); } to { transform: scale(1.09); } }
+.hero.polish-kenburns .hero-img,
+.hero.polish-kenburns .hero-slide { animation: kenburns 30s ease-in-out infinite alternate; transform-origin: 52% 46%; }
+
+.hero.polish-scrim::before { background: linear-gradient(to bottom, rgba(28,24,18,0.55) 0%, rgba(28,24,18,0.28) 34%, rgba(28,24,18,0.30) 56%, rgba(28,24,18,0.78) 100%); }
+
+.hero.polish-bigtag .hero-tag { font-family: var(--font-display); font-weight: var(--fw-medium); font-size: clamp(1.6rem, 3.4vw, 2.5rem); line-height: 1.2; letter-spacing: 0; max-width: 760px; color: #f4e7d4; }
+
+.scroll-cue { position: absolute; bottom: 74px; left: 50%; transform: translateX(-50%); z-index: 3; width: 1px; height: 46px; background: rgba(240,217,191,0.30); overflow: hidden; }
+.scroll-cue::after { content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 45%; background: #f0d9bf; animation: scrolldrop 1.9s cubic-bezier(.6,0,.2,1) infinite; }
+@keyframes scrolldrop { 0% { transform: translateY(-110%); } 100% { transform: translateY(230%); } }
+@media (max-width: 640px) { .scroll-cue { bottom: 56px; height: 38px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero.polish-kenburns .hero-img, .hero.polish-kenburns .hero-slide { animation: none; }
+  .scroll-cue::after { animation: none; }
+}

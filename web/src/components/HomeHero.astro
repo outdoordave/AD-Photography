@@ -28,8 +28,22 @@ const hasMedia =
 const headline = tl(hero.headline, lang);
 const ctaP = tl(hero.cta_portfolio, lang) || (isEn ? 'View portfolio' : 'Portfolio ansehen');
 const ctaS = tl(hero.cta_stories, lang) || (isEn ? 'Read our stories' : 'Reiseberichte lesen');
+
+// Politur-Schalter (Standard an; im CMS abschaltbar -> zurück zum 1:1-Look).
+const pol = hero.polish || {};
+const pKen = pol.ken_burns !== false;
+const pScrim = pol.scrim !== false;
+const pBig = pol.big_headline !== false;
+const pScroll = pol.scroll_indicator !== false;
+const heroClass = [
+  'hero',
+  hasMedia ? 'has-media' : '',
+  pKen ? 'polish-kenburns' : '',
+  pScrim ? 'polish-scrim' : '',
+  pBig ? 'polish-bigtag' : '',
+].filter(Boolean).join(' ');
 ---
-<div class={`hero${hasMedia ? ' has-media' : ''}`}>
+<div class={heroClass}>
   <div class="hero-media">
     {mode === 'video' && hero.video ? (
       <video
@@ -58,7 +72,11 @@ const ctaS = tl(hero.cta_stories, lang) || (isEn ? 'Read our stories' : 'Reisebe
     {showStories ? <a class="btn ghost" href={`${prefix}/stories`}>{ctaS}</a> : null}
   </div>
 
-  <div class="scroll-hint">↓</div>
+  {pScroll ? (
+    <div class="scroll-cue" aria-hidden="true"></div>
+  ) : (
+    <div class="scroll-hint">↓</div>
+  )}
 
   <svg class="hero-rip" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
     <defs>

@@ -486,6 +486,16 @@ export default defineConfig({
               { type: 'object', name: 'headline', label: 'Überschrift', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
               { type: 'object', name: 'cta_portfolio', label: 'Knopf 1 (→ Portfolio)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
               { type: 'object', name: 'cta_stories', label: 'Knopf 2 (→ Stories)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              {
+                type: 'object', name: 'polish', label: 'Politur (edler Look, abschaltbar)',
+                description: 'Feinschliff-Effekte für den Hero. Aus = 1:1 schlichter Look.',
+                fields: [
+                  { type: 'boolean', name: 'ken_burns', label: 'Langsamer Bild-Zoom (Ken-Burns)' },
+                  { type: 'boolean', name: 'scrim', label: 'Stärkerer Verlauf (Text hebt sich ab)' },
+                  { type: 'boolean', name: 'big_headline', label: 'Große, edle Überschrift (Display-Schrift)' },
+                  { type: 'boolean', name: 'scroll_indicator', label: 'Eleganter Scroll-Hinweis' },
+                ],
+              },
             ],
           },
         ],
