@@ -17,3 +17,16 @@ const ICONS: Record<string, string> = {
 export function socialIcon(type?: string): string {
   return (type && ICONS[type]) || ICONS.web;
 }
+
+// Profil-URL aus Plattform + Benutzername (1:1 aus wwSocialUrl).
+export function socialUrl(platform: string | undefined, username: string): string {
+  const u = encodeURIComponent(username);
+  switch (platform) {
+    case 'tiktok': return 'https://www.tiktok.com/@' + u;
+    case 'youtube': return 'https://www.youtube.com/@' + u;
+    case 'facebook': return 'https://facebook.com/' + u;
+    case 'x': return 'https://x.com/' + u;
+    case 'instagram':
+    default: return 'https://instagram.com/' + u;
+  }
+}

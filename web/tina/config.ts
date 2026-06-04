@@ -512,6 +512,23 @@ export default defineConfig({
             fields: [
               { type: 'object', name: 'subline', label: 'Zwischenüberschrift', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
               { type: 'object', name: 'subtext', label: 'Intro-Text', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              {
+                type: 'object', name: 'social', label: 'Social-Links (z. B. Instagram)', list: true,
+                ui: { itemProps: (i: any) => ({ label: i?.username ? '@' + i.username : 'Neuer Link' }) },
+                fields: [
+                  {
+                    type: 'string', name: 'platform', label: 'Plattform',
+                    options: [
+                      { value: 'instagram', label: 'Instagram' },
+                      { value: 'tiktok', label: 'TikTok' },
+                      { value: 'youtube', label: 'YouTube' },
+                      { value: 'facebook', label: 'Facebook' },
+                      { value: 'x', label: 'X (Twitter)' },
+                    ],
+                  },
+                  { type: 'string', name: 'username', label: 'Benutzername (ohne @)' },
+                ],
+              },
             ],
           },
           {

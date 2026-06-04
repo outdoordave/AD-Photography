@@ -602,3 +602,10 @@ footer .fnote .ww-admin-link:hover { color: #f0c9a8; opacity: 1; }
   .latest-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 480px) { .random-box { grid-template-columns: 1fr; } }
+
+/* Social-Links im Intro-Block (1:1 aus .insta-row) */
+.insta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 26px; }
+.insta-link { display: inline-flex; align-items: center; gap: 10px; background: var(--c-bg-alt); border: 1px solid var(--c-line); border-radius: var(--radius-pill); padding: 10px 20px; font-weight: var(--fw-bold); font-size: var(--fs-ui); color: var(--c-ink); text-decoration: none; transition: all var(--dur-base) var(--ease); cursor: pointer; }
+.insta-link:hover { border-color: var(--c-accent); color: var(--c-accent); transform: translateY(-2px); }
+.insta-link .ig-ic { display: inline-flex; align-items: center; }
+.insta-link .ig-ic svg { width: 18px; height: 18px; vertical-align: middle; }

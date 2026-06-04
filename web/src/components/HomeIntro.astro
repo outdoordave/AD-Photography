@@ -1,8 +1,11 @@
 ---
-// Intro-Block unter dem Hero (1:1 aus .home-intro): Zwischenüberschrift + ✦ + Text.
-// (Social-Row folgt in Etappe 4.)
-interface Props { subline?: string; subtext?: string; }
-const { subline = '', subtext = '' } = Astro.props;
+// Intro-Block unter dem Hero (1:1 aus .home-intro + renderHeroSocial): Zwischenüberschrift
+// + ✦ + Text + Social-Links (Insta etc.).
+import { socialIcon, socialUrl } from '../lib/socialIcons';
+interface Social { platform?: string; username?: string; }
+interface Props { subline?: string; subtext?: string; social?: Social[]; }
+const { subline = '', subtext = '', social = [] } = Astro.props;
+const links = (social || []).filter((s) => s && s.username);
 ---
 <section>
   <div class="wrap">
@@ -10,6 +13,16 @@ const { subline = '', subtext = '' } = Astro.props;
       {subline ? <h2>{subline}</h2> : null}
       <div class="divider-orn">✦</div>
       {subtext ? <p>{subtext}</p> : null}
+      {links.length > 0 && (
+        <div class="insta-row">
+          {links.map((s) => (
+            <a class="insta-link" href={socialUrl(s.platform, s.username!)} target="_blank" rel="noopener">
+              <span class="ig-ic" set:html={socialIcon(s.platform || 'instagram')} />
+              @{s.username}
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   </div>
 </section>

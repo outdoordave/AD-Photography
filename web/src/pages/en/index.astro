@@ -37,7 +37,7 @@ const intro = h.intro || {};
 <BaseLayout title="Wide & Wild — Travel & Outdoor Photography" lang="en">
   <HomeHero hero={h.hero} logo={ap.logo} showHeroLogo={ap.show_hero_logo !== false} showStories={showStories} lang="en" />
 
-  <HomeIntro subline={tl(intro.subline, lang)} subtext={tl(intro.subtext, lang)} />
+  <HomeIntro subline={tl(intro.subline, lang)} subtext={tl(intro.subtext, lang)} social={intro.social || []} />
 
   {moments.length > 0 && (
     <section style="padding-top:0;">
