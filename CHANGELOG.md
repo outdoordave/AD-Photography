@@ -17,6 +17,14 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-04 — Über uns CMS: DE/EN-Felder als inline aufklappbare Dropdowns
+- Auf Nutzer-Wunsch: DE/EN-Felder klappen jetzt **inline auf** (Dropdown) statt eine
+  Tina-**Unterseite** zu öffnen. Neues `BilingualField`/`BilingualTextField`
+  (`ui.component` am object-Feld) — angewandt auf kicker/title/intro + persons.role/
+  bio/gear. „why" flach zu `why_title`/`why_text` (je inline). Personen-Panel
+  (Unterseite pro Person) bleibt wie gewünscht. **Besucher-Seite 1:1 unverändert.**
+- Commit: `92b842a`
+
 ## 2026-06-04 — Über uns: Personen als aufklappbare Tina-Liste (Editier-Komfort)
 - Auf Nutzer-Wunsch: Person 1/2 von zwei Einzel-Objekten zu **einer Liste „Personen"**
   zusammengefasst → im Tina-Editor **zwei zuklappbare Einträge** (Name als Titel) statt
