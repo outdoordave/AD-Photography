@@ -418,3 +418,32 @@ auto-wachsende Felder, Kanal-Typ als Dropdown, Live-Vorschau, Router → `/conta
 - [x] Nutzer hat Kontakt **abgenommen am 2026-06-04** („passt!"). CMS-Edit verifiziert
       (Nutzer hat über Tina einen 3. Kanal ergänzt). **Kontakt gilt als fertig portiert.** ✅
       (Echtes Formular-Senden „W5" bleibt offen — eigener Schritt.)
+
+---
+
+# Reisen (Stufe 5, 🔴🔴 größter Brocken) — Capability-Lock
+
+**Schritt 0 (Live-Wahrheit):** vollständige Analyse in **`ANALYSE-Reisen.md`** (Karte,
+Stationen, Ortssuche, Datenstruktur) + echter Code `index.html` (renderTrip, wwDrawTrip,
+wwActivateStop, wwMapStyleUrl, wwSetMapLanguage, renderStops, buildStopHTML, buildTrip,
+pickStopCoord, gallery_block), `content/trips/*.json` (5 Reisen), `admin/config.yml` (trips).
+**Prototypen abgenommen:** MapLibre-Insel + Stationen-Wischen (`TripMapProto.tsx`, Safari ok),
+Nominatim-Ortssuche (`LocationSearchField.tsx`).
+**Schritt B:** Liste bestätigt **2026-06-04** („sollte erstmal passen"). Entscheidungen:
+(a) Reisen-Collection (je Reise 1 Eintrag) + „Reisen-Einstellungen" (Texte + map_style),
+(b) Album-Link jetzt technisch, aktiv ab Galerie, (c) WebP-Upload + Englisch-Schalter +
+Live-Vorschau, (d) Route `/trips` + `/en/trips`.
+
+## Eingefrorene Soll-Liste (18 Punkte)
+A1 Seitenkopf (DE/EN) · A2 Reise-Tabs (aktiv, mobil scrollbar) · A3 Reise-Kopf (Titel/Datum/
+Meta/Summary + „bald ✦" bei upcoming) · B4 MapLibre-Insel · B5 Marker (aktiv/Popup/Klick) ·
+B6 fitBounds + flyTo · B7 5 Stile (map_style) · B8 Sprach-Labels · B9 scrollZoom-aus/
+cooperativeGestures/8s-Fallback · C10 Snap-Bahn + Observer + Pfeile (entkoppelt) · C11 Stop-
+Liste · D12 Stations-Karte (Station X/Y, Titel, Datum, Titelbild, Text) · D13 weitere Fotos →
+**Lightbox** (Gruppe „stop") · D14 Video-Loop + YouTube · E15 verknüpftes Album (linked_trip) ·
+E16 „Reisefazit"-Galerie (gallery_block, Captions DE/EN) · F17 Daten trips/*.json (DE/EN, GeoJSON-
+Point, pickStopCoord-Fallbacks) · F18 Ortssuche-Feld (Nominatim).
+**Bewusst NICHT portiert:** toter Legacy-Code projectUSA/Alaska/ensureXY (s. ANALYSE-Reisen.md).
+
+(Schritt C/D folgen beim Bau.)
+- [ ] Nutzer hat Reisen Seite-an-Seite (Live vs. `…-astro.pages.dev/trips`) verglichen und abgenommen.
