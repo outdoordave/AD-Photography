@@ -559,3 +559,39 @@ Aus Live-Code extrahiert (Schritt 0/A vorab erledigt, damit nichts verloren geht
 - ✅ A17 CMS „🖼️ Alben" + „🖼️ Galerie – Einstellungen" (je ein Menüpunkt, Leitprinzip).
 
 - [x] **Abgenommen (Nutzer „PASST!", 2026-06-04).** A15-Ziel (Album-Unterseite) mit ok.
+
+---
+
+# Startseite (Stufe 7) — in 4 Etappen, je eigener Capability-Lock
+Reihenfolge (Nutzer „du entscheidest"): **1 Nav-Shell → 2 Hero → 3 Home-Teaser → 4 Intro/Social.**
+
+## Etappe 1: Nav-Shell — Schritt 0 (Live-Wahrheit)
+- Markup: `<header><nav>` (919–937), `<footer>` (1215–1230). CSS: `header` sticky/blur (129–136),
+  `.nav`/`.nav-links`/`.lang-toggle`/`.burger` (137–162), mobiles Slide-in `.nav-links` (846–848),
+  `footer` (768). Logo `applyBranding` (3962, ein `logo` → Nav/Hero/Footer), Sprache
+  `applyLang`/`setLang` (1469/1493). Daten `appearance-settings.json` (`logo, show_hero_logo,
+  show_discover`). Stories-Sichtbarkeit `show_stories`.
+
+## Etappe 1 — A: Soll-Fähigkeiten (eingefroren nach Bestätigung)
+N1 **Sticky Header** (durchscheinend + Blur + untere Linie, über Inhalt; Höhe 88 px, mobil 72).
+N2 **Logo** (CMS `appearance.logo`) links → **Home** (`/` bzw. `/en/`).
+N3 **7 Nav-Links**: Start/Portfolio/Stories/Reisen/Equipment/Über uns/Kontakt (EN: Home/
+   Portfolio/Stories/Trips/Gear/About/Contact) → `/`, `/portfolio`, `/stories`, `/trips`,
+   `/gear`, `/about`, `/contact` (EN mit `/en`-Präfix).
+N4 **Aktiver Link** hervorgehoben (Accent + Unterstrich) je aktueller Seite.
+N5 **Stories-Link** nur sichtbar, wenn Stories aktiv sind (`show_stories`) — in Nav, Footer, Hero-CTA.
+N6 **DE/EN-Umschalter** (Pille, aktiver = Accent) → **gleiche Seite in der anderen Sprache**
+   (`/...` ↔ `/en/...`); ersetzt das Live-`applyLang` (dort ein JS-Umschalter, hier echte Routen).
+N7 **Burger-Menü** (mobil): Slide-in-Panel von rechts (78 % / max 320 px), schließt bei Link-Klick.
+N8 **Footer** (dunkel): Logo + 7 Footer-Links + „© 2026 Alexandra Apostel & David Bastisch ·
+   Admin" (Admin → `/admin`) + „Travel & Outdoor Photography" (DE/EN).
+N9 **Logo-Quelle/CMS:** `appearance-settings.json` migrieren + EIN Menüpunkt „🎨 Darstellung"
+   (Logo-Upload + `show_hero_logo` + `show_discover`; Letztere greifen in Etappe 2/3).
+N10 **In `BaseLayout`** → erscheint auf **allen** Seiten; ersetzt das aktuelle nav-lose Layout.
+**Bewusst NICHT portiert:** In-Page-Admin-Overlay (Edit-Stifte, `wwEnterAdmin`) — Tina-Visual-
+Editing ersetzt es vollständig.
+
+## Etappe 1 — B: Nutzer-Bestätigung
+- [ ] Liste N1–N10 vollständig?
+- [ ] Stories sichtbar schalten? (Live: standardmäßig AUS; wir haben Stories aber gebaut/abgenommen.)
+- [ ] Footer-Admin-Link → `/admin` (Tina) ok?
