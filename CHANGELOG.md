@@ -17,6 +17,17 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-04 — Kontakt 1:1 portiert (Stufe 4, konsolidiert + Live-Vorschau)
+- Sektion 4 gebaut: `/contact` + `/en/contact` (`#page-contact`), `ContactContent.tsx`
+  (`useTina` + `tinaField`). Kanal-Liste mit **Auto-Icon** (`socialIcons.ts`, 10 Typen)
+  + Standort-Zeile. **Formular = Vorschau** (prüft Felder → Alert, Erfolgs-Meldung,
+  leert; versendet nichts — 1:1 wie Live).
+- CSS `contact-grid`/`form-field`/`form-success`/`.btn.dark` 1:1; Mobile 1-spaltig.
+- **EIN** Tina-Eintrag „✉️ Kontakt" (Englisch-Schalter, auto-Felder, Kanal-Typ-Dropdown),
+  Router → `/contact`. Capability-Lock D: 12/12 ✅. Lokal verifiziert. `index.html` unberührt.
+- **Offen / eigener Schritt:** echtes Formular-Versenden (Dienst + Datenschutz, „W5").
+- Commit: `2980036`
+
 ## 2026-06-04 — Über uns CMS: auto-wachsende Felder + globaler Englisch-Schalter
 - Felder wachsen mit dem Text (auto-resize); Klapp-Konstrukt entfernt (behebt zu
   kleine Felder + nicht-scrollbares „Nirvana"). Neuer Apple-Schalter oben

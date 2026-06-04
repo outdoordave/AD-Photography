@@ -382,3 +382,37 @@ ohne Namens-Overlay. Da beide Personen Fotos haben, aktuell nicht sichtbar.
       DE/EN-Felder inline (auto-wachsend), globaler Apple-Englisch-Schalter (Standard
       nur Deutsch). Besucher-Seite 1:1. **Feinschliff (Optik Editor) später vorgemerkt.**
       **Über uns gilt als fertig portiert.** ✅
+
+---
+
+# Kontakt (Stufe 4) — Capability-Lock
+
+**Schritt 0 (Live-Wahrheit):** echter Code — `index.html` (#page-contact, contact-grid,
+`renderContactChannels`, `wwSocialIcon`, `handleSend`, Form-CSS), `content/contact.json`,
+`admin/config.yml` (kontakt + channels-Select).
+**Schritt B:** Liste bestätigt **2026-06-04** („a und b und c"): (a) Formular **als Vorschau
+1:1** (echtes Senden = separater Schritt mit Datenschutz-Blick), (b) konsolidiert + Englisch-
+Schalter + auto-Felder + Kanal-Typ-Dropdown, (c) Route `/contact`.
+
+## Soll-Liste + Abhak-Vergleich (Schritt D, 2026-06-04)
+
+| # | Fähigkeit | Status | Notiz |
+|---|---|---|---|
+| 1 | Seitenkopf Kicker/Titel/Intro (DE/EN) | ✅ | `contact.json` + ContactContent |
+| 2 | 2-Spalten-Grid, mobil <860px → 1 Spalte | ✅ | `.contact-grid` 1:1 |
+| 3 | Links: „Schreib uns direkt" (Titel+Text) + Kanal-Liste | ✅ | |
+| 4 | Rechts: Kontaktformular | ✅ | |
+| 5 | Kanal: Auto-Icon nach Typ + Label; mit URL → Link, sonst Text | ✅ | `socialIcons.ts` |
+| 6 | 10 Kanal-Typen mit eigenem SVG-Icon | ✅ | email/instagram/…/web 1:1 |
+| 7 | Standort-Zeile am Ende (Web-Icon + location) | ✅ | |
+| 8 | Form-Felder Name/E-Mail/Nachricht (Labels DE/EN) | ✅ | |
+| 9 | Senden: alle Felder gefüllt? sonst Alert; sonst Erfolg + leeren | ✅ | React-State, 1:1-Verhalten |
+| 10 | Formular = Vorschau, versendet NICHTS | ✅ | 1:1 (echtes Senden später, Entscheidung a) |
+| 11 | Styles 1:1 (Felder, Fokus-Rand, Erfolgs-Box grün, `.btn.dark`) | ✅ | `global.css` |
+| 12 | DE/EN-Umschaltung; Quelle `contact.json` | ✅ | `/contact` + `/en/contact` |
+
+**Konsolidiert (Leitprinzip):** EIN Tina-Eintrag „✉️ Kontakt" (Englisch-Schalter,
+auto-wachsende Felder, Kanal-Typ als Dropdown, Live-Vorschau, Router → `/contact`).
+**Offen / eigener Schritt:** echtes Formular-Versenden (Dienst + Datenschutz) — „W5", später.
+
+- [ ] Nutzer hat Kontakt Seite-an-Seite (Live vs. `…-astro.pages.dev/contact`) verglichen und abgenommen.
