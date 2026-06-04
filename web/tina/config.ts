@@ -34,6 +34,165 @@ export default defineConfig({
   },
   schema: {
     collections: [
+      // --- Startseite: Hero (Medien + Texte). Intro/Social folgen in Etappe 4. ---
+      {
+        name: 'startseite',
+        label: '🏠 Startseite',
+        path: 'src/data',
+        format: 'json',
+        match: { include: 'home-settings' },
+        ui: { allowedActions: { create: false, delete: false } },
+        fields: [
+          {
+            type: 'string', name: 'editor_language', label: 'Sprache',
+            description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
+            ui: { component: EnglishToggle },
+          },
+          {
+            type: 'object', name: 'hero', label: 'Hero (Kopfbereich)',
+            fields: [
+              {
+                type: 'string', name: 'mode', label: 'Hintergrund-Typ',
+                description: 'Einzelbild, Diashow (mehrere Bilder) oder Video.',
+                options: [
+                  { value: 'image', label: 'Einzelbild' },
+                  { value: 'random', label: 'Diashow (mehrere Bilder)' },
+                  { value: 'video', label: 'Video' },
+                ],
+              },
+              { type: 'image', name: 'image', label: 'Einzelbild (Auto-WebP)', ui: { component: SinglePhotoField } },
+              { type: 'image', name: 'slideshow', label: 'Diashow-Bilder (Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
+              { type: 'string', name: 'video', label: 'Video (optional)', description: 'Pfad zu /uploads/… — Video vorher lokal komprimieren (HandBrake/CapCut).' },
+              { type: 'image', name: 'video_poster', label: 'Video-Vorschaubild (Poster)', ui: { component: SinglePhotoField } },
+              { type: 'object', name: 'headline', label: 'Überschrift', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'cta_portfolio', label: 'Knopf 1 (→ Portfolio)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'cta_stories', label: 'Knopf 2 (→ Stories)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              {
+                type: 'object', name: 'polish', label: 'Politur (edler Look, abschaltbar)',
+                description: 'Feinschliff-Effekte für den Hero. Aus = 1:1 schlichter Look.',
+                fields: [
+                  { type: 'boolean', name: 'ken_burns', label: 'Langsamer Bild-Zoom (Ken-Burns)' },
+                  { type: 'boolean', name: 'scrim', label: 'Stärkerer Verlauf (Text hebt sich ab)' },
+                  { type: 'boolean', name: 'big_headline', label: 'Große, edle Überschrift (Display-Schrift)' },
+                  {
+                    type: 'string', name: 'scroll_style', label: 'Scroll-Hinweis (Stil)',
+                    description: 'Welcher Hinweis unten im Hero zum Weiterscrollen.',
+                    options: [
+                      { value: 'line', label: 'Linie (elegant)' },
+                      { value: 'arrow', label: 'Pfeil ↓ (klassisch / wie Live)' },
+                      { value: 'mouse', label: 'Maus (Puls)' },
+                      { value: 'none', label: 'Keiner' },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: 'object', name: 'intro', label: 'Intro-Block (unter dem Hero)',
+            fields: [
+              { type: 'object', name: 'subline', label: 'Zwischenüberschrift', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'subtext', label: 'Intro-Text', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              {
+                type: 'object', name: 'social', label: 'Social-Links (z. B. Instagram)', list: true,
+                ui: { itemProps: (i: any) => ({ label: i?.username ? '@' + i.username : 'Neuer Link' }) },
+                fields: [
+                  {
+                    type: 'string', name: 'platform', label: 'Plattform',
+                    options: [
+                      { value: 'instagram', label: 'Instagram' },
+                      { value: 'tiktok', label: 'TikTok' },
+                      { value: 'youtube', label: 'YouTube' },
+                      { value: 'facebook', label: 'Facebook' },
+                      { value: 'x', label: 'X (Twitter)' },
+                    ],
+                  },
+                  { type: 'string', name: 'username', label: 'Benutzername (ohne @)' },
+                ],
+              },
+            ],
+          },
+          {
+            type: 'object', name: 'sections', label: 'Sektion-Überschriften (Startseite)',
+            fields: [
+              { type: 'object', name: 'gallery_kicker', label: 'Momentaufnahmen — Kicker', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'gallery_title', label: 'Momentaufnahmen — Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'latest_kicker', label: 'Aktuell — Kicker', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'latest_title', label: 'Aktuell — Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'discover_kicker', label: 'Entdecken — Kicker', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'discover_title', label: 'Entdecken — Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+            ],
+          },
+          {
+            type: 'object', name: 'social_show', label: 'Social-Links anzeigen — wo?',
+            description: 'Wo die Instagram-Links (aus dem Intro-Block) erscheinen. Standard: nur Intro (wie Live).',
+            fields: [
+              { type: 'boolean', name: 'intro', label: 'Im Intro-Block (unter dem Hero)' },
+              { type: 'boolean', name: 'hero', label: 'Im Hero (unter den Buttons)' },
+              { type: 'boolean', name: 'footer', label: 'Im Footer (auf jeder Seite)' },
+            ],
+          },
+        ],
+      },
+      // --- Alben: jedes Album ein Eintrag (Mehrfach-Collection wie Reisen) ---
+      {
+        name: 'alben',
+        label: '🖼️ Alben',
+        path: 'src/data/albums',
+        format: 'json',
+        // Router -> Live-Vorschau der Album-Unterseite /portfolio/<slug> (useTina).
+        ui: {
+          router: ({ document }: any) => `/portfolio/${document._sys.filename}`,
+        },
+        fields: [
+          {
+            type: 'string', name: 'editor_language', label: 'Sprache',
+            description: 'Nur Deutsch — oder Deutsch + Englisch. Gilt für alle Felder. (Nur Anzeige im Editor.)',
+            ui: { component: EnglishToggle },
+          },
+          { type: 'object', name: 'name', label: 'Album-Name', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'note', label: 'Notiz (optional)', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'string', name: 'date', label: 'Datum (YYYY-MM-DD)', description: 'Für Sortierung „Neueste" und die Galerie-Reihenfolge.' },
+          { type: 'string', name: 'linked_trip', label: 'Verknüpfte Reise (Slug, optional)', description: 'Slug einer Reise (Dateiname ohne .json, z. B. „florida"). Dann zeigt diese Reise einen „Mehr Fotos im Album"-Link.' },
+          {
+            type: 'object', name: 'pin', label: 'In der Galerie anheften',
+            description: 'Angeheftete Alben stehen in der Galerie vorne.',
+            fields: [
+              { type: 'boolean', name: 'highlight', label: 'Anheften?' },
+              { type: 'number', name: 'highlight_order', label: 'Reihenfolge (kleiner = weiter vorne)' },
+            ],
+          },
+          { type: 'image', name: 'photos', label: 'Fotos (Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
+        ],
+      },
+      // --- Galerie: Seiten-Einstellungen (Texte + Sortier-Modi) ---
+      {
+        name: 'galerie_settings',
+        label: '🖼️ Galerie – Einstellungen',
+        path: 'src/data',
+        format: 'json',
+        match: { include: 'gallery-settings' },
+        ui: { allowedActions: { create: false, delete: false } },
+        fields: [
+          {
+            type: 'string', name: 'editor_language', label: 'Sprache',
+            description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
+            ui: { component: EnglishToggle },
+          },
+          { type: 'object', name: 'kicker', label: 'Mini-Titel (Kicker)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'title', label: 'Seiten-Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'intro', label: 'Einleitung', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          {
+            type: 'object', name: 'modes', label: 'Sichtbare Sortier-Modi',
+            description: 'Welche Sortier-Knöpfe Besucher sehen. Ist nur einer (oder keiner) an, wird die Leiste versteckt und „Alben" als Standard genutzt.',
+            fields: [
+              { type: 'boolean', name: 'album', label: 'Alben (Karten)' },
+              { type: 'boolean', name: 'chronological', label: 'Neueste (flach, nach Datum)' },
+              { type: 'boolean', name: 'alphabetical', label: 'A–Z (flach, nach Name)' },
+            ],
+          },
+        ],
+      },
       {
         name: 'story',
         label: 'Stories',
@@ -73,6 +232,85 @@ export default defineConfig({
           { type: 'string', name: 'category_en', label: 'Category (EN)' },
           { type: 'string', name: 'excerpt_en', label: 'Excerpt (EN)', ui: { component: 'textarea' } },
           { type: 'string', name: 'body_en', label: 'Body (EN, Markdown)', ui: { component: 'textarea' } },
+        ],
+      },
+      // --- Reisen: jede Reise ein Eintrag (Mehrfach-Collection wie Stories) ---
+      {
+        name: 'reisen',
+        label: '🧭 Reisen',
+        path: 'src/data/trips',
+        format: 'json',
+        // Router -> Live-Vorschau: eigene Pfad-Route je Reise (/trips/<slug>), damit
+        // Tina die richtige Reise zuverlaessig anzeigt (Query-Strings verwirft Tina).
+        // Die Route nutzt useTina -> Visual-Editing (Klick=Feld + Live-Update).
+        ui: {
+          router: ({ document }: any) => `/trips/${document._sys.filename}`,
+        },
+        fields: [
+          {
+            type: 'string', name: 'editor_language', label: 'Sprache',
+            description: 'Schalter: nur Deutsch — oder Deutsch + Englisch. Gilt für alle Felder. (Nur Anzeige im Editor.)',
+            ui: { component: EnglishToggle },
+          },
+          { type: 'number', name: 'order', label: 'Reihenfolge (Tab)', description: 'Kleinere Zahl = weiter links in den Reise-Tabs.' },
+          { type: 'object', name: 'title', label: 'Reise-Titel (Tab)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'string', name: 'date', label: 'Datum (YYYY-MM-DD)', description: 'Für Sortierung/Meta.' },
+          { type: 'object', name: 'meta', label: 'Meta-Zeile (Datum · km · …)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'summary', label: 'Zusammenfassung', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'boolean', name: 'upcoming', label: 'Kommende Reise? (zeigt „bald ✦")' },
+          {
+            type: 'object', name: 'stops', label: 'Stationen', list: true,
+            ui: { itemProps: (i: any) => ({ label: i?.name || 'Neue Station' }) },
+            fields: [
+              { type: 'string', name: 'name', label: 'Name (kurz – für Marker & Liste)', required: true, description: 'z. B. San Francisco' },
+              { type: 'string', name: 'location', label: '📍 Ort auf der Karte', description: 'Suchen & auf der Karte feinjustieren.', ui: { component: LocationSearchField } },
+              { type: 'object', name: 'title', label: 'Stations-Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'date', label: 'Datum/Zeitraum', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'text', label: 'Text', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'image', name: 'photo', label: 'Titelbild (Auto-WebP)', ui: { component: SinglePhotoField } },
+              { type: 'image', name: 'photos', label: 'Weitere Fotos (Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
+              { type: 'string', name: 'video', label: 'Video-Loop (optional)', description: 'Pfad zu /uploads/… — Video vorher lokal komprimieren (HandBrake/CapCut).' },
+              { type: 'string', name: 'youtube', label: 'YouTube-URL (optional)' },
+            ],
+          },
+          {
+            type: 'object', name: 'gallery', label: '„Reisefazit"-Galerie (optional)', list: true,
+            ui: { itemProps: (i: any) => ({ label: i?.image ? i.image.split('/').pop() : 'Neues Bild' }) },
+            fields: [
+              { type: 'image', name: 'image', label: 'Bild (Auto-WebP)', ui: { component: SinglePhotoField } },
+              { type: 'object', name: 'caption', label: 'Bildunterschrift', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+            ],
+          },
+        ],
+      },
+      // --- Reisen: Seiten-Einstellungen (Texte + Karten-Stil) ---
+      {
+        name: 'reisen_settings',
+        label: '🧭 Reisen – Einstellungen',
+        path: 'src/data',
+        format: 'json',
+        match: { include: 'trips-settings' },
+        ui: { allowedActions: { create: false, delete: false } },
+        fields: [
+          {
+            type: 'string', name: 'editor_language', label: 'Sprache',
+            description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
+            ui: { component: EnglishToggle },
+          },
+          { type: 'object', name: 'kicker', label: 'Mini-Titel (Kicker)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'title', label: 'Seiten-Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'intro', label: 'Einleitung', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          {
+            type: 'string', name: 'map_style', label: 'Karten-Stil',
+            description: 'Stil der MapLibre-Karte (OpenFreeMap).',
+            options: [
+              { value: 'liberty', label: 'Liberty (Standard)' },
+              { value: 'positron', label: 'Positron (hell/minimal)' },
+              { value: 'bright', label: 'Bright' },
+              { value: 'fiord', label: 'Fiord (gedeckt)' },
+              { value: 'dark', label: 'Dark' },
+            ],
+          },
         ],
       },
       // --- Equipment / Gear: EIN Eintrag (Seitentexte + Liste) mit Live-Vorschau ---
@@ -313,244 +551,6 @@ export default defineConfig({
           { type: 'object', name: 'form_message', label: 'Formular — Label „Nachricht"', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
           { type: 'object', name: 'form_send', label: 'Formular — Senden-Button', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
           { type: 'object', name: 'form_note', label: 'Formular — Hinweis darunter', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-        ],
-      },
-      // --- Reisen: jede Reise ein Eintrag (Mehrfach-Collection wie Stories) ---
-      {
-        name: 'reisen',
-        label: '🧭 Reisen',
-        path: 'src/data/trips',
-        format: 'json',
-        // Router -> Live-Vorschau: eigene Pfad-Route je Reise (/trips/<slug>), damit
-        // Tina die richtige Reise zuverlaessig anzeigt (Query-Strings verwirft Tina).
-        // Die Route nutzt useTina -> Visual-Editing (Klick=Feld + Live-Update).
-        ui: {
-          router: ({ document }: any) => `/trips/${document._sys.filename}`,
-        },
-        fields: [
-          {
-            type: 'string', name: 'editor_language', label: 'Sprache',
-            description: 'Schalter: nur Deutsch — oder Deutsch + Englisch. Gilt für alle Felder. (Nur Anzeige im Editor.)',
-            ui: { component: EnglishToggle },
-          },
-          { type: 'number', name: 'order', label: 'Reihenfolge (Tab)', description: 'Kleinere Zahl = weiter links in den Reise-Tabs.' },
-          { type: 'object', name: 'title', label: 'Reise-Titel (Tab)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'string', name: 'date', label: 'Datum (YYYY-MM-DD)', description: 'Für Sortierung/Meta.' },
-          { type: 'object', name: 'meta', label: 'Meta-Zeile (Datum · km · …)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'summary', label: 'Zusammenfassung', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'boolean', name: 'upcoming', label: 'Kommende Reise? (zeigt „bald ✦")' },
-          {
-            type: 'object', name: 'stops', label: 'Stationen', list: true,
-            ui: { itemProps: (i: any) => ({ label: i?.name || 'Neue Station' }) },
-            fields: [
-              { type: 'string', name: 'name', label: 'Name (kurz – für Marker & Liste)', required: true, description: 'z. B. San Francisco' },
-              { type: 'string', name: 'location', label: '📍 Ort auf der Karte', description: 'Suchen & auf der Karte feinjustieren.', ui: { component: LocationSearchField } },
-              { type: 'object', name: 'title', label: 'Stations-Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'date', label: 'Datum/Zeitraum', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'text', label: 'Text', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'image', name: 'photo', label: 'Titelbild (Auto-WebP)', ui: { component: SinglePhotoField } },
-              { type: 'image', name: 'photos', label: 'Weitere Fotos (Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
-              { type: 'string', name: 'video', label: 'Video-Loop (optional)', description: 'Pfad zu /uploads/… — Video vorher lokal komprimieren (HandBrake/CapCut).' },
-              { type: 'string', name: 'youtube', label: 'YouTube-URL (optional)' },
-            ],
-          },
-          {
-            type: 'object', name: 'gallery', label: '„Reisefazit"-Galerie (optional)', list: true,
-            ui: { itemProps: (i: any) => ({ label: i?.image ? i.image.split('/').pop() : 'Neues Bild' }) },
-            fields: [
-              { type: 'image', name: 'image', label: 'Bild (Auto-WebP)', ui: { component: SinglePhotoField } },
-              { type: 'object', name: 'caption', label: 'Bildunterschrift', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-            ],
-          },
-        ],
-      },
-      // --- Reisen: Seiten-Einstellungen (Texte + Karten-Stil) ---
-      {
-        name: 'reisen_settings',
-        label: '🧭 Reisen – Einstellungen',
-        path: 'src/data',
-        format: 'json',
-        match: { include: 'trips-settings' },
-        ui: { allowedActions: { create: false, delete: false } },
-        fields: [
-          {
-            type: 'string', name: 'editor_language', label: 'Sprache',
-            description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
-            ui: { component: EnglishToggle },
-          },
-          { type: 'object', name: 'kicker', label: 'Mini-Titel (Kicker)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'title', label: 'Seiten-Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'intro', label: 'Einleitung', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          {
-            type: 'string', name: 'map_style', label: 'Karten-Stil',
-            description: 'Stil der MapLibre-Karte (OpenFreeMap).',
-            options: [
-              { value: 'liberty', label: 'Liberty (Standard)' },
-              { value: 'positron', label: 'Positron (hell/minimal)' },
-              { value: 'bright', label: 'Bright' },
-              { value: 'fiord', label: 'Fiord (gedeckt)' },
-              { value: 'dark', label: 'Dark' },
-            ],
-          },
-        ],
-      },
-      // --- Alben: jedes Album ein Eintrag (Mehrfach-Collection wie Reisen) ---
-      {
-        name: 'alben',
-        label: '🖼️ Alben',
-        path: 'src/data/albums',
-        format: 'json',
-        // Router -> Live-Vorschau der Album-Unterseite /portfolio/<slug> (useTina).
-        ui: {
-          router: ({ document }: any) => `/portfolio/${document._sys.filename}`,
-        },
-        fields: [
-          {
-            type: 'string', name: 'editor_language', label: 'Sprache',
-            description: 'Nur Deutsch — oder Deutsch + Englisch. Gilt für alle Felder. (Nur Anzeige im Editor.)',
-            ui: { component: EnglishToggle },
-          },
-          { type: 'object', name: 'name', label: 'Album-Name', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'note', label: 'Notiz (optional)', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'string', name: 'date', label: 'Datum (YYYY-MM-DD)', description: 'Für Sortierung „Neueste" und die Galerie-Reihenfolge.' },
-          { type: 'string', name: 'linked_trip', label: 'Verknüpfte Reise (Slug, optional)', description: 'Slug einer Reise (Dateiname ohne .json, z. B. „florida"). Dann zeigt diese Reise einen „Mehr Fotos im Album"-Link.' },
-          {
-            type: 'object', name: 'pin', label: 'In der Galerie anheften',
-            description: 'Angeheftete Alben stehen in der Galerie vorne.',
-            fields: [
-              { type: 'boolean', name: 'highlight', label: 'Anheften?' },
-              { type: 'number', name: 'highlight_order', label: 'Reihenfolge (kleiner = weiter vorne)' },
-            ],
-          },
-          { type: 'image', name: 'photos', label: 'Fotos (Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
-        ],
-      },
-      // --- Galerie: Seiten-Einstellungen (Texte + Sortier-Modi) ---
-      {
-        name: 'galerie_settings',
-        label: '🖼️ Galerie – Einstellungen',
-        path: 'src/data',
-        format: 'json',
-        match: { include: 'gallery-settings' },
-        ui: { allowedActions: { create: false, delete: false } },
-        fields: [
-          {
-            type: 'string', name: 'editor_language', label: 'Sprache',
-            description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
-            ui: { component: EnglishToggle },
-          },
-          { type: 'object', name: 'kicker', label: 'Mini-Titel (Kicker)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'title', label: 'Seiten-Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'intro', label: 'Einleitung', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          {
-            type: 'object', name: 'modes', label: 'Sichtbare Sortier-Modi',
-            description: 'Welche Sortier-Knöpfe Besucher sehen. Ist nur einer (oder keiner) an, wird die Leiste versteckt und „Alben" als Standard genutzt.',
-            fields: [
-              { type: 'boolean', name: 'album', label: 'Alben (Karten)' },
-              { type: 'boolean', name: 'chronological', label: 'Neueste (flach, nach Datum)' },
-              { type: 'boolean', name: 'alphabetical', label: 'A–Z (flach, nach Name)' },
-            ],
-          },
-        ],
-      },
-      // --- Startseite: Hero (Medien + Texte). Intro/Social folgen in Etappe 4. ---
-      {
-        name: 'startseite',
-        label: '🏠 Startseite',
-        path: 'src/data',
-        format: 'json',
-        match: { include: 'home-settings' },
-        ui: { allowedActions: { create: false, delete: false } },
-        fields: [
-          {
-            type: 'string', name: 'editor_language', label: 'Sprache',
-            description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
-            ui: { component: EnglishToggle },
-          },
-          {
-            type: 'object', name: 'hero', label: 'Hero (Kopfbereich)',
-            fields: [
-              {
-                type: 'string', name: 'mode', label: 'Hintergrund-Typ',
-                description: 'Einzelbild, Diashow (mehrere Bilder) oder Video.',
-                options: [
-                  { value: 'image', label: 'Einzelbild' },
-                  { value: 'random', label: 'Diashow (mehrere Bilder)' },
-                  { value: 'video', label: 'Video' },
-                ],
-              },
-              { type: 'image', name: 'image', label: 'Einzelbild (Auto-WebP)', ui: { component: SinglePhotoField } },
-              { type: 'image', name: 'slideshow', label: 'Diashow-Bilder (Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
-              { type: 'string', name: 'video', label: 'Video (optional)', description: 'Pfad zu /uploads/… — Video vorher lokal komprimieren (HandBrake/CapCut).' },
-              { type: 'image', name: 'video_poster', label: 'Video-Vorschaubild (Poster)', ui: { component: SinglePhotoField } },
-              { type: 'object', name: 'headline', label: 'Überschrift', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'cta_portfolio', label: 'Knopf 1 (→ Portfolio)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'cta_stories', label: 'Knopf 2 (→ Stories)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              {
-                type: 'object', name: 'polish', label: 'Politur (edler Look, abschaltbar)',
-                description: 'Feinschliff-Effekte für den Hero. Aus = 1:1 schlichter Look.',
-                fields: [
-                  { type: 'boolean', name: 'ken_burns', label: 'Langsamer Bild-Zoom (Ken-Burns)' },
-                  { type: 'boolean', name: 'scrim', label: 'Stärkerer Verlauf (Text hebt sich ab)' },
-                  { type: 'boolean', name: 'big_headline', label: 'Große, edle Überschrift (Display-Schrift)' },
-                  {
-                    type: 'string', name: 'scroll_style', label: 'Scroll-Hinweis (Stil)',
-                    description: 'Welcher Hinweis unten im Hero zum Weiterscrollen.',
-                    options: [
-                      { value: 'line', label: 'Linie (elegant)' },
-                      { value: 'arrow', label: 'Pfeil ↓ (klassisch / wie Live)' },
-                      { value: 'mouse', label: 'Maus (Puls)' },
-                      { value: 'none', label: 'Keiner' },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: 'object', name: 'intro', label: 'Intro-Block (unter dem Hero)',
-            fields: [
-              { type: 'object', name: 'subline', label: 'Zwischenüberschrift', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'subtext', label: 'Intro-Text', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              {
-                type: 'object', name: 'social', label: 'Social-Links (z. B. Instagram)', list: true,
-                ui: { itemProps: (i: any) => ({ label: i?.username ? '@' + i.username : 'Neuer Link' }) },
-                fields: [
-                  {
-                    type: 'string', name: 'platform', label: 'Plattform',
-                    options: [
-                      { value: 'instagram', label: 'Instagram' },
-                      { value: 'tiktok', label: 'TikTok' },
-                      { value: 'youtube', label: 'YouTube' },
-                      { value: 'facebook', label: 'Facebook' },
-                      { value: 'x', label: 'X (Twitter)' },
-                    ],
-                  },
-                  { type: 'string', name: 'username', label: 'Benutzername (ohne @)' },
-                ],
-              },
-            ],
-          },
-          {
-            type: 'object', name: 'sections', label: 'Sektion-Überschriften (Startseite)',
-            fields: [
-              { type: 'object', name: 'gallery_kicker', label: 'Momentaufnahmen — Kicker', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'gallery_title', label: 'Momentaufnahmen — Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'latest_kicker', label: 'Aktuell — Kicker', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'latest_title', label: 'Aktuell — Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'discover_kicker', label: 'Entdecken — Kicker', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'discover_title', label: 'Entdecken — Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-            ],
-          },
-          {
-            type: 'object', name: 'social_show', label: 'Social-Links anzeigen — wo?',
-            description: 'Wo die Instagram-Links (aus dem Intro-Block) erscheinen. Standard: nur Intro (wie Live).',
-            fields: [
-              { type: 'boolean', name: 'intro', label: 'Im Intro-Block (unter dem Hero)' },
-              { type: 'boolean', name: 'hero', label: 'Im Hero (unter den Buttons)' },
-              { type: 'boolean', name: 'footer', label: 'Im Footer (auf jeder Seite)' },
-            ],
-          },
         ],
       },
       // --- Highlights: album-übergreifende Lieblingsfotos (speisen die Home-Teaser) ---
