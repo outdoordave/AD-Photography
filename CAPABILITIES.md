@@ -447,3 +447,62 @@ Point, pickStopCoord-Fallbacks) · F18 Ortssuche-Feld (Nominatim).
 
 (Schritt C/D folgen beim Bau.)
 - [ ] Nutzer hat Reisen Seite-an-Seite (Live vs. `…-astro.pages.dev/trips`) verglichen und abgenommen.
+
+---
+
+# Galerie / Alben (Stufe 6, 🔴 letzter großer Brocken) — Capability-Lock
+
+## Schritt 0 — Live-Wahrheit (Code-Fundstellen, `index.html`)
+- `renderGallery` (1995), Modus-Schalter `setGalleryMode` (1831), Modus-Sichtbarkeit
+  `applyGalleryModes` (3919), Markup `#galleryModes`/`#galleryGrid` (1041–1046).
+- Album-Aufbau `buildAlbumFromData` (1651), Palette `paletteFromString` (1715),
+  flaches Portfolio `rebuildPortfolioFromAlbums` (1732), Laden `loadAlbums`/`loadHighlights` (1780/1760).
+- Album-Karte: `makeAlbumSlideshow` (1851, inkl. `scrollToCell` 1876, Autoplay 4 s, Pfeile),
+  `buildAlbumBody` (1925), Kachel `makeGalleryTile` (2084).
+- Album-Unterseite `openAlbum`/`renderAlbum` (2903/2904).
+- Reise→Album-Link im Reise-Summary (3226–3255, `.trip-album-link`).
+- Daten: `content/albums/*.json` (`name_de/en, note_de/en, date, photos[]` flach,
+  Alt-Format `{image,highlight}` toleriert, `linked_trip, pin{highlight,highlight_order},
+  english{enabled,name_en,note_en}, highlight_photos[]`); Sortierung aus `albums-index.json`
+  (`build-indexes.js`: angepinnte zuerst, dann Datum absteigend); Modi aus `gallery-settings.json`.
+- **Toter Code (NICHT portieren):** In-Place-Aufklappen `setAlbumOpen`/`.album-toggle`
+  (1941/CSS 311) wird **nirgends aufgerufen** — Album-Karten sind immer Diashow, Klick→Unterseite.
+- **Außerhalb dieser Sektion (= Startseite, später):** `highlights.json`/`G_HIGHLIGHTS`,
+  „Momentaufnahmen" (`renderRandomMoments`), „Neueste" (`renderLatest`), „Entdecken" (`renderDiscover`).
+
+## A — Soll-Fähigkeiten (eingefroren nach Bestätigung)
+A1 **Galerie-Seite** (`/gallery`?) mit Seitenkopf (Kicker/Titel/Einleitung, DE/EN) + Modus-Leiste.
+A2 **Modus-Leiste** 3 Knöpfe: Alben / Neueste / A–Z (DE) bzw. Albums / Newest / A–Z (EN), aktiver markiert.
+A3 **Modus-Sichtbarkeit** aus `gallery-settings`: Knopf aus → versteckt; bei ≤1 aktivem Modus ganze
+   Leiste weg; abgeschalteter Aktiv-Modus → auf ersten sichtbaren wechseln; alles aus → Fallback „Alben".
+A4 **Album-Modus**: 2-Spalten-Grid von Album-Karten (mobil 1 Spalte).
+A5 **Album-Karte**: Titel + `→`-Pfeil + Foto-Anzahl-Badge + Notiz (falls vorhanden).
+A6 **Auto-Diashow** in der Karte: horizontale Snap-Bahn der Fotos, **Autoplay alle 4 s**
+   (am Ende instant zurück auf 0), **‹/›-Pfeile**, Autoplay stoppt bei bewusster Interaktion
+   (pointerdown / horizontales Wheel); nur bei >1 Foto.
+A7 **Klick (kein Wisch) auf die Diashow → Lightbox** der Album-Fotos ab dem aktuell zentrierten Bild.
+A8 **Klick auf Album-Titel → Album-Unterseite** (Pfeil ist der Hinweis; Enter/Leertaste ebenso).
+A9 **Flach-Modi** (Neueste/A–Z): alle Fotos aller Alben als ein Kachel-Grid;
+   Neueste = nach Album-Datum absteigend (dann Album-Reihenfolge); A–Z = nach Album-Name (dann Index).
+A10 **Kachel** (`makeGalleryTile`): Platzhalter-Palette (stabil aus Pfad) + echtes Bild,
+    Albumname als dezenter **Hover-Streifen** unten.
+A11 **Kachel-Klick → Lightbox-Galerie** des jeweiligen Albums, Start beim geklickten Foto, mit Albumname.
+A12 **Album-Unterseite** (`/gallery/<slug>`?): Kicker „Album" + Name + Notiz + flaches Kachel-Grid;
+    Kachel-Klick → Lightbox wie A11.
+A13 **Album-Sortierung** in der Galerie: angepinnte (`pin.highlight`) zuerst nach `highlight_order`,
+    dann nach Datum absteigend (entspricht `build-indexes.js`/Reisen-Logik).
+A14 **DE/EN**: Name/Notiz je `english.enabled` (EN-Fallback auf DE); Labels (Album/Modi/„Mehr Fotos…").
+A15 **Reise→Album-Link**: im Reisen-Summary „Mehr Fotos im Album → [Name]" wenn ein Album
+    `linked_trip === Reise-Slug`; Klick → zur Galerie. (Greift damit der schon gebauten Reisen-Seite.)
+A16 **Lightbox**: nutzt die bereits abgenommene `Lightbox.tsx` (Gruppe = Album).
+A17 **Daten/CMS**: Alben als Tina-Collection „🖼️ Alben" (je Album: Name/Notiz DE/EN via Englisch-
+    Schalter, Datum, Foto-Liste Auto-WebP, `linked_trip`-Auswahl, Anheften+Reihenfolge) +
+    EIN „🖼️ Galerie – Einstellungen" (Seitentexte + 3 Modus-Schalter). **Ein Menüpunkt je Belang** (Leitprinzip).
+**Bewusst NICHT portiert:** toter In-Place-Toggle (A8 ersetzt ihn); Highlights/Momentaufnahmen/
+Neueste/Entdecken = Startseiten-Sektion (separat, später).
+
+## B — Nutzer-Bestätigung
+- [ ] Liste vollständig? Scope ok (Highlights/Momentaufnahmen gehören zur Startseite, nicht hierher)?
+- [ ] URL-Pfade ok: `/gallery` + `/gallery/<slug>` (oder lieber `/portfolio`/`/albums`)?
+
+(Schritt C/D folgen nach Bestätigung.)
