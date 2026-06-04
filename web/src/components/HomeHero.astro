@@ -1,0 +1,95 @@
+---
+// Hero (1:1 aus index.html renderHero + .hero-Markup): Vollflächiger Kopf mit
+// Medien-Umschalter (Einzelbild / Diashow 5 s / Video), Logo, Headline, 2 CTAs,
+// Scroll-Pfeil, „Rip"-Kante. Daten aus home-settings.json (CMS „🏠 Startseite").
+import { tl, type Lang } from '../lib/albums';
+import { normalizePath } from '../lib/stories';
+
+interface Props {
+  hero?: any;
+  logo?: string;
+  showHeroLogo?: boolean;
+  showStories?: boolean;
+  lang: Lang;
+}
+const { hero = {}, logo = '', showHeroLogo = true, showStories = false, lang } = Astro.props;
+const isEn = lang === 'en';
+const prefix = isEn ? '/en' : '';
+const mode = hero.mode || 'image';
+const logoSrc = logo && logo.charAt(0) !== '/' && !/^https?:/.test(logo) ? '/' + logo : logo;
+const slides = (Array.isArray(hero.slideshow) ? hero.slideshow : [])
+  .map((s: any) => (typeof s === 'string' ? s : s && s.img))
+  .filter(Boolean)
+  .map((p: string) => normalizePath(p));
+const hasMedia =
+  (mode === 'image' && hero.image) ||
+  (mode === 'random' && slides.length) ||
+  (mode === 'video' && hero.video);
+const headline = tl(hero.headline, lang);
+const ctaP = tl(hero.cta_portfolio, lang) || (isEn ? 'View portfolio' : 'Portfolio ansehen');
+const ctaS = tl(hero.cta_stories, lang) || (isEn ? 'Read our stories' : 'Reiseberichte lesen');
+---
+<div class={`hero${hasMedia ? ' has-media' : ''}`}>
+  <div class="hero-media">
+    {mode === 'video' && hero.video ? (
+      <video
+        class="hero-vid"
+        src={normalizePath(hero.video)}
+        autoplay loop muted playsinline preload="auto"
+        poster={hero.video_poster ? normalizePath(hero.video_poster) : undefined}
+      ></video>
+    ) : mode === 'random' && slides.length ? (
+      slides.map((s: string, i: number) => (
+        <img class={`hero-slide${i === 0 ? ' is-active' : ''}`} src={s} alt="" />
+      ))
+    ) : mode === 'image' && hero.image ? (
+      <img class="hero-img" src={normalizePath(hero.image)} alt="" />
+    ) : null}
+  </div>
+
+  {showHeroLogo && logoSrc ? (
+    <div class="hero-logo"><img src={logoSrc} alt="Wide & Wild" /></div>
+  ) : null}
+
+  <p class="hero-tag">{headline}</p>
+
+  <div class="hero-cta">
+    <a class="btn" href={`${prefix}/portfolio`}>{ctaP}</a>
+    {showStories ? <a class="btn ghost" href={`${prefix}/stories`}>{ctaS}</a> : null}
+  </div>
+
+  <div class="scroll-hint">↓</div>
+
+  <svg class="hero-rip" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="heroRipRamp" x1="0" y1="66" x2="0" y2="92" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="currentColor" stop-opacity="0"></stop>
+        <stop offset="1" stop-color="currentColor" stop-opacity="1"></stop>
+      </linearGradient>
+      <filter id="heroRipDry" x="-3%" y="-70%" width="106%" height="240%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.016 0.18" numOctaves="3" seed="7" stitchTiles="stitch" result="n"></feTurbulence>
+        <feColorMatrix in="n" type="luminanceToAlpha" result="na"></feColorMatrix>
+        <feComposite in="SourceGraphic" in2="na" operator="arithmetic" k1="0" k2="1" k3="1" k4="-0.42" result="sum"></feComposite>
+        <feComponentTransfer in="sum" result="mask"><feFuncA type="linear" slope="7" intercept="-2.2"></feFuncA></feComponentTransfer>
+        <feFlood flood-color="currentColor" result="cream"></feFlood>
+        <feComposite in="cream" in2="mask" operator="in" result="col"></feComposite>
+        <feDisplacementMap in="col" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+      </filter>
+    </defs>
+    <rect x="0" y="89" width="1200" height="31" fill="currentColor"></rect>
+    <rect x="-20" y="62" width="1240" height="36" fill="url(#heroRipRamp)" filter="url(#heroRipDry)"></rect>
+  </svg>
+</div>
+
+<script>
+  // Diashow: aktives Bild alle 5 s weiterschalten (nur bei >1 Bild).
+  const slides = document.querySelectorAll<HTMLElement>('.hero-media .hero-slide');
+  if (slides.length > 1) {
+    let idx = 0;
+    setInterval(() => {
+      slides[idx].classList.remove('is-active');
+      idx = (idx + 1) % slides.length;
+      slides[idx].classList.add('is-active');
+    }, 5000);
+  }
+</script>

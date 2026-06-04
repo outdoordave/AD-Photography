@@ -1,24 +1,18 @@
 ---
-// Stories-Liste DE ('/'). Header-Texte faithful aus index.html (#page-stories).
-import { getCollection } from 'astro:content';
+// Startseite DE ('/'). Etappe 2: Hero. Teaser/Intro folgen in Etappe 3/4.
 import BaseLayout from '../layouts/BaseLayout.astro';
-import StoryCard from '../components/StoryCard.astro';
-import { toSortedStories } from '../lib/stories';
-
-const entries = await getCollection('stories');
-const stories = toSortedStories(entries.map((e) => ({ slug: e.slug, data: e.data })));
+import HomeHero from '../components/HomeHero.astro';
+import home from '../data/home-settings.json';
+import appearance from '../data/appearance-settings.json';
+const h = home as any;
+const ap = appearance as any;
 ---
-<BaseLayout title="Geschichten von unterwegs — Wide & Wild" lang="de">
-  <section>
-    <div class="wrap">
-      <div class="page-title">
-        <div class="kicker">Reiseberichte</div>
-        <h1>Geschichten von unterwegs</h1>
-        <p>Was zwischen den Bildern passiert ist — die guten, die anstrengenden und die ziemlich lustigen Momente.</p>
-      </div>
-      <div class="stories-grid">
-        {stories.map((s) => <StoryCard story={s} lang="de" base="" />)}
-      </div>
-    </div>
-  </section>
+<BaseLayout title="Wide & Wild — Travel & Outdoor Photography" lang="de">
+  <HomeHero
+    hero={h.hero}
+    logo={ap.logo}
+    showHeroLogo={ap.show_hero_logo !== false}
+    showStories={ap.show_stories === true}
+    lang="de"
+  />
 </BaseLayout>

@@ -453,6 +453,43 @@ export default defineConfig({
           },
         ],
       },
+      // --- Startseite: Hero (Medien + Texte). Intro/Social folgen in Etappe 4. ---
+      {
+        name: 'startseite',
+        label: '🏠 Startseite',
+        path: 'src/data',
+        format: 'json',
+        match: { include: 'home-settings' },
+        ui: { allowedActions: { create: false, delete: false } },
+        fields: [
+          {
+            type: 'string', name: 'editor_language', label: 'Sprache',
+            description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
+            ui: { component: EnglishToggle },
+          },
+          {
+            type: 'object', name: 'hero', label: 'Hero (Kopfbereich)',
+            fields: [
+              {
+                type: 'string', name: 'mode', label: 'Hintergrund-Typ',
+                description: 'Einzelbild, Diashow (mehrere Bilder) oder Video.',
+                options: [
+                  { value: 'image', label: 'Einzelbild' },
+                  { value: 'random', label: 'Diashow (mehrere Bilder)' },
+                  { value: 'video', label: 'Video' },
+                ],
+              },
+              { type: 'image', name: 'image', label: 'Einzelbild (Auto-WebP)', ui: { component: SinglePhotoField } },
+              { type: 'image', name: 'slideshow', label: 'Diashow-Bilder (Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
+              { type: 'string', name: 'video', label: 'Video (optional)', description: 'Pfad zu /uploads/… — Video vorher lokal komprimieren (HandBrake/CapCut).' },
+              { type: 'image', name: 'video_poster', label: 'Video-Vorschaubild (Poster)', ui: { component: SinglePhotoField } },
+              { type: 'object', name: 'headline', label: 'Überschrift', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'cta_portfolio', label: 'Knopf 1 (→ Portfolio)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'cta_stories', label: 'Knopf 2 (→ Stories)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+            ],
+          },
+        ],
+      },
       // --- Darstellung: globale Optik (Logo + Sichtbarkeits-Schalter) ---
       {
         name: 'darstellung',

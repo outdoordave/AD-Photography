@@ -1,0 +1,16 @@
+{
+  "editor_language": "de",
+  "hero": {
+    "mode": "image",
+    "image": "/uploads/IMG_5904.webp",
+    "slideshow": [],
+    "video": "",
+    "video_poster": "",
+    "headline": {
+      "de": "Wir fotografieren die Weite Amerikas — vom Boden, aus der Luft und mittendrin in der Wildnis.",
+      "en": "We photograph the American wild — from the ground, from the air, and right in the middle of it all."
+    },
+    "cta_portfolio": { "de": "Portfolio ansehen", "en": "View portfolio" },
+    "cta_stories": { "de": "Reiseberichte lesen", "en": "Read our stories" }
+  }
+}

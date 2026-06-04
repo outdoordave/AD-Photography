@@ -1,0 +1,24 @@
+---
+// Stories list EN ('/en/stories'). Moved from '/en/' since '/' is the real homepage.
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import StoryCard from '../../../components/StoryCard.astro';
+import { toSortedStories } from '../../../lib/stories';
+
+const entries = await getCollection('stories');
+const stories = toSortedStories(entries.map((e) => ({ slug: e.slug, data: e.data })));
+---
+<BaseLayout title="Stories from the road — Wide & Wild" lang="en">
+  <section>
+    <div class="wrap">
+      <div class="page-title">
+        <div class="kicker">Travel stories</div>
+        <h1>Stories from the road</h1>
+        <p>What happened between the photos — the good, the exhausting, and the pretty funny moments.</p>
+      </div>
+      <div class="stories-grid">
+        {stories.map((s) => <StoryCard story={s} lang="en" base="/en" />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
