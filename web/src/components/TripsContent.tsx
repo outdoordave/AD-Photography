@@ -79,6 +79,14 @@ export default function TripsContent(props: Props) {
   const activeRef = React.useRef(0);
   const stopsRef = React.useRef<ViewStop[]>(stops);
   const ioRef = React.useRef<IntersectionObserver | null>(null);
+  const coordSigRef = React.useRef('');
+
+  // Signatur der karten-relevanten Stop-Daten (Koordinaten + Marker-/Popup-Texte).
+  // Aendert sie sich (Ortssuche, Titel, Datum, Name), werden in der Live-Vorschau die
+  // Marker neu gezeichnet; reine Fliesstext-Edits lassen die Karte in Ruhe.
+  function stopSig(list: ViewStop[]): string {
+    return list.map((s) => s.lon + ',' + s.lat + ',' + s.title + ',' + s.date + ',' + s.name).join('|');
+  }
 
   const styleUrl = 'https://tiles.openfreemap.org/styles/' + (mapStyle || 'liberty');
 
@@ -219,12 +227,26 @@ export default function TripsContent(props: Props) {
     setActive(0);
     drawMarkers();
     fitAll();
+    coordSigRef.current = stopSig(stops);
     if (mapRef.current && readyRef.current) setMapLanguage(mapRef.current, lang);
     const track = trackRef.current;
     if (track) track.scrollTo({ left: 0, behavior: 'auto' });
     observeSlides();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tripIdx, lang]);
+
+  // Live-Vorschau: CMS-Edit an Stop-Daten -> Marker neu zeichnen, OHNE Bahn/aktive
+  // Station/Viewport zurueckzusetzen (kein Sprung beim Tippen). Nur bei echter
+  // Aenderung der karten-relevanten Felder (Signatur), nicht bei reinem Fliesstext.
+  React.useEffect(() => {
+    stopsRef.current = stops;
+    const sig = stopSig(stops);
+    if (sig !== coordSigRef.current) {
+      coordSigRef.current = sig;
+      if (mapRef.current && readyRef.current) drawMarkers();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stops]);
 
   // Lightbox-Gruppe einer Station: Titelbild (falls da) + weitere Fotos.
   function openStopLightbox(s: ViewStop, photoIndex: number) {
