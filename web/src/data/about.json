@@ -45,14 +45,12 @@
       }
     }
   ],
-  "why": {
-    "title": {
-      "de": "Warum die USA?",
-      "en": "Why the USA?"
-    },
-    "text": {
-      "de": "Weil kein anderes Land so viel Vielfalt auf einer einzigen Reise bietet: Wüsten, Canyons, Küsten, Wälder, Berge — und dazwischen Tiere, die man sonst nur aus Dokus kennt. Jede Tour ist anders, jedes Licht neu. Genau das hält uns draußen.",
-      "en": "Because no other country offers so much variety in a single trip: deserts, canyons, coasts, forests, mountains — and animals in between that you usually only see in documentaries. Every trip is different, every light is new. That's exactly what keeps us out there."
-    }
+  "why_title": {
+    "de": "Warum die USA?",
+    "en": "Why the USA?"
+  },
+  "why_text": {
+    "de": "Weil kein anderes Land so viel Vielfalt auf einer einzigen Reise bietet: Wüsten, Canyons, Küsten, Wälder, Berge — und dazwischen Tiere, die man sonst nur aus Dokus kennt. Jede Tour ist anders, jedes Licht neu. Genau das hält uns draußen.",
+    "en": "Because no other country offers so much variety in a single trip: deserts, canyons, coasts, forests, mountains — and animals in between that you usually only see in documentaries. Every trip is different, every light is new. That's exactly what keeps us out there."
   }
 }

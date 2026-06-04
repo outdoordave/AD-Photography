@@ -73,9 +73,9 @@ export default function AboutContent(props: Props) {
       <section>
         <div className="wrap">
           <div className="home-intro">
-            <h2 data-tina-field={tinaField(about.why, 'title')}>{t(about.why?.title)}</h2>
+            <h2 data-tina-field={tinaField(about, 'why_title')}>{t(about.why_title)}</h2>
             <div className="divider-orn">✦</div>
-            <p data-tina-field={tinaField(about.why, 'text')}>{t(about.why?.text)}</p>
+            <p data-tina-field={tinaField(about, 'why_text')}>{t(about.why_text)}</p>
           </div>
         </div>
       </section>

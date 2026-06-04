@@ -1,6 +1,7 @@
 import { defineConfig } from 'tinacms';
 import BulkPhotoField from './fields/BulkPhotoField';
 import SinglePhotoField from './fields/SinglePhotoField';
+import { BilingualField, BilingualTextField } from './fields/BilingualField';
 import LocationSearchField from './fields/LocationSearchField';
 
 // Tina-Cloud-Anbindung:
@@ -164,9 +165,10 @@ export default defineConfig({
           router: () => '/about',
         },
         fields: [
-          // --- Seitenkopf ---
+          // --- Seitenkopf (DE/EN inline aufklappbar, keine Unterseite) ---
           {
             type: 'object', name: 'kicker', label: 'Mini-Titel (Kicker)',
+            ui: { component: BilingualField },
             fields: [
               { type: 'string', name: 'de', label: 'Deutsch' },
               { type: 'string', name: 'en', label: 'Englisch' },
@@ -174,6 +176,7 @@ export default defineConfig({
           },
           {
             type: 'object', name: 'title', label: 'Titel',
+            ui: { component: BilingualField },
             fields: [
               { type: 'string', name: 'de', label: 'Deutsch' },
               { type: 'string', name: 'en', label: 'Englisch' },
@@ -181,9 +184,10 @@ export default defineConfig({
           },
           {
             type: 'object', name: 'intro', label: 'Einleitung',
+            ui: { component: BilingualTextField },
             fields: [
-              { type: 'string', name: 'de', label: 'Deutsch', ui: { component: 'textarea' } },
-              { type: 'string', name: 'en', label: 'Englisch', ui: { component: 'textarea' } },
+              { type: 'string', name: 'de', label: 'Deutsch' },
+              { type: 'string', name: 'en', label: 'Englisch' },
             ],
           },
           // --- Personen: aufklappbare Liste (Eintrag 1 = links, Eintrag 2 = rechts) ---
@@ -199,6 +203,7 @@ export default defineConfig({
               { type: 'image', name: 'photo', label: 'Foto (Auto-WebP)', ui: { component: SinglePhotoField } },
               {
                 type: 'object', name: 'role', label: 'Rolle',
+                ui: { component: BilingualField },
                 fields: [
                   { type: 'string', name: 'de', label: 'Deutsch' },
                   { type: 'string', name: 'en', label: 'Englisch' },
@@ -206,14 +211,16 @@ export default defineConfig({
               },
               {
                 type: 'object', name: 'bio', label: 'Bio',
+                ui: { component: BilingualTextField },
                 fields: [
-                  { type: 'string', name: 'de', label: 'Deutsch', ui: { component: 'textarea' } },
-                  { type: 'string', name: 'en', label: 'Englisch', ui: { component: 'textarea' } },
+                  { type: 'string', name: 'de', label: 'Deutsch' },
+                  { type: 'string', name: 'en', label: 'Englisch' },
                 ],
               },
               {
                 type: 'object', name: 'gear', label: 'Ausrüstungs-Zeile',
                 description: 'Freie Textzeile (z. B. „Ausrüstung: Sony A7 IV · …"). NICHT automatisch aus der Equipment-Liste.',
+                ui: { component: BilingualField },
                 fields: [
                   { type: 'string', name: 'de', label: 'Deutsch' },
                   { type: 'string', name: 'en', label: 'Englisch' },
@@ -221,24 +228,21 @@ export default defineConfig({
               },
             ],
           },
-          // --- „Warum die USA?" ---
+          // --- „Warum die USA?" — flach (Überschrift + Text), je inline aufklappbar ---
           {
-            type: 'object', name: 'why', label: '„Warum die USA?"',
+            type: 'object', name: 'why_title', label: '„Warum die USA?" — Überschrift',
+            ui: { component: BilingualField },
             fields: [
-              {
-                type: 'object', name: 'title', label: 'Überschrift',
-                fields: [
-                  { type: 'string', name: 'de', label: 'Deutsch' },
-                  { type: 'string', name: 'en', label: 'Englisch' },
-                ],
-              },
-              {
-                type: 'object', name: 'text', label: 'Text',
-                fields: [
-                  { type: 'string', name: 'de', label: 'Deutsch', ui: { component: 'textarea' } },
-                  { type: 'string', name: 'en', label: 'Englisch', ui: { component: 'textarea' } },
-                ],
-              },
+              { type: 'string', name: 'de', label: 'Deutsch' },
+              { type: 'string', name: 'en', label: 'Englisch' },
+            ],
+          },
+          {
+            type: 'object', name: 'why_text', label: '„Warum die USA?" — Text',
+            ui: { component: BilingualTextField },
+            fields: [
+              { type: 'string', name: 'de', label: 'Deutsch' },
+              { type: 'string', name: 'en', label: 'Englisch' },
             ],
           },
         ],
