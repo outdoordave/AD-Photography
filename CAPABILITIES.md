@@ -501,8 +501,30 @@ A17 **Daten/CMS**: Alben als Tina-Collection „🖼️ Alben" (je Album: Name/N
 **Bewusst NICHT portiert:** toter In-Place-Toggle (A8 ersetzt ihn); Highlights/Momentaufnahmen/
 Neueste/Entdecken = Startseiten-Sektion (separat, später).
 
-## B — Nutzer-Bestätigung
-- [ ] Liste vollständig? Scope ok (Highlights/Momentaufnahmen gehören zur Startseite, nicht hierher)?
-- [ ] URL-Pfade ok: `/gallery` + `/gallery/<slug>` (oder lieber `/portfolio`/`/albums`)?
+## B — Nutzer-Bestätigung (2026-06-04)
+- [x] **Eingefroren: A1–A17.** Scope-Frage „Home-Features?" → Nutzer „ist dir überlassen" →
+  Entscheidung: **Galerie/Alben jetzt komplett**; die album-/highlight-getriebenen
+  **Startseiten-Teaser** (Momentaufnahmen/Neueste/Entdecken) kommen als **nächste Sektion
+  „Startseite"** (dort sind Stories/Reisen/Alben fertig + Home-Rahmen existiert).
+- [x] **URL-Pfad: `/portfolio` + `/portfolio/<slug>`** (Nutzer „überlassen", intern heißt es
+  schon `portfolio`). EN: `/en/portfolio`(+`/<slug>`).
 
-(Schritt C/D folgen nach Bestätigung.)
+## Vorgezogene Analyse — Startseiten-Teaser (für die Sektion „Startseite", NICHT hier bauen)
+Aus Live-Code extrahiert (Schritt 0/A vorab erledigt, damit nichts verloren geht):
+- **Momentaufnahmen** `renderRandomMoments` (2129), `#randomBox`: Highlight-Fotos (`portfolio`-
+  Fotos mit `.highlight`) in Album-Reihenfolge; **kein Highlight → Zufalls-Mix** aller Fotos;
+  **max. 6**; Kachel = MediaBox + Albumname-Label; Klick → `wwOpenImage(photo, shownGroup, name)`
+  (Lightbox-Gruppe der gezeigten Momente). Highlight-Quelle: zentrale `highlights.json`
+  (`G_HIGHLIGHTS`) **ODER** Alt-Per-Foto-Flag, ver-ODER-t.
+- **Neueste / „Frisch aus dem Westen"** `renderLatest` (2655), `#latestGrid`: mischt **Stories**
+  (nur wenn `show_stories`), **Reisen** (keine `upcoming`, nur mit Titel), **Alben** (mit Datum);
+  Sortierung Datum absteigend; **Top 3**; Karten mit Tag (Neuer Beitrag/Neue Reise/Neues Album);
+  Klick → Story/Reise/Galerie.
+- **Entdecken** `renderDiscover` (2591), `#discoverGrid`, schaltbar via `appearance-settings`
+  (`show_discover`, Default an): mischt **Highlight-Fotos + Alben + vergangene Reisen**,
+  Fisher-Yates, **3 Teaser** (cat + title); leer → statische HTML-Platzhalter bleiben.
+- **Highlights-CMS:** `content/highlights.json` (`{images:[...]}`) → bei der Startseite als
+  EIN „⭐ Highlights"-Menüpunkt bauen (Foto-Liste). pin.highlight am Album ≠ Foto-Highlight:
+  `pin` steuert Galerie-Sortierung, `highlights.json` steuert die Home-Teaser.
+
+(Schritt C/D der Galerie folgen jetzt beim Bau.)
