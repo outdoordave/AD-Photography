@@ -507,6 +507,36 @@ export default defineConfig({
               },
             ],
           },
+          {
+            type: 'object', name: 'intro', label: 'Intro-Block (unter dem Hero)',
+            fields: [
+              { type: 'object', name: 'subline', label: 'Zwischenüberschrift', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'subtext', label: 'Intro-Text', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+            ],
+          },
+          {
+            type: 'object', name: 'sections', label: 'Sektion-Überschriften (Startseite)',
+            fields: [
+              { type: 'object', name: 'gallery_kicker', label: 'Momentaufnahmen — Kicker', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'gallery_title', label: 'Momentaufnahmen — Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'latest_kicker', label: 'Aktuell — Kicker', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'latest_title', label: 'Aktuell — Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'discover_kicker', label: 'Entdecken — Kicker', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'object', name: 'discover_title', label: 'Entdecken — Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+            ],
+          },
+        ],
+      },
+      // --- Highlights: album-übergreifende Lieblingsfotos (speisen die Home-Teaser) ---
+      {
+        name: 'highlights',
+        label: '⭐ Highlights',
+        path: 'src/data',
+        format: 'json',
+        match: { include: 'highlights' },
+        ui: { allowedActions: { create: false, delete: false } },
+        fields: [
+          { type: 'image', name: 'images', label: 'Highlight-Fotos (Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
         ],
       },
       // --- Darstellung: globale Optik (Logo + Sichtbarkeits-Schalter) ---

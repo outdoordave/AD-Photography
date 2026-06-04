@@ -1,0 +1,15 @@
+---
+// Intro-Block unter dem Hero (1:1 aus .home-intro): Zwischenüberschrift + ✦ + Text.
+// (Social-Row folgt in Etappe 4.)
+interface Props { subline?: string; subtext?: string; }
+const { subline = '', subtext = '' } = Astro.props;
+---
+<section>
+  <div class="wrap">
+    <div class="home-intro">
+      {subline ? <h2>{subline}</h2> : null}
+      <div class="divider-orn">✦</div>
+      {subtext ? <p>{subtext}</p> : null}
+    </div>
+  </div>
+</section>
