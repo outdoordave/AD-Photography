@@ -186,10 +186,14 @@ export default defineConfig({
               { type: 'string', name: 'en', label: 'Englisch', ui: { component: 'textarea' } },
             ],
           },
-          // --- Person 1 ---
+          // --- Personen: aufklappbare Liste (Eintrag 1 = links, Eintrag 2 = rechts) ---
           {
-            type: 'object', name: 'person1', label: 'Person 1 (links)',
-            ui: { itemProps: (i: any) => ({ label: i?.name || 'Person 1' }) },
+            type: 'object',
+            name: 'persons',
+            label: 'Personen',
+            list: true,
+            // Jede Person = ein zuklappbarer Eintrag mit dem Namen als Titel.
+            ui: { itemProps: (i: any) => ({ label: i?.name || 'Person' }) },
             fields: [
               { type: 'string', name: 'name', label: 'Name', description: 'z. B. Alexandra Apostel' },
               { type: 'image', name: 'photo', label: 'Foto (Auto-WebP)', ui: { component: SinglePhotoField } },
@@ -210,37 +214,6 @@ export default defineConfig({
               {
                 type: 'object', name: 'gear', label: 'Ausrüstungs-Zeile',
                 description: 'Freie Textzeile (z. B. „Ausrüstung: Sony A7 IV · …"). NICHT automatisch aus der Equipment-Liste.',
-                fields: [
-                  { type: 'string', name: 'de', label: 'Deutsch' },
-                  { type: 'string', name: 'en', label: 'Englisch' },
-                ],
-              },
-            ],
-          },
-          // --- Person 2 ---
-          {
-            type: 'object', name: 'person2', label: 'Person 2 (rechts)',
-            ui: { itemProps: (i: any) => ({ label: i?.name || 'Person 2' }) },
-            fields: [
-              { type: 'string', name: 'name', label: 'Name', description: 'z. B. David Bastisch' },
-              { type: 'image', name: 'photo', label: 'Foto (Auto-WebP)', ui: { component: SinglePhotoField } },
-              {
-                type: 'object', name: 'role', label: 'Rolle',
-                fields: [
-                  { type: 'string', name: 'de', label: 'Deutsch' },
-                  { type: 'string', name: 'en', label: 'Englisch' },
-                ],
-              },
-              {
-                type: 'object', name: 'bio', label: 'Bio',
-                fields: [
-                  { type: 'string', name: 'de', label: 'Deutsch', ui: { component: 'textarea' } },
-                  { type: 'string', name: 'en', label: 'Englisch', ui: { component: 'textarea' } },
-                ],
-              },
-              {
-                type: 'object', name: 'gear', label: 'Ausrüstungs-Zeile',
-                description: 'Freie Textzeile. NICHT automatisch aus der Equipment-Liste.',
                 fields: [
                   { type: 'string', name: 'de', label: 'Deutsch' },
                   { type: 'string', name: 'en', label: 'Englisch' },

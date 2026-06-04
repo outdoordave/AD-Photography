@@ -15,9 +15,10 @@ type Props = {
   lang: 'de' | 'en';
 };
 
-const PERSONS = [
-  { key: 'person1', illus: 'desert', c1: '#b08a5e', c2: '#5e3f20' },
-  { key: 'person2', illus: 'coast', c1: '#7e98a0', c2: '#3a5058' },
+// Illustration + Platzhalterfarben nach Position (Eintrag 1 = desert, 2 = coast).
+const PERSON_STYLE = [
+  { illus: 'desert', c1: '#b08a5e', c2: '#5e3f20' },
+  { illus: 'coast', c1: '#7e98a0', c2: '#3a5058' },
 ] as const;
 
 export default function AboutContent(props: Props) {
@@ -39,8 +40,8 @@ export default function AboutContent(props: Props) {
       <section className="about-band">
         <div className="wrap">
           <div className="about-grid">
-            {PERSONS.map((p) => {
-              const person = (about[p.key] ?? {}) as Record<string, any>;
+            {PERSON_STYLE.map((p, idx) => {
+              const person = ((Array.isArray(about.persons) ? about.persons[idx] : null) ?? {}) as Record<string, any>;
               const photo = person.photo ? normalizePath(person.photo) : '';
               const illusStyle = {
                 ['--ph-c1' as any]: p.c1,
@@ -48,7 +49,7 @@ export default function AboutContent(props: Props) {
                 backgroundImage: `url('${ILLUS[p.illus]}')`,
               } as React.CSSProperties;
               return (
-                <div className="person" key={p.key}>
+                <div className="person" key={idx}>
                   <div
                     className={`ph person-photo${photo ? '' : ' has-illus'}`}
                     style={photo ? undefined : illusStyle}
