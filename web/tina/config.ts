@@ -256,6 +256,65 @@ export default defineConfig({
           },
         ],
       },
+      // --- Kontakt: EIN Eintrag (Kopf + Direkt-Block + Kanäle + Formular-Texte) ---
+      {
+        name: 'kontakt',
+        label: '✉️ Kontakt',
+        path: 'src/data',
+        format: 'json',
+        match: { include: 'contact' }, // nur src/data/contact.json
+        ui: {
+          allowedActions: { create: false, delete: false },
+          router: () => '/contact',
+        },
+        fields: [
+          {
+            type: 'string', name: 'editor_language', label: 'Sprache',
+            description: 'Schalter: nur Deutsch — oder Deutsch + Englisch anzeigen. Gilt für alle Felder. (Nur Anzeige im Editor.)',
+            ui: { component: EnglishToggle },
+          },
+          // --- Seitenkopf ---
+          { type: 'object', name: 'kicker', label: 'Mini-Titel (Kicker)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'title', label: 'Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'intro', label: 'Einleitung', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          // --- „Schreib uns direkt" ---
+          { type: 'object', name: 'direct_title', label: '„Schreib uns direkt" — Überschrift', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'direct_text', label: '„Schreib uns direkt" — Text', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'location', label: 'Standort-Zeile', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          // --- Kontakt-Kanäle ---
+          {
+            type: 'object', name: 'channels', label: 'Kontakt-Kanäle (E-Mail, Social)', list: true,
+            ui: { itemProps: (i: any) => ({ label: i?.label ? `${i.type || '?'}: ${i.label}` : 'Neuer Kanal' }) },
+            fields: [
+              {
+                type: 'string', name: 'type', label: 'Typ / Plattform',
+                description: 'Bestimmt das Symbol automatisch.',
+                options: [
+                  { value: 'email', label: 'E-Mail' },
+                  { value: 'instagram', label: 'Instagram' },
+                  { value: 'facebook', label: 'Facebook' },
+                  { value: 'tiktok', label: 'TikTok' },
+                  { value: 'youtube', label: 'YouTube' },
+                  { value: 'x', label: 'X / Twitter' },
+                  { value: 'phone', label: 'Telefon' },
+                  { value: 'whatsapp', label: 'WhatsApp' },
+                  { value: 'pinterest', label: 'Pinterest' },
+                  { value: 'web', label: 'Website / Sonstiges' },
+                ],
+              },
+              { type: 'string', name: 'label', label: 'Anzeigetext', description: 'z. B. @name oder die E-Mail-Adresse' },
+              { type: 'string', name: 'url', label: 'Link (URL)', description: 'z. B. mailto:hallo@… oder https://…  (leer = kein Link)' },
+            ],
+          },
+          // --- Formular-Texte ---
+          { type: 'object', name: 'form_success', label: 'Formular — Erfolgs-Meldung', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'form_name', label: 'Formular — Label „Name"', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'form_email', label: 'Formular — Label „E-Mail"', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'form_message', label: 'Formular — Label „Nachricht"', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'form_send', label: 'Formular — Senden-Button', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'form_note', label: 'Formular — Hinweis darunter', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+        ],
+      },
       // --- PROTOTYP: isolierte Test-Collection fuer das Ortssuche-Feld ---
       {
         name: 'proto_ort',

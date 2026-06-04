@@ -1,0 +1,20 @@
+---
+// Contact page EN ('/en/contact'). Same Tina-Client data as the DE page.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContactContent from '../../components/ContactContent.tsx';
+import { client } from '../../../tina/__generated__/client';
+
+const res = await client.queries.kontakt({ relativePath: 'contact.json' });
+const title = (res.data.kontakt as any)?.title?.en || 'Contact';
+---
+<BaseLayout title={`${title} — Wide & Wild`} lang="en">
+  <div id="page-contact">
+    <ContactContent
+      client:load
+      query={res.query}
+      variables={res.variables}
+      data={res.data}
+      lang="en"
+    />
+  </div>
+</BaseLayout>

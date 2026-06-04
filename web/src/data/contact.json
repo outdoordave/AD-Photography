@@ -1,0 +1,33 @@
+{
+  "kicker": { "de": "Kontakt", "en": "Contact" },
+  "title": { "de": "Sag Hallo.", "en": "Say hello." },
+  "intro": {
+    "de": "Lust auf eine gemeinsame Tour, eine Frage zu einem Bild oder einfach nur Hallo sagen? Wir freuen uns über jede Nachricht.",
+    "en": "Up for a trip together, a question about a photo, or just want to say hi? We'd love to hear from you."
+  },
+  "direct_title": { "de": "Schreib uns direkt", "en": "Reach us directly" },
+  "direct_text": {
+    "de": "Am schnellsten erreichst du uns per E-Mail oder über Instagram. Wir antworten meist innerhalb weniger Tage.",
+    "en": "The fastest way to reach us is by email or Instagram. We usually reply within a few days."
+  },
+  "location": {
+    "de": "Unterwegs in den USA & daheim in Deutschland",
+    "en": "On the road in the USA & home in Germany"
+  },
+  "channels": [
+    { "type": "email", "label": "hallo@wideandwild.example", "url": "mailto:hallo@wideandwild.example" },
+    { "type": "instagram", "label": "@davidbastisch", "url": "https://instagram.com/davidbastisch" }
+  ],
+  "form_success": {
+    "de": "Danke! Deine Nachricht ist angekommen — wir melden uns bald.",
+    "en": "Thanks! Your message came through — we'll be in touch soon."
+  },
+  "form_name": { "de": "Dein Name", "en": "Your name" },
+  "form_email": { "de": "Deine E-Mail", "en": "Your email" },
+  "form_message": { "de": "Deine Nachricht", "en": "Your message" },
+  "form_send": { "de": "Nachricht senden", "en": "Send message" },
+  "form_note": {
+    "de": "Hinweis: Dies ist eine Vorschau — das Formular versendet noch nichts. Beim Live-Schalten verbinden wir es mit eurem Postfach.",
+    "en": "Note: This is a preview — the form doesn't send anything yet. When we go live, we'll connect it to your inbox."
+  }
+}
