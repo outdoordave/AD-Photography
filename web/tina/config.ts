@@ -1,5 +1,6 @@
 import { defineConfig } from 'tinacms';
 import BulkPhotoField from './fields/BulkPhotoField';
+import SinglePhotoField from './fields/SinglePhotoField';
 import LocationSearchField from './fields/LocationSearchField';
 
 // Tina-Cloud-Anbindung:
@@ -147,6 +148,124 @@ export default defineConfig({
                 ],
               },
               { type: 'string', name: 'link', label: 'Link (optional)', description: 'Volle URL (https://…). Leer lassen = kein Link.' },
+            ],
+          },
+        ],
+      },
+      // --- Über uns: EIN Eintrag (Kopf-Texte + 2 Personen + „Warum die USA?") ---
+      {
+        name: 'ueber_uns',
+        label: '📄 Über uns',
+        path: 'src/data',
+        format: 'json',
+        match: { include: 'about' }, // nur src/data/about.json
+        ui: {
+          allowedActions: { create: false, delete: false },
+          router: () => '/about',
+        },
+        fields: [
+          // --- Seitenkopf ---
+          {
+            type: 'object', name: 'kicker', label: 'Mini-Titel (Kicker)',
+            fields: [
+              { type: 'string', name: 'de', label: 'Deutsch' },
+              { type: 'string', name: 'en', label: 'Englisch' },
+            ],
+          },
+          {
+            type: 'object', name: 'title', label: 'Titel',
+            fields: [
+              { type: 'string', name: 'de', label: 'Deutsch' },
+              { type: 'string', name: 'en', label: 'Englisch' },
+            ],
+          },
+          {
+            type: 'object', name: 'intro', label: 'Einleitung',
+            fields: [
+              { type: 'string', name: 'de', label: 'Deutsch', ui: { component: 'textarea' } },
+              { type: 'string', name: 'en', label: 'Englisch', ui: { component: 'textarea' } },
+            ],
+          },
+          // --- Person 1 ---
+          {
+            type: 'object', name: 'person1', label: 'Person 1 (links)',
+            ui: { itemProps: (i: any) => ({ label: i?.name || 'Person 1' }) },
+            fields: [
+              { type: 'string', name: 'name', label: 'Name', description: 'z. B. Alexandra Apostel' },
+              { type: 'image', name: 'photo', label: 'Foto (Auto-WebP)', ui: { component: SinglePhotoField } },
+              {
+                type: 'object', name: 'role', label: 'Rolle',
+                fields: [
+                  { type: 'string', name: 'de', label: 'Deutsch' },
+                  { type: 'string', name: 'en', label: 'Englisch' },
+                ],
+              },
+              {
+                type: 'object', name: 'bio', label: 'Bio',
+                fields: [
+                  { type: 'string', name: 'de', label: 'Deutsch', ui: { component: 'textarea' } },
+                  { type: 'string', name: 'en', label: 'Englisch', ui: { component: 'textarea' } },
+                ],
+              },
+              {
+                type: 'object', name: 'gear', label: 'Ausrüstungs-Zeile',
+                description: 'Freie Textzeile (z. B. „Ausrüstung: Sony A7 IV · …"). NICHT automatisch aus der Equipment-Liste.',
+                fields: [
+                  { type: 'string', name: 'de', label: 'Deutsch' },
+                  { type: 'string', name: 'en', label: 'Englisch' },
+                ],
+              },
+            ],
+          },
+          // --- Person 2 ---
+          {
+            type: 'object', name: 'person2', label: 'Person 2 (rechts)',
+            ui: { itemProps: (i: any) => ({ label: i?.name || 'Person 2' }) },
+            fields: [
+              { type: 'string', name: 'name', label: 'Name', description: 'z. B. David Bastisch' },
+              { type: 'image', name: 'photo', label: 'Foto (Auto-WebP)', ui: { component: SinglePhotoField } },
+              {
+                type: 'object', name: 'role', label: 'Rolle',
+                fields: [
+                  { type: 'string', name: 'de', label: 'Deutsch' },
+                  { type: 'string', name: 'en', label: 'Englisch' },
+                ],
+              },
+              {
+                type: 'object', name: 'bio', label: 'Bio',
+                fields: [
+                  { type: 'string', name: 'de', label: 'Deutsch', ui: { component: 'textarea' } },
+                  { type: 'string', name: 'en', label: 'Englisch', ui: { component: 'textarea' } },
+                ],
+              },
+              {
+                type: 'object', name: 'gear', label: 'Ausrüstungs-Zeile',
+                description: 'Freie Textzeile. NICHT automatisch aus der Equipment-Liste.',
+                fields: [
+                  { type: 'string', name: 'de', label: 'Deutsch' },
+                  { type: 'string', name: 'en', label: 'Englisch' },
+                ],
+              },
+            ],
+          },
+          // --- „Warum die USA?" ---
+          {
+            type: 'object', name: 'why', label: '„Warum die USA?"',
+            fields: [
+              {
+                type: 'object', name: 'title', label: 'Überschrift',
+                fields: [
+                  { type: 'string', name: 'de', label: 'Deutsch' },
+                  { type: 'string', name: 'en', label: 'Englisch' },
+                ],
+              },
+              {
+                type: 'object', name: 'text', label: 'Text',
+                fields: [
+                  { type: 'string', name: 'de', label: 'Deutsch', ui: { component: 'textarea' } },
+                  { type: 'string', name: 'en', label: 'Englisch', ui: { component: 'textarea' } },
+                ],
+              },
             ],
           },
         ],

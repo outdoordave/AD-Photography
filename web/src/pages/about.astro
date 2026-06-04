@@ -1,0 +1,21 @@
+---
+// Über-uns DE ('/about'). Daten via Tina-Client (Live-Vorschau-fähig); Render in
+// der AboutContent-Insel. Wrapper #page-about, damit die Live-CSS-Scopes greifen.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AboutContent from '../components/AboutContent.tsx';
+import { client } from '../../tina/__generated__/client';
+
+const res = await client.queries.ueber_uns({ relativePath: 'about.json' });
+const title = (res.data.ueber_uns as any)?.title?.de || 'Über uns';
+---
+<BaseLayout title={`${title} — Wide & Wild`} lang="de">
+  <div id="page-about">
+    <AboutContent
+      client:load
+      query={res.query}
+      variables={res.variables}
+      data={res.data}
+      lang="de"
+    />
+  </div>
+</BaseLayout>

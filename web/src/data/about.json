@@ -1,0 +1,56 @@
+{
+  "kicker": {
+    "de": "Über uns",
+    "en": "About"
+  },
+  "title": {
+    "de": "Wer hinter dem Logo steckt",
+    "en": "Who's behind the logo"
+  },
+  "intro": {
+    "de": "Zwei Menschen, eine gemeinsame Leidenschaft für die Weite — und zwei sehr unterschiedliche Arten, sie einzufangen.",
+    "en": "Two people, one shared love for wide open spaces — and two very different ways of capturing it."
+  },
+  "person1": {
+    "name": "Alexandra Apostel",
+    "photo": "/uploads/a7406523.jpg",
+    "role": {
+      "de": "Landschaft & Wildlife",
+      "en": "Landscape & Wildlife"
+    },
+    "bio": {
+      "de": "Frisch verliebt in die Fotografie und schon nicht mehr zu bremsen. Alexandra hat das Auge für Tiere und Licht — und die Geduld, die beides braucht.",
+      "en": "Freshly in love with photography and already unstoppable. Alexandra has the eye for animals and light — and the patience both demand."
+    },
+    "gear": {
+      "de": "Ausrüstung: Sony A7 IV · Tamron 28-75mm · Tamron 150-500mm · Peak Design Stativ",
+      "en": "Gear: Sony A7 IV · Tamron 28-75mm · Tamron 150-500mm · Peak Design tripod"
+    }
+  },
+  "person2": {
+    "name": "David Bastisch",
+    "photo": "/uploads/a7406566.jpg",
+    "role": {
+      "de": "Aus der Luft & Bewegung",
+      "en": "Aerial & Motion"
+    },
+    "bio": {
+      "de": "Der Mann für die andere Perspektive. David schickt die Drohne hoch, hält mit der Action-Cam drauf und findet Blickwinkel, an die sonst keiner denkt.",
+      "en": "The man for the other angle. David sends the drone up, rolls the action cam, and finds perspectives nobody else thinks of."
+    },
+    "gear": {
+      "de": "Ausrüstung: DJI Air 2S · DJI Osmo Action 4 · iPhone",
+      "en": "Gear: DJI Air 2S · DJI Osmo Action 4 · iPhone"
+    }
+  },
+  "why": {
+    "title": {
+      "de": "Warum die USA?",
+      "en": "Why the USA?"
+    },
+    "text": {
+      "de": "Weil kein anderes Land so viel Vielfalt auf einer einzigen Reise bietet: Wüsten, Canyons, Küsten, Wälder, Berge — und dazwischen Tiere, die man sonst nur aus Dokus kennt. Jede Tour ist anders, jedes Licht neu. Genau das hält uns draußen.",
+      "en": "Because no other country offers so much variety in a single trip: deserts, canyons, coasts, forests, mountains — and animals in between that you usually only see in documentaries. Every trip is different, every light is new. That's exactly what keeps us out there."
+    }
+  }
+}
