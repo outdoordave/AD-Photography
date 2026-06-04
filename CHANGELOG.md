@@ -28,6 +28,12 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 - **Karte live:** zweiter Effekt zeichnet Marker neu, sobald sich karten-relevante
   Stop-Daten ändern (Ortssuche/Titel/Datum/Name, per Signatur erkannt) — ohne Bahn/aktive
   Station/Viewport zurückzusetzen. Commit `96a3e67`.
+- **Tab- & Station-Sync (`87f4be5`):** Reise-Tab verfolgt jetzt `?trip=<slug>` über Tinas
+  pushState-Navigation (popstate + Editor-Polling 400 ms) → die im CMS gewählte Reise wird
+  auch angezeigt (vorher hing es auf Tab 0). Beim Durchscrollen meldet die aktive Station
+  einen Klick an ihr `data-tina-field` → Tina öffnet **genau diese Station** im Formular
+  (debounced 200 ms). Beides nur im Vorschau-Iframe (`window.self !== window.top`),
+  Live-Seite unverändert.
 - **Bekannt/Hosting (kein Code-Bug):** Frisch hochgeladene Bilder erscheinen in der
   **Online**-Vorschau erst nach Save+Deploy (repo-basierte Git-Medien, statisches Hosting);
   **lokal** (`npm run dev`) sofort sichtbar. Text/Karte sind überall live.

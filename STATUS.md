@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-04** · letzter Commit `96a3e67` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-04** · letzter Commit `87f4be5` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -166,10 +166,13 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
     Nutzer abgenommen.
   - **CMS:** EIN Hauptmenü „🧭 Reisen" (jede Reise editier-/anlegbar) + „🧭 Reisen –
     Einstellungen". Editieren bestätigt (Nutzer legte Test-Station „Anchorage" an).
-  - **Live-Vorschau (`e2048c9`, `96a3e67`):** `/trips` zieht Daten via `useTina`
+  - **Live-Vorschau (`e2048c9`, `96a3e67`, `87f4be5`):** `/trips` zieht Daten via `useTina`
     (`reisenConnection`); Router `→ /trips?trip=<slug>`; `data-tina-field` auf
     Tabs/Meta/Summary/Stationen/Galerie (Klick→Feld, Text live). Karte zeichnet Marker
     bei Orts-/Titel-Edit live neu (Signatur-Guard, kein Sprung bei Fliesstext).
+    **Tab folgt `?trip=`** über Tinas pushState (popstate + Editor-Polling) → richtige Reise;
+    **Station folgt Scroll** (aktive Station meldet Klick an ihr `data-tina-field` → Tina
+    öffnet sie im Formular, debounced). Editor-Sync nur im Vorschau-Iframe, Live-Seite unberührt.
   - **Bekannt / Hosting (kein Bug):** Frisch hochgeladene Bilder erscheinen **online**
     erst nach Save+Deploy (repo-basierte Git-Medien + statisches Hosting); **lokal**
     (`npm run dev`) sofort. Text/Karte überall live.
