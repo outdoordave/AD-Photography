@@ -14,7 +14,7 @@ import { viewStops, tl, sortTrips, type RawTrip, type Lang, type ViewStop } from
 // Daten via useTina (reisenConnection) -> LIVE-Vorschau: Edits im CMS erscheinen
 // sofort; data-tina-field = Klick auf der Seite springt zum passenden Feld.
 
-type Props = { query: string; variables: object; data: any; lang: Lang; mapStyle?: string };
+type Props = { query: string; variables: object; data: any; lang: Lang; mapStyle?: string; initialSlug?: string };
 
 function setMapLanguage(map: maplibregl.Map, lang: Lang) {
   if (!map.isStyleLoaded()) return;
@@ -44,37 +44,25 @@ export default function TripsContent(props: Props) {
     );
   }, [data]);
 
-  // Start immer bei 0 (gleich auf Server + Client -> kein Hydration-Mismatch);
-  // die ?trip=-Auswahl wird per URL-Sync (unten) nachgezogen.
-  const [tripIdx, setTripIdx] = React.useState(0);
+  // Aktiver Tab aus initialSlug (Editor-Vorschauroute /trips/<slug> bzw. Deeplink).
+  // initialSlug ist ein Prop (gleich auf Server + Client) -> Hydration-sicher als
+  // useState-Initialwert. Ohne initialSlug (oeffentliche /trips) startet Tab 0.
+  const initialTab = React.useMemo(() => {
+    if (!props.initialSlug) return 0;
+    const i = trips.findIndex((t) => t.slug === props.initialSlug);
+    return i >= 0 ? i : 0;
+  }, [trips, props.initialSlug]);
+
+  const [tripIdx, setTripIdx] = React.useState(() => initialTab);
   const [active, setActive] = React.useState(0);
   const [lb, setLb] = React.useState<{ photos: LbPhoto[]; start: number } | null>(null);
 
-  // Laeuft die Seite in Tinas Vorschau-Iframe? Dann ist der Editor-Sync aktiv;
-  // die oeffentliche Seite bleibt voellig unberuehrt.
+  // Laeuft die Seite in Tinas Vorschau-Iframe? Dann ist der Editor-Sync (Scroll ->
+  // Station im Formular) aktiv; die oeffentliche Seite bleibt voellig unberuehrt.
   const inEditorRef = React.useRef(false);
-
-  // Tab folgt der URL (?trip=<slug>): Tina wechselt die Reise per pushState OHNE
-  // Remount -> einmal lesen + auf popstate hoeren + im Editor kurz pollen (faengt die
-  // SPA-Navigation, fuer die es kein popstate gibt). Auf der Live-Seite kein Polling.
   React.useEffect(() => {
-    let inEditor = false;
-    try { inEditor = window.self !== window.top; } catch { inEditor = true; }
-    inEditorRef.current = inEditor;
-    const syncFromUrl = () => {
-      const want = new URLSearchParams(window.location.search).get('trip');
-      if (!want) return;
-      const i = trips.findIndex((t) => t.slug === want);
-      if (i >= 0) setTripIdx((prev) => (prev === i ? prev : i));
-    };
-    syncFromUrl();
-    window.addEventListener('popstate', syncFromUrl);
-    const id = inEditor ? window.setInterval(syncFromUrl, 400) : 0;
-    return () => {
-      window.removeEventListener('popstate', syncFromUrl);
-      if (id) window.clearInterval(id);
-    };
-  }, [trips]);
+    try { inEditorRef.current = window.self !== window.top; } catch { inEditorRef.current = true; }
+  }, []);
 
   const trip: any = trips[tripIdx]?.data || {};
   const rawStops: any[] = Array.isArray(trip.stops) ? trip.stops : [];
@@ -145,15 +133,17 @@ export default function TripsContent(props: Props) {
   }
 
   // Im Editor: aktive Station als Klick an Tina melden -> das Formular oeffnet genau
-  // diese Station (Scroll-Folgen statt manuellem Klick). Debounce: nur die Station, auf
-  // der man landet, nicht jede beim Vorbeiscrollen. Auf der Live-Seite passiert nichts.
+  // diese Station als GANZES Item (Titel, Datum, Text, Bilder ...), nicht nur ein
+  // Unterfeld. Dafuer traegt die .trip-slide selbst das Item-`data-tina-field`.
+  // Debounce: nur die Station, auf der man landet, nicht jede beim Vorbeiscrollen.
+  // Auf der Live-Seite passiert nichts (nur im Vorschau-Iframe aktiv).
   function syncEditorToStop(idx: number) {
     if (!inEditorRef.current) return;
     if (editSyncTimerRef.current) window.clearTimeout(editSyncTimerRef.current);
     editSyncTimerRef.current = window.setTimeout(() => {
       const track = trackRef.current;
       if (!track) return;
-      const el = track.querySelector<HTMLElement>('.trip-slide[data-sidx="' + idx + '"] h3[data-tina-field]');
+      const el = track.querySelector<HTMLElement>('.trip-slide[data-sidx="' + idx + '"]');
       if (el) el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
     }, 200);
   }
@@ -312,7 +302,7 @@ export default function TripsContent(props: Props) {
               const yt = wwYouTubeEmbed(s.youtube);
               const rs = rawStops[i];
               return (
-                <div className="trip-slide" data-sidx={i} key={i}>
+                <div className="trip-slide" data-sidx={i} key={i} data-tina-field={rs ? tinaField(rs) : undefined}>
                   <div className="step">{stepWord}{i + 1}/{stops.length}</div>
                   <h3 data-tina-field={rs ? tinaField(rs, 'title') : undefined}>{s.title}</h3>
                   <div className="date" data-tina-field={rs ? tinaField(rs, 'date') : undefined}>{s.date}</div>

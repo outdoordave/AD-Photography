@@ -321,11 +321,11 @@ export default defineConfig({
         label: '🧭 Reisen',
         path: 'src/data/trips',
         format: 'json',
-        // Router -> Live-Vorschau: Klick auf eine Reise oeffnet /trips mit aktivem
-        // Tab dieser Reise (?trip=<slug>). Die Trips-Seite nutzt useTina, daher
-        // greift Visual-Editing (Klick auf der Seite springt zum Feld + Live-Update).
+        // Router -> Live-Vorschau: eigene Pfad-Route je Reise (/trips/<slug>), damit
+        // Tina die richtige Reise zuverlaessig anzeigt (Query-Strings verwirft Tina).
+        // Die Route nutzt useTina -> Visual-Editing (Klick=Feld + Live-Update).
         ui: {
-          router: ({ document }: any) => `/trips?trip=${document._sys.filename}`,
+          router: ({ document }: any) => `/trips/${document._sys.filename}`,
         },
         fields: [
           {

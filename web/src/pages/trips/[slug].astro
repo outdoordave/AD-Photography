@@ -1,0 +1,41 @@
+---
+// Reisen-Vorschau-Route '/trips/<slug>' — gleiche Seite wie '/trips', startet aber
+// auf der gewählten Reise. Ziel von Tinas Router (Live-Vorschau/Visual-Editing):
+// so zeigt die Vorschau zuverlässig die im CMS gewählte Reise (Pfad statt Query).
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TripsContent from '../../components/TripsContent.tsx';
+import { tl } from '../../lib/trips';
+import settings from '../../data/trips-settings.json';
+import { client } from '../../../tina/__generated__/client';
+
+export async function getStaticPaths() {
+  const conn = await client.queries.reisenConnection({ first: 100 });
+  const edges = (conn.data.reisenConnection?.edges || []).filter(Boolean);
+  return edges.map((e: any) => ({ params: { slug: e.node._sys.filename } }));
+}
+
+const { slug } = Astro.params;
+const res = await client.queries.reisenConnection({ first: 100 });
+const s = settings as any;
+const mapStyle = s.map_style || 'liberty';
+---
+<BaseLayout title={`${tl(s.title, 'de') || 'Reisen'} — Wide & Wild`} lang="de">
+  <section>
+    <div class="wrap">
+      <div class="page-title">
+        <div class="kicker">{tl(s.kicker, 'de')}</div>
+        <h1>{tl(s.title, 'de')}</h1>
+        <p>{tl(s.intro, 'de')}</p>
+      </div>
+      <TripsContent
+        client:load
+        query={res.query}
+        variables={res.variables}
+        data={res.data}
+        lang="de"
+        mapStyle={mapStyle}
+        initialSlug={slug}
+      />
+    </div>
+  </section>
+</BaseLayout>
