@@ -17,6 +17,35 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-05 20:55 — Stories: Album verknüpfen + frei im Text als Lightbox einbetten
+- **Neues Feature** (über Live hinaus, mit Nutzer-Freigabe; Live-Stories haben KEINE Galerie —
+  nur Titelbild + Markdown-Fließtext mit Inline-`![](…)`). Ziel: 1–2 Bilder direkt im Text +
+  ein bestehendes Album an frei wählbarer Stelle als Lightbox einbetten, **ohne Doppel-Upload**.
+- **`StoryBodyField.tsx`** (neu): eigener Haupttext-Editor, laientauglich. Zwei Knöpfe über dem
+  Textfeld — „📷 Bild einfügen" (Auto-WebP-Upload via jSquash an die Cursor-Stelle, kein
+  Media-Manager/kein „?") + „📸 Album hier einfügen" (setzt `[[album]]`-Platzhalter an Cursor).
+  Gespeichert bleibt **normales Markdown** → mdToHtml-Port unverändert (Capability-Lock-sicher).
+- **Schema:** Story `body_de`/`body_en` auf StoryBodyField; neues **`linked_album`** (Tina-
+  `reference` auf Sammlung `alben`, Dropdown); altes Story-**`gallery`**-Mehrfach-Upload-Feld
+  **entfernt** (war der Doppel-Upload). Fotos kommen aus dem Album selbst.
+- **`StoryAlbumBlock.tsx`** (neu): Vorschau-Kacheln (erste 4 + „+N") → öffnet die bestehende
+  `Lightbox` mit allen Album-Fotos. **`StoryReaderContent`** teilt den Body am `[[album]]`-Marker
+  und rendert den Block dort (ohne Marker, aber mit Album → ans Ende). **`storyAlbum.ts`** (neu)
+  löst die Referenz robust auf; Astro DE/EN übergeben `album`. CSS für den Block im Reader-Stil.
+- ⚠️ **Schema-Änderung → tina-lock + Codegen neu → Tina-Cloud-Re-index + Cloudflare-Rebuild nötig.**
+  Offline-Build grün (29 Seiten); positiv getestet (Block an Marker-Stelle, 4 Kacheln + „+4",
+  Album-Link, kein Marker-Leak, kein Block ohne Album), Test-Verknüpfung zurückgesetzt.
+- Commit: `053ffeb`
+
+## 2026-06-05 — TEIL D Slice 2/3 + Crop-Feld als String (Stationen, Fixes)
+- **Slice 2:** CropPhotoField auf **Reise-Stations-Titelbild** (cropRatio 16:10); trip-JSONs +
+  lib/trips (`photoDisplay`/`photoFull`) migriert. Commits `46eca37`, `25b363b`.
+- **Crop-Feld Objekt → String** (`15bec1e`): Tina rendert Objekt-Felder als navigierbare Gruppe →
+  beim Reinklicken erschienen rohe Unterfelder (Original/Anzeige/Crop) mit „?". Wert jetzt
+  String (JSON-Blob oder reiner /uploads-Pfad) → Editor rendert **immer inline**, kein „?".
+  Person- + Stations-Foto umgestellt; Daten + lib/trips angepasst.
+- **Story-Titelbild** auf SinglePhotoField (`2cd1852`) — umgeht den Media-Manager („?").
+
 ## 2026-06-05 — TEIL D Slice 1: Zuschnitt-Foto-Feld (CropPhotoField)
 - Option D (freies Zuschneiden, Original behalten), 1. Slice: `CropPhotoField.tsx` — gerahmtes
   Einzelbild mit Zoom + Verschieben (touch: Ziehen=pan, Pinch/Regler=zoom; WYSIWYG-Rahmen).

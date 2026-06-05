@@ -715,3 +715,44 @@ T7 **CSS 1:1**: `.random-box`/`.item .label`, `.latest-grid`/`.latest-card`, `.t
 - **Damit ist die Startseite vollständig** (Hero + Intro + Momentaufnahmen + Aktuell + Entdecken
   + Social). Capability-Lock D: S1–S3 ✅. **Offen:** Gesamt-Abnahme der Startseite.
 - [ ] Nutzer hat die komplette Startseite Seite-an-Seite verglichen und abgenommen.
+
+---
+
+# Stories: Album-Einbettung + Laien-Text-Editor (NEU, über Live hinaus) — 2026-06-05
+
+> **Schritt 0 — Live-Wahrheit (belegt):** Live-Stories (`admin/config.yml` Collection
+> `stories`, `index.html`) bestehen aus **Titelbild (`cover`) + Markdown-Fließtext
+> (`body_de/_en`) + optional YouTube** — **KEIN Galerie-Feld**. Bilder „im Beitrag"
+> stehen inline als `![](…)` im Text (mdToHtml). Die Reisen-„Reisefazit"-Galerie ist
+> im CMS ausdrücklich als *„NICHT zugeschnitten"* markiert (frisches Portfolio).
+> → Der frühere Wunsch „Galerie zuschneiden" war auf eine Galerie aufgebaut, die es
+> nicht gibt. Mit Nutzer-Freigabe stattdessen dieses **neue** Feature gebaut.
+
+**Nutzer-Wunsch (bestätigt):** 1–2 eigene Bilder direkt im Text + ein bestehendes
+Album an **frei wählbarer Stelle** als Lightbox einbetten, **ohne Doppel-Upload**,
+**laientauglich** (keine Markdown-/Token-Syntax tippen).
+
+**C — Gebaut (Astro/Tina):**
+1. `StoryBodyField.tsx` — Haupttext-Editor: normales Textfeld + zwei Knöpfe.
+   „📷 Bild einfügen" lädt Auto-WebP (jSquash, kein Media-Manager) hoch und setzt
+   `![](pfad)` an die **Cursor-Stelle**. „📸 Album hier einfügen" setzt `[[album]]`
+   an die Cursor-Stelle. Speicherformat bleibt **Markdown** → mdToHtml unverändert.
+2. `linked_album` (Tina-`reference` auf `alben`) — Dropdown wählt das Album.
+3. `StoryReaderContent` teilt `body` am `[[album]]`-Marker → `StoryAlbumBlock`
+   (Vorschau-Kacheln erste 4 + „+N") öffnet die bestehende `Lightbox` mit allen
+   Album-Fotos. Ohne Marker, aber mit Album → Block ans Ende.
+4. `storyAlbum.ts` löst die Referenz auf (Slug → `alben`-Query → name/photos/href);
+   Astro DE/EN übergeben `album`. Altes Story-`gallery`-Feld entfernt.
+
+**Capability-Lock (keine bestehende Funktion verändert):**
+- ✅ Titelbild/Body/YouTube/DE-EN-Logik unverändert (mdToHtml 1:1).
+- ✅ Album-Fotos kommen aus dem Album → kein Doppel-Upload.
+- ✅ Lightbox = die bestehende gemeinsame Komponente (1:1).
+- ⚠️ NEU gegenüber Live (additiv, mit Freigabe): Album-Block im Text + Knopf-Editor.
+
+**D — Verifikation (Build):** Offline-Build grün (29 Seiten). Positiv-Test (Story
+testweise verknüpft + `[[album]]`): Block sitzt an der Marker-Stelle, 4 Kacheln aus
+Album „Firsts" (Bild 1–4 von 8) + „+4", Link `/portfolio/2024-erste-fotos`, kein
+Marker-Leak im sichtbaren Text, kein Block ohne Album. Test-Verknüpfung zurückgesetzt.
+Commit `053ffeb`. **Offen:** Re-index + Rebuild, dann Nutzer-Abnahme (iPad: Knöpfe +
+Upload, Lightbox-Touch).

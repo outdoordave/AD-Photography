@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-04** · letzter Commit `4b10459` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-05** · letzter Commit `053ffeb` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -267,8 +267,15 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 - **Bild-Altlasten:** ~12 große Legacy-JPGs in `/uploads/` (vor der Auto-WebP-Umstellung
   hochgeladen) → David lädt sie im CMS neu hoch (wird dann auto-WebP). 2 verwaiste bereits
   entfernt (`ed69c63`).
-- **Stories-Galerie:** Stories haben kein Mehrbild-Array (nur Cover + Bilder im Text) —
-  optionales `multiple:true`-Galeriefeld wäre konsistent mit Alben/Stationen (offen).
+- **Stories — Album-Einbettung + Laien-Text-Editor (NEU, `053ffeb`, über Live hinaus, freigegeben):**
+  Live-Stories haben KEINE Galerie (nur Cover + Markdown-Text). Statt Zuschnitt (passt für Stories
+  nicht) auf Nutzer-Wunsch: eigener Haupttext-Editor `StoryBodyField` mit zwei Knöpfen — „📷 Bild
+  einfügen" (Auto-WebP-Upload an Cursor, kein „?") + „📸 Album hier einfügen" (setzt `[[album]]`).
+  Neues Dropdown `linked_album` (Tina-`reference` auf `alben`); `StoryReaderContent` rendert an der
+  Marker-Stelle `StoryAlbumBlock` (Vorschau-Kacheln + bestehende Lightbox) — **kein Doppel-Upload**
+  (Fotos aus dem Album). `storyAlbum.ts` löst die Referenz auf. Altes Story-`gallery`-Feld entfernt.
+  Speicherformat bleibt Markdown (mdToHtml 1:1). ⚠️ Schema → **Re-index + Rebuild nötig**. Build
+  grün (29 Seiten), positiv getestet. **Offen:** Nutzer-Abnahme (iPad: Knöpfe/Upload/Lightbox).
 - **Vertagt:** `srcset`/responsive Bilder (erst mit eigener Domain via Cloudflare
   Image Transformations sinnvoll); Safe-Area/`viewport-fit=cover`; iPad-Portrait-Breakpoint.
 
@@ -294,7 +301,13 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   **Re-index nötig**. **Wartet auf Live-Abnahme**, dann Ausrollung (Reisen/Über uns/Kontakt/
   Equipment/Startseite). Caveat: Listen-Felder (Stationen etc.) bleiben verschachtelt (Tina).
 - **3A „Zur Website"**: deployt, im ☰-Menü (Rubrik „Site"); Zurück-zur-Übersicht = Brotkrümel.
-- **Offen (Reihenfolge, je Zwischenbericht + Warten):** 4 Bild-Kontrolle ✅ analysiert (ABNAHME §11) ·
+- **4 Bild-Kontrolle → Option D (Zuschnitt) gebaut:** `CropPhotoField` (Zoom/Pan im Rahmen, touch,
+  Auto-WebP-Einbrennen, Original behalten). Angewandt: **Personen-Foto** (4:3) + **Reise-Stations-
+  Titelbild** (16:10). Wert ist **String** (JSON-Blob oder /uploads-Pfad) → Editor rendert immer
+  inline, kein „?" (Fix `15bec1e`). **Hero/Portfolio bewusst ausgeschlossen** (Vollbild bzw. frisch
+  aus Lightroom). **Stories: kein Zuschnitt** — stattdessen das Album-Einbettungs-Feature (s. o.).
+  ⚠️ Schema → Re-index. **Offen:** iPad-Abnahme der Crop-Felder.
+- **Offen (Reihenfolge, je Zwischenbericht + Warten):**
   5 Karten-Scroll-Zoom-Schalter · 6 Rahmen+Schatten (3 Stufen) · 7 EN-Felder im CMS abheben ·
   8 Kartenstil-Sofortvorschau (mit 3B/Karte denken) · 10 CMS-Orientierung „wo bin ich".
 
