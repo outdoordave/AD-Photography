@@ -47,8 +47,7 @@ export default defineConfig({
         path: 'src/data',
         format: 'json',
         match: { include: 'home-settings' },
-        // Router -> Vorschau-Fenster der Startseite (wie bei den Inhalts-Collections).
-        ui: { allowedActions: { create: false, delete: false }, router: () => '/' },
+        ui: { allowedActions: { create: false, delete: false } },
         fields: [
           {
             type: 'string', name: 'editor_language', label: 'Sprache',
@@ -180,8 +179,7 @@ export default defineConfig({
         path: 'src/data',
         format: 'json',
         match: { include: 'gallery-settings' },
-        // Router -> Vorschau-Fenster der Galerie-Seite.
-        ui: { allowedActions: { create: false, delete: false }, router: () => '/portfolio' },
+        ui: { allowedActions: { create: false, delete: false } },
         fields: [
           {
             type: 'string', name: 'editor_language', label: 'Sprache',
@@ -250,8 +248,7 @@ export default defineConfig({
         path: 'src/data',
         format: 'json',
         match: { include: 'stories-settings' },
-        // Router -> Vorschau-Fenster der Stories-Liste.
-        ui: { allowedActions: { create: false, delete: false }, router: () => '/stories' },
+        ui: { allowedActions: { create: false, delete: false } },
         fields: [
           {
             type: 'string', name: 'editor_language', label: 'Sprache',
@@ -320,8 +317,7 @@ export default defineConfig({
         path: 'src/data',
         format: 'json',
         match: { include: 'trips-settings' },
-        // Router -> Vorschau-Fenster der Reisen-Seite.
-        ui: { allowedActions: { create: false, delete: false }, router: () => '/trips' },
+        ui: { allowedActions: { create: false, delete: false } },
         fields: [
           {
             type: 'string', name: 'editor_language', label: 'Sprache',
@@ -591,8 +587,7 @@ export default defineConfig({
         path: 'src/data',
         format: 'json',
         match: { include: 'highlights' },
-        // Router -> Vorschau-Fenster der Startseite (Highlights speisen die Home-Teaser).
-        ui: { allowedActions: { create: false, delete: false }, router: () => '/' },
+        ui: { allowedActions: { create: false, delete: false } },
         fields: [
           { type: 'image', name: 'images', label: 'Highlight-Fotos (Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
         ],
@@ -604,8 +599,7 @@ export default defineConfig({
         path: 'src/data',
         format: 'json',
         match: { include: 'appearance-settings' },
-        // Router -> Vorschau-Fenster der Startseite (globale Optik wirkt überall).
-        ui: { allowedActions: { create: false, delete: false }, router: () => '/' },
+        ui: { allowedActions: { create: false, delete: false } },
         fields: [
           { type: 'image', name: 'logo', label: 'Logo (Nav / Hero / Footer)', ui: { component: SinglePhotoField } },
           { type: 'boolean', name: 'show_hero_logo', label: 'Logo im Hero zeigen?' },
