@@ -17,6 +17,17 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-05 — TEIL D Slice 1: Zuschnitt-Foto-Feld (CropPhotoField)
+- Option D (freies Zuschneiden, Original behalten), 1. Slice: `CropPhotoField.tsx` — gerahmtes
+  Einzelbild mit Zoom + Verschieben (touch: Ziehen=pan, Pinch/Regler=zoom; WYSIWYG-Rahmen).
+  „Übernehmen" brennt die Anzeige-WebP via jSquash. Wert = Objekt `{original, display, crop}`
+  (Original bleibt für Lightbox/Neu-Zuschnitt; `display` = eingebrannter Zuschnitt → Besucher
+  1:1 auf jedem Gerät). Ratio aus `field.cropRatio` (Default 4/3).
+- Angewandt auf **Über-uns-Personen-Foto** (image→object, cropRatio 4/3); about.json migriert;
+  AboutContent liest `display||original`. `.person .ph` = 4/3 ohne Mobile-Override → 1:1.
+- ⚠️ Schema-Änderung → tina-lock neu → **Re-index + Rebuild**. Build grün. **Pilot — iPad-Test,
+  dann Ausrollung auf Stationen/Hero/Stories.** Commit `e3564b3`.
+
 ## 2026-06-05 — Startseite live-editierbar + Equipment-Klickfix
 - **Equipment:** `data-tina-field` saß auf der ganzen Ausrüstungs-Liste → Klick fokussierte das
   `items`-Feld (wirkte wie „+ hinzufügen"). Jetzt pro `gear-row` (`tinaField(it)` → `gear.items.N`),
