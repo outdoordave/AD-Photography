@@ -4,6 +4,7 @@ import SinglePhotoField from './fields/SinglePhotoField';
 import { BilingualField, BilingualTextField } from './fields/BilingualField';
 import EnglishToggle from './fields/EnglishToggle';
 import LocationSearchField from './fields/LocationSearchField';
+import { backToSiteScreen } from './screens/BackToSiteScreen';
 
 // Tina-Cloud-Anbindung:
 //   clientId + branch sind OEFFENTLICH (clientId steht ohnehin im Browser-Bundle).
@@ -22,6 +23,11 @@ export default defineConfig({
   branch,
   clientId,
   token,
+  // TEIL 3A(b): globaler „Zur Website"-Menüpunkt in der CMS-Seitenleiste (Kategorie „Site").
+  cmsCallback: (cms: any) => {
+    try { cms.plugins.add(backToSiteScreen); } catch (e) { /* ignore */ }
+    return cms;
+  },
   build: {
     outputFolder: 'admin',
     publicFolder: 'public',
