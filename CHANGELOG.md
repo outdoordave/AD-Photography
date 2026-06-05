@@ -17,6 +17,23 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-05 — Rollout: zweisprachige Felder flach (ganze Seite)
+- Pilot-Ansatz (flache `*_de/*_en` statt `object{de,en}`) auf ALLE Inhalte ausgerollt: Reisen
+  (Meta, Zusammenfassung, Stationen Titel/Datum/Text, Galerie-Caption), Über uns (Kopf, Personen
+  Rolle/Bio/Gear, „Warum die USA?"), Kontakt (Kopf, Direkt-Block, Standort, Formular-Labels),
+  Equipment (Kopf + neuer Sprach-Schalter), Startseite (Hero-Headline/CTAs, Intro, Sektion-
+  Überschriften), Album-Notiz.
+- Werkzeuge: `scripts/flatten-bilingual.mjs` (Daten, 166 Felder/11 Dateien, nested + Listen),
+  `scripts/flatten-config.mjs` (30 einzeilige Schema-Felder); About/Equipment von Hand.
+- Render: neuer Helfer `bi(obj,base,lang)` (lib/trips + lib/albums) + `tf()` je Insel →
+  `data-tina-field` zeigt auf das Feld der aktiven Sprache (kein DE/EN-Untermenü mehr).
+  Angepasst: TripsContent, AboutContent, ContactContent, GearContent, AlbumContent,
+  GalleryContent, HomeHero, index/en-index, lib/home, lib/trips, Page-Titles, trips/[slug]
+  (war seit Pilot leer → gefixt). EN-Felder via EnglishOnlyField (bei „Nur Deutsch" aus).
+- ⚠️ Schema-Änderung → tina-lock neu → **Tina-Cloud-Re-index + Cloudflare-Rebuild nötig.**
+  Offline-Build grün (29 Seiten); HTML DE+EN geprüft. **Wartet auf Live-Abnahme.**
+- Commit: cd8383c
+
 ## 2026-06-05 — Fixes aus der Live-Prüfung: EN-Ausblenden, „?"-Thumbnails, Reise-Wechsel
 - **EN-Felder bei „Nur Deutsch" ausblenden** (`ff0aa52`): die letzten immer-sichtbaren plain-EN-
   Felder „Album-Name (Englisch)" + „Reise-Titel (Englisch)" an `EnglishOnlyField` gehängt →

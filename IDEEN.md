@@ -221,9 +221,11 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
   auf Objekt-Felder {de,en} immer ein Unterformular. Lösung (Option 1, vom Nutzer gewählt):
   zweisprachige Felder flach machen → Klick springt direkt ins Freitextfeld. **Pilot** auf den
   3 Settings-Seiten (flache `*_de/*_en` + neues `EnglishOnlyField`, das sich bei „Nur Deutsch"
-  ausblendet). **Wartet auf Live-Abnahme**, dann Ausrollung auf Reisen/Über uns/Kontakt/
-  Equipment/Startseite. ⚠️ Schema-Änderung → Re-index nötig. **Caveat:** Felder INNERHALB von
-  Listen (Stationen, Galerie, Personen) öffnen weiterhin das Listen-Element (Tina-inhärent).
+  ausblendet). ✅ **Komplett ausgerollt** (`cd8383c`) auf Reisen/Über uns/Kontakt/Equipment/
+  Startseite/Album-Notiz: Helfer `bi()`/`tf()`, Daten via `scripts/flatten-bilingual.mjs`
+  (166 Felder), Schema via `scripts/flatten-config.mjs`. ⚠️ Schema-Änderung → Re-index nötig.
+  **Caveat:** Felder INNERHALB von Listen (Stationen, Galerie, Personen) öffnen weiterhin das
+  Listen-Element (Tina-inhärent), aber ohne DE/EN-Unterebene. **Wartet auf Live-Abnahme.**
 - **3A „Zur Website" Hinweis:** ist deployt, steckt im ☰-Menü (Rubrik „Site"); kein Dauer-Button
   möglich (Tina-Chrome). Zurück zur Übersicht = Brotkrümel oben im Formular.
 - **Offen:** 4 Bild-Kontrolle-Optionen (nur Analyse) · 5 Karten-Scroll-Zoom-Schalter ·
