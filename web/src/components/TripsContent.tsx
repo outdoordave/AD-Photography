@@ -4,7 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { useTina, tinaField } from 'tinacms/dist/react';
 import Lightbox, { type LbPhoto } from './Lightbox';
 import { normalizePath, wwYouTubeEmbed } from './../lib/stories';
-import { viewStops, tl, tripTitle, sortTrips, type RawTrip, type Lang, type ViewStop } from '../lib/trips';
+import { viewStops, bi, tripTitle, sortTrips, type RawTrip, type Lang, type ViewStop } from '../lib/trips';
 
 // Reisen-Insel (Vollausbau, 1:1 aus index.html): Reise-Tabs, Reise-Kopf, MapLibre-
 // Karte (Marker/flyTo/fitBounds/Sprach-Labels), Stationen-Snap-Bahn + Observer +
@@ -33,6 +33,9 @@ function setMapLanguage(map: maplibregl.Map, lang: Lang) {
 
 export default function TripsContent(props: Props) {
   const { lang, mapStyle } = props;
+  // tinaField auf das flache Feld der aktiven Sprache (…_de bzw. …_en) -> Klick
+  // springt direkt ins Freitextfeld statt in ein DE/EN-Unterformular.
+  const tf = (o: any, base: string) => tinaField(o, (lang === 'en' ? base + '_en' : base + '_de') as any);
   const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
 
   // Reisen aus der Connection ableiten (live), nach order/Datum sortiert.
@@ -295,8 +298,8 @@ export default function TripsContent(props: Props) {
       </div>
 
       <div className="trip-summary">
-        <div className="meta" data-tina-field={tinaField(trip, 'meta')}>{tl(trip.meta, lang)}</div>
-        <p data-tina-field={tinaField(trip, 'summary')}>{tl(trip.summary, lang)}</p>
+        <div className="meta" data-tina-field={tf(trip, 'meta')}>{bi(trip, 'meta', lang)}</div>
+        <p data-tina-field={tf(trip, 'summary')}>{bi(trip, 'summary', lang)}</p>
         {/* Verknüpftes Album (linked_trip === aktuelle Reise) -> Link zur Album-Unterseite. */}
         {(() => {
           const la = props.linkedAlbums?.[trips[tripIdx]?.slug || ''];
@@ -326,8 +329,8 @@ export default function TripsContent(props: Props) {
               return (
                 <div className="trip-slide" data-sidx={i} key={i} data-tina-field={rs ? tinaField(rs) : undefined}>
                   <div className="step">{stepWord}{i + 1}/{stops.length}</div>
-                  <h3 data-tina-field={rs ? tinaField(rs, 'title') : undefined}>{s.title}</h3>
-                  <div className="date" data-tina-field={rs ? tinaField(rs, 'date') : undefined}>{s.date}</div>
+                  <h3 data-tina-field={rs ? tf(rs, 'title') : undefined}>{s.title}</h3>
+                  <div className="date" data-tina-field={rs ? tf(rs, 'date') : undefined}>{s.date}</div>
                   {cover ? (
                     <div className="ph ww-photo" style={{ aspectRatio: 'var(--ar-media)' }} data-tina-field={rs ? tinaField(rs, 'photo') : undefined} onClick={() => openStopLightbox(s, 0)}>
                       <img src={cover} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--radius-sm)' }} />
@@ -335,7 +338,7 @@ export default function TripsContent(props: Props) {
                   ) : (
                     <div className="ph" style={{ aspectRatio: 'var(--ar-media)' }} data-tina-field={rs ? tinaField(rs, 'photo') : undefined} />
                   )}
-                  <p data-tina-field={rs ? tinaField(rs, 'text') : undefined}>{s.text}</p>
+                  <p data-tina-field={rs ? tf(rs, 'text') : undefined}>{s.text}</p>
                   {s.photos.length ? (
                     <div className="ww-station-photos">
                       {s.photos.map((p, pi) => (
@@ -370,7 +373,7 @@ export default function TripsContent(props: Props) {
       {Array.isArray(trip.gallery) && trip.gallery.length ? (
         <div className="story-gallery" style={{ marginTop: 30 }}>
           {trip.gallery.map((g: any, i: number) => (
-            <img key={i} src={normalizePath(g.image)} alt={tl(g.caption, lang)} loading="lazy"
+            <img key={i} src={normalizePath(g.image)} alt={bi(g, 'caption', lang)} loading="lazy"
               data-tina-field={tinaField(g, 'image')}
               onClick={() => setLb({ photos: trip.gallery.map((x: any) => ({ photo: normalizePath(x.image) })), start: i })} />
           ))}

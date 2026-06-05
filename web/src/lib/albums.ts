@@ -25,6 +25,14 @@ export function tl(b: Bi | undefined, lang: Lang): string {
   return lang === 'en' ? b.en || b.de || '' : b.de || '';
 }
 
+// Flaches zweisprachiges Feld lesen (base_de/base_en); EN fällt auf DE zurück.
+export function bi(obj: any, base: string, lang: Lang): string {
+  if (!obj) return '';
+  const de = obj[base + '_de'];
+  const en = obj[base + '_en'];
+  return lang === 'en' ? en || de || '' : de || '';
+}
+
 // Album-Anzeigename (Name = DE/isTitle, name_en = optionale EN-Variante).
 export function albName(d: { name?: string; name_en?: string } | undefined, lang: Lang): string {
   if (!d) return '';

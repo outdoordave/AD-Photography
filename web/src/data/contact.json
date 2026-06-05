@@ -1,28 +1,4 @@
 {
-  "kicker": {
-    "de": "Kontakt",
-    "en": "Contact"
-  },
-  "title": {
-    "de": "Sag Hallo.",
-    "en": "Say hello."
-  },
-  "intro": {
-    "de": "Lust auf eine gemeinsame Tour, eine Frage zu einem Bild oder einfach nur Hallo sagen? Wir freuen uns über jede Nachricht.",
-    "en": "Up for a trip together, a question about a photo, or just want to say hi? We'd love to hear from you."
-  },
-  "direct_title": {
-    "de": "Schreib uns direkt",
-    "en": "Reach us directly"
-  },
-  "direct_text": {
-    "de": "Am schnellsten erreichst du uns per E-Mail oder über Instagram. Wir antworten meist innerhalb weniger Tage.",
-    "en": "The fastest way to reach us is by email or Instagram. We usually reply within a few days."
-  },
-  "location": {
-    "de": "Unterwegs in den USA & daheim in Deutschland",
-    "en": "On the road in the USA & home in Germany"
-  },
   "channels": [
     {
       "type": "email",
@@ -40,28 +16,28 @@
       "url": "https://instagram.com/a3_flow"
     }
   ],
-  "form_success": {
-    "de": "Danke! Deine Nachricht ist angekommen — wir melden uns bald.",
-    "en": "Thanks! Your message came through — we'll be in touch soon."
-  },
-  "form_name": {
-    "de": "Dein Name",
-    "en": "Your name"
-  },
-  "form_email": {
-    "de": "Deine E-Mail",
-    "en": "Your email"
-  },
-  "form_message": {
-    "de": "Deine Nachricht",
-    "en": "Your message"
-  },
-  "form_send": {
-    "de": "Nachricht senden",
-    "en": "Send message"
-  },
-  "form_note": {
-    "de": "Hinweis: Dies ist eine Vorschau — das Formular versendet noch nichts. Beim Live-Schalten verbinden wir es mit eurem Postfach.",
-    "en": "Note: This is a preview — the form doesn't send anything yet. When we go live, we'll connect it to your inbox."
-  }
+  "kicker_de": "Kontakt",
+  "kicker_en": "Contact",
+  "title_de": "Sag Hallo.",
+  "title_en": "Say hello.",
+  "intro_de": "Lust auf eine gemeinsame Tour, eine Frage zu einem Bild oder einfach nur Hallo sagen? Wir freuen uns über jede Nachricht.",
+  "intro_en": "Up for a trip together, a question about a photo, or just want to say hi? We'd love to hear from you.",
+  "direct_title_de": "Schreib uns direkt",
+  "direct_title_en": "Reach us directly",
+  "direct_text_de": "Am schnellsten erreichst du uns per E-Mail oder über Instagram. Wir antworten meist innerhalb weniger Tage.",
+  "direct_text_en": "The fastest way to reach us is by email or Instagram. We usually reply within a few days.",
+  "location_de": "Unterwegs in den USA & daheim in Deutschland",
+  "location_en": "On the road in the USA & home in Germany",
+  "form_success_de": "Danke! Deine Nachricht ist angekommen — wir melden uns bald.",
+  "form_success_en": "Thanks! Your message came through — we'll be in touch soon.",
+  "form_name_de": "Dein Name",
+  "form_name_en": "Your name",
+  "form_email_de": "Deine E-Mail",
+  "form_email_en": "Your email",
+  "form_message_de": "Deine Nachricht",
+  "form_message_en": "Your message",
+  "form_send_de": "Nachricht senden",
+  "form_send_en": "Send message",
+  "form_note_de": "Hinweis: Dies ist eine Vorschau — das Formular versendet noch nichts. Beim Live-Schalten verbinden wir es mit eurem Postfach.",
+  "form_note_en": "Note: This is a preview — the form doesn't send anything yet. When we go live, we'll connect it to your inbox."
 }

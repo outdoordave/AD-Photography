@@ -3,7 +3,7 @@ import { useTina, tinaField } from 'tinacms/dist/react';
 import Lightbox, { type LbPhoto } from './Lightbox';
 import { Tile } from './GalleryContent';
 import { normalizePath } from '../lib/stories';
-import { albumPhotos, tl, type RawAlbum, type Lang } from '../lib/albums';
+import { albumPhotos, bi, type RawAlbum, type Lang } from '../lib/albums';
 
 // Album-Unterseite (1:1 aus renderAlbum): Kicker „Album" + Name + Notiz + flaches
 // Kachel-Grid; Kachel-Klick -> Lightbox des Albums. Daten via useTina(alben) ->
@@ -18,7 +18,7 @@ export default function AlbumContent(props: Props) {
 
   const photos = React.useMemo(() => albumPhotos(alb), [alb]);
   const name = (lang === 'en' ? alb.name_en || alb.name : alb.name) || '';
-  const note = tl(alb.note, lang);
+  const note = bi(alb, 'note', lang);
   const [lb, setLb] = React.useState<{ photos: LbPhoto[]; start: number } | null>(null);
 
   function openAt(start: number) {
@@ -31,7 +31,7 @@ export default function AlbumContent(props: Props) {
       <div className="page-title">
         <div className="kicker">{lang === 'en' ? 'Album' : 'Album'}</div>
         <h1 data-tina-field={tinaField(alb as any, 'name')}>{name}</h1>
-        {note ? <p data-tina-field={tinaField(alb as any, 'note')}>{note}</p> : null}
+        {note ? <p data-tina-field={tinaField(alb as any, lang === 'en' ? 'note_en' : 'note_de')}>{note}</p> : null}
       </div>
       <div className="gallery">
         {photos.map((ph, i) => (

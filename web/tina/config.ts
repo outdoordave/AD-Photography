@@ -1,7 +1,6 @@
 import { defineConfig } from 'tinacms';
 import BulkPhotoField from './fields/BulkPhotoField';
 import SinglePhotoField from './fields/SinglePhotoField';
-import { BilingualField, BilingualTextField } from './fields/BilingualField';
 import { EnglishOnlyField, EnglishOnlyTextField } from './fields/EnglishOnlyField';
 import EnglishToggle from './fields/EnglishToggle';
 import LocationSearchField from './fields/LocationSearchField';
@@ -71,9 +70,12 @@ export default defineConfig({
               { type: 'image', name: 'slideshow', label: 'Diashow-Bilder (Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
               { type: 'string', name: 'video', label: 'Video (optional)', description: 'Pfad zu /uploads/… — Video vorher lokal komprimieren (HandBrake/CapCut).' },
               { type: 'image', name: 'video_poster', label: 'Video-Vorschaubild (Poster)', ui: { component: SinglePhotoField } },
-              { type: 'object', name: 'headline', label: 'Überschrift', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'cta_portfolio', label: 'Knopf 1 (→ Portfolio)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'cta_stories', label: 'Knopf 2 (→ Stories)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'string', name: 'headline_de', label: 'Überschrift', ui: { component: 'textarea' } },
+              { type: 'string', name: 'headline_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+              { type: 'string', name: 'cta_portfolio_de', label: 'Knopf 1 (→ Portfolio)' },
+              { type: 'string', name: 'cta_portfolio_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+              { type: 'string', name: 'cta_stories_de', label: 'Knopf 2 (→ Stories)' },
+              { type: 'string', name: 'cta_stories_en', label: '↳ English', ui: { component: EnglishOnlyField } },
               {
                 type: 'object', name: 'polish', label: 'Politur (edler Look, abschaltbar)',
                 description: 'Feinschliff-Effekte für den Hero. Aus = 1:1 schlichter Look.',
@@ -98,8 +100,10 @@ export default defineConfig({
           {
             type: 'object', name: 'intro', label: 'Intro-Block (unter dem Hero)',
             fields: [
-              { type: 'object', name: 'subline', label: 'Zwischenüberschrift', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'subtext', label: 'Intro-Text', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'string', name: 'subline_de', label: 'Zwischenüberschrift' },
+              { type: 'string', name: 'subline_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+              { type: 'string', name: 'subtext_de', label: 'Intro-Text', ui: { component: 'textarea' } },
+              { type: 'string', name: 'subtext_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
               {
                 type: 'object', name: 'social', label: 'Social-Links (z. B. Instagram)', list: true,
                 ui: { itemProps: (i: any) => ({ label: i?.username ? '@' + i.username : 'Neuer Link' }) },
@@ -122,12 +126,18 @@ export default defineConfig({
           {
             type: 'object', name: 'sections', label: 'Sektion-Überschriften (Startseite)',
             fields: [
-              { type: 'object', name: 'gallery_kicker', label: 'Momentaufnahmen — Kicker', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'gallery_title', label: 'Momentaufnahmen — Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'latest_kicker', label: 'Aktuell — Kicker', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'latest_title', label: 'Aktuell — Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'discover_kicker', label: 'Entdecken — Kicker', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'discover_title', label: 'Entdecken — Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'string', name: 'gallery_kicker_de', label: 'Momentaufnahmen — Kicker' },
+              { type: 'string', name: 'gallery_kicker_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+              { type: 'string', name: 'gallery_title_de', label: 'Momentaufnahmen — Titel' },
+              { type: 'string', name: 'gallery_title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+              { type: 'string', name: 'latest_kicker_de', label: 'Aktuell — Kicker' },
+              { type: 'string', name: 'latest_kicker_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+              { type: 'string', name: 'latest_title_de', label: 'Aktuell — Titel' },
+              { type: 'string', name: 'latest_title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+              { type: 'string', name: 'discover_kicker_de', label: 'Entdecken — Kicker' },
+              { type: 'string', name: 'discover_kicker_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+              { type: 'string', name: 'discover_title_de', label: 'Entdecken — Titel' },
+              { type: 'string', name: 'discover_title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
             ],
           },
           {
@@ -159,7 +169,8 @@ export default defineConfig({
           },
           { type: 'string', name: 'name', label: 'Album-Name', isTitle: true, required: true, description: 'Erscheint als Anzeigename in der Übersicht.' },
           { type: 'string', name: 'name_en', label: 'Album-Name (Englisch)', ui: { component: EnglishOnlyField } },
-          { type: 'object', name: 'note', label: 'Notiz (optional)', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'string', name: 'note_de', label: 'Notiz (optional)', ui: { component: 'textarea' } },
+          { type: 'string', name: 'note_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
           { type: 'string', name: 'date', label: 'Datum (YYYY-MM-DD)', description: 'Für Sortierung „Neueste" und die Galerie-Reihenfolge.' },
           { type: 'string', name: 'linked_trip', label: 'Verknüpfte Reise (Slug, optional)', description: 'Slug einer Reise (Dateiname ohne .json, z. B. „florida"). Dann zeigt diese Reise einen „Mehr Fotos im Album"-Link.' },
           {
@@ -292,8 +303,10 @@ export default defineConfig({
           { type: 'string', name: 'title', label: 'Reise-Titel (Tab)', isTitle: true, required: true, description: 'Erscheint als Anzeigename in der Übersicht & als Tab.' },
           { type: 'string', name: 'title_en', label: 'Reise-Titel (Englisch)', ui: { component: EnglishOnlyField } },
           { type: 'string', name: 'date', label: 'Datum (YYYY-MM-DD)', description: 'Für Sortierung/Meta.' },
-          { type: 'object', name: 'meta', label: 'Meta-Zeile (Datum · km · …)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'summary', label: 'Zusammenfassung', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'string', name: 'meta_de', label: 'Meta-Zeile (Datum · km · …)' },
+          { type: 'string', name: 'meta_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'summary_de', label: 'Zusammenfassung', ui: { component: 'textarea' } },
+          { type: 'string', name: 'summary_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
           { type: 'boolean', name: 'upcoming', label: 'Kommende Reise? (zeigt „bald ✦")' },
           {
             type: 'object', name: 'stops', label: 'Stationen', list: true,
@@ -301,9 +314,12 @@ export default defineConfig({
             fields: [
               { type: 'string', name: 'name', label: 'Name (kurz – für Marker & Liste)', required: true, description: 'z. B. San Francisco' },
               { type: 'string', name: 'location', label: '📍 Ort auf der Karte', description: 'Suchen & auf der Karte feinjustieren.', ui: { component: LocationSearchField } },
-              { type: 'object', name: 'title', label: 'Stations-Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'date', label: 'Datum/Zeitraum', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-              { type: 'object', name: 'text', label: 'Text', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'string', name: 'title_de', label: 'Stations-Titel' },
+              { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+              { type: 'string', name: 'date_de', label: 'Datum/Zeitraum' },
+              { type: 'string', name: 'date_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+              { type: 'string', name: 'text_de', label: 'Text', ui: { component: 'textarea' } },
+              { type: 'string', name: 'text_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
               { type: 'image', name: 'photo', label: 'Titelbild (Auto-WebP)', ui: { component: SinglePhotoField } },
               { type: 'image', name: 'photos', label: 'Weitere Fotos (Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
               { type: 'string', name: 'video', label: 'Video-Loop (optional)', description: 'Pfad zu /uploads/… — Video vorher lokal komprimieren (HandBrake/CapCut).' },
@@ -315,7 +331,8 @@ export default defineConfig({
             ui: { itemProps: (i: any) => ({ label: i?.image ? i.image.split('/').pop() : 'Neues Bild' }) },
             fields: [
               { type: 'image', name: 'image', label: 'Bild (Auto-WebP)', ui: { component: SinglePhotoField } },
-              { type: 'object', name: 'caption', label: 'Bildunterschrift', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+              { type: 'string', name: 'caption_de', label: 'Bildunterschrift' },
+              { type: 'string', name: 'caption_en', label: '↳ English', ui: { component: EnglishOnlyField } },
             ],
           },
         ],
@@ -368,34 +385,19 @@ export default defineConfig({
           router: () => '/gear',
         },
         fields: [
-          // --- Seitenkopf-Texte (DE/EN) ---
+          // --- Sprach-Schalter (nur Editor; steuert die EN-Felder) ---
           {
-            type: 'object',
-            name: 'kicker',
-            label: 'Mini-Titel (Kicker)',
-            fields: [
-              { type: 'string', name: 'de', label: 'Deutsch' },
-              { type: 'string', name: 'en', label: 'Englisch' },
-            ],
+            type: 'string', name: 'editor_language', label: 'Sprache',
+            description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
+            ui: { component: EnglishToggle },
           },
-          {
-            type: 'object',
-            name: 'title',
-            label: 'Titel',
-            fields: [
-              { type: 'string', name: 'de', label: 'Deutsch' },
-              { type: 'string', name: 'en', label: 'Englisch' },
-            ],
-          },
-          {
-            type: 'object',
-            name: 'intro',
-            label: 'Beschreibung',
-            fields: [
-              { type: 'string', name: 'de', label: 'Deutsch', ui: { component: 'textarea' } },
-              { type: 'string', name: 'en', label: 'Englisch', ui: { component: 'textarea' } },
-            ],
-          },
+          // --- Seitenkopf-Texte (DE/EN, flach) ---
+          { type: 'string', name: 'kicker_de', label: 'Mini-Titel (Kicker)' },
+          { type: 'string', name: 'kicker_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'title_de', label: 'Titel' },
+          { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'intro_de', label: 'Beschreibung', ui: { component: 'textarea' } },
+          { type: 'string', name: 'intro_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
           // --- Ausrüstungs-Liste ---
           {
             type: 'object',
@@ -454,30 +456,12 @@ export default defineConfig({
             ui: { component: EnglishToggle },
           },
           // --- Seitenkopf (Deutsch direkt; Englisch erscheint bei Schalter „an") ---
-          {
-            type: 'object', name: 'kicker', label: 'Mini-Titel (Kicker)',
-            ui: { component: BilingualField },
-            fields: [
-              { type: 'string', name: 'de', label: 'Deutsch' },
-              { type: 'string', name: 'en', label: 'Englisch' },
-            ],
-          },
-          {
-            type: 'object', name: 'title', label: 'Titel',
-            ui: { component: BilingualField },
-            fields: [
-              { type: 'string', name: 'de', label: 'Deutsch' },
-              { type: 'string', name: 'en', label: 'Englisch' },
-            ],
-          },
-          {
-            type: 'object', name: 'intro', label: 'Einleitung',
-            ui: { component: BilingualTextField },
-            fields: [
-              { type: 'string', name: 'de', label: 'Deutsch' },
-              { type: 'string', name: 'en', label: 'Englisch' },
-            ],
-          },
+          { type: 'string', name: 'kicker_de', label: 'Mini-Titel (Kicker)' },
+          { type: 'string', name: 'kicker_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'title_de', label: 'Titel' },
+          { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'intro_de', label: 'Einleitung', ui: { component: 'textarea' } },
+          { type: 'string', name: 'intro_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
           // --- Personen: aufklappbare Liste (Eintrag 1 = links, Eintrag 2 = rechts) ---
           {
             type: 'object',
@@ -489,50 +473,19 @@ export default defineConfig({
             fields: [
               { type: 'string', name: 'name', label: 'Name', description: 'z. B. Alexandra Apostel' },
               { type: 'image', name: 'photo', label: 'Foto (Auto-WebP)', ui: { component: SinglePhotoField } },
-              {
-                type: 'object', name: 'role', label: 'Rolle',
-                ui: { component: BilingualField },
-                fields: [
-                  { type: 'string', name: 'de', label: 'Deutsch' },
-                  { type: 'string', name: 'en', label: 'Englisch' },
-                ],
-              },
-              {
-                type: 'object', name: 'bio', label: 'Bio',
-                ui: { component: BilingualTextField },
-                fields: [
-                  { type: 'string', name: 'de', label: 'Deutsch' },
-                  { type: 'string', name: 'en', label: 'Englisch' },
-                ],
-              },
-              {
-                type: 'object', name: 'gear', label: 'Ausrüstungs-Zeile',
-                description: 'Freie Textzeile (z. B. „Ausrüstung: Sony A7 IV · …"). NICHT automatisch aus der Equipment-Liste.',
-                ui: { component: BilingualField },
-                fields: [
-                  { type: 'string', name: 'de', label: 'Deutsch' },
-                  { type: 'string', name: 'en', label: 'Englisch' },
-                ],
-              },
+              { type: 'string', name: 'role_de', label: 'Rolle' },
+              { type: 'string', name: 'role_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+              { type: 'string', name: 'bio_de', label: 'Bio', ui: { component: 'textarea' } },
+              { type: 'string', name: 'bio_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+              { type: 'string', name: 'gear_de', label: 'Ausrüstungs-Zeile', description: 'Freie Textzeile (z. B. „Ausrüstung: Sony A7 IV · …"). NICHT automatisch aus der Equipment-Liste.' },
+              { type: 'string', name: 'gear_en', label: '↳ English', ui: { component: EnglishOnlyField } },
             ],
           },
           // --- „Warum die USA?" — flach (Überschrift + Text), je inline aufklappbar ---
-          {
-            type: 'object', name: 'why_title', label: '„Warum die USA?" — Überschrift',
-            ui: { component: BilingualField },
-            fields: [
-              { type: 'string', name: 'de', label: 'Deutsch' },
-              { type: 'string', name: 'en', label: 'Englisch' },
-            ],
-          },
-          {
-            type: 'object', name: 'why_text', label: '„Warum die USA?" — Text',
-            ui: { component: BilingualTextField },
-            fields: [
-              { type: 'string', name: 'de', label: 'Deutsch' },
-              { type: 'string', name: 'en', label: 'Englisch' },
-            ],
-          },
+          { type: 'string', name: 'why_title_de', label: '„Warum die USA?" — Überschrift' },
+          { type: 'string', name: 'why_title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'why_text_de', label: '„Warum die USA?" — Text', ui: { component: 'textarea' } },
+          { type: 'string', name: 'why_text_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
         ],
       },
       // --- Kontakt: EIN Eintrag (Kopf + Direkt-Block + Kanäle + Formular-Texte) ---
@@ -553,13 +506,19 @@ export default defineConfig({
             ui: { component: EnglishToggle },
           },
           // --- Seitenkopf ---
-          { type: 'object', name: 'kicker', label: 'Mini-Titel (Kicker)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'title', label: 'Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'intro', label: 'Einleitung', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'string', name: 'kicker_de', label: 'Mini-Titel (Kicker)' },
+          { type: 'string', name: 'kicker_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'title_de', label: 'Titel' },
+          { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'intro_de', label: 'Einleitung', ui: { component: 'textarea' } },
+          { type: 'string', name: 'intro_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
           // --- „Schreib uns direkt" ---
-          { type: 'object', name: 'direct_title', label: '„Schreib uns direkt" — Überschrift', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'direct_text', label: '„Schreib uns direkt" — Text', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'location', label: 'Standort-Zeile', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'string', name: 'direct_title_de', label: '„Schreib uns direkt" — Überschrift' },
+          { type: 'string', name: 'direct_title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'direct_text_de', label: '„Schreib uns direkt" — Text', ui: { component: 'textarea' } },
+          { type: 'string', name: 'direct_text_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+          { type: 'string', name: 'location_de', label: 'Standort-Zeile' },
+          { type: 'string', name: 'location_en', label: '↳ English', ui: { component: EnglishOnlyField } },
           // --- Kontakt-Kanäle ---
           {
             type: 'object', name: 'channels', label: 'Kontakt-Kanäle (E-Mail, Social)', list: true,
@@ -586,12 +545,18 @@ export default defineConfig({
             ],
           },
           // --- Formular-Texte ---
-          { type: 'object', name: 'form_success', label: 'Formular — Erfolgs-Meldung', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'form_name', label: 'Formular — Label „Name"', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'form_email', label: 'Formular — Label „E-Mail"', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'form_message', label: 'Formular — Label „Nachricht"', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'form_send', label: 'Formular — Senden-Button', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'form_note', label: 'Formular — Hinweis darunter', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'string', name: 'form_success_de', label: 'Formular — Erfolgs-Meldung', ui: { component: 'textarea' } },
+          { type: 'string', name: 'form_success_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+          { type: 'string', name: 'form_name_de', label: 'Formular — Label „Name"' },
+          { type: 'string', name: 'form_name_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'form_email_de', label: 'Formular — Label „E-Mail"' },
+          { type: 'string', name: 'form_email_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'form_message_de', label: 'Formular — Label „Nachricht"' },
+          { type: 'string', name: 'form_message_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'form_send_de', label: 'Formular — Senden-Button' },
+          { type: 'string', name: 'form_send_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'form_note_de', label: 'Formular — Hinweis darunter', ui: { component: 'textarea' } },
+          { type: 'string', name: 'form_note_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
         ],
       },
       // --- Highlights: album-übergreifende Lieblingsfotos (speisen die Home-Teaser) ---

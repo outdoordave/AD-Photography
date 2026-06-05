@@ -6,7 +6,7 @@ import AboutContent from '../components/AboutContent.tsx';
 import { client } from '../../tina/__generated__/client';
 
 const res = await client.queries.ueber_uns({ relativePath: 'about.json' });
-const title = (res.data.ueber_uns as any)?.title?.de || 'Über uns';
+const title = (res.data.ueber_uns as any)?.title_de || 'Über uns';
 ---
 <BaseLayout title={`${title} — Wide & Wild`} lang="de">
   <div id="page-about">

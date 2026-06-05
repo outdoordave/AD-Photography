@@ -2,7 +2,7 @@
 // Hero (1:1 aus index.html renderHero + .hero-Markup): Vollflächiger Kopf mit
 // Medien-Umschalter (Einzelbild / Diashow 5 s / Video), Logo, Headline, 2 CTAs,
 // Scroll-Pfeil, „Rip"-Kante. Daten aus home-settings.json (CMS „🏠 Startseite").
-import { tl, type Lang } from '../lib/albums';
+import { bi, type Lang } from '../lib/albums';
 import { normalizePath } from '../lib/stories';
 import { socialIcon, socialUrl } from '../lib/socialIcons';
 
@@ -29,9 +29,9 @@ const hasMedia =
   (mode === 'image' && hero.image) ||
   (mode === 'random' && slides.length) ||
   (mode === 'video' && hero.video);
-const headline = tl(hero.headline, lang);
-const ctaP = tl(hero.cta_portfolio, lang) || (isEn ? 'View portfolio' : 'Portfolio ansehen');
-const ctaS = tl(hero.cta_stories, lang) || (isEn ? 'Read our stories' : 'Reiseberichte lesen');
+const headline = bi(hero, 'headline', lang);
+const ctaP = bi(hero, 'cta_portfolio', lang) || (isEn ? 'View portfolio' : 'Portfolio ansehen');
+const ctaS = bi(hero, 'cta_stories', lang) || (isEn ? 'Read our stories' : 'Reiseberichte lesen');
 
 // Politur-Schalter (Standard an; im CMS abschaltbar -> zurück zum 1:1-Look).
 const pol = hero.polish || {};

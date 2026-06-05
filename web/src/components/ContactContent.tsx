@@ -19,7 +19,9 @@ export default function ContactContent(props: Props) {
   const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
   const c = (data.kontakt ?? {}) as Record<string, any>;
   const lang = props.lang;
-  const t = (o: any) => (o ? (lang === 'en' ? o.en : o.de) : '');
+  // Flache Felder (base_de/base_en): EN fällt auf DE zurück.
+  const t = (o: any, base: string) => { if (!o) return ''; const de = o[base + '_de'], en = o[base + '_en']; return lang === 'en' ? (en || de || '') : (de || ''); };
+  const tf = (o: any, base: string) => tinaField(o, (lang === 'en' ? base + '_en' : base + '_de') as any);
 
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -38,15 +40,15 @@ export default function ContactContent(props: Props) {
   };
 
   const channels: any[] = Array.isArray(c.channels) ? c.channels : [];
-  const locTxt = t(c.location);
+  const locTxt = t(c, 'location');
 
   return (
     <>
       <div className="wrap">
         <div className="page-title">
-          <div className="kicker" data-tina-field={tinaField(c, 'kicker')}>{t(c.kicker)}</div>
-          <h1 data-tina-field={tinaField(c, 'title')}>{t(c.title)}</h1>
-          <p data-tina-field={tinaField(c, 'intro')}>{t(c.intro)}</p>
+          <div className="kicker" data-tina-field={tf(c, 'kicker')}>{t(c, 'kicker')}</div>
+          <h1 data-tina-field={tf(c, 'title')}>{t(c, 'title')}</h1>
+          <p data-tina-field={tf(c, 'intro')}>{t(c, 'intro')}</p>
         </div>
       </div>
 
@@ -55,8 +57,8 @@ export default function ContactContent(props: Props) {
           <div className="contact-grid">
             {/* Links: Direkt-Block + Kanäle */}
             <div className="contact-info">
-              <h3 data-tina-field={tinaField(c, 'direct_title')}>{t(c.direct_title)}</h3>
-              <p data-tina-field={tinaField(c, 'direct_text')}>{t(c.direct_text)}</p>
+              <h3 data-tina-field={tf(c, 'direct_title')}>{t(c, 'direct_title')}</h3>
+              <p data-tina-field={tf(c, 'direct_text')}>{t(c, 'direct_text')}</p>
               <div data-tina-field={tinaField(c, 'channels')}>
                 {channels.map((ch, i) => {
                   const inner = (
@@ -72,7 +74,7 @@ export default function ContactContent(props: Props) {
                   );
                 })}
                 {locTxt ? (
-                  <div className="line ww-channel" data-tina-field={tinaField(c, 'location')}>
+                  <div className="line ww-channel" data-tina-field={tf(c, 'location')}>
                     <span className="ic ww-social-ic" dangerouslySetInnerHTML={{ __html: socialIcon('web') }} />
                     {locTxt}
                   </div>
@@ -82,21 +84,21 @@ export default function ContactContent(props: Props) {
 
             {/* Rechts: Formular (Vorschau) */}
             <div className="contact-form">
-              <div className={`form-success${sent ? ' show' : ''}`} data-tina-field={tinaField(c, 'form_success')}>{t(c.form_success)}</div>
+              <div className={`form-success${sent ? ' show' : ''}`} data-tina-field={tf(c, 'form_success')}>{t(c, 'form_success')}</div>
               <div className="form-field">
-                <label data-tina-field={tinaField(c, 'form_name')}>{t(c.form_name)}</label>
+                <label data-tina-field={tf(c, 'form_name')}>{t(c, 'form_name')}</label>
                 <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
               </div>
               <div className="form-field">
-                <label data-tina-field={tinaField(c, 'form_email')}>{t(c.form_email)}</label>
+                <label data-tina-field={tf(c, 'form_email')}>{t(c, 'form_email')}</label>
                 <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
               <div className="form-field">
-                <label data-tina-field={tinaField(c, 'form_message')}>{t(c.form_message)}</label>
+                <label data-tina-field={tf(c, 'form_message')}>{t(c, 'form_message')}</label>
                 <textarea value={msg} onChange={(e) => setMsg(e.target.value)} />
               </div>
-              <button type="button" className="btn dark" data-tina-field={tinaField(c, 'form_send')} onClick={onSend}>{t(c.form_send)}</button>
-              <p className="form-note" data-tina-field={tinaField(c, 'form_note')}>{t(c.form_note)}</p>
+              <button type="button" className="btn dark" data-tina-field={tf(c, 'form_send')} onClick={onSend}>{t(c, 'form_send')}</button>
+              <p className="form-note" data-tina-field={tf(c, 'form_note')}>{t(c, 'form_note')}</p>
             </div>
           </div>
         </div>

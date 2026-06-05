@@ -25,15 +25,17 @@ export default function AboutContent(props: Props) {
   const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
   const about = (data.ueber_uns ?? {}) as Record<string, any>;
   const lang = props.lang;
-  const t = (o: any) => (o ? (lang === 'en' ? o.en : o.de) : '');
+  // Flache Felder (base_de/base_en): EN fällt auf DE zurück.
+  const t = (o: any, base: string) => { if (!o) return ''; const de = o[base + '_de'], en = o[base + '_en']; return lang === 'en' ? (en || de || '') : (de || ''); };
+  const tf = (o: any, base: string) => tinaField(o, (lang === 'en' ? base + '_en' : base + '_de') as any);
 
   return (
     <>
       <div className="wrap">
         <div className="page-title">
-          <div className="kicker" data-tina-field={tinaField(about, 'kicker')}>{t(about.kicker)}</div>
-          <h1 data-tina-field={tinaField(about, 'title')}>{t(about.title)}</h1>
-          <p data-tina-field={tinaField(about, 'intro')}>{t(about.intro)}</p>
+          <div className="kicker" data-tina-field={tf(about, 'kicker')}>{t(about, 'kicker')}</div>
+          <h1 data-tina-field={tf(about, 'title')}>{t(about, 'title')}</h1>
+          <p data-tina-field={tf(about, 'intro')}>{t(about, 'intro')}</p>
         </div>
       </div>
 
@@ -59,9 +61,9 @@ export default function AboutContent(props: Props) {
                   </div>
                   <div className="info">
                     <h3 data-tina-field={tinaField(person, 'name')}>{person.name}</h3>
-                    <div className="role" data-tina-field={tinaField(person, 'role')}>{t(person.role)}</div>
-                    <p className="bio" data-tina-field={tinaField(person, 'bio')}>{t(person.bio)}</p>
-                    <div className="gear" data-tina-field={tinaField(person, 'gear')}>{t(person.gear)}</div>
+                    <div className="role" data-tina-field={tf(person, 'role')}>{t(person, 'role')}</div>
+                    <p className="bio" data-tina-field={tf(person, 'bio')}>{t(person, 'bio')}</p>
+                    <div className="gear" data-tina-field={tf(person, 'gear')}>{t(person, 'gear')}</div>
                   </div>
                 </div>
               );
@@ -73,9 +75,9 @@ export default function AboutContent(props: Props) {
       <section>
         <div className="wrap">
           <div className="home-intro">
-            <h2 data-tina-field={tinaField(about, 'why_title')}>{t(about.why_title)}</h2>
+            <h2 data-tina-field={tf(about, 'why_title')}>{t(about, 'why_title')}</h2>
             <div className="divider-orn">✦</div>
-            <p data-tina-field={tinaField(about, 'why_text')}>{t(about.why_text)}</p>
+            <p data-tina-field={tf(about, 'why_text')}>{t(about, 'why_text')}</p>
           </div>
         </div>
       </section>

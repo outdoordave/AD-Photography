@@ -2,10 +2,6 @@
   "editor_language": "de",
   "name": "Firsts",
   "name_en": "",
-  "note": {
-    "de": "Erstes Album, mit einigen unserer Werke",
-    "en": ""
-  },
   "date": "2024-01-01",
   "linked_trip": "",
   "pin": {
@@ -21,5 +17,7 @@
     "/uploads/img_6039.jpg",
     "/uploads/img_4101.jpg",
     "/uploads/dji_0136_edit.jpeg"
-  ]
+  ],
+  "note_de": "Erstes Album, mit einigen unserer Werke",
+  "note_en": ""
 }

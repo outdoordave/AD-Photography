@@ -22,13 +22,13 @@ const linkedAlbums = linkedAlbumsByTrip(albRes.data);
 const s = settings as any;
 const mapStyle = s.map_style || 'liberty';
 ---
-<BaseLayout title={`${tl(s.title, 'de') || 'Reisen'} — Wide & Wild`} lang="de">
+<BaseLayout title={`${(s.title_de || '') || 'Reisen'} — Wide & Wild`} lang="de">
   <section>
     <div class="wrap">
       <div class="page-title">
-        <div class="kicker">{tl(s.kicker, 'de')}</div>
-        <h1>{tl(s.title, 'de')}</h1>
-        <p>{tl(s.intro, 'de')}</p>
+        <div class="kicker">{(s.kicker_de || '')}</div>
+        <h1>{(s.title_de || '')}</h1>
+        <p>{(s.intro_de || '')}</p>
       </div>
       <TripsContent
         client:load

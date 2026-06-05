@@ -8,9 +8,9 @@ export type Bi = { de?: string; en?: string };
 export type RawStop = {
   name?: string;
   location?: string;
-  title?: Bi;
-  date?: Bi;
-  text?: Bi;
+  title_de?: string; title_en?: string;
+  date_de?: string; date_en?: string;
+  text_de?: string; text_en?: string;
   photo?: string;
   photos?: string[];
   video?: string;
@@ -21,12 +21,20 @@ export type RawTrip = {
   title?: string;
   title_en?: string;
   date?: string;
-  meta?: Bi;
-  summary?: Bi;
+  meta_de?: string; meta_en?: string;
+  summary_de?: string; summary_en?: string;
   upcoming?: boolean;
   stops?: RawStop[];
-  gallery?: { image: string; caption?: Bi }[];
+  gallery?: { image: string; caption_de?: string; caption_en?: string }[];
 };
+
+// Flaches zweisprachiges Feld lesen (base_de/base_en); EN fällt auf DE zurück.
+export function bi(obj: any, base: string, lang: Lang): string {
+  if (!obj) return '';
+  const de = obj[base + '_de'];
+  const en = obj[base + '_en'];
+  return lang === 'en' ? en || de || '' : de || '';
+}
 
 // Koordinate aus GeoJSON-Point-String: {"type":"Point","coordinates":[lon,lat]}
 export function pickCoord(location: string | undefined, which: 'lat' | 'lon'): number | null {
@@ -70,9 +78,9 @@ export function viewStops(trip: RawTrip, lang: Lang): ViewStop[] {
     name: s.name || '',
     lat: pickCoord(s.location, 'lat'),
     lon: pickCoord(s.location, 'lon'),
-    title: tl(s.title, lang) || s.name || '',
-    date: tl(s.date, lang),
-    text: tl(s.text, lang),
+    title: bi(s, 'title', lang) || s.name || '',
+    date: bi(s, 'date', lang),
+    text: bi(s, 'text', lang),
     photo: s.photo || '',
     photos: Array.isArray(s.photos) ? s.photos.filter(Boolean) : [],
     video: s.video || '',

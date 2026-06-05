@@ -7,7 +7,7 @@ import HomeIntro from '../../components/HomeIntro.astro';
 import HomeMoments from '../../components/HomeMoments.tsx';
 import HomeLatest from '../../components/HomeLatest.astro';
 import HomeDiscover from '../../components/HomeDiscover.tsx';
-import { tl } from '../../lib/albums';
+import { bi } from '../../lib/albums';
 import { buildMoments, buildLatest, buildDiscover } from '../../lib/home';
 import home from '../../data/home-settings.json';
 import appearance from '../../data/appearance-settings.json';
@@ -39,14 +39,14 @@ const socialList = intro.social || [];
 <BaseLayout title="Wide & Wild — Travel & Outdoor Photography" lang="en">
   <HomeHero hero={h.hero} logo={ap.logo} showHeroLogo={ap.show_hero_logo !== false} showStories={showStories} lang="en" social={socialList} showSocial={socialShow.hero === true} />
 
-  <HomeIntro subline={tl(intro.subline, lang)} subtext={tl(intro.subtext, lang)} social={socialList} showSocial={socialShow.intro !== false} />
+  <HomeIntro subline={bi(intro, 'subline', lang)} subtext={bi(intro, 'subtext', lang)} social={socialList} showSocial={socialShow.intro !== false} />
 
   {moments.length > 0 && (
     <section style="padding-top:0;">
       <div class="wrap">
         <div class="section-head" style="text-align:center; margin-left:auto; margin-right:auto;">
-          <div class="kicker">{tl(s.gallery_kicker, lang)}</div>
-          <h2>{tl(s.gallery_title, lang)}</h2>
+          <div class="kicker">{bi(s, 'gallery_kicker', lang)}</div>
+          <h2>{bi(s, 'gallery_title', lang)}</h2>
         </div>
         <HomeMoments client:load moments={moments} lang="en" />
       </div>
@@ -57,8 +57,8 @@ const socialList = intro.social || [];
     <section style="padding-top:0;">
       <div class="wrap">
         <div class="section-head" style="text-align:center; margin-left:auto; margin-right:auto;">
-          <div class="kicker">{tl(s.latest_kicker, lang)}</div>
-          <h2>{tl(s.latest_title, lang)}</h2>
+          <div class="kicker">{bi(s, 'latest_kicker', lang)}</div>
+          <h2>{bi(s, 'latest_title', lang)}</h2>
         </div>
         <HomeLatest cards={latest} />
       </div>
@@ -69,8 +69,8 @@ const socialList = intro.social || [];
     <section style="padding-top:0;">
       <div class="wrap">
         <div class="section-head" style="text-align:center; margin-left:auto; margin-right:auto;">
-          <div class="kicker">{tl(s.discover_kicker, lang)}</div>
-          <h2>{tl(s.discover_title, lang)}</h2>
+          <div class="kicker">{bi(s, 'discover_kicker', lang)}</div>
+          <h2>{bi(s, 'discover_title', lang)}</h2>
         </div>
         <HomeDiscover client:load pool={discover} />
       </div>

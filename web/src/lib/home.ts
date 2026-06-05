@@ -2,7 +2,7 @@
 // am Build aus Alben/Reisen/Stories + Highlights zusammengestellt; das Mischen +
 // Begrenzen (6 bzw. 3) macht die Insel beim Laden (lebendig).
 import { paletteFromString, albName } from './albums';
-import { tripTitle } from './trips';
+import { tripTitle, bi } from './trips';
 import { normalizePath } from './stories';
 
 export type Lang = 'de' | 'en';
@@ -66,7 +66,7 @@ export function buildLatest(opts: { stories: Doc[]; trips: Doc[]; albums: Doc[];
     if (d.upcoming || !d.title) continue;
     const firstPhoto = (Array.isArray(d.stops) ? d.stops : []).map((s: any) => s && s.photo).find(Boolean) || '';
     const pal = paletteFromString(firstPhoto || t.slug);
-    rows.push({ date: d.date || '', card: { tag: TAG.trip[lang], title: tripTitle(d, lang), meta: tl(d.meta, lang) || monthYear(d.date, lang), href: `${prefix}/trips/${t.slug}`, image: firstPhoto, c1: pal.c1, c2: pal.c2, img: pal.img } });
+    rows.push({ date: d.date || '', card: { tag: TAG.trip[lang], title: tripTitle(d, lang), meta: bi(d, 'meta', lang) || monthYear(d.date, lang), href: `${prefix}/trips/${t.slug}`, image: firstPhoto, c1: pal.c1, c2: pal.c2, img: pal.img } });
   }
   for (const a of albums) {
     const d = a.data;

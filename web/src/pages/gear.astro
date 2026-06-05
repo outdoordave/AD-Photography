@@ -6,7 +6,7 @@ import GearContent from '../components/GearContent.tsx';
 import { client } from '../../tina/__generated__/client';
 
 const res = await client.queries.gear({ relativePath: 'gear.json' });
-const title = (res.data.gear as any)?.title?.de || 'Equipment';
+const title = (res.data.gear as any)?.title_de || 'Equipment';
 ---
 <BaseLayout title={`${title} — Wide & Wild`} lang="de">
   <section>

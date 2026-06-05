@@ -18,7 +18,9 @@ export default function GearContent(props: Props) {
   const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
   const gear = (data.gear ?? {}) as Record<string, any>;
   const lang = props.lang;
-  const t = (obj: any) => (obj ? (lang === 'en' ? obj.en : obj.de) : '');
+  // Flache Felder (base_de/base_en): EN fällt auf DE zurück.
+  const t = (o: any, base: string) => { if (!o) return ''; const de = o[base + '_de'], en = o[base + '_en']; return lang === 'en' ? (en || de || '') : (de || ''); };
+  const tf = (o: any, base: string) => tinaField(o, (lang === 'en' ? base + '_en' : base + '_de') as any);
 
   const items: GearItem[] = Array.isArray(gear.items) ? gear.items : [];
   const groups = groupGear(items);
@@ -26,9 +28,9 @@ export default function GearContent(props: Props) {
   return (
     <>
       <div className="page-title">
-        <div className="kicker" data-tina-field={tinaField(gear, 'kicker')}>{t(gear.kicker)}</div>
-        <h1 data-tina-field={tinaField(gear, 'title')}>{t(gear.title)}</h1>
-        <p data-tina-field={tinaField(gear, 'intro')}>{t(gear.intro)}</p>
+        <div className="kicker" data-tina-field={tf(gear, 'kicker')}>{t(gear, 'kicker')}</div>
+        <h1 data-tina-field={tf(gear, 'title')}>{t(gear, 'title')}</h1>
+        <p data-tina-field={tf(gear, 'intro')}>{t(gear, 'intro')}</p>
       </div>
 
       <div className="gear-list" data-tina-field={tinaField(gear, 'items')}>

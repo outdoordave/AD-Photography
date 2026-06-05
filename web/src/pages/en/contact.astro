@@ -5,7 +5,7 @@ import ContactContent from '../../components/ContactContent.tsx';
 import { client } from '../../../tina/__generated__/client';
 
 const res = await client.queries.kontakt({ relativePath: 'contact.json' });
-const title = (res.data.kontakt as any)?.title?.en || 'Contact';
+const title = (res.data.kontakt as any)?.title_en || 'Contact';
 ---
 <BaseLayout title={`${title} — Wide & Wild`} lang="en">
   <div id="page-contact">

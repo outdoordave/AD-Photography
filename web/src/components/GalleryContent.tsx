@@ -4,7 +4,7 @@ import Lightbox, { type LbPhoto } from './Lightbox';
 import { normalizePath } from '../lib/stories';
 import { ILLUS } from '../lib/illus';
 import {
-  sortAlbums, albumPhotos, tl,
+  sortAlbums, albumPhotos, bi,
   type RawAlbum, type Lang, type GalleryMode, type ViewPhoto,
 } from '../lib/albums';
 
@@ -198,7 +198,7 @@ export default function GalleryContent(props: Props) {
           {albums.map((alb) => {
             const photos = albumPhotos(alb.data);
             const name = albName(alb);
-            const note = tl(alb.data.note, lang);
+            const note = bi(alb.data, 'note', lang);
             return (
               <div className="album-section" key={alb.slug}>
                 <div className="album-head">
