@@ -11,7 +11,8 @@ export type RawStop = {
   title_de?: string; title_en?: string;
   date_de?: string; date_en?: string;
   text_de?: string; text_en?: string;
-  photo?: string;
+  // Titelbild: Pfad-String (alt) ODER Zuschnitt-Objekt { original, display, crop }.
+  photo?: string | { original?: string; display?: string; crop?: string };
   photos?: string[];
   video?: string;
   youtube?: string;
@@ -34,6 +35,18 @@ export function bi(obj: any, base: string, lang: Lang): string {
   const de = obj[base + '_de'];
   const en = obj[base + '_en'];
   return lang === 'en' ? en || de || '' : de || '';
+}
+
+// Foto-Wert (Pfad-String ODER Zuschnitt-Objekt {original,display,crop}):
+//  - photoDisplay -> die ANZEIGE-Version (zugeschnitten, gerahmt),
+//  - photoFull    -> das volle Original (Lightbox / Vollbild).
+export function photoDisplay(v: any): string {
+  if (!v) return '';
+  return typeof v === 'string' ? v : v.display || v.original || '';
+}
+export function photoFull(v: any): string {
+  if (!v) return '';
+  return typeof v === 'string' ? v : v.original || v.display || '';
 }
 
 // Koordinate aus GeoJSON-Point-String: {"type":"Point","coordinates":[lon,lat]}
@@ -67,7 +80,8 @@ export type ViewStop = {
   title: string;
   date: string;
   text: string;
-  photo: string;
+  photo: string;      // Anzeige (zugeschnitten)
+  photoFull: string;  // Original (Lightbox)
   photos: string[];
   video: string;
   youtube: string;
@@ -81,7 +95,8 @@ export function viewStops(trip: RawTrip, lang: Lang): ViewStop[] {
     title: bi(s, 'title', lang) || s.name || '',
     date: bi(s, 'date', lang),
     text: bi(s, 'text', lang),
-    photo: s.photo || '',
+    photo: photoDisplay(s.photo),
+    photoFull: photoFull(s.photo),
     photos: Array.isArray(s.photos) ? s.photos.filter(Boolean) : [],
     video: s.video || '',
     youtube: s.youtube || '',

@@ -269,7 +269,8 @@ export default function TripsContent(props: Props) {
 
   // Lightbox-Gruppe einer Station: Titelbild (falls da) + weitere Fotos.
   function openStopLightbox(s: ViewStop, photoIndex: number) {
-    const all = (s.photo ? [s.photo] : []).concat(s.photos).filter(Boolean);
+    // Cover in der Lightbox = volles Original (nicht der gerahmte Zuschnitt).
+    const all = (s.photoFull ? [s.photoFull] : []).concat(s.photos).filter(Boolean);
     if (!all.length) return;
     setLb({ photos: all.map((p) => ({ photo: normalizePath(p) })), start: photoIndex });
   }

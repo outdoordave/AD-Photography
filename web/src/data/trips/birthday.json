@@ -8,7 +8,6 @@
     {
       "name": "San Francisco",
       "location": "{\"type\":\"Point\",\"coordinates\":[-122.42,37.77]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",
@@ -22,7 +21,6 @@
     {
       "name": "Yosemite",
       "location": "{\"type\":\"Point\",\"coordinates\":[-119.54,37.87]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",
@@ -36,7 +34,6 @@
     {
       "name": "Sequoia",
       "location": "{\"type\":\"Point\",\"coordinates\":[-118.57,36.49]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",
@@ -50,7 +47,6 @@
     {
       "name": "Los Angeles",
       "location": "{\"type\":\"Point\",\"coordinates\":[-118.24,34.05]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",
@@ -64,7 +60,6 @@
     {
       "name": "Las Vegas",
       "location": "{\"type\":\"Point\",\"coordinates\":[-115.14,36.17]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",
@@ -78,7 +73,6 @@
     {
       "name": "Grand Canyon",
       "location": "{\"type\":\"Point\",\"coordinates\":[-112.14,36.06]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",
@@ -92,7 +86,6 @@
     {
       "name": "Albuquerque",
       "location": "{\"type\":\"Point\",\"coordinates\":[-106.65,35.08]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",

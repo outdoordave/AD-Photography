@@ -2,7 +2,7 @@
 // am Build aus Alben/Reisen/Stories + Highlights zusammengestellt; das Mischen +
 // Begrenzen (6 bzw. 3) macht die Insel beim Laden (lebendig).
 import { paletteFromString, albName } from './albums';
-import { tripTitle, bi } from './trips';
+import { tripTitle, bi, photoDisplay } from './trips';
 import { normalizePath } from './stories';
 
 export type Lang = 'de' | 'en';
@@ -64,7 +64,7 @@ export function buildLatest(opts: { stories: Doc[]; trips: Doc[]; albums: Doc[];
   for (const t of trips) {
     const d = t.data;
     if (d.upcoming || !d.title) continue;
-    const firstPhoto = (Array.isArray(d.stops) ? d.stops : []).map((s: any) => s && s.photo).find(Boolean) || '';
+    const firstPhoto = (Array.isArray(d.stops) ? d.stops : []).map((s: any) => photoDisplay(s && s.photo)).find(Boolean) || '';
     const pal = paletteFromString(firstPhoto || t.slug);
     rows.push({ date: d.date || '', card: { tag: TAG.trip[lang], title: tripTitle(d, lang), meta: bi(d, 'meta', lang) || monthYear(d.date, lang), href: `${prefix}/trips/${t.slug}`, image: firstPhoto, c1: pal.c1, c2: pal.c2, img: pal.img } });
   }
@@ -105,7 +105,7 @@ export function buildDiscover(opts: { albums: Doc[]; trips: Doc[]; highlights: s
   for (const t of trips) {
     const d = t.data;
     if (d.upcoming || !d.title) continue;
-    const firstPhoto = (Array.isArray(d.stops) ? d.stops : []).map((s: any) => s && s.photo).find(Boolean) || '';
+    const firstPhoto = (Array.isArray(d.stops) ? d.stops : []).map((s: any) => photoDisplay(s && s.photo)).find(Boolean) || '';
     const pal = paletteFromString(firstPhoto || t.slug);
     pool.push({ cat: lang === 'en' ? 'Trip' : 'Reise', title: tripTitle(d, lang), image: firstPhoto, href: `${prefix}/trips/${t.slug}`, c1: pal.c1, c2: pal.c2, img: pal.img });
   }

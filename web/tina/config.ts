@@ -323,7 +323,16 @@ export default defineConfig({
               { type: 'string', name: 'date_en', label: '↳ English', ui: { component: EnglishOnlyField } },
               { type: 'string', name: 'text_de', label: 'Text', ui: { component: 'textarea' } },
               { type: 'string', name: 'text_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
-              { type: 'image', name: 'photo', label: 'Titelbild (Auto-WebP)', ui: { component: SinglePhotoField } },
+              {
+                type: 'object', name: 'photo', label: 'Titelbild (Zoom/Zuschnitt 16:10, Auto-WebP)',
+                cropRatio: 16 / 10,
+                ui: { component: CropPhotoField },
+                fields: [
+                  { type: 'image', name: 'original', label: 'Original' },
+                  { type: 'image', name: 'display', label: 'Anzeige (Zuschnitt)' },
+                  { type: 'string', name: 'crop', label: 'Crop' },
+                ],
+              },
               { type: 'image', name: 'photos', label: 'Weitere Fotos (Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
               { type: 'string', name: 'video', label: 'Video-Loop (optional)', description: 'Pfad zu /uploads/… — Video vorher lokal komprimieren (HandBrake/CapCut).' },
               { type: 'string', name: 'youtube', label: 'YouTube-URL (optional)' },

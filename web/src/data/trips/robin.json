@@ -8,7 +8,6 @@
     {
       "name": "Atlanta",
       "location": "{\"type\":\"Point\",\"coordinates\":[-84.39,33.75]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",
@@ -22,7 +21,6 @@
     {
       "name": "Chattanooga",
       "location": "{\"type\":\"Point\",\"coordinates\":[-85.31,35.05]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",
@@ -36,7 +34,6 @@
     {
       "name": "Pigeon Forge",
       "location": "{\"type\":\"Point\",\"coordinates\":[-83.554333,35.788424]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",
@@ -50,7 +47,6 @@
     {
       "name": "Nashville",
       "location": "{\"type\":\"Point\",\"coordinates\":[-86.774298,36.162277]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",

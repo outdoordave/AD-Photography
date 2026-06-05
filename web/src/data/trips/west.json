@@ -8,7 +8,6 @@
     {
       "name": "San Francisco",
       "location": "{\"type\":\"Point\",\"coordinates\":[-122.42,37.77]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",
@@ -22,7 +21,6 @@
     {
       "name": "Morro Bay",
       "location": "{\"type\":\"Point\",\"coordinates\":[-120.85,35.37]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",
@@ -36,7 +34,6 @@
     {
       "name": "Los Angeles",
       "location": "{\"type\":\"Point\",\"coordinates\":[-118.24,34.05]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",
@@ -50,7 +47,6 @@
     {
       "name": "San Diego",
       "location": "{\"type\":\"Point\",\"coordinates\":[-117.16,32.72]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",
@@ -64,7 +60,6 @@
     {
       "name": "Las Vegas",
       "location": "{\"type\":\"Point\",\"coordinates\":[-115.14,36.17]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",
@@ -78,7 +73,6 @@
     {
       "name": "Zion",
       "location": "{\"type\":\"Point\",\"coordinates\":[-113.03,37.3]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",
@@ -92,7 +86,6 @@
     {
       "name": "Yellowstone",
       "location": "{\"type\":\"Point\",\"coordinates\":[-110.59,44.43]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",
@@ -106,7 +99,6 @@
     {
       "name": "Lake Tahoe",
       "location": "{\"type\":\"Point\",\"coordinates\":[-120.03,39.1]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",
@@ -120,7 +112,6 @@
     {
       "name": "Yosemite",
       "location": "{\"type\":\"Point\",\"coordinates\":[-119.54,37.87]}",
-      "photo": "",
       "photos": [],
       "video": "",
       "youtube": "",
