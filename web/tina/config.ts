@@ -235,7 +235,7 @@ export default defineConfig({
           { type: 'string', name: 'title_de', label: 'Titel', isTitle: true, required: true },
           { type: 'string', name: 'category_de', label: 'Ort / Kategorie' },
           { type: 'string', name: 'date', label: 'Datum (YYYY-MM-DD)' },
-          { type: 'image', name: 'cover', label: 'Titelbild' },
+          { type: 'image', name: 'cover', label: 'Titelbild (Auto-WebP)', ui: { component: SinglePhotoField } },
           { type: 'string', name: 'excerpt_de', label: 'Anriss / Vorschautext', ui: { component: 'textarea' } },
           // Haupttext als Markdown-String (Textarea) -> wird ueber unseren
           // mdToHtml-Port gerendert (Pullquote `>`, Listen, Bilder usw. identisch
