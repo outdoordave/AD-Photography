@@ -17,6 +17,17 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-05 — Startseite live-editierbar + Equipment-Klickfix
+- **Equipment:** `data-tina-field` saß auf der ganzen Ausrüstungs-Liste → Klick fokussierte das
+  `items`-Feld (wirkte wie „+ hinzufügen"). Jetzt pro `gear-row` (`tinaField(it)` → `gear.items.N`),
+  wie bei den Stationen → Klick öffnet genau diesen Eintrag. (`committed`)
+- **Startseite live:** war als einzige „form-only". Neue useTina-Inseln `HomeHeroLive`,
+  `HomeIntroLive`, `HomeSectionHead` (1:1-Port von HomeHero/HomeIntro.astro — gleiche Klassen/
+  Markup/Effekte, Diashow per useEffect, Rip-SVG) + `data-tina-field` auf Headline/CTAs/Intro/
+  Sektion-Köpfe. `index.astro` (+en) holen `client.queries.startseite`; startseite bekommt
+  `ui.router: () => '/'`. Alte HomeHero/HomeIntro.astro entfernt. tina-lock unverändert (kein
+  zusätzlicher Re-index). Build grün, HTML 1:1 DE+EN. (`a9f9303`)
+
 ## 2026-06-05 — Rollout: zweisprachige Felder flach (ganze Seite)
 - Pilot-Ansatz (flache `*_de/*_en` statt `object{de,en}`) auf ALLE Inhalte ausgerollt: Reisen
   (Meta, Zusammenfassung, Stationen Titel/Datum/Text, Galerie-Caption), Über uns (Kopf, Personen
