@@ -16,7 +16,7 @@ body_de: |-
 
   Das Bild, das wir mit nach Hause brachten, hängt heute groß im Flur. Jedes Mal, wenn jemand fragt, wie wir es gemacht haben, sagen wir: 
 
-  [[album]]
+  [[album]] 
 linked_album: src/data/albums/2026-usa-2023.json
 has_english: false
 title_en: ''
