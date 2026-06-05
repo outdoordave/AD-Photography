@@ -176,18 +176,19 @@ Alles im **CMS → 🏠 Startseite**:
 - [ ] Kopf + „Schreib uns direkt"-Block + **Kanäle** (E-Mail/Social mit Icons) + Standort.
 - [ ] **Formular** sichtbar (Name/E-Mail/Nachricht + Senden).
 - [ ] ⚠️ **Formular sendet noch NICHT** wirklich (nur Vorschau) → „Offene Punkte" (W5).
-- [ ] **CMS** → ✉️ Kontakt.
+- [ ] **CMS** → ✉️ Kontakt (Inhalte).
+- [ ] 🆕 **Kontakt-Seite an-/abschaltbar** (CMS → 🎨 Darstellung → „Kontakt zeigen") — wie Stories. Standard: an.
 
 ---
 
 ## 9. OFFENE PUNKTE — **vor Cutover klären**
 
-- [ ] **Bild `IMG_5618.webp`** (in Story „Utah-Drohne-Kevin") fehlt im Repo → neu hochladen **oder** Referenz entfernen.
-- [ ] **Bild `IMG_5534.webp`** (Test-Station „Anchorage") liegt lokal, aber **uncommittet** → mitcommitten oder verwerfen.
-- [ ] **Kontaktformular-Versand (W5):** echter Versand-Dienst + Datenschutz — Entscheidung offen.
+- [x] **Bild `IMG_5618.webp`** (Story „Utah-Drohne-Kevin") — **erledigt:** Test-Galerie der Story entfernt (Live hat keine).
+- [x] **Bild `IMG_5534.webp`** (Test-Upload) — **erledigt:** aus Alaska (Station-Fotos + Test-Station „Anchorage") entfernt.
+- [ ] **Kontaktformular-Versand (W5):** echter Versand-Dienst + Datenschutz — **später** (nach Cutover). *(Kontakt-Seite ist jetzt im CMS an-/abschaltbar.)*
 - [ ] **Reisen-Vorschau-Feinschliff:** Stations-Durchscrollen/Snap im schmalen CMS-Vorschau-Iframe noch geradeziehen.
 - [x] **Alaska-Titel:** geklärt (Teil 1 — Tab = reiner CMS-Titel; Zusatz tippst du selbst).
-- [ ] **Stories-Seitentitel** (Liste): aktuell fest verdrahtet → soll er ins CMS? (Entscheidung.)
+- [x] **Stories-Seitentitel:** **erledigt** — jetzt im CMS (📖 Stories – Einstellungen), DE/EN.
 - [ ] **Bild-Kontrolle / Zuschnitt:** Optionen aufbereitet (Teil 4, weiter unten) → du wählst.
 - [ ] **Gesamt-Bildkontrolle:** alle Seiten DE+EN auf abgeschnittene/fehlende Bilder durchsehen.
 

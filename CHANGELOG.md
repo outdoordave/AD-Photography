@@ -17,6 +17,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-04 — Sammel-Auftrag Teil 2-Folge: ABNAHME-Punkte A–D
+- **A:** Fehlendes `IMG_5618.webp` raus — die Test-Galerie der Story „Utah-Drohne-Kevin" ganz
+  entfernt (`gallery: []`), da das Live-Original keine Galerie hat (2 von 3 Bildern fehlten).
+- **B:** Test-Station „Anchorage" (`ANC`) + untracked `IMG_5534.webp` (auch in Station-1-Fotos)
+  aus `alaska2026.json` entfernt.
+- **C:** **Stories-Seitentitel ins CMS** (Einheitlichkeit) — `stories-settings.json` + Tina
+  „📖 Stories – Einstellungen" (Kicker/Titel/Einleitung DE/EN); `/stories`(+`/en`) liest sie
+  (vorher fest verdrahtet).
+- **D:** **Kontakt-Seite an-/abschaltbar** wie Stories — `show_contact` in 🎨 Darstellung;
+  Kontakt-Link in Nav + Footer gated (Standard an). Formular-Versand (W5) bleibt später.
+- `ABNAHME.md` entsprechend abgehakt. Lokaler Build grün (29 Seiten), keine Leftover.
+
 ## 2026-06-04 — Sammel-Auftrag Teil 1: Alaska-Titel 1:1 wie Live
 - **Befund (Live-Wahrheit):** Live hängt KEIN Tab-Suffix an (`buildTripTabs` nimmt den Titel
   wörtlich); „· bald ✦" steht dort im Titel-**Text** (CMS). `upcoming` steuert live nur
