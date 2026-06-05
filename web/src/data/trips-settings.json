@@ -1,9 +1,15 @@
 {
-  "kicker": { "de": "Reisen", "en": "Trips" },
-  "title": { "de": "Unsere Roadtrips", "en": "Our road trips" },
+  "kicker": {
+    "de": "Reisen",
+    "en": "Trips"
+  },
+  "title": {
+    "de": "Unsere Roadtrips",
+    "en": "Our road trips"
+  },
   "intro": {
     "de": "Tausende Kilometer, unzählige Stopps. Tippe auf eine Station, um zu sehen, was wir dort erlebt haben.",
     "en": "Thousands of miles, countless stops. Tap a station to see what we got up to there."
   },
-  "map_style": "liberty"
+  "map_style": "positron"
 }
