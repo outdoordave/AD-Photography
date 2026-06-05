@@ -4,5 +4,5 @@
   "show_discover": true,
   "show_stories": true,
   "show_contact": true,
-  "show_admin_bar": false
+  "show_admin_bar": true
 }
