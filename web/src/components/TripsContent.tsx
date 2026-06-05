@@ -281,7 +281,15 @@ export default function TripsContent(props: Props) {
           // (upcoming steuert nur Aktuell/Entdecken, nicht das Tab-Label.)
           const label = tripTitle(tp.data, lang) || tp.slug;
           return (
-            <button key={tp.slug} className={i === tripIdx ? 'active' : ''} data-tina-field={tinaField(tp.data as any, 'title')} onClick={() => setTripIdx(i)}>{label}</button>
+            <button key={tp.slug} className={i === tripIdx ? 'active' : ''} data-tina-field={tinaField(tp.data as any, 'title')}
+              // Im Tina-Editor fängt Tina den `click` auf data-tina-field-Elemente in der
+              // Capture-Phase ab (stopPropagation) -> React-onClick feuert nicht, der Tab
+              // würde die Reise nicht wechseln. Tina fängt aber NUR `click` ab, nicht
+              // `mousedown` -> dort den Wechsel zusätzlich auslösen (nur im Editor; die
+              // öffentliche Seite nutzt weiter onClick). Tinas Klick wählt parallel das
+              // Feld dieser Reise -> das Formular folgt mit.
+              onMouseDown={() => { if (inEditorRef.current) setTripIdx(i); }}
+              onClick={() => setTripIdx(i)}>{label}</button>
           );
         })}
       </div>
