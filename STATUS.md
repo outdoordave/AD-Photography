@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-04** · letzter Commit `8ae005c` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-04** · letzter Commit `36eec24` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -113,6 +113,12 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 - **`<img>` kann kein `::after`** → Expand-Symbol braucht `.zoom-hint`-Span-Wrap.
 - **Lokaler `origin/main`-Stand kann veralten** (David pusht via GitHub Desktop) →
   Push-Status im Zweifel per `curl` gegen die Live-Seite prüfen, nicht blind `git rev-list`.
+- ⚠️ **`tina-lock.json` nach SCHEMA-Änderungen neu generieren** (neue Collection/Felder)
+  und committen — **sonst bricht der Cloudflare-Build ab** mit „local GraphQL schema doesn't
+  match remote". **Wichtig:** `tinacms build --local` aktualisiert die `tina-lock` **NICHT**;
+  nur der laufende **`tinacms dev`** (oder `npx tinacms dev --no-server`) regeneriert sie.
+  Danach: pushen → Tina Cloud **re-indexiert** aus der neuen `tina-lock` → Build grün.
+  (Reine Inhalts-/Code-Änderungen ohne Schema brauchen das nicht.)
 
 ## 5. Offene Punkte / Restposten
 - **Umbau Stufe 1 (Stories → Astro+Tina) in `web/`:** Schritte 0–5 **erledigt &
