@@ -22,10 +22,7 @@ body_de: >-
 
   Das Bild, das wir mit nach Hause brachten, hängt heute groß im Flur. Jedes
   Mal, wenn jemand fragt, wie wir es gemacht haben, sagen wir: 
-gallery:
-  - /uploads/IMG_5618.webp
-  - /uploads/IMG_5534.webp
-  - /uploads/IMG_6001.jpg
+gallery: []
 has_english: false
 title_en: ''
 category_en: ''

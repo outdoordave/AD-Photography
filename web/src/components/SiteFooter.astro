@@ -6,10 +6,11 @@ interface Props {
   lang: 'de' | 'en';
   logo?: string;
   showStories?: boolean;
+  showContact?: boolean;
   social?: { platform?: string; username?: string }[];
   showSocial?: boolean;
 }
-const { lang, logo = '', showStories = false, social = [], showSocial = false } = Astro.props;
+const { lang, logo = '', showStories = false, showContact = true, social = [], showSocial = false } = Astro.props;
 const isEn = lang === 'en';
 const prefix = isEn ? '/en' : '';
 const socialLinks = showSocial ? (social || []).filter((s) => s && s.username) : [];
@@ -21,7 +22,7 @@ const NAV = [
   { de: 'Reisen', en: 'Trips', href: '/trips' },
   { de: 'Equipment', en: 'Gear', href: '/gear' },
   { de: 'Über uns', en: 'About', href: '/about' },
-  { de: 'Kontakt', en: 'Contact', href: '/contact' },
+  { de: 'Kontakt', en: 'Contact', href: '/contact', contactOnly: true },
 ];
 const linkHref = (href: string) => (href === '/' ? (isEn ? '/en/' : '/') : prefix + href);
 const logoSrc = logo && logo.charAt(0) !== '/' && !/^https?:/.test(logo) ? '/' + logo : logo;
@@ -29,7 +30,7 @@ const logoSrc = logo && logo.charAt(0) !== '/' && !/^https?:/.test(logo) ? '/' +
 <footer>
   {logoSrc ? <div class="footer-logo"><img src={logoSrc} alt="Wide & Wild" loading="lazy" /></div> : null}
   <div class="footer-nav">
-    {NAV.filter((i) => !i.storiesOnly || showStories).map((i) => (
+    {NAV.filter((i) => (!i.storiesOnly || showStories) && (!i.contactOnly || showContact)).map((i) => (
       <a href={linkHref(i.href)}>{isEn ? i.en : i.de}</a>
     ))}
   </div>

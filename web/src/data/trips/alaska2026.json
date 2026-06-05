@@ -31,8 +31,7 @@
       "photo": "/uploads/img_0206.jpg",
       "photos": [
         "/uploads/img_5273.jpg",
-        "/uploads/img_1418-2.jpg",
-        "/uploads/IMG_5534.webp"
+        "/uploads/img_1418-2.jpg"
       ],
       "video": "",
       "youtube": ""
@@ -216,10 +215,6 @@
       "photos": [],
       "video": "",
       "youtube": ""
-    },
-    {
-      "name": "ANC",
-      "location": "{\"type\":\"Point\",\"coordinates\":[-149.894852,61.216313]}"
     }
   ],
   "gallery": []

@@ -7,8 +7,9 @@ interface Props {
   pathname: string;
   logo?: string;
   showStories?: boolean;
+  showContact?: boolean;
 }
-const { lang, pathname, logo = '', showStories = false } = Astro.props;
+const { lang, pathname, logo = '', showStories = false, showContact = true } = Astro.props;
 
 const NAV = [
   { key: 'home', de: 'Start', en: 'Home', href: '/' },
@@ -17,7 +18,7 @@ const NAV = [
   { key: 'trips', de: 'Reisen', en: 'Trips', href: '/trips' },
   { key: 'gear', de: 'Equipment', en: 'Gear', href: '/gear' },
   { key: 'about', de: 'Über uns', en: 'About', href: '/about' },
-  { key: 'contact', de: 'Kontakt', en: 'Contact', href: '/contact' },
+  { key: 'contact', de: 'Kontakt', en: 'Contact', href: '/contact', contactOnly: true },
 ];
 
 const isEn = lang === 'en';
@@ -42,7 +43,7 @@ const logoSrc = logo && logo.charAt(0) !== '/' && !/^https?:/.test(logo) ? '/' +
       {logoSrc ? <img src={logoSrc} alt="Wide & Wild Logo" /> : <strong>Wide &amp; Wild</strong>}
     </a>
     <div class="nav-links" id="navLinks">
-      {NAV.filter((i) => !i.storiesOnly || showStories).map((i) => (
+      {NAV.filter((i) => (!i.storiesOnly || showStories) && (!i.contactOnly || showContact)).map((i) => (
         <a href={linkHref(i.href)} class={isActive(i) ? 'active' : ''}>{isEn ? i.en : i.de}</a>
       ))}
       <div class="lang-toggle">

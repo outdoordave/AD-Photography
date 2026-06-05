@@ -16,6 +16,7 @@ const ap = appearance as any;
 const hm = home as any;
 const logo = ap.logo || '';
 const showStories = ap.show_stories === true;
+const showContact = ap.show_contact !== false;
 const pathname = Astro.url.pathname;
 const footerSocial = (hm.intro && hm.intro.social) || [];
 const showFooterSocial = !!(hm.social_show && hm.social_show.footer);
@@ -35,10 +36,10 @@ const showFooterSocial = !!(hm.social_show && hm.social_show.footer);
     />
   </head>
   <body>
-    <SiteNav lang={lang} pathname={pathname} logo={logo} showStories={showStories} />
+    <SiteNav lang={lang} pathname={pathname} logo={logo} showStories={showStories} showContact={showContact} />
     <main id="main">
       <slot />
     </main>
-    <SiteFooter lang={lang} logo={logo} showStories={showStories} social={footerSocial} showSocial={showFooterSocial} />
+    <SiteFooter lang={lang} logo={logo} showStories={showStories} showContact={showContact} social={footerSocial} showSocial={showFooterSocial} />
   </body>
 </html>

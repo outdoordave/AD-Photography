@@ -235,6 +235,25 @@ export default defineConfig({
           { type: 'string', name: 'body_en', label: 'Body (EN, Markdown)', ui: { component: 'textarea' } },
         ],
       },
+      // --- Stories: Seiten-Einstellungen (Kopf-Texte der Stories-Liste) ---
+      {
+        name: 'stories_settings',
+        label: '📖 Stories – Einstellungen',
+        path: 'src/data',
+        format: 'json',
+        match: { include: 'stories-settings' },
+        ui: { allowedActions: { create: false, delete: false } },
+        fields: [
+          {
+            type: 'string', name: 'editor_language', label: 'Sprache',
+            description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
+            ui: { component: EnglishToggle },
+          },
+          { type: 'object', name: 'kicker', label: 'Mini-Titel (Kicker)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'title', label: 'Seiten-Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'object', name: 'intro', label: 'Einleitung', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+        ],
+      },
       // --- Reisen: jede Reise ein Eintrag (Mehrfach-Collection wie Stories) ---
       {
         name: 'reisen',
@@ -580,6 +599,7 @@ export default defineConfig({
           { type: 'boolean', name: 'show_hero_logo', label: 'Logo im Hero zeigen?' },
           { type: 'boolean', name: 'show_discover', label: '„Entdecken"-Bereich auf der Startseite zeigen?' },
           { type: 'boolean', name: 'show_stories', label: 'Stories zeigen? (Nav-Link, Footer, Startseiten-Teaser)' },
+          { type: 'boolean', name: 'show_contact', label: 'Kontakt zeigen? (Nav-Link + Footer-Link)' },
         ],
       },
     ],
