@@ -6,20 +6,24 @@
     "slideshow": [],
     "video": "",
     "video_poster": "",
-    "polish": {
-      "ken_burns": true,
-      "scrim": true,
-      "big_headline": true,
-      "scroll_style": "line"
-    },
     "headline_de": "Wir fotografieren die Weite Amerikas — vom Boden, aus der Luft und mittendrin in der Wildnis.",
     "headline_en": "We photograph the American wild — from the ground, from the air, and right in the middle of it all.",
     "cta_portfolio_de": "Portfolio ansehen",
     "cta_portfolio_en": "View portfolio",
     "cta_stories_de": "Reiseberichte lesen",
-    "cta_stories_en": "Read our stories"
+    "cta_stories_en": "Read our stories",
+    "polish": {
+      "ken_burns": true,
+      "scrim": true,
+      "big_headline": true,
+      "scroll_style": "line"
+    }
   },
   "intro": {
+    "subline_de": "Zwei Blickwinkel, ein endloser Horizont.",
+    "subline_en": "Two perspectives, one endless horizon.",
+    "subtext_de": "Alexandra fängt mit der Kamera Tiere und Licht ein, David schickt die Drohne in den Himmel. Zusammen erzählen wir die Geschichte der amerikanischen Landschaft — eine Aufnahme nach der anderen.",
+    "subtext_en": "Alexandra captures animals and light with her camera, David sends the drone into the sky. Together we tell the story of the American landscape — one frame at a time.",
     "social": [
       {
         "platform": "instagram",
@@ -27,18 +31,9 @@
       },
       {
         "platform": "instagram",
-        "username": "davidbastisch"
+        "username": "david.bastisch"
       }
-    ],
-    "subline_de": "Zwei Blickwinkel, ein endloser Horizont.",
-    "subline_en": "Two perspectives, one endless horizon.",
-    "subtext_de": "Alexandra fängt mit der Kamera Tiere und Licht ein, David schickt die Drohne in den Himmel. Zusammen erzählen wir die Geschichte der amerikanischen Landschaft — eine Aufnahme nach der anderen.",
-    "subtext_en": "Alexandra captures animals and light with her camera, David sends the drone into the sky. Together we tell the story of the American landscape — one frame at a time."
-  },
-  "social_show": {
-    "intro": true,
-    "hero": false,
-    "footer": false
+    ]
   },
   "sections": {
     "gallery_kicker_de": "Portfolio",
@@ -53,5 +48,10 @@
     "discover_kicker_en": "Explore",
     "discover_title_de": "Wonach uns gerade ist",
     "discover_title_en": "What we're drawn to"
+  },
+  "social_show": {
+    "intro": true,
+    "hero": false,
+    "footer": false
   }
 }

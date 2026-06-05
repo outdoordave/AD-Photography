@@ -1,21 +1,4 @@
 {
-  "channels": [
-    {
-      "type": "email",
-      "label": "hallo@wideandwild.example",
-      "url": "mailto:hallo@wideandwild.example"
-    },
-    {
-      "type": "instagram",
-      "label": "@davidbastisch",
-      "url": "https://instagram.com/davidbastisch"
-    },
-    {
-      "type": "instagram",
-      "label": "@a3_flow",
-      "url": "https://instagram.com/a3_flow"
-    }
-  ],
   "kicker_de": "Kontakt",
   "kicker_en": "Contact",
   "title_de": "Sag Hallo.",
@@ -28,6 +11,23 @@
   "direct_text_en": "The fastest way to reach us is by email or Instagram. We usually reply within a few days.",
   "location_de": "Unterwegs in den USA & daheim in Deutschland",
   "location_en": "On the road in the USA & home in Germany",
+  "channels": [
+    {
+      "type": "email",
+      "label": "hallo@wideandwild.example",
+      "url": "mailto:hallo@wideandwild.example"
+    },
+    {
+      "type": "instagram",
+      "label": "@david.bastisch",
+      "url": "https://instagram.com/david.bastisch"
+    },
+    {
+      "type": "instagram",
+      "label": "@a3_flow",
+      "url": "https://instagram.com/a3_flow"
+    }
+  ],
   "form_success_de": "Danke! Deine Nachricht ist angekommen — wir melden uns bald.",
   "form_success_en": "Thanks! Your message came through — we'll be in touch soon.",
   "form_name_de": "Dein Name",
