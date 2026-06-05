@@ -197,13 +197,15 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
   man im Tina-CMS angemeldet ist (localStorage-Token, gleiche Origin) **und** der Schalter
   „🎨 Darstellung → Admin-Leiste" an ist (**Standard AUS**). Links: CMS öffnen, Abmelden.
   Vorbild: Sveltia-`.ww-admin-bar`.
-- **TEIL 3B — Vorschau-Fenster auf allen CMS-Seiten ✅ gebaut**: alle Einstellungs-Collections
-  (Startseite, Galerie-/Stories-/Reisen-Einstellungen, Highlights, Darstellung) haben jetzt
-  einen `ui.router` auf die passende Live-Seite — vorher nur die Inhalts-Collections. Router
-  sind reine UI-Funktionen → **kein** Schema-Eingriff, **kein** Re-index. (Hinweis: die kurzen
-  Settings-Texte Kicker/Titel/Intro werden statisch in den Astro-Seiten gerendert; das
-  Vorschau-Fenster aktualisiert diese beim Speichern, nicht pro Tastendruck — die Alben/Reisen/
-  Stories-Inhalte selbst sind über `useTina` weiterhin echtzeit-live.)
+- **TEIL 3B — Vorschau-Fenster auf allen CMS-Seiten ⚠️ zurückgerollt**: Erster Versuch war,
+  allen Einstellungs-Collections einen `ui.router` zu geben. **Das war falsch:** ein `ui.router`
+  schaltet eine Collection in Tinas **Visual-Editing-Modus** — die Seitenleiste zeigt dann nur
+  Formulare, die die Ziel-Seite per `useTina` registriert. Die Einstellungs-Seiten (`/`,
+  `/portfolio`, `/stories`, `/trips`) rendern ihre Texte aber **statisch** → kein useTina-Formular
+  → Tina zeigt „nothing to edit on this page" und das Bearbeiten-Formular **verschwindet**.
+  Daher zurückgenommen (Commit `fda8a94`). **Echtes 3B** braucht `useTina`-Verdrahtung der
+  Settings-Dokumente je Seite (das „eigentliche per-Seite-Work") — separat zu entscheiden.
+  Inhalts-Collections behalten ihre Router (dort gibt es passende useTina-Seiten).
 - **TEIL 3A — Zurück-Navigation im CMS ✅ gebaut**: (a) edit→Übersicht ist durch Tinas native
   Breadcrumb abgedeckt (Collection-Name oben anklicken); (b) CMS→Website neuer Menüpunkt
   „Zur Website" in der Seitenleiste (Kategorie „Site") via `cmsCallback`+ScreenPlugin

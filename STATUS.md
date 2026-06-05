@@ -275,8 +275,10 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 ### Sammel-Auftrag (Teile 1–10) — Fortschritt
 - **1 Alaska „· soon"** ✅ (Auto-Suffix entfernt) · **2 ABNAHME.md** ✅ + Folge-Punkte A–D ✅
 - **3C Admin-Leiste** ✅ (`SiteAdminBar.astro`, Schalter Darstellung, Standard AUS)
-- **3B Vorschau-Fenster auf jeder CMS-Seite** ✅ (`ui.router` auf allen Einstellungs-
-  Collections; reine UI-Funktion → kein Schema-Eingriff, kein Re-index). Commit `2cb01d9`.
+- **3B Vorschau-Fenster auf jeder CMS-Seite** ⚠️ **zurückgerollt** (`fda8a94`): `ui.router` auf
+  Settings-Collections schaltet Tina in Visual-Editing → Seitenleiste zeigt nur useTina-Formulare
+  der Zielseite; Settings-Seiten rendern statisch → „nothing to edit", Formular weg. Echtes 3B =
+  useTina-Verdrahtung der Settings-Dokumente (separat). Inhalts-Router unberührt.
 - **3A Zurück-Navigation** ✅ (a) edit→Übersicht via Tina-Breadcrumb; (b) „Zur Website"-
   Seitenleisten-Menüpunkt via `cmsCallback`+ScreenPlugin (`tina/screens/BackToSiteScreen.tsx`).
   Commit `5276b22`.

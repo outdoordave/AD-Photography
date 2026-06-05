@@ -17,6 +17,17 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-05 — Fix: Teil-3B-Router zurückgerollt (Settings-Editoren waren leer)
+- Ursache: ein `ui.router` schaltet eine Collection in Tinas Visual-Editing-Modus; die
+  Seitenleiste zeigt dann nur Formulare, die die Ziel-Seite per `useTina` registriert. Die
+  Einstellungs-Seiten rendern statisch → kein useTina-Formular → „Looks like there's nothing
+  to edit on this page", Bearbeiten-Formular verschwindet (Darstellung u. a.).
+- Die sechs Settings-Router aus `2cb01d9` entfernt → Editoren wieder normal. Inhalts-Router
+  (Gear/About/Kontakt/Alben/Reisen/Stories) unberührt. 3A („Zur Website") bleibt.
+- Echtes 3B braucht useTina-Verdrahtung der Settings-Dokumente (separat). `tina-lock`
+  unverändert, kein Re-index. Build grün (29 Seiten).
+- Commit: fda8a94
+
 ## 2026-06-05 — Sammel-Auftrag Teil 3B + 3A: CMS-Vorschau überall + Zurück-Navigation
 - **3B (Vorschau-Fenster auf jeder CMS-Seite):** allen Einstellungs-Collections (Startseite,
   Galerie-/Stories-/Reisen-Einstellungen, Highlights, Darstellung) einen `ui.router` auf die
