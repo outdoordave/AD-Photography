@@ -3,6 +3,7 @@ import BulkPhotoField from './fields/BulkPhotoField';
 import SinglePhotoField from './fields/SinglePhotoField';
 import { EnglishOnlyField, EnglishOnlyTextField } from './fields/EnglishOnlyField';
 import CropPhotoField from './fields/CropPhotoField';
+import StoryBodyField from './fields/StoryBodyField';
 import EnglishToggle from './fields/EnglishToggle';
 import LocationSearchField from './fields/LocationSearchField';
 import { backToSiteScreen } from './screens/BackToSiteScreen';
@@ -237,19 +238,23 @@ export default defineConfig({
           { type: 'string', name: 'date', label: 'Datum (YYYY-MM-DD)' },
           { type: 'image', name: 'cover', label: 'Titelbild (Auto-WebP)', ui: { component: SinglePhotoField } },
           { type: 'string', name: 'excerpt_de', label: 'Anriss / Vorschautext', ui: { component: 'textarea' } },
-          // Haupttext als Markdown-String (Textarea) -> wird ueber unseren
-          // mdToHtml-Port gerendert (Pullquote `>`, Listen, Bilder usw. identisch
-          // zur Live-Seite). BEWUSST kein Tina-Rich-Text (wuerde Speicherformat +
-          // Rendering aendern).
-          { type: 'string', name: 'body_de', label: 'Haupttext (Markdown)', ui: { component: 'textarea' } },
-          // --- Galerie: eigenes Bulk-Upload-Feld (mehrere Fotos auf einmal,
-          //     Auto-WebP @2400px, Sortieren per Drag & Drop) ---
+          // Haupttext: gespeichert als Markdown-String -> wird ueber unseren
+          // mdToHtml-Port gerendert (Pullquote `>`, Listen, Bilder identisch zur
+          // Live-Seite). BEWUSST kein Tina-Rich-Text (wuerde Speicherformat +
+          // Rendering aendern). Editor = StoryBodyField: Laien-Knoepfe ueber dem
+          // Textfeld — „📷 Bild einfuegen" (Auto-WebP-Upload an die Cursor-Stelle)
+          // + „📸 Album hier einfuegen" (setzt den [[album]]-Platzhalter -> dort
+          // erscheint die Lightbox des unten verknuepften Albums).
+          { type: 'string', name: 'body_de', label: 'Haupttext', ui: { component: StoryBodyField } },
+          // --- Verknuepftes Album: per Dropdown ein vorhandenes Album waehlen.
+          //     Mit „📸 Album hier einfuegen" im Text frei platzierbar (Lightbox),
+          //     ohne die Bilder erneut hochzuladen (sie kommen aus dem Album). ---
           {
-            type: 'image',
-            name: 'gallery',
-            label: 'Galerie (Mehrfach-Upload, Auto-WebP)',
-            list: true,
-            ui: { component: BulkPhotoField },
+            type: 'reference',
+            name: 'linked_album',
+            label: 'Verknüpftes Album (für „📸 Album hier einfügen")',
+            description: 'Optional. Wähle ein vorhandenes Album — seine Fotos erscheinen als Lightbox an der [[album]]-Stelle im Text (kein erneuter Upload).',
+            collections: ['alben'],
           },
           // --- Optionales Video ---
           { type: 'string', name: 'youtube_url', label: 'YouTube-URL (optional)' },
@@ -258,7 +263,7 @@ export default defineConfig({
           { type: 'string', name: 'title_en', label: 'Title (EN)' },
           { type: 'string', name: 'category_en', label: 'Category (EN)' },
           { type: 'string', name: 'excerpt_en', label: 'Excerpt (EN)', ui: { component: 'textarea' } },
-          { type: 'string', name: 'body_en', label: 'Body (EN, Markdown)', ui: { component: 'textarea' } },
+          { type: 'string', name: 'body_en', label: 'Body (EN)', ui: { component: StoryBodyField } },
         ],
       },
       // --- Stories: Seiten-Einstellungen (Kopf-Texte der Stories-Liste) ---

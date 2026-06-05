@@ -5,6 +5,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import StoryReaderContent from '../../components/StoryReaderContent.tsx';
 import { client } from '../../../tina/__generated__/client';
 import { buildStory } from '../../lib/stories';
+import { resolveLinkedAlbum } from '../../lib/storyAlbum';
 
 export async function getStaticPaths() {
   const conn = await client.queries.storyConnection();
@@ -30,6 +31,7 @@ const { prev, next } = Astro.props as {
 };
 const res = await client.queries.story({ relativePath: `${slug}.md` });
 const title = buildStory(res.data.story as any).de.title;
+const album = await resolveLinkedAlbum((res.data.story as any).linked_album, 'de');
 ---
 <BaseLayout title={`${title} — Wide & Wild`} lang="de">
   <div id="page-story">
@@ -38,6 +40,7 @@ const title = buildStory(res.data.story as any).de.title;
       query={res.query}
       variables={res.variables}
       data={res.data}
+      album={album}
       lang="de"
     />
 
