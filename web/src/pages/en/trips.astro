@@ -16,7 +16,7 @@ const linkedAlbums = linkedAlbumsByTrip(albRes.data);
 const s = settings as any;
 const mapStyle = s.map_style || 'liberty';
 ---
-<BaseLayout title={`${tl(s.title, 'en') || 'Trips'} — Wide & Wild`} lang="en">
+<BaseLayout title={`${s.title_en || s.title_de || 'Trips'} — Wide & Wild`} lang="en">
   <section>
     <div class="wrap">
       <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="reisen_settings" lang="en" />

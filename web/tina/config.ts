@@ -2,6 +2,7 @@ import { defineConfig } from 'tinacms';
 import BulkPhotoField from './fields/BulkPhotoField';
 import SinglePhotoField from './fields/SinglePhotoField';
 import { BilingualField, BilingualTextField } from './fields/BilingualField';
+import { EnglishOnlyField, EnglishOnlyTextField } from './fields/EnglishOnlyField';
 import EnglishToggle from './fields/EnglishToggle';
 import LocationSearchField from './fields/LocationSearchField';
 import { backToSiteScreen } from './screens/BackToSiteScreen';
@@ -188,9 +189,12 @@ export default defineConfig({
             description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
             ui: { component: EnglishToggle },
           },
-          { type: 'object', name: 'kicker', label: 'Mini-Titel (Kicker)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'title', label: 'Seiten-Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'intro', label: 'Einleitung', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'string', name: 'kicker_de', label: 'Mini-Titel (Kicker)' },
+          { type: 'string', name: 'kicker_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'title_de', label: 'Seiten-Titel' },
+          { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'intro_de', label: 'Einleitung', ui: { component: 'textarea' } },
+          { type: 'string', name: 'intro_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
           {
             type: 'object', name: 'modes', label: 'Sichtbare Sortier-Modi',
             description: 'Welche Sortier-Knöpfe Besucher sehen. Ist nur einer (oder keiner) an, wird die Leiste versteckt und „Alben" als Standard genutzt.',
@@ -258,9 +262,12 @@ export default defineConfig({
             description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
             ui: { component: EnglishToggle },
           },
-          { type: 'object', name: 'kicker', label: 'Mini-Titel (Kicker)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'title', label: 'Seiten-Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'intro', label: 'Einleitung', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'string', name: 'kicker_de', label: 'Mini-Titel (Kicker)' },
+          { type: 'string', name: 'kicker_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'title_de', label: 'Seiten-Titel' },
+          { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'intro_de', label: 'Einleitung', ui: { component: 'textarea' } },
+          { type: 'string', name: 'intro_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
         ],
       },
       // --- Reisen: jede Reise ein Eintrag (Mehrfach-Collection wie Stories) ---
@@ -328,9 +335,12 @@ export default defineConfig({
             description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
             ui: { component: EnglishToggle },
           },
-          { type: 'object', name: 'kicker', label: 'Mini-Titel (Kicker)', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'title', label: 'Seiten-Titel', ui: { component: BilingualField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
-          { type: 'object', name: 'intro', label: 'Einleitung', ui: { component: BilingualTextField }, fields: [{ type: 'string', name: 'de', label: 'Deutsch' }, { type: 'string', name: 'en', label: 'Englisch' }] },
+          { type: 'string', name: 'kicker_de', label: 'Mini-Titel (Kicker)' },
+          { type: 'string', name: 'kicker_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'title_de', label: 'Seiten-Titel' },
+          { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'intro_de', label: 'Einleitung', ui: { component: 'textarea' } },
+          { type: 'string', name: 'intro_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
           {
             type: 'string', name: 'map_style', label: 'Karten-Stil',
             description: 'Stil der MapLibre-Karte (OpenFreeMap).',

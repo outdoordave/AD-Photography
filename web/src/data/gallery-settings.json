@@ -1,10 +1,10 @@
 {
   "editor_language": "de",
-  "kicker": { "de": "Portfolio", "en": "Portfolio" },
-  "title": { "de": "Ausgewählte Aufnahmen", "en": "Selected work" },
-  "intro": {
-    "de": "Alle Bilder, geordnet nach Alben. Oben rechts kannst du die Sortierung umschalten.",
-    "en": "All photos, organized in albums. Switch the sorting at the top right."
-  },
+  "kicker_de": "Portfolio",
+  "kicker_en": "Portfolio",
+  "title_de": "Ausgewählte Aufnahmen",
+  "title_en": "Selected work",
+  "intro_de": "Alle Bilder, geordnet nach Alben. Oben rechts kannst du die Sortierung umschalten.",
+  "intro_en": "All photos, organized in albums. Switch the sorting at the top right.",
   "modes": { "album": true, "chronological": false, "alphabetical": false }
 }

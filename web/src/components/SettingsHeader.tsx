@@ -9,8 +9,6 @@ import { useTina, tinaField } from 'tinacms/dist/react';
 // Astro rendert die Insel beim Build statisch vor → Besucher sehen identisches HTML
 // wie die bisherige `.page-title`-Variante (t() repliziert lib/albums tl()-Fallback).
 
-type Bi = { de?: string | null; en?: string | null } | null | undefined;
-
 type Props = {
   query: string;
   variables: object;
@@ -20,18 +18,21 @@ type Props = {
   lang: 'de' | 'en';
 };
 
+// FLACHE Felder (kicker_de/kicker_en …): Klick in der Vorschau springt direkt
+// ins jeweilige Freitextfeld (kein DE/EN-Untermenü). EN fällt auf DE zurück.
 export default function SettingsHeader(props: Props) {
   const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
   const doc = (data?.[props.docKey] ?? {}) as Record<string, any>;
   const lang = props.lang;
-  // Exakt wie tl(): EN fällt auf DE zurück, DE nie auf EN.
-  const t = (b: Bi) => (!b ? '' : lang === 'en' ? b.en || b.de || '' : b.de || '');
+  const t = (de: any, en: any) => (lang === 'en' ? en || de || '' : de || '');
+  // tinaField auf das Feld der aktiven Sprache → Klick landet dort.
+  const f = (base: string) => tinaField(doc, (lang === 'en' ? base + '_en' : base + '_de') as any);
 
   return (
     <div className="page-title">
-      <div className="kicker" data-tina-field={tinaField(doc, 'kicker')}>{t(doc.kicker)}</div>
-      <h1 data-tina-field={tinaField(doc, 'title')}>{t(doc.title)}</h1>
-      <p data-tina-field={tinaField(doc, 'intro')}>{t(doc.intro)}</p>
+      <div className="kicker" data-tina-field={f('kicker')}>{t(doc.kicker_de, doc.kicker_en)}</div>
+      <h1 data-tina-field={f('title')}>{t(doc.title_de, doc.title_en)}</h1>
+      <p data-tina-field={f('intro')}>{t(doc.intro_de, doc.intro_en)}</p>
     </div>
   );
 }
