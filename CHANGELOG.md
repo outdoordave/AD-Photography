@@ -17,6 +17,21 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-05 — Fixes aus der Live-Prüfung: EN-Ausblenden, „?"-Thumbnails, Reise-Wechsel
+- **EN-Felder bei „Nur Deutsch" ausblenden** (`ff0aa52`): die letzten immer-sichtbaren plain-EN-
+  Felder „Album-Name (Englisch)" + „Reise-Titel (Englisch)" an `EnglishOnlyField` gehängt →
+  verschwinden bei „Nur Deutsch". Nur UI, kein Re-index.
+- **„?"-Thumbnails in den Foto-Feldern** (`186c35e`): Bearbeiten-Vorschau zeigte „?", weil Tina
+  Cloud den /uploads-Pfad fürs Anzeigen auf `assets.tina.io/<id>/…` umschreibt (404, repo-basierte
+  Bilder). Neuer Helfer `tina/fields/mediaPath.ts` (`toLocalMedia`) biegt nur für die ANZEIGE auf
+  `/uploads/` zurück; in SinglePhotoField + BulkPhotoField (Kacheln + Drag-Overlay). Website war nie
+  betroffen (nutzt normalizePath). Nur UI, kein Re-index.
+- **Reise-Wechsel in der Live-Vorschau** (`c7324e1`): Tina fängt `click` auf data-tina-field per
+  Capture + stopPropagation ab → der Reise-Tab-`onClick` feuerte nicht, Stationen blieben gleich.
+  Tina fängt aber nur `click`, nicht `mousedown` → Tab-Wechsel im Editor zusätzlich per
+  `onMouseDown` (nur inEditorRef; öffentliche Seite unverändert). Tinas paralleler Klick wählt das
+  Reise-Titel-Feld → Formular folgt der Reise. Nur Insel, kein Re-index.
+
 ## 2026-06-05 — Teil B-Pilot: zweisprachige Settings-Felder flach (kein Klick-Untermenü)
 - Problem (Live-Wahrheit): Klick in der Vorschau auf ein Objekt-Feld {de,en} öffnet bei Tina
   zwangsläufig ein Unterformular (`getActiveField` navigiert in die Gruppe). Lösung (Option 1):
