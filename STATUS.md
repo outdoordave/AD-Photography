@@ -272,6 +272,19 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 - **Vertagt:** `srcset`/responsive Bilder (erst mit eigener Domain via Cloudflare
   Image Transformations sinnvoll); Safe-Area/`viewport-fit=cover`; iPad-Portrait-Breakpoint.
 
+### Sammel-Auftrag (Teile 1–10) — Fortschritt
+- **1 Alaska „· soon"** ✅ (Auto-Suffix entfernt) · **2 ABNAHME.md** ✅ + Folge-Punkte A–D ✅
+- **3C Admin-Leiste** ✅ (`SiteAdminBar.astro`, Schalter Darstellung, Standard AUS)
+- **3B Vorschau-Fenster auf jeder CMS-Seite** ✅ (`ui.router` auf allen Einstellungs-
+  Collections; reine UI-Funktion → kein Schema-Eingriff, kein Re-index). Commit `2cb01d9`.
+- **3A Zurück-Navigation** ✅ (a) edit→Übersicht via Tina-Breadcrumb; (b) „Zur Website"-
+  Seitenleisten-Menüpunkt via `cmsCallback`+ScreenPlugin (`tina/screens/BackToSiteScreen.tsx`).
+  Commit `5276b22`.
+- **Offen (in Reihenfolge, je Zwischenbericht + Warten):** 4 Bild-Kontrolle (nur Analyse) ·
+  5 Karten-Scroll-Zoom-Schalter · 6 Rahmen+Schatten (3 Stufen) · 7 EN-Felder im CMS abheben ·
+  8 Kartenstil-Sofortvorschau (mit 3B/Karte denken) · 9 CMS-Benennung „Portfolio" ·
+  10 CMS-Orientierung „wo bin ich".
+
 ## 6. Strategische Entscheidung (laufend)
 **Evaluierung eines Umbaus** auf **Astro + ein CMS mit Live-Vorschau & Drag-&-Drop.**
 - **Favorit: TinaCMS** (bleibt git-basiert/kostenlos, Inhalte als Markdown im Repo,

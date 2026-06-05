@@ -17,6 +17,21 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-05 — Sammel-Auftrag Teil 3B + 3A: CMS-Vorschau überall + Zurück-Navigation
+- **3B (Vorschau-Fenster auf jeder CMS-Seite):** allen Einstellungs-Collections (Startseite,
+  Galerie-/Stories-/Reisen-Einstellungen, Highlights, Darstellung) einen `ui.router` auf die
+  passende Live-Seite gegeben (→ `/`, `/portfolio`, `/stories`, `/trips`). Vorher hatten nur die
+  Inhalts-Collections eine Vorschau. Router = reine UI-Funktionen → **kein** Schema-Eingriff,
+  `tina-lock.json` unverändert, **kein** Tina-Cloud-Re-index nötig.
+- **3A (Zurück-Navigation):** (a) edit→Übersicht via Tinas nativer Breadcrumb; (b) CMS→Website
+  neuer Seitenleisten-Menüpunkt „Zur Website" (Kategorie „Site") — ScreenPlugin
+  (`tina/screens/BackToSiteScreen.tsx`) per `cmsCallback`+`cms.plugins.add` registriert
+  (createScreen ist nicht öffentlich exportiert → Objekt `__type:'screen'` selbst gebaut),
+  leitet sofort nach „/" weiter (Fallback-Link inkl. „neuer Tab").
+- Dateien: `web/tina/config.ts`, `web/tina/screens/BackToSiteScreen.tsx` (neu). Offline-Build
+  grün (29 Seiten). (B) in `IDEEN.md` §5 dokumentiert.
+- Commit: 2cb01d9 (3B), 5276b22 (3A)
+
 ## 2026-06-05 — Sammel-Auftrag Teil 3C: Admin-Leiste auf der Website (B)
 - `SiteAdminBar.astro` (Vorbild Sveltia `.ww-admin-bar`): fixe Leiste oben (Erdtöne/dunkel),
   „Als Admin angemeldet · CMS öffnen · Abmelden". Erscheint **nur**, wenn (1) Schalter

@@ -197,9 +197,21 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
   man im Tina-CMS angemeldet ist (localStorage-Token, gleiche Origin) **und** der Schalter
   „🎨 Darstellung → Admin-Leiste" an ist (**Standard AUS**). Links: CMS öffnen, Abmelden.
   Vorbild: Sveltia-`.ww-admin-bar`.
-- **Offen:** 3B Live-Vorschau für Einstellungs-Collections · 3A Zurück-Buttons im CMS ·
-  5 Karten-Scroll-Zoom-Schalter · 6 Rahmen+Schatten (3 Stufen) · 7 EN-Felder im CMS abheben ·
-  8 Kartenstil-Sofortvorschau · 9 CMS-Benennung „Portfolio" · 10 CMS-Orientierung „wo bin ich".
+- **TEIL 3B — Vorschau-Fenster auf allen CMS-Seiten ✅ gebaut**: alle Einstellungs-Collections
+  (Startseite, Galerie-/Stories-/Reisen-Einstellungen, Highlights, Darstellung) haben jetzt
+  einen `ui.router` auf die passende Live-Seite — vorher nur die Inhalts-Collections. Router
+  sind reine UI-Funktionen → **kein** Schema-Eingriff, **kein** Re-index. (Hinweis: die kurzen
+  Settings-Texte Kicker/Titel/Intro werden statisch in den Astro-Seiten gerendert; das
+  Vorschau-Fenster aktualisiert diese beim Speichern, nicht pro Tastendruck — die Alben/Reisen/
+  Stories-Inhalte selbst sind über `useTina` weiterhin echtzeit-live.)
+- **TEIL 3A — Zurück-Navigation im CMS ✅ gebaut**: (a) edit→Übersicht ist durch Tinas native
+  Breadcrumb abgedeckt (Collection-Name oben anklicken); (b) CMS→Website neuer Menüpunkt
+  „Zur Website" in der Seitenleiste (Kategorie „Site") via `cmsCallback`+ScreenPlugin
+  (`tina/screens/BackToSiteScreen.tsx`) — leitet sofort nach „/" weiter (Fallback-Link inkl.
+  „neuer Tab").
+- **Offen:** 4 Bild-Kontrolle-Optionen (nur Analyse) · 5 Karten-Scroll-Zoom-Schalter ·
+  6 Rahmen+Schatten (3 Stufen) · 7 EN-Felder im CMS abheben · 8 Kartenstil-Sofortvorschau ·
+  9 CMS-Benennung „Portfolio" · 10 CMS-Orientierung „wo bin ich".
 
 ---
 
