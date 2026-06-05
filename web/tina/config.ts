@@ -47,7 +47,9 @@ export default defineConfig({
         path: 'src/data',
         format: 'json',
         match: { include: 'home-settings' },
-        ui: { allowedActions: { create: false, delete: false } },
+        // Router -> Vorschau + Bearbeiten auf / (Hero/Intro/Sektion-Köpfe sind dort
+        // useTina-Inseln -> Formular + Klick-ins-Feld, kein „nothing to edit").
+        ui: { allowedActions: { create: false, delete: false }, router: () => '/' },
         fields: [
           {
             type: 'string', name: 'editor_language', label: 'Sprache',

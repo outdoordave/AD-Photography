@@ -1,23 +1,28 @@
 ---
-// Startseite DE ('/'). Hero + Intro + Momentaufnahmen + Aktuell + Entdecken (Etappe 2+3).
+// Startseite DE ('/'). Hero + Intro + Sektion-Köpfe sind LIVE-Inseln (useTina
+// startseite) -> im CMS bearbeitbar mit Klick-ins-Feld + Vorschau (Router /).
+// Momentaufnahmen/Aktuell/Entdecken-Inhalte weiterhin aus Alben/Reisen/Stories.
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import HomeHero from '../components/HomeHero.astro';
-import HomeIntro from '../components/HomeIntro.astro';
+import HomeHeroLive from '../components/HomeHeroLive.tsx';
+import HomeIntroLive from '../components/HomeIntroLive.tsx';
+import HomeSectionHead from '../components/HomeSectionHead.tsx';
 import HomeMoments from '../components/HomeMoments.tsx';
 import HomeLatest from '../components/HomeLatest.astro';
 import HomeDiscover from '../components/HomeDiscover.tsx';
-import { bi } from '../lib/albums';
 import { buildMoments, buildLatest, buildDiscover } from '../lib/home';
 import home from '../data/home-settings.json';
 import appearance from '../data/appearance-settings.json';
 import highlights from '../data/highlights.json';
+import { client } from '../../tina/__generated__/client';
 
 const h = home as any;
 const ap = appearance as any;
 const showStories = ap.show_stories === true;
 const showDiscover = ap.show_discover !== false;
 const lang = 'de';
+
+const stRes = await client.queries.startseite({ relativePath: 'home-settings.json' });
 
 const albumMods = import.meta.glob('../data/albums/*.json', { eager: true });
 const albums = Object.entries(albumMods).map(([p, m]) => ({ slug: p.split('/').pop()!.replace('.json', ''), data: ((m as any).default || m) }));
@@ -30,24 +35,16 @@ const hlImages = (highlights as any).images || [];
 const moments = buildMoments(albums, hlImages, lang);
 const latest = buildLatest({ stories, trips, albums, lang, showStories, prefix: '' });
 const discover = buildDiscover({ albums, trips, highlights: hlImages, lang, prefix: '' });
-
-const s = h.sections || {};
-const intro = h.intro || {};
-const socialShow = h.social_show || {};
-const socialList = intro.social || [];
 ---
 <BaseLayout title="Wide & Wild — Travel & Outdoor Photography" lang="de">
-  <HomeHero hero={h.hero} logo={ap.logo} showHeroLogo={ap.show_hero_logo !== false} showStories={showStories} lang="de" social={socialList} showSocial={socialShow.hero === true} />
+  <HomeHeroLive client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="de" logo={ap.logo} showHeroLogo={ap.show_hero_logo !== false} showStories={showStories} />
 
-  <HomeIntro subline={bi(intro, 'subline', lang)} subtext={bi(intro, 'subtext', lang)} social={socialList} showSocial={socialShow.intro !== false} />
+  <HomeIntroLive client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="de" />
 
   {moments.length > 0 && (
     <section style="padding-top:0;">
       <div class="wrap">
-        <div class="section-head" style="text-align:center; margin-left:auto; margin-right:auto;">
-          <div class="kicker">{bi(s, 'gallery_kicker', lang)}</div>
-          <h2>{bi(s, 'gallery_title', lang)}</h2>
-        </div>
+        <HomeSectionHead client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="de" sectionKey="gallery" />
         <HomeMoments client:load moments={moments} lang="de" />
       </div>
     </section>
@@ -56,10 +53,7 @@ const socialList = intro.social || [];
   {latest.length > 0 && (
     <section style="padding-top:0;">
       <div class="wrap">
-        <div class="section-head" style="text-align:center; margin-left:auto; margin-right:auto;">
-          <div class="kicker">{bi(s, 'latest_kicker', lang)}</div>
-          <h2>{bi(s, 'latest_title', lang)}</h2>
-        </div>
+        <HomeSectionHead client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="de" sectionKey="latest" />
         <HomeLatest cards={latest} />
       </div>
     </section>
@@ -68,10 +62,7 @@ const socialList = intro.social || [];
   {showDiscover && discover.length > 0 && (
     <section style="padding-top:0;">
       <div class="wrap">
-        <div class="section-head" style="text-align:center; margin-left:auto; margin-right:auto;">
-          <div class="kicker">{bi(s, 'discover_kicker', lang)}</div>
-          <h2>{bi(s, 'discover_title', lang)}</h2>
-        </div>
+        <HomeSectionHead client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="de" sectionKey="discover" />
         <HomeDiscover client:load pool={discover} />
       </div>
     </section>
