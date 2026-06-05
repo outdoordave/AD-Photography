@@ -17,6 +17,27 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-05 — Teil B-Pilot: zweisprachige Settings-Felder flach (kein Klick-Untermenü)
+- Problem (Live-Wahrheit): Klick in der Vorschau auf ein Objekt-Feld {de,en} öffnet bei Tina
+  zwangsläufig ein Unterformular (`getActiveField` navigiert in die Gruppe). Lösung (Option 1):
+  zweisprachige Felder flach machen → Klick springt direkt ins Freitextfeld.
+- **Pilot** auf den drei „… – Einstellungen" (Portfolio/Stories/Reisen): kicker/title/intro je
+  object{de,en} → flache Strings `kicker_de/kicker_en` usw. Neues Feld `EnglishOnlyField`/
+  `EnglishOnlyTextField` (blendet sich bei „Nur Deutsch" komplett aus). Daten migriert,
+  `SettingsHeader.tsx` + Seiten-`<title>` (DE+EN) auf flache Keys; data-tina-field → Feld der
+  aktiven Sprache.
+- **Schema-Änderung → tina-lock neu** (`npx tinacms dev --no-server`). **Braucht Tina-Cloud-
+  Re-index + Cloudflare-Rebuild.** Offline-Build grün; SSR-HTML DE & EN ok.
+- Dateien: `web/tina/fields/EnglishOnlyField.tsx` (neu), `web/tina/config.ts`, `tina-lock.json`,
+  `web/src/data/{gallery,stories,trips}-settings.json`, `SettingsHeader.tsx`, 6 Settings-Seiten.
+- Commit: 8850f59 — **Pilot, wartet auf Live-Abnahme** bevor Ausrollung auf Reisen/Über uns/
+  Kontakt/Equipment/Startseite.
+
+## 2026-06-05 — Teil 9: CMS-Benennung „Portfolio"
+- Labels an Website-Nav angeglichen: „🖼️ Alben" → „🖼️ Portfolio Alben", „🖼️ Galerie –
+  Einstellungen" → „🖼️ Portfolio". Nur Labels → tina-lock unverändert, kein Re-index.
+- Commit: 79d4956
+
 ## 2026-06-05 — Teil 3B (richtig): Live-Vorschau für Galerie-/Stories-/Reisen-Einstellungen
 - Statt nur Router: die Kopf-Blöcke (Kicker/Titel/Intro) dieser drei Settings-Seiten sind jetzt
   eine **useTina-Insel** (`SettingsHeader.tsx`, generisch via `docKey`-Prop, `t()` repliziert

@@ -286,10 +286,17 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 - **3A Zurück-Navigation** ✅ (a) edit→Übersicht via Tina-Breadcrumb; (b) „Zur Website"-
   Seitenleisten-Menüpunkt via `cmsCallback`+ScreenPlugin (`tina/screens/BackToSiteScreen.tsx`).
   Commit `5276b22`.
-- **Offen (in Reihenfolge, je Zwischenbericht + Warten):** 4 Bild-Kontrolle (nur Analyse) ·
+- **9 CMS-Benennung „Portfolio"** ✅ (`79d4956`): „Alben"→„Portfolio Alben", „Galerie –
+  Einstellungen"→„Portfolio". Nur Labels, kein Re-index.
+- **Zusatz B — Klick-Untermenü (Pilot)** (`8850f59`): Tina öffnet beim Klick auf Objekt-Felder
+  {de,en} immer ein Unterformular. Fix (Nutzer-Wahl Option 1): zweisprachige Felder flach machen.
+  **Pilot** auf 3 Settings-Seiten (flache `*_de/*_en`, neues `EnglishOnlyField`). ⚠️ Schema →
+  **Re-index nötig**. **Wartet auf Live-Abnahme**, dann Ausrollung (Reisen/Über uns/Kontakt/
+  Equipment/Startseite). Caveat: Listen-Felder (Stationen etc.) bleiben verschachtelt (Tina).
+- **3A „Zur Website"**: deployt, im ☰-Menü (Rubrik „Site"); Zurück-zur-Übersicht = Brotkrümel.
+- **Offen (Reihenfolge, je Zwischenbericht + Warten):** 4 Bild-Kontrolle (nur Analyse) ·
   5 Karten-Scroll-Zoom-Schalter · 6 Rahmen+Schatten (3 Stufen) · 7 EN-Felder im CMS abheben ·
-  8 Kartenstil-Sofortvorschau (mit 3B/Karte denken) · 9 CMS-Benennung „Portfolio" ·
-  10 CMS-Orientierung „wo bin ich".
+  8 Kartenstil-Sofortvorschau (mit 3B/Karte denken) · 10 CMS-Orientierung „wo bin ich".
 
 ## 6. Strategische Entscheidung (laufend)
 **Evaluierung eines Umbaus** auf **Astro + ein CMS mit Live-Vorschau & Drag-&-Drop.**

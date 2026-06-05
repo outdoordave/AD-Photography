@@ -215,9 +215,20 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
   „Zur Website" in der Seitenleiste (Kategorie „Site") via `cmsCallback`+ScreenPlugin
   (`tina/screens/BackToSiteScreen.tsx`) — leitet sofort nach „/" weiter (Fallback-Link inkl.
   „neuer Tab").
+- **TEIL 9 — CMS-Benennung „Portfolio" ✅** (`79d4956`): „Alben"→„Portfolio Alben",
+  „Galerie – Einstellungen"→„Portfolio". Nur Labels, kein Re-index.
+- **Zusatz B — Klick-Untermenü in der Vorschau (Pilot)** (`8850f59`): Tina öffnet beim Klick
+  auf Objekt-Felder {de,en} immer ein Unterformular. Lösung (Option 1, vom Nutzer gewählt):
+  zweisprachige Felder flach machen → Klick springt direkt ins Freitextfeld. **Pilot** auf den
+  3 Settings-Seiten (flache `*_de/*_en` + neues `EnglishOnlyField`, das sich bei „Nur Deutsch"
+  ausblendet). **Wartet auf Live-Abnahme**, dann Ausrollung auf Reisen/Über uns/Kontakt/
+  Equipment/Startseite. ⚠️ Schema-Änderung → Re-index nötig. **Caveat:** Felder INNERHALB von
+  Listen (Stationen, Galerie, Personen) öffnen weiterhin das Listen-Element (Tina-inhärent).
+- **3A „Zur Website" Hinweis:** ist deployt, steckt im ☰-Menü (Rubrik „Site"); kein Dauer-Button
+  möglich (Tina-Chrome). Zurück zur Übersicht = Brotkrümel oben im Formular.
 - **Offen:** 4 Bild-Kontrolle-Optionen (nur Analyse) · 5 Karten-Scroll-Zoom-Schalter ·
-  6 Rahmen+Schatten (3 Stufen) · 7 EN-Felder im CMS abheben · 8 Kartenstil-Sofortvorschau ·
-  9 CMS-Benennung „Portfolio" · 10 CMS-Orientierung „wo bin ich".
+  6 Rahmen+Schatten (3 Stufen) · 7 EN-Felder im CMS abheben (greift in B mit) ·
+  8 Kartenstil-Sofortvorschau · 10 CMS-Orientierung „wo bin ich".
 
 ---
 
