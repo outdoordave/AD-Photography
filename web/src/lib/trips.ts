@@ -37,17 +37,19 @@ export function bi(obj: any, base: string, lang: Lang): string {
   return lang === 'en' ? en || de || '' : de || '';
 }
 
-// Foto-Wert (Pfad-String ODER Zuschnitt-Objekt {original,display,crop}):
-//  - photoDisplay -> die ANZEIGE-Version (zugeschnitten, gerahmt),
-//  - photoFull    -> das volle Original (Lightbox / Vollbild).
-export function photoDisplay(v: any): string {
-  if (!v) return '';
-  return typeof v === 'string' ? v : v.display || v.original || '';
+// Foto-Wert: reiner /uploads-Pfad ODER JSON-Blob {original,display,crop} (String-Feld)
+// ODER Alt-Objekt. -> Anzeige (display) bzw. voll (original).
+function parsePhotoVal(v: any): { original: string; display: string } {
+  if (!v) return { original: '', display: '' };
+  if (typeof v === 'object') return { original: v.original || '', display: v.display || v.original || '' };
+  const s = String(v).trim();
+  if (s.charAt(0) === '{') {
+    try { const o = JSON.parse(s); return { original: o.original || '', display: o.display || o.original || '' }; } catch { /* Pfad */ }
+  }
+  return { original: s, display: s };
 }
-export function photoFull(v: any): string {
-  if (!v) return '';
-  return typeof v === 'string' ? v : v.original || v.display || '';
-}
+export function photoDisplay(v: any): string { return parsePhotoVal(v).display; }
+export function photoFull(v: any): string { return parsePhotoVal(v).original; }
 
 // Koordinate aus GeoJSON-Point-String: {"type":"Point","coordinates":[lon,lat]}
 export function pickCoord(location: string | undefined, which: 'lat' | 'lon'): number | null {

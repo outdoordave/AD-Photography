@@ -8,11 +8,7 @@
     {
       "name": "San Francisco",
       "location": "{\"type\":\"Point\",\"coordinates\":[-122.42,37.77]}",
-      "photo": {
-        "original": "/uploads/img_0206.jpg",
-        "display": "/uploads/img_0206.jpg",
-        "crop": ""
-      },
+      "photo": "/uploads/img_0206.jpg",
       "photos": [
         "/uploads/img_5273.jpg",
         "/uploads/img_1418-2.jpg"

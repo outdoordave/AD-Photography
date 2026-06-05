@@ -12,14 +12,32 @@ import { toLocalMedia } from './mediaPath';
 // Pinch / Schieberegler = zoomen. „Übernehmen" brennt die display-WebP (jSquash, auch Safari).
 
 type CropRect = { x: number; y: number; w: number; h: number };
-type Val = { original?: string; display?: string; crop?: string } | string | null | undefined;
+type Parsed = { original: string; display: string; crop: CropRect | null };
 
-function parseVal(v: Val): { original: string; display: string; crop: CropRect | null } {
+// Wert ist jetzt ein STRING-Feld (nicht mehr Objekt -> nicht navigierbar -> Editor
+// rendert immer inline). Inhalt: JSON-Blob {original,display,crop} ODER (alt) ein
+// reiner /uploads-Pfad ODER (Slice-1/2-Migration) ein Objekt. Alles abgefangen.
+function parseVal(v: any): Parsed {
   if (!v) return { original: '', display: '', crop: null };
-  if (typeof v === 'string') return { original: v, display: v, crop: null };
-  let crop: CropRect | null = null;
-  try { crop = v.crop ? JSON.parse(v.crop) : null; } catch { crop = null; }
-  return { original: v.original || '', display: v.display || v.original || '', crop };
+  if (typeof v === 'object') { // alte Objekt-Daten
+    let c: CropRect | null = null;
+    try { c = v.crop ? (typeof v.crop === 'string' ? JSON.parse(v.crop) : v.crop) : null; } catch { c = null; }
+    return { original: v.original || '', display: v.display || v.original || '', crop: c };
+  }
+  const s = String(v).trim();
+  if (s.charAt(0) === '{') {
+    try {
+      const o = JSON.parse(s);
+      return { original: o.original || '', display: o.display || o.original || '', crop: o.crop || null };
+    } catch { /* faellt auf Pfad zurueck */ }
+  }
+  return { original: s, display: s, crop: null }; // reiner Pfad (Alt-Bestand)
+}
+
+// Serialisieren: leeres Original -> '' (Feld leer), sonst kompakter JSON-Blob.
+function serialize(p: { original: string; display: string; crop: CropRect | null }): string {
+  if (!p.original) return '';
+  return JSON.stringify({ original: p.original, display: p.display || p.original, crop: p.crop || null });
 }
 
 async function encodeCanvas(canvas: HTMLCanvasElement, mode: EncoderMode, base: string): Promise<File> {
@@ -188,7 +206,7 @@ const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
       const media = await cms.media.persist([{ directory: '', file }]);
       const src = media.map((m: any) => m.src).filter(Boolean)[0];
       if (!src) throw new Error('Upload ohne Ergebnis');
-      input.onChange({ original: src, display: src, crop: '' }); // erstmal unbeschnitten
+      input.onChange(serialize({ original: src, display: src, crop: null })); // erstmal unbeschnitten
     } catch (e: any) { setError(e?.message || 'Upload fehlgeschlagen'); }
     finally { setBusy(false); setProgress(''); }
   }
@@ -213,12 +231,12 @@ const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
       const media = await cms.media.persist([{ directory: '', file }]);
       const src = media.map((m: any) => m.src).filter(Boolean)[0];
       if (!src) throw new Error('Upload ohne Ergebnis');
-      input.onChange({ original: val.original, display: src, crop: JSON.stringify(crop) });
+      input.onChange(serialize({ original: val.original, display: src, crop }));
     } catch (e: any) { setError(e?.message || 'Zuschnitt fehlgeschlagen'); }
     finally { setBusy(false); setProgress(''); }
   }
 
-  function resetCrop() { input.onChange({ original: val.original, display: val.original, crop: '' }); }
+  function resetCrop() { input.onChange(serialize({ original: val.original, display: val.original, crop: null })); }
   function remove() { input.onChange(''); }
 
   const hasCrop = !!val.crop;

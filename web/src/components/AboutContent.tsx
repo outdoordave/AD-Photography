@@ -1,5 +1,6 @@
 import { useTina, tinaField } from 'tinacms/dist/react';
 import { normalizePath } from '../lib/stories';
+import { photoDisplay } from '../lib/trips';
 import { ILLUS } from '../lib/illus';
 
 // Über-uns als React-Insel (wie Stories/Gear): useTina = LIVE-Daten, data-tina-field
@@ -44,8 +45,7 @@ export default function AboutContent(props: Props) {
           <div className="about-grid">
             {PERSON_STYLE.map((p, idx) => {
               const person = ((Array.isArray(about.persons) ? about.persons[idx] : null) ?? {}) as Record<string, any>;
-              const pv = person.photo;
-              const photoSrc = !pv ? '' : (typeof pv === 'string' ? pv : (pv.display || pv.original || ''));
+              const photoSrc = photoDisplay(person.photo);
               const photo = photoSrc ? normalizePath(photoSrc) : '';
               const illusStyle = {
                 ['--ph-c1' as any]: p.c1,

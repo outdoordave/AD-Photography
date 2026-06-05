@@ -323,16 +323,7 @@ export default defineConfig({
               { type: 'string', name: 'date_en', label: '↳ English', ui: { component: EnglishOnlyField } },
               { type: 'string', name: 'text_de', label: 'Text', ui: { component: 'textarea' } },
               { type: 'string', name: 'text_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
-              {
-                type: 'object', name: 'photo', label: 'Titelbild (Zoom/Zuschnitt 16:10, Auto-WebP)',
-                cropRatio: 16 / 10,
-                ui: { component: CropPhotoField },
-                fields: [
-                  { type: 'image', name: 'original', label: 'Original' },
-                  { type: 'image', name: 'display', label: 'Anzeige (Zuschnitt)' },
-                  { type: 'string', name: 'crop', label: 'Crop' },
-                ],
-              },
+              { type: 'string', name: 'photo', label: 'Titelbild (Zoom/Zuschnitt 16:10, Auto-WebP)', cropRatio: 16 / 10, ui: { component: CropPhotoField } },
               { type: 'image', name: 'photos', label: 'Weitere Fotos (Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
               { type: 'string', name: 'video', label: 'Video-Loop (optional)', description: 'Pfad zu /uploads/… — Video vorher lokal komprimieren (HandBrake/CapCut).' },
               { type: 'string', name: 'youtube', label: 'YouTube-URL (optional)' },
@@ -484,16 +475,7 @@ export default defineConfig({
             ui: { itemProps: (i: any) => ({ label: i?.name || 'Person' }) },
             fields: [
               { type: 'string', name: 'name', label: 'Name', description: 'z. B. Alexandra Apostel' },
-              {
-                type: 'object', name: 'photo', label: 'Foto (Zuschnitt 4:3, Auto-WebP)',
-                cropRatio: 4 / 3,
-                ui: { component: CropPhotoField },
-                fields: [
-                  { type: 'image', name: 'original', label: 'Original' },
-                  { type: 'image', name: 'display', label: 'Anzeige (Zuschnitt)' },
-                  { type: 'string', name: 'crop', label: 'Crop' },
-                ],
-              },
+              { type: 'string', name: 'photo', label: 'Foto (Zuschnitt 4:3, Auto-WebP)', cropRatio: 4 / 3, ui: { component: CropPhotoField } },
               { type: 'string', name: 'role_de', label: 'Rolle' },
               { type: 'string', name: 'role_en', label: '↳ English', ui: { component: EnglishOnlyField } },
               { type: 'string', name: 'bio_de', label: 'Bio', ui: { component: 'textarea' } },
