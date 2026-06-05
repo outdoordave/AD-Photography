@@ -44,7 +44,9 @@ export default function AboutContent(props: Props) {
           <div className="about-grid">
             {PERSON_STYLE.map((p, idx) => {
               const person = ((Array.isArray(about.persons) ? about.persons[idx] : null) ?? {}) as Record<string, any>;
-              const photo = person.photo ? normalizePath(person.photo) : '';
+              const pv = person.photo;
+              const photoSrc = !pv ? '' : (typeof pv === 'string' ? pv : (pv.display || pv.original || ''));
+              const photo = photoSrc ? normalizePath(photoSrc) : '';
               const illusStyle = {
                 ['--ph-c1' as any]: p.c1,
                 ['--ph-c2' as any]: p.c2,

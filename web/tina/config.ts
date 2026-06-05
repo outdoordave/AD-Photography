@@ -2,6 +2,7 @@ import { defineConfig } from 'tinacms';
 import BulkPhotoField from './fields/BulkPhotoField';
 import SinglePhotoField from './fields/SinglePhotoField';
 import { EnglishOnlyField, EnglishOnlyTextField } from './fields/EnglishOnlyField';
+import CropPhotoField from './fields/CropPhotoField';
 import EnglishToggle from './fields/EnglishToggle';
 import LocationSearchField from './fields/LocationSearchField';
 import { backToSiteScreen } from './screens/BackToSiteScreen';
@@ -474,7 +475,16 @@ export default defineConfig({
             ui: { itemProps: (i: any) => ({ label: i?.name || 'Person' }) },
             fields: [
               { type: 'string', name: 'name', label: 'Name', description: 'z. B. Alexandra Apostel' },
-              { type: 'image', name: 'photo', label: 'Foto (Auto-WebP)', ui: { component: SinglePhotoField } },
+              {
+                type: 'object', name: 'photo', label: 'Foto (Zuschnitt 4:3, Auto-WebP)',
+                cropRatio: 4 / 3,
+                ui: { component: CropPhotoField },
+                fields: [
+                  { type: 'image', name: 'original', label: 'Original' },
+                  { type: 'image', name: 'display', label: 'Anzeige (Zuschnitt)' },
+                  { type: 'string', name: 'crop', label: 'Crop' },
+                ],
+              },
               { type: 'string', name: 'role_de', label: 'Rolle' },
               { type: 'string', name: 'role_en', label: '↳ English', ui: { component: EnglishOnlyField } },
               { type: 'string', name: 'bio_de', label: 'Bio', ui: { component: 'textarea' } },
