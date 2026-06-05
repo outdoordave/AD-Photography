@@ -17,6 +17,24 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-05 21:30 — Stories-Feedback: Album-Vorschau live, Mediathek, Inline-Lightbox
+- Drei Punkte aus dem Nutzer-Test der Album-Funktion:
+  1. **Album-Block in Live-Vorschau:** war nur beim Seitenbau aufgelöst → im Editor nur roher
+     `[[album]]`-Marker sichtbar. Auflösung jetzt **direkt in der Insel** aus den useTina-Daten
+     (`linked_album` ist im Tina-Fragment mit name/photos/_sys expandiert) → Block erscheint
+     **sofort** in der Vorschau an der Marker-Stelle. `storyAlbum.ts` + `album`-Prop der
+     Astro-Seiten entfernt (überflüssig).
+  2. **Mediathek (wie Sveltia):** neuer Knopf „🖼️ Aus Mediathek wählen" in StoryBodyField →
+     Raster ALLER vorhandenen `/uploads`-Bilder (build-generiertes `public/uploads-manifest.json`,
+     `scripts/gen-uploads-manifest.mjs` im build-Script) → Klick fügt `![](pfad)` ein, **kein
+     erneuter Upload**.
+  3. **Inline-Bilder im Beitrag** öffnen jetzt als blätterbare Gruppe die bestehende **Lightbox**
+     (1:1 wie Live `index.html` ~2883: alle `.reader-body img`). Album-Kacheln ausgenommen.
+- **Kein Schema-Feld geändert → tina-lock unverändert, KEINE zusätzliche Re-index** (über die
+  bereits offene vom Vor-Commit hinaus). Offline-Build grün (29 Seiten, Manifest 22 Bilder);
+  Album-Positivfall verifiziert (Zitat → Album-Block → Absatz danach), Test zurückgesetzt.
+- Commit: `1cc96fc`
+
 ## 2026-06-05 20:55 — Stories: Album verknüpfen + frei im Text als Lightbox einbetten
 - **Neues Feature** (über Live hinaus, mit Nutzer-Freigabe; Live-Stories haben KEINE Galerie —
   nur Titelbild + Markdown-Fließtext mit Inline-`![](…)`). Ziel: 1–2 Bilder direkt im Text +

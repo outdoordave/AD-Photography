@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-05** · letzter Commit `053ffeb` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-05** · letzter Commit `1cc96fc` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -276,6 +276,12 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   (Fotos aus dem Album). `storyAlbum.ts` löst die Referenz auf. Altes Story-`gallery`-Feld entfernt.
   Speicherformat bleibt Markdown (mdToHtml 1:1). ⚠️ Schema → **Re-index + Rebuild nötig**. Build
   grün (29 Seiten), positiv getestet. **Offen:** Nutzer-Abnahme (iPad: Knöpfe/Upload/Lightbox).
+  - **Feedback-Runde (`1cc96fc`):** (1) Album-Block jetzt **in der Live-Vorschau** sichtbar
+    (Auflösung in der Insel aus useTina-Daten statt beim Seitenbau; `storyAlbum.ts` entfernt).
+    (2) **Mediathek-Raster** „🖼️ Aus Mediathek wählen" (alle vorhandenen `/uploads`-Bilder aus
+    `public/uploads-manifest.json`, `gen-uploads-manifest.mjs` im build) → einfügen ohne
+    Doppel-Upload. (3) **Inline-Bilder im Beitrag** öffnen die Lightbox als Gruppe (1:1 wie Live).
+    Kein Schema-Feld geändert → tina-lock unverändert.
 - **Vertagt:** `srcset`/responsive Bilder (erst mit eigener Domain via Cloudflare
   Image Transformations sinnvoll); Safe-Area/`viewport-fit=cover`; iPad-Portrait-Breakpoint.
 
