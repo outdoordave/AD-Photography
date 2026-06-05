@@ -612,3 +612,19 @@ footer .fnote .ww-admin-link:hover { color: #f0c9a8; opacity: 1; }
 .insta-row.on-dark .insta-link { background: rgba(240,229,212,0.08); border-color: rgba(240,229,212,0.2); color: #f0e5d4; }
 .insta-row.on-dark .insta-link:hover { border-color: #f0c9a8; color: #f0c9a8; }
 .hero-social { position: relative; z-index: 2; margin-top: 22px; }
+
+/* (B) Admin-Leiste auf der Website (nur bei CMS-Login + Schalter an), Erdtöne/dunkel */
+.ww-admin-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1200;
+  background: var(--c-dark); color: var(--c-dark-ink);
+  font-size: var(--fs-label); font-weight: var(--fw-semibold); letter-spacing: var(--tracking-slight);
+  text-align: center; padding: 8px 14px; line-height: 1.4;
+  border-bottom: 1px solid rgba(240,201,168,0.25); box-shadow: 0 2px 10px rgba(28,24,18,0.25);
+}
+.ww-admin-bar strong { color: #fff; font-weight: var(--fw-bold); }
+.ww-admin-bar a { color: #f0c9a8; text-decoration: underline; cursor: pointer; }
+.ww-admin-bar a:hover { color: #fff; }
+.ww-admin-bar .sep { opacity: 0.4; margin: 0 4px; }
+html.ww-adminbar-on body { padding-top: 38px; }
+html.ww-adminbar-on header { top: 38px; }
+@media (max-width: 640px) { html.ww-adminbar-on body { padding-top: 52px; } html.ww-adminbar-on header { top: 52px; } }
