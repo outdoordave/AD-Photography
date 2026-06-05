@@ -33,14 +33,16 @@ export default function GearContent(props: Props) {
         <p data-tina-field={tf(gear, 'intro')}>{t(gear, 'intro')}</p>
       </div>
 
-      <div className="gear-list" data-tina-field={tinaField(gear, 'items')}>
+      <div className="gear-list">
         {groups.map((g) => (
           <div className="gear-cat" key={g.cat}>
             <h3>{lang === 'en' ? g.en : g.de}</h3>
             {g.items.map((it, i) => {
               const href = safeUrl(it.link);
               return (
-                <div className="gear-row" key={i}>
+                // data-tina-field je Gegenstand (nicht auf der ganzen Liste) -> Klick
+                // springt zu DIESEM Eintrag, statt die Liste zu fokussieren („+ hinzufügen").
+                <div className="gear-row" key={i} data-tina-field={tinaField(it as any)}>
                   {href ? (
                     <a className="gr-name" href={href} target="_blank" rel="noopener">{it.name}</a>
                   ) : (
