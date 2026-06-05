@@ -277,8 +277,9 @@ export default function TripsContent(props: Props) {
     <>
       <div className="trip-tabs" id="tripTabs">
         {trips.map((tp, i) => {
-          let label = tripTitle(tp.data, lang) || tp.slug;
-          if (tp.data.upcoming && label.indexOf('✦') === -1) label += lang === 'de' ? ' · bald ✦' : ' · soon ✦';
+          // 1:1 wie Live: Tab zeigt exakt den CMS-Titel, KEIN automatisches Suffix.
+          // (upcoming steuert nur Aktuell/Entdecken, nicht das Tab-Label.)
+          const label = tripTitle(tp.data, lang) || tp.slug;
           return (
             <button key={tp.slug} className={i === tripIdx ? 'active' : ''} data-tina-field={tinaField(tp.data as any, 'title')} onClick={() => setTripIdx(i)}>{label}</button>
           );

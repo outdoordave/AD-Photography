@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-04 — Sammel-Auftrag Teil 1: Alaska-Titel 1:1 wie Live
+- **Befund (Live-Wahrheit):** Live hängt KEIN Tab-Suffix an (`buildTripTabs` nimmt den Titel
+  wörtlich); „· bald ✦" steht dort im Titel-**Text** (CMS). `upcoming` steuert live nur
+  Aktuell/Entdecken. Unsere Astro-Seite hatte eine **(B)-Abweichung** (auto-Suffix in
+  `TripsContent`) → zusammen mit „· soon" im migrierten Titel ergab das „Alaska 2026 · soon · bald ✦".
+- **Fix (Nutzer wählte Option a = 1:1 Live):** Auto-Suffix-Zeile in `TripsContent.tsx` entfernt
+  (Tab zeigt exakt den CMS-Titel); Alaska-Titel auf saubere Basis „Alaska 2026" gesetzt
+  (Zusatz tippt der Nutzer selbst im CMS). `upcoming`-Flag bleibt (nur Aktuell/Entdecken, wie Live).
+  Lokaler Voll-Build grün (29 Seiten); Tab = „Alaska 2026" DE+EN verifiziert.
+
 ## 2026-06-04 — CMS aufgeräumt (Test-Reste, Reihenfolge, Anzeigenamen)
 - **A (`cec1ee1`):** Test-Reste raus — `proto_ort`-Collection, `album-proto.json`/`trip-proto.json`,
   `src/content/proto/`, Seiten `proto-karte`/`proto-lightbox`/`stilprobe`.
