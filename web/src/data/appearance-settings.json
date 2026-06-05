@@ -3,5 +3,5 @@
   "show_hero_logo": true,
   "show_discover": true,
   "show_stories": false,
-  "show_contact": true
+  "show_contact": false
 }
