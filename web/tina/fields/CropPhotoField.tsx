@@ -236,7 +236,8 @@ const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
             {nat ? (
               <img
                 src={toLocalMedia(val.original)} alt="" draggable={false}
-                style={{ position: 'absolute', left: 0, top: 0, width: nat.w * baseScale * scale, height: nat.h * baseScale * scale, transform: `translate(${tx}px, ${ty}px)`, transformOrigin: '0 0', pointerEvents: 'none' }}
+                onError={() => setError('Bild lädt nicht (Pfad/Original prüfen)')}
+                style={{ position: 'absolute', left: 0, top: 0, width: nat.w * baseScale * scale, height: nat.h * baseScale * scale, maxWidth: 'none', maxHeight: 'none', transform: `translate(${tx}px, ${ty}px)`, transformOrigin: '0 0', pointerEvents: 'none' }}
               />
             ) : <div style={{ color: '#cbb', fontSize: 12, padding: 12 }}>lädt …</div>}
             {/* Raster-Hilfslinien */}
