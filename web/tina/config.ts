@@ -179,7 +179,9 @@ export default defineConfig({
         path: 'src/data',
         format: 'json',
         match: { include: 'gallery-settings' },
-        ui: { allowedActions: { create: false, delete: false } },
+        // Router -> Vorschau + Bearbeiten auf /portfolio (Kopf-Block ist dort eine
+        // useTina-Insel <SettingsHeader> -> Formular + Live-Update, kein „nothing to edit").
+        ui: { allowedActions: { create: false, delete: false }, router: () => '/portfolio' },
         fields: [
           {
             type: 'string', name: 'editor_language', label: 'Sprache',
@@ -248,7 +250,8 @@ export default defineConfig({
         path: 'src/data',
         format: 'json',
         match: { include: 'stories-settings' },
-        ui: { allowedActions: { create: false, delete: false } },
+        // Router -> Vorschau + Bearbeiten auf /stories (useTina-Insel <SettingsHeader>).
+        ui: { allowedActions: { create: false, delete: false }, router: () => '/stories' },
         fields: [
           {
             type: 'string', name: 'editor_language', label: 'Sprache',
@@ -317,7 +320,8 @@ export default defineConfig({
         path: 'src/data',
         format: 'json',
         match: { include: 'trips-settings' },
-        ui: { allowedActions: { create: false, delete: false } },
+        // Router -> Vorschau + Bearbeiten auf /trips (useTina-Insel <SettingsHeader>).
+        ui: { allowedActions: { create: false, delete: false }, router: () => '/trips' },
         fields: [
           {
             type: 'string', name: 'editor_language', label: 'Sprache',

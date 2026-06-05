@@ -3,22 +3,21 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import StoryCard from '../../../components/StoryCard.astro';
+import SettingsHeader from '../../../components/SettingsHeader.tsx';
 import { toSortedStories } from '../../../lib/stories';
 import { tl } from '../../../lib/albums';
 import settings from '../../../data/stories-settings.json';
+import { client } from '../../../../tina/__generated__/client';
 
 const entries = await getCollection('stories');
 const stories = toSortedStories(entries.map((e) => ({ slug: e.slug, data: e.data })));
+const setRes = await client.queries.stories_settings({ relativePath: 'stories-settings.json' });
 const s = settings as any;
 ---
 <BaseLayout title={`${tl(s.title, 'en') || 'Stories from the road'} — Wide & Wild`} lang="en">
   <section>
     <div class="wrap">
-      <div class="page-title">
-        <div class="kicker">{tl(s.kicker, 'en')}</div>
-        <h1>{tl(s.title, 'en')}</h1>
-        <p>{tl(s.intro, 'en')}</p>
-      </div>
+      <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="stories_settings" lang="en" />
       <div class="stories-grid">
         {stories.map((s) => <StoryCard story={s} lang="en" base="/en" />)}
       </div>

@@ -4,6 +4,7 @@
 // Karten-Stil weiter aus trips-settings.json. Tab-Vorauswahl per ?trip=<slug>.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TripsContent from '../components/TripsContent.tsx';
+import SettingsHeader from '../components/SettingsHeader.tsx';
 import { tl } from '../lib/trips';
 import { linkedAlbumsByTrip } from '../lib/albums';
 import settings from '../data/trips-settings.json';
@@ -11,6 +12,7 @@ import { client } from '../../tina/__generated__/client';
 
 const res = await client.queries.reisenConnection({ first: 100 });
 const albRes = await client.queries.albenConnection({ first: 1000 });
+const setRes = await client.queries.reisen_settings({ relativePath: 'trips-settings.json' });
 const linkedAlbums = linkedAlbumsByTrip(albRes.data);
 const s = settings as any;
 const mapStyle = s.map_style || 'liberty';
@@ -18,11 +20,7 @@ const mapStyle = s.map_style || 'liberty';
 <BaseLayout title={`${tl(s.title, 'de') || 'Reisen'} — Wide & Wild`} lang="de">
   <section>
     <div class="wrap">
-      <div class="page-title">
-        <div class="kicker">{tl(s.kicker, 'de')}</div>
-        <h1>{tl(s.title, 'de')}</h1>
-        <p>{tl(s.intro, 'de')}</p>
-      </div>
+      <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="reisen_settings" lang="de" />
       <TripsContent
         client:load
         query={res.query}

@@ -3,22 +3,20 @@
 // in der GalleryContent-Insel. Seitentexte + Sortier-Modi aus gallery-settings.json.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import GalleryContent from '../components/GalleryContent.tsx';
+import SettingsHeader from '../components/SettingsHeader.tsx';
 import { tl } from '../lib/albums';
 import settings from '../data/gallery-settings.json';
 import { client } from '../../tina/__generated__/client';
 
 const res = await client.queries.albenConnection({ first: 1000 });
+const setRes = await client.queries.galerie_settings({ relativePath: 'gallery-settings.json' });
 const s = settings as any;
 const modes = s.modes || { album: true, chronological: false, alphabetical: false };
 ---
 <BaseLayout title={`${tl(s.title, 'de') || 'Portfolio'} — Wide & Wild`} lang="de">
   <section>
     <div class="wrap">
-      <div class="page-title">
-        <div class="kicker">{tl(s.kicker, 'de')}</div>
-        <h1>{tl(s.title, 'de')}</h1>
-        <p>{tl(s.intro, 'de')}</p>
-      </div>
+      <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="galerie_settings" lang="de" />
       <GalleryContent
         client:load
         query={res.query}
