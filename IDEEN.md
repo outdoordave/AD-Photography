@@ -192,6 +192,17 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
 
 ---
 
+## 5. (B)-Erweiterungen aus dem Sammel-Auftrag (über Live hinaus, beauftragt)
+- **TEIL 3C — Admin-Leiste auf der Website ✅ gebaut** (`SiteAdminBar.astro`): erscheint nur, wenn
+  man im Tina-CMS angemeldet ist (localStorage-Token, gleiche Origin) **und** der Schalter
+  „🎨 Darstellung → Admin-Leiste" an ist (**Standard AUS**). Links: CMS öffnen, Abmelden.
+  Vorbild: Sveltia-`.ww-admin-bar`.
+- **Offen:** 3B Live-Vorschau für Einstellungs-Collections · 3A Zurück-Buttons im CMS ·
+  5 Karten-Scroll-Zoom-Schalter · 6 Rahmen+Schatten (3 Stufen) · 7 EN-Felder im CMS abheben ·
+  8 Kartenstil-Sofortvorschau · 9 CMS-Benennung „Portfolio" · 10 CMS-Orientierung „wo bin ich".
+
+---
+
 _Quelle der Ideen: tiefe Live-Code-Analyse (siehe `ANALYSE-Reisen.md`) + Bau von
 Stufe 1 (Stories) und dem Foto-Upload-Feld. Pflege: Status pro Punkt aktualisieren,
 sobald David ihn im jeweiligen Schritt freigibt/umsetzt._

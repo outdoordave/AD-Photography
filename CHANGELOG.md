@@ -17,6 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-05 — Sammel-Auftrag Teil 3C: Admin-Leiste auf der Website (B)
+- `SiteAdminBar.astro` (Vorbild Sveltia `.ww-admin-bar`): fixe Leiste oben (Erdtöne/dunkel),
+  „Als Admin angemeldet · CMS öffnen · Abmelden". Erscheint **nur**, wenn (1) Schalter
+  „🎨 Darstellung → Admin-Leiste" an **und** (2) im Tina-CMS angemeldet (localStorage-Token-
+  Erkennung, gleiche Origin). **Standard AUS.** Abmelden löscht Tina-Token + Reload.
+- `show_admin_bar` in `appearance-settings` + Darstellung; BaseLayout rendert die Bar nur bei
+  Schalter an; CSS schiebt Header/Body bei aktiver Bar nach unten. `tina-lock` regeneriert.
+- (B) in `IDEEN.md` §5 dokumentiert. Lokaler Build grün (29 Seiten); Default-aus + Toggle-an verifiziert.
+
 ## 2026-06-04 — Sammel-Auftrag Teil 2-Folge: ABNAHME-Punkte A–D
 - **A:** Fehlendes `IMG_5618.webp` raus — die Test-Galerie der Story „Utah-Drohne-Kevin" ganz
   entfernt (`gallery: []`), da das Live-Original keine Galerie hat (2 von 3 Bildern fehlten).
