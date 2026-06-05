@@ -197,15 +197,19 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
   man im Tina-CMS angemeldet ist (localStorage-Token, gleiche Origin) **und** der Schalter
   „🎨 Darstellung → Admin-Leiste" an ist (**Standard AUS**). Links: CMS öffnen, Abmelden.
   Vorbild: Sveltia-`.ww-admin-bar`.
-- **TEIL 3B — Vorschau-Fenster auf allen CMS-Seiten ⚠️ zurückgerollt**: Erster Versuch war,
-  allen Einstellungs-Collections einen `ui.router` zu geben. **Das war falsch:** ein `ui.router`
-  schaltet eine Collection in Tinas **Visual-Editing-Modus** — die Seitenleiste zeigt dann nur
-  Formulare, die die Ziel-Seite per `useTina` registriert. Die Einstellungs-Seiten (`/`,
-  `/portfolio`, `/stories`, `/trips`) rendern ihre Texte aber **statisch** → kein useTina-Formular
-  → Tina zeigt „nothing to edit on this page" und das Bearbeiten-Formular **verschwindet**.
-  Daher zurückgenommen (Commit `fda8a94`). **Echtes 3B** braucht `useTina`-Verdrahtung der
-  Settings-Dokumente je Seite (das „eigentliche per-Seite-Work") — separat zu entscheiden.
-  Inhalts-Collections behalten ihre Router (dort gibt es passende useTina-Seiten).
+- **TEIL 3B — Live-Vorschau für Settings-Seiten ✅ richtig gebaut** (`1acab68`): Der erste
+  Versuch (nur `ui.router`) machte die Editoren leer (`fda8a94` zurückgerollt) — ein Router
+  schaltet Tina in **Visual-Editing**, und die Seitenleiste zeigt nur Formulare, die die
+  Zielseite per `useTina` registriert. Lösung: Die Kopf-Blöcke (Kicker/Titel/Intro) von
+  **Galerie-, Stories- und Reisen-Einstellungen** sind jetzt eine **useTina-Insel**
+  (`SettingsHeader.tsx`, generisch via `docKey`) → die Seite registriert ein Formular →
+  Bearbeiten + Live-Vorschau (Klick-zum-Feld, Sofort-Update). Verdrahtet auf
+  `/portfolio`, `/stories`, `/trips` (+ `/en/`), Router wieder aktiv. `tina-lock` unverändert
+  → kein Re-index.
+  - **Bewusst NICHT live-verdrahtet:** Startseite, Highlights, Darstellung (zeigen alle auf
+    `/`). Deren Zielseite ist eine Astro-Komposition (Hero/Teaser/Toggles) — echte Live-Vorschau
+    hieße den halben Homepage-Baum nach React umbauen (großes Risiko, geringer Mehrwert).
+    Diese bleiben **form-only ohne Router** (normal editierbar, nur ohne Vorschau-Fenster).
 - **TEIL 3A — Zurück-Navigation im CMS ✅ gebaut**: (a) edit→Übersicht ist durch Tinas native
   Breadcrumb abgedeckt (Collection-Name oben anklicken); (b) CMS→Website neuer Menüpunkt
   „Zur Website" in der Seitenleiste (Kategorie „Site") via `cmsCallback`+ScreenPlugin

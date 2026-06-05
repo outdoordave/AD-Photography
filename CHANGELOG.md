@@ -17,6 +17,24 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-05 — Teil 3B (richtig): Live-Vorschau für Galerie-/Stories-/Reisen-Einstellungen
+- Statt nur Router: die Kopf-Blöcke (Kicker/Titel/Intro) dieser drei Settings-Seiten sind jetzt
+  eine **useTina-Insel** (`SettingsHeader.tsx`, generisch via `docKey`-Prop, `t()` repliziert
+  `tl()`-Fallback EN→DE). Dadurch registriert die Seite ein Tina-Formular → Bearbeiten +
+  Live-Vorschau (Klick-zum-Feld via `data-tina-field`, Sofort-Update beim Tippen). Erst danach
+  Router wieder gesetzt: galerie_settings→/portfolio, stories_settings→/stories,
+  reisen_settings→/trips.
+- Verdrahtet auf `/portfolio`, `/stories`, `/trips` **und** den `/en/`-Pendants (lang-Prop).
+  Astro rendert die Insel vor → Besucher sehen identisches HTML (in dist verifiziert: Kopf-Text
+  + data-tina-field, DE & EN).
+- **Startseite/Highlights/Darstellung bleiben bewusst form-only OHNE Router** (Zielseite `/` ist
+  Astro-Komposition Hero/Teaser/Toggles; echte Live-Vorschau = halber Homepage-React-Umbau).
+- Dateien: `web/src/components/SettingsHeader.tsx` (neu), `web/src/pages/{portfolio,trips}.astro`,
+  `web/src/pages/stories/index.astro`, `web/src/pages/en/{portfolio,trips}.astro`,
+  `web/src/pages/en/stories/index.astro`, `web/tina/config.ts`. tina-lock unverändert → kein
+  Re-index. Build grün (29 Seiten).
+- Commit: 1acab68
+
 ## 2026-06-05 — Fix: Teil-3B-Router zurückgerollt (Settings-Editoren waren leer)
 - Ursache: ein `ui.router` schaltet eine Collection in Tinas Visual-Editing-Modus; die
   Seitenleiste zeigt dann nur Formulare, die die Ziel-Seite per `useTina` registriert. Die

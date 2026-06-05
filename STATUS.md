@@ -275,10 +275,14 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 ### Sammel-Auftrag (Teile 1–10) — Fortschritt
 - **1 Alaska „· soon"** ✅ (Auto-Suffix entfernt) · **2 ABNAHME.md** ✅ + Folge-Punkte A–D ✅
 - **3C Admin-Leiste** ✅ (`SiteAdminBar.astro`, Schalter Darstellung, Standard AUS)
-- **3B Vorschau-Fenster auf jeder CMS-Seite** ⚠️ **zurückgerollt** (`fda8a94`): `ui.router` auf
-  Settings-Collections schaltet Tina in Visual-Editing → Seitenleiste zeigt nur useTina-Formulare
-  der Zielseite; Settings-Seiten rendern statisch → „nothing to edit", Formular weg. Echtes 3B =
-  useTina-Verdrahtung der Settings-Dokumente (separat). Inhalts-Router unberührt.
+- **3B Live-Vorschau für Settings-Seiten** ✅ **richtig** (`1acab68`; Zwischenschritt `fda8a94`
+  Rollback): Kopf-Blöcke von Galerie-/Stories-/Reisen-Einstellungen sind jetzt useTina-Inseln
+  (`SettingsHeader.tsx`) → Bearbeiten + Live-Vorschau, Router auf /portfolio /stories /trips
+  (+ /en/). Startseite/Highlights/Darstellung bewusst form-only OHNE Router (Zielseite `/` ist
+  Astro-Komposition; Live-Vorschau dort = halber Homepage-React-Umbau, separat). Kein Re-index.
+  - **Lehre/Falle:** `ui.router` ⇒ Tina-Visual-Editing ⇒ Seitenleiste zeigt nur Formulare, die
+    die Zielseite per `useTina` registriert. Router nur auf Collections setzen, deren Zielseite
+    das Dokument useTina-bindet — sonst „Looks like there's nothing to edit on this page".
 - **3A Zurück-Navigation** ✅ (a) edit→Übersicht via Tina-Breadcrumb; (b) „Zur Website"-
   Seitenleisten-Menüpunkt via `cmsCallback`+ScreenPlugin (`tina/screens/BackToSiteScreen.tsx`).
   Commit `5276b22`.
