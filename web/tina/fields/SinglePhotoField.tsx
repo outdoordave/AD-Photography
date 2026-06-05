@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCMS, wrapFieldsWithMeta } from 'tinacms';
 import { fmt, detectEncoder, toOptimized, type EncoderMode } from './webpEncode';
+import { toLocalMedia } from './mediaPath';
 
 // Einzelfoto-Feld mit Auto-WebP (gleiche Logik wie BulkPhotoField, aber EIN Bild):
 //  - Datei waehlen oder hierher ziehen,
@@ -65,7 +66,7 @@ const SinglePhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
       {value ? (
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 10 }}>
           <div style={{ position: 'relative', width: PREVIEW, height: PREVIEW, borderRadius: 8, overflow: 'hidden', border: '1px solid #e1ddd5', background: '#f4ede1', flex: '0 0 auto' }}>
-            <img src={value} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            <img src={toLocalMedia(value)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             <button
               type="button"
               onClick={() => input.onChange('')}

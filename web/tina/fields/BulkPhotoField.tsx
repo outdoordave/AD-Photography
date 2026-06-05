@@ -16,6 +16,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { fmt, detectEncoder, toOptimized, type EncoderMode } from './webpEncode';
+import { toLocalMedia } from './mediaPath';
 
 // Eigenes Galerie-Feld fuer AD-Photography:
 //  - mehrere Fotos auf einmal: Button, Drag-&-Drop-Ablage ODER ganzer Ordner,
@@ -41,7 +42,7 @@ function SortableTile({ src, onRemove }: { src: string; onRemove: () => void }) 
   };
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners} title="Zum Sortieren ziehen">
-      <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none' }} />
+      <img src={toLocalMedia(src)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none' }} />
       <button
         type="button"
         onPointerDown={(e) => e.stopPropagation()}
@@ -159,7 +160,7 @@ const BulkPhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
           <DragOverlay>
             {activeId ? (
               <div style={{ ...tileBase, cursor: 'grabbing', boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
-                <img src={activeId} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                <img src={toLocalMedia(activeId)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
               </div>
             ) : null}
           </DragOverlay>
