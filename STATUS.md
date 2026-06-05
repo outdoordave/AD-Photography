@@ -294,7 +294,7 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   **Re-index nötig**. **Wartet auf Live-Abnahme**, dann Ausrollung (Reisen/Über uns/Kontakt/
   Equipment/Startseite). Caveat: Listen-Felder (Stationen etc.) bleiben verschachtelt (Tina).
 - **3A „Zur Website"**: deployt, im ☰-Menü (Rubrik „Site"); Zurück-zur-Übersicht = Brotkrümel.
-- **Offen (Reihenfolge, je Zwischenbericht + Warten):** 4 Bild-Kontrolle (nur Analyse) ·
+- **Offen (Reihenfolge, je Zwischenbericht + Warten):** 4 Bild-Kontrolle ✅ analysiert (ABNAHME §11) ·
   5 Karten-Scroll-Zoom-Schalter · 6 Rahmen+Schatten (3 Stufen) · 7 EN-Felder im CMS abheben ·
   8 Kartenstil-Sofortvorschau (mit 3B/Karte denken) · 10 CMS-Orientierung „wo bin ich".
 

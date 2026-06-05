@@ -228,7 +228,7 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
   Listen-Element (Tina-inhärent), aber ohne DE/EN-Unterebene. **Wartet auf Live-Abnahme.**
 - **3A „Zur Website" Hinweis:** ist deployt, steckt im ☰-Menü (Rubrik „Site"); kein Dauer-Button
   möglich (Tina-Chrome). Zurück zur Übersicht = Brotkrümel oben im Formular.
-- **Offen:** 4 Bild-Kontrolle-Optionen (nur Analyse) · 5 Karten-Scroll-Zoom-Schalter ·
+- **Offen:** 4 Bild-Kontrolle ✅ analysiert (ABNAHME §11, wartet auf Auswahl) · 5 Karten-Scroll-Zoom-Schalter ·
   6 Rahmen+Schatten (3 Stufen) · 7 EN-Felder im CMS abheben (greift in B mit) ·
   8 Kartenstil-Sofortvorschau · 10 CMS-Orientierung „wo bin ich".
 

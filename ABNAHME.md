@@ -189,7 +189,7 @@ Alles im **CMS → 🏠 Startseite**:
 - [ ] **Reisen-Vorschau-Feinschliff:** Stations-Durchscrollen/Snap im schmalen CMS-Vorschau-Iframe noch geradeziehen.
 - [x] **Alaska-Titel:** geklärt (Teil 1 — Tab = reiner CMS-Titel; Zusatz tippst du selbst).
 - [x] **Stories-Seitentitel:** **erledigt** — jetzt im CMS (📖 Stories – Einstellungen), DE/EN.
-- [ ] **Bild-Kontrolle / Zuschnitt:** Optionen aufbereitet (Teil 4, weiter unten) → du wählst.
+- [x] **Bild-Kontrolle / Zuschnitt:** Optionen aufbereitet (Teil 4 → §11) → **du wählst Stufe/Option.**
 - [ ] **Gesamt-Bildkontrolle:** alle Seiten DE+EN auf abgeschnittene/fehlende Bilder durchsehen.
 
 ---
@@ -199,7 +199,7 @@ Alles im **CMS → 🏠 Startseite**:
 > Diese Punkte werden **erst gebaut** und dann hier abgehakt. Stand: offen.
 
 - [ ] **Teil 3 – CMS-Komfort:** (a) Zurück-Buttons (Bearbeitung→Übersicht, CMS→Website), (b) **Live-Vorschau auf jeder** CMS-Seite vereinheitlicht, (c) Admin-Banner auf der Website (an/aus, Standard aus).
-- [ ] **Teil 4 – Bild-Kontrolle:** Optionen zum Skalieren/Positionieren (siehe unten) — **nur Auswahl**, kein Bau in dieser Runde.
+- [x] **Teil 4 – Bild-Kontrolle:** Optionen ausgearbeitet (§11, Live-Wahrheit + A/A-light/B/C/D/E mit Aufwand·Wirkung·Mobile + Empfehlung) — **wartet auf deine Auswahl**, kein Bau.
 - [ ] **Teil 5 – Karten-Scroll-Zoom:** als CMS-Schalter (Standard wie jetzt = aus).
 - [ ] **Teil 6 – Rahmen + Schatten:** 3-Stufen-CMS-Einstellung (keine/ausgewogen/kräftig), warm getönte Schatten, global.
 - [ ] **Teil 7 – EN-Felder im CMS** visuell abheben (dezent, Erdtöne).
@@ -209,11 +209,59 @@ Alles im **CMS → 🏠 Startseite**:
 
 ---
 
-## 11. BILD-KONTROLLE — Optionen (wird in Teil 4 ausgearbeitet)
+## 11. BILD-KONTROLLE — Optionen (Teil 4, NUR Analyse — du wählst)
 
-> Platzhalter — wird mit der Live-Wahrheit-Analyse gefüllt (Skalieren in Reise-/Story-Beiträgen,
-> Positionieren der „Über uns"-Fotos: freies Transformieren vs. Fokuspunkt vs. Zoom+Position;
-> je Aufwand, Wirkung, Mobile-Auswirkung). Du wählst danach.
+### Live-Wahrheit (Stand 05.06.2026)
+- Die **Live-Seite schneidet überall zu**: `object-fit: cover` + `object-position: center`,
+  feste Seitenverhältnisse je Stelle. **Keine** Fokuspunkt-/Zuschnitt-Funktion. Sveltias
+  `transformations:` ist nur das Upload-WebP/Resize (kein Crop). Die `transform: scale`-Stellen
+  sind Hover-/Ken-Burns-Effekte, keine Nutzer-Kontrolle.
+- **Astro macht es 1:1 genauso.** ⇒ Bild-Kontrolle wäre eine **NEUE Fähigkeit über Live hinaus** (B).
+
+### Wo es beschneidet (Schmerzpunkte, absteigend)
+| Stelle | Rahmen (Seitenverhältnis) | Folge |
+|---|---|---|
+| **Über-uns Personen-Fotos** | `4/3` cover, zentriert | Köpfe/Ränder können abgeschnitten werden (Hochformat-Portraits leiden) |
+| **Reise-Stationen-Fotos** | `--ar-media 16/10` cover | Hochformat-Fotos stark beschnitten |
+| **Galerie/Portfolio-Kacheln** | `--ar-portrait 4/5` cover | gemischte Ausrichtungen werden zugeschnitten |
+| **Startseite-Teaser** (Aktuell/Entdecken/Momente) | `3/2`, `3/4`, Portrait | beschnitten |
+| **Story-Galerie** (2-spaltig) | `--ar-card 3/2` cover | beschnitten |
+| Story-Fließtext-Bilder | `max-height:540px, width:auto` | **nicht** beschnitten (natürlich) ✅ |
+| Hero | full-bleed cover | gewollt (Hintergrund) |
+| Lightbox | `contain` | **nichts** beschnitten ✅ |
+
+### Optionen (Aufwand / Wirkung / Mobile)
+- **A — Fokuspunkt pro Bild** (object-position): Im Foto-Feld klickt man auf den wichtigen
+  Bildausschnitt, gespeichert wird `{x%,y%}`, angewendet als `object-position`. Rahmen/Layout
+  bleiben gleich (weiter cover, kein Letterbox).
+  · Aufwand **mittel-hoch** (Feld-UI + Datenmodell: Bilder sind heute nur Pfad-Strings →
+  `{src,focus}`-Objekte + Migration). · Wirkung **hoch** (du bestimmst, was sichtbar bleibt).
+  · Mobile ✅.
+- **A-light — Position-Dropdown** (oben/mitte/unten · links/mitte/rechts) **nur an den
+  Schmerzpunkten** (Über-uns-Personen, evtl. Stations-Titelbild): einfache Auswahl statt
+  Klick-Picker. · Aufwand **niedrig** · Wirkung **gut** (deckt 80 % ab) · Mobile ✅.
+- **B — „Nicht beschneiden" (contain) als Schalter** (global in 🎨 Darstellung oder je Sektion):
+  ganzes Bild sichtbar, aber **Letterbox** (Ränder/uneinheitliche Höhen). · Aufwand **niedrig** ·
+  Wirkung „nichts abgeschnitten", aber Optik ändert sich · Mobile ✅.
+- **C — Seitenverhältnis je Sektion wählbar** (Portrait/Quer/Quadrat): Rahmen an die Fotos
+  anpassen. · Aufwand **mittel** · Wirkung gut bei einheitlicher Ausrichtung, hilft nicht bei
+  gemischten · Mobile ✅.
+- **D — Freies Zuschneiden (Zoom + Verschieben)** im Foto-Feld (WYSIWYG-Crop wie Social-Tools):
+  Zuschnitt wird beim Upload **fest eingebrannt** (oder als Transform gespeichert). · Aufwand
+  **hoch** (interaktive UI; eingebrannt = Original geht verloren) · Wirkung **maximal** · Mobile ✅.
+- **E — Nichts ändern (wie Live):** cover/center beibehalten, du lädst bei Bedarf vor-zugeschnittene
+  Bilder hoch. · Aufwand **null**.
+
+### Empfehlung (zur Auswahl)
+- **Stufe 1 (klein, schnell):** **A-light** an den Personen-Fotos (Über uns) + optional
+  Stations-Titelbild — löst die häufigsten „Kopf abgeschnitten"-Fälle mit wenig Aufwand.
+- **Stufe 2 (später, wenn gewünscht):** **A (Fokuspunkt)** flächendeckend für Galerie/Stationen
+  — braucht die Datenmodell-Erweiterung (`{src,focus}`), daher eigenes Etappenpaket.
+- **D** nur, wenn du echtes WYSIWYG-Zuschneiden willst (größter Bau).
+- **B** als schneller globaler Notnagel, falls „lieber Letterbox als Beschnitt".
+
+> **Kein Bau in dieser Runde** — sag, welche Stufe/Option(en) du willst, dann plane ich den Bau
+> (mit Capability-Lock + Daten-Migration, falls A/D).
 
 ---
 
