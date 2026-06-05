@@ -143,7 +143,7 @@ export default defineConfig({
       // --- Alben: jedes Album ein Eintrag (Mehrfach-Collection wie Reisen) ---
       {
         name: 'alben',
-        label: '🖼️ Alben',
+        label: '🖼️ Portfolio Alben',
         path: 'src/data/albums',
         format: 'json',
         // Router -> Live-Vorschau der Album-Unterseite /portfolio/<slug> (useTina).
@@ -175,7 +175,7 @@ export default defineConfig({
       // --- Galerie: Seiten-Einstellungen (Texte + Sortier-Modi) ---
       {
         name: 'galerie_settings',
-        label: '🖼️ Galerie – Einstellungen',
+        label: '🖼️ Portfolio',
         path: 'src/data',
         format: 'json',
         match: { include: 'gallery-settings' },
