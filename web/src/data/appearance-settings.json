@@ -2,7 +2,7 @@
   "logo": "/uploads/Logo Website.webp",
   "show_hero_logo": true,
   "show_discover": true,
-  "show_stories": false,
+  "show_stories": true,
   "show_contact": true,
   "show_admin_bar": false
 }
