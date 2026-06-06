@@ -697,3 +697,43 @@ body.ww-frame-controls .form-field input,
 body.ww-frame-controls .form-field textarea { box-shadow: var(--ww-shadow); }
 /* Hero-CTAs: durchsichtigerer Schatten, damit das Hero-Bild durchscheint */
 body.ww-frame-controls .hero-cta .btn { box-shadow: 0 8px 22px -10px rgba(0,0,0,0.38); }
+
+/* ============ TEIL 6 – Feedback-Runde: weitere Kästchen + einheitliche Hover (Story-Card = Vorbild) ============
+   Story-Card-Hover ist die Referenz: anheben + warmer Schatten 0 20px 44px -20px rgba(46,36,24,.5).
+   Resting-Rahmen/-Schatten kommen aus der Stufe (--ww-ring/--ww-shadow); Hover nutzt den Vorbild-Schatten. */
+
+/* Entdecken-Kacheln (Startseite) — vorher ohne Schatten/Erhebung */
+.teaser { box-shadow: var(--ww-ring), var(--ww-shadow); transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease); }
+.teaser:hover { transform: translateY(-5px); box-shadow: var(--ww-ring), 0 20px 44px -20px rgba(46,36,24,0.5); }
+
+/* Momentaufnahmen + Portfolio-Kacheln: Hover an Vorbild angleichen (war 5c0cb50 schwächer) */
+.gallery .item:hover, .random-box .item:hover { transform: translateY(-5px); box-shadow: var(--ww-ring), 0 20px 44px -20px rgba(46,36,24,0.5); }
+
+/* Instagram-/Social-Buttons (Intro) — heller + dunkler Grund */
+.insta-link { box-shadow: var(--ww-ring), var(--ww-shadow); }
+.insta-link:hover { box-shadow: var(--ww-ring), 0 14px 30px -12px rgba(46,36,24,0.42); }
+.insta-row.on-dark .insta-link { box-shadow: var(--ww-ring-d), var(--ww-shadow-d); }
+.insta-row.on-dark .insta-link:hover { box-shadow: var(--ww-ring-d), 0 16px 32px -12px rgba(0,0,0,0.5); }
+
+/* Stations-Pills unten = wie Reise-Tabs (Rahmen aus Stufe + Hover-Erhebung) */
+.trip-stoplist button { border-color: transparent; box-shadow: var(--ww-ring), var(--ww-shadow); }
+.trip-stoplist button:hover { transform: translateY(-2px); box-shadow: var(--ww-ring), 0 12px 26px -10px rgba(46,36,24,0.40); }
+.trip-stoplist button.active { box-shadow: var(--ww-ring), var(--ww-shadow); }
+
+/* Stationsfenster (rechte Box .trip-detail): Rahmen aus Stufe + Schatten (Alt-Rahmen raus) */
+.trip-detail { border: none; box-shadow: var(--ww-ring), var(--ww-shadow); }
+
+/* Hero-CTAs: EINHEITLICHE Hover-Animation — auch der ghost-Button hebt sich jetzt gleich */
+.hero-cta .btn:hover { transform: translateY(-3px); }
+body.ww-frame-controls .hero-cta .btn:hover { box-shadow: 0 14px 30px -10px rgba(0,0,0,0.45); }
+
+/* Portfolio-Album-Hover (per CMS-Schalter album_hover, Standard an) — nur geschlossene Alben */
+body.ww-album-hover .album-section { transition: transform var(--dur-base) var(--ease); }
+body.ww-album-hover .album-section:not(.open):hover { transform: translateY(-5px); }
+
+/* Über uns: „Riss"-Papierkante OBEN + UNTEN an der dunklen Profil-Box (wie Hero-Übergang) */
+#page-about .about-band { position: relative; overflow: hidden; }
+.band-rip { position: absolute; left: 0; right: 0; width: 100%; height: 72px; z-index: 2; color: var(--c-bg); display: block; pointer-events: none; }
+.band-rip-top { top: -1px; transform: scaleY(-1); }
+.band-rip-bottom { bottom: -1px; }
+@media (max-width: 640px) { .band-rip { height: 52px; } }

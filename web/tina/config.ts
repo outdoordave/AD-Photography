@@ -608,6 +608,10 @@ export default defineConfig({
             type: 'boolean', name: 'frame_controls', label: 'Auch Buttons & Eingabefelder rahmen?',
             description: 'AN (Standard): auch Buttons/CTAs (im Hero mit durchsichtigem Schatten) und die Kontakt-Eingabefelder bekommen den Rahmen+Schatten. AUS: nur Anzeige-Boxen (Karten/Kacheln/Fotos/Tabs/Stationen/Karte).',
           },
+          {
+            type: 'boolean', name: 'album_hover', label: 'Alben beim Drüberfahren anheben?',
+            description: 'AN (Standard): Portfolio-Alben heben sich beim Hovern leicht an (Klick-Signal). AUS: keine Hover-Bewegung bei den Alben (sinnvoll, da man Alben auch ohne Klick durchscrollen kann).',
+          },
           { type: 'boolean', name: 'show_hero_logo', label: 'Logo im Hero zeigen?' },
           { type: 'boolean', name: 'show_discover', label: '„Entdecken"-Bereich auf der Startseite zeigen?' },
           { type: 'boolean', name: 'show_stories', label: 'Stories zeigen? (Nav-Link, Footer, Startseiten-Teaser)' },

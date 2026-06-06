@@ -2,6 +2,7 @@ import { useTina, tinaField } from 'tinacms/dist/react';
 import { normalizePath } from '../lib/stories';
 import { photoDisplay } from '../lib/trips';
 import { ILLUS } from '../lib/illus';
+import PaperRip from './PaperRip';
 
 // Über-uns als React-Insel (wie Stories/Gear): useTina = LIVE-Daten, data-tina-field
 // = Klick auf der Seite springt zum Feld. Aufbau 1:1 wie #page-about in index.html:
@@ -41,6 +42,8 @@ export default function AboutContent(props: Props) {
       </div>
 
       <section className="about-band">
+        <PaperRip idp="aboutTop" className="band-rip band-rip-top" />
+        <PaperRip idp="aboutBot" className="band-rip band-rip-bottom" />
         <div className="wrap">
           <div className="about-grid">
             {PERSON_STYLE.map((p, idx) => {

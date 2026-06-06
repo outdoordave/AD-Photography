@@ -2,6 +2,7 @@
   "logo": "/uploads/Logo Website.webp",
   "image_frame": "strong",
   "frame_controls": true,
+  "album_hover": true,
   "show_hero_logo": true,
   "show_discover": true,
   "show_stories": true,
