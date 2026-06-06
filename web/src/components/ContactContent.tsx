@@ -28,6 +28,17 @@ export default function ContactContent(props: Props) {
   const [msg, setMsg] = React.useState('');
   const [sent, setSent] = React.useState(false);
 
+  // Nachrichten-Textfeld wächst mit dem Inhalt mit — bis zur max-height aus dem CSS
+  // (300px), danach interner Scroll. 1:1-Port von wwGrowMsg (Live index.html).
+  const msgRef = React.useRef<HTMLTextAreaElement | null>(null);
+  React.useEffect(() => {
+    const ta = msgRef.current;
+    if (!ta) return;
+    ta.style.height = 'auto';
+    const max = parseInt(getComputedStyle(ta).maxHeight, 10) || 300;
+    ta.style.height = Math.min(ta.scrollHeight, max) + 'px';
+  }, [msg]);
+
   const onSend = () => {
     if (!name.trim() || !email.trim() || !msg.trim()) {
       alert(lang === 'de' ? 'Bitte fülle alle Felder aus.' : 'Please fill in all fields.');
@@ -95,7 +106,7 @@ export default function ContactContent(props: Props) {
               </div>
               <div className="form-field">
                 <label data-tina-field={tf(c, 'form_message')}>{t(c, 'form_message')}</label>
-                <textarea value={msg} onChange={(e) => setMsg(e.target.value)} />
+                <textarea ref={msgRef} value={msg} onChange={(e) => setMsg(e.target.value)} />
               </div>
               <button type="button" className="btn dark" data-tina-field={tf(c, 'form_send')} onClick={onSend}>{t(c, 'form_send')}</button>
               <p className="form-note" data-tina-field={tf(c, 'form_note')}>{t(c, 'form_note')}</p>
