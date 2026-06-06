@@ -102,6 +102,28 @@ button { font-family: var(--font-body); }
 .ph.has-illus::before { opacity: 0; }
 .ph.has-illus .ph-icon { display: none; }
 
+/* ---------- TEIL 6: globaler Bild-Rahmen & Schatten (CMS: image_frame) ----------
+   Per <body class="ww-frame-none|soft|strong"> gesetzte Variable, angewendet auf
+   die gerundeten Foto-Wrapper (Karten/Kacheln/Personen/Stationen/Beitragsbilder/
+   Album-Lightbox-Kacheln). „Rahmen" = feine warme Linie (Inset-Ring, kein Layout-
+   Sprung), „Schatten" = warm getönter Schlagschatten. Hero/Lightbox/Karte sind
+   bewusst NICHT in der Liste -> bleiben unberührt. Standard: soft. */
+:root { --ww-frame: none; }
+body.ww-frame-none   { --ww-frame: none; }
+body.ww-frame-soft   { --ww-frame: 0 0 0 1px rgba(46,36,24,0.06), 0 8px 22px -10px rgba(46,36,24,0.30); }
+body.ww-frame-strong { --ww-frame: 0 0 0 1px rgba(46,36,24,0.12), 0 18px 40px -12px rgba(46,36,24,0.50); }
+.story-card,
+.latest-card,
+.gallery .item,
+.random-box .item,
+.album-slideshow,
+.reader-body .story-album-embed .sae-tile,
+.person .ph,
+.trip-detail .ph,
+.reader-body img {
+  box-shadow: var(--ww-frame);
+}
+
 /* ---------- Layout-Helfer ---------- */
 .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
 section { padding: 84px 0; }

@@ -593,6 +593,15 @@ export default defineConfig({
         ui: { allowedActions: { create: false, delete: false } },
         fields: [
           { type: 'image', name: 'logo', label: 'Logo (Nav / Hero / Footer)', ui: { component: SinglePhotoField } },
+          {
+            type: 'string', name: 'image_frame', label: 'Bild-Rahmen & Schatten',
+            description: 'Global für Fotos (Karten, Kacheln, Personen, Stationen, Beitragsbilder). Hero/Lightbox/Karte bleiben unberührt. Standard: Ausgewogen.',
+            options: [
+              { value: 'none', label: 'Keine (flach, wie alte Live-Seite)' },
+              { value: 'soft', label: 'Ausgewogen (Standard) — zarte Linie + weicher Schatten' },
+              { value: 'strong', label: 'Kräftig — deutliche Linie + tiefer Schatten' },
+            ],
+          },
           { type: 'boolean', name: 'show_hero_logo', label: 'Logo im Hero zeigen?' },
           { type: 'boolean', name: 'show_discover', label: '„Entdecken"-Bereich auf der Startseite zeigen?' },
           { type: 'boolean', name: 'show_stories', label: 'Stories zeigen? (Nav-Link, Footer, Startseiten-Teaser)' },
