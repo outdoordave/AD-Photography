@@ -17,6 +17,21 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 10:06 — TEIL 6: Bild-Rahmen & Schatten (3-Stufen-CMS-Einstellung, global)
+- Neue Darstellungs-Option **„Bild-Rahmen & Schatten"** (`darstellung.image_frame`:
+  `none|soft|strong`), **Standard `soft` (ausgewogen)** — bewusste Abweichung von der Live-Seite
+  (flach), nach dem Muster „Standard an, im CMS abschaltbar".
+  - **Keine:** flach (wie Live) · **Ausgewogen:** zarte warme Linie + weicher Schatten ·
+    **Kräftig:** deutliche Linie + tiefer Schatten.
+- `BaseLayout` setzt `<body class="ww-frame-*">` aus dem Setting; `global.css` definiert je Stufe
+  die warm getönte Variable `--ww-frame` (Inset-Ring als Rahmen ohne Layout-Sprung + Schlagschatten).
+- Angewendet auf die gerundeten Foto-Wrapper: Story-/Latest-Cards, Portfolio-/Album-/Moments-Kacheln,
+  Album-Diashow, Story-Album-Lightbox-Kacheln, Personen- + Stations-Fotos, Beitragsbilder.
+  **Hero/Lightbox/Karte bewusst ausgenommen** (nicht in der Selektor-Liste).
+- ⚠️ Schema-Feld → **tina-lock neu → Re-index + Rebuild nötig.** Offline-Build grün (29 Seiten);
+  body-Klasse, beide Stufen-Variablen + Selektor-Liste (ohne Hero/Lightbox) im CSS verifiziert.
+- Commit: `77bf13f`
+
 ## 2026-06-06 09:47 — TEIL 5: Karten-Scroll-Zoom als CMS-Schalter (Standard AN)
 - Neuer Schalter **„Karte: Mit Mausrad zoomen"** in den Reisen-Einstellungen
   (`reisen_settings.map_scroll_zoom`), **Standard AN** — bewusste Abweichung von der Live-Seite

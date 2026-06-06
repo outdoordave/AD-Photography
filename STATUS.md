@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-06** · letzter Commit `2879c11` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-06** · letzter Commit `77bf13f` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -317,8 +317,12 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   (`reisen_settings.map_scroll_zoom`). **Standard AN** (Mausrad/1-Finger zoomt; Abweichung von Live,
   auf Nutzer-Wunsch — Muster ab jetzt: Features Standard AN, im CMS abschaltbar). AUS = Live-Verhalten.
   ⚠️ Schema → Re-index. **Offen:** Abnahme.
+- **6 Rahmen+Schatten ✅ (`77bf13f`):** 3-Stufen-Darstellungs-Option `image_frame`
+  (none/soft/strong), Standard `soft`. `<body class=ww-frame-*>` + warme CSS-Variable `--ww-frame`
+  auf Content-Foto-Wrapper (Karten/Kacheln/Personen/Stationen/Beitragsbilder/Album-Kacheln);
+  Hero/Lightbox/Karte ausgenommen. ⚠️ Schema → Re-index. **Offen:** Abnahme.
 - **Offen (Reihenfolge, je Zwischenbericht + Warten):**
-  6 Rahmen+Schatten (3 Stufen) · 7 EN-Felder im CMS abheben ·
+  7 EN-Felder im CMS abheben ·
   8 Kartenstil-Sofortvorschau (mit 3B/Karte denken) · 10 CMS-Orientierung „wo bin ich".
 
 ## 6. Strategische Entscheidung (laufend)
