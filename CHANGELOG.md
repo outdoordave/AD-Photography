@@ -17,6 +17,25 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 12:49 — Stationsfenster = eine Karte + Gear-Listen-Stile (CMS-Option)
+- **Stationsfenster (Reisen):** kein Rahmen-im-Rahmen mehr — das innere Stationsfoto (`.trip-detail .ph`)
+  aus der Schatten-Liste genommen; nur das äußere Panel (`.trip-detail`) ist gerahmt+erhaben, das Foto
+  darin schlicht. Wie Story-Card (Vorbild). (`40faf3a`)
+- **Gear-Seite:** neuer CMS-Stil **`gear_style`** (plain | card | notes), Standard **card**.
+  - **card:** jede Kategorie eine ruhige erhabene Karte · **notes:** Field-Notes/Notizzettel
+    (Kraftpapier-Ton, Rand-Linie, Häkchen je Eintrag) · **plain:** bisheriger schlichter Listenstil.
+  - Eigener Schatten (unabhängig vom globalen Rahmen-Schalter), CMS-Vorschau-Feld `GearStyleField`
+    (Mini-Vorschau je Stil). `GearContent` setzt `.gear-list gear-style-<stil>`. (`40faf3a`)
+- ⚠️ Schema-Feld `gear_style` → tina-lock neu → **Re-index + Rebuild.** Build grün (29 Seiten).
+
+## 2026-06-06 12:42 — Fix: Kontakt-Textfeld wächst wieder mit + Insta-Handle a3.flow
+- **Kontakt-Nachrichtenfeld:** Auto-Wachstum (1:1-Port von `wwGrowMsg`/Live) in `ContactContent` —
+  wächst mit dem Inhalt bis 300px, dann interner Scroll. War in der Astro-Version verloren.
+- **Instagram-Handle** `a3_flow` → **`a3.flow`** in `home-settings.json` (Intro) + `contact.json`
+  (Label + URL). Hinweis: `a3.flow` war nie im Repo (alte Live-Daten + neue trugen immer `a3_flow`)
+  → nichts „zurückgerutscht", sondern erstmals korrekt gespeichert.
+- Build grün. Commit: `d2eff59`
+
 ## 2026-06-06 11:53 — TEIL 6 Feedback-Runde: alle Kästchen + einheitliche Hover + Über-uns-Riss
 - Weiteres Nutzer-Feedback (Story-Card = Vorbild für Hover/Rahmen):
   - **Entdecken-Kacheln** (`.teaser`): Rahmen+Schatten + Hover-Erhebung (vorher ohne).

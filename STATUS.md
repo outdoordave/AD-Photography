@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-06** · letzter Commit `edb4234` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-06** · letzter Commit `40faf3a` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -330,6 +330,10 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
     Hero-CTA-Hover vereinheitlicht (ghost hebt sich jetzt gleich). Neuer Schalter **`album_hover`**
     (Standard an) für Album-Hover-Erhebung. **Über uns:** `PaperRip`-Komponente — dunkle Profil-Box
     bekommt oben+unten die gerissene Papierkante (wie Hero). ⚠️ Schema → Re-index. **Offen:** Abnahme.
+  - **Runde 2 (`d2eff59`, `40faf3a`):** Stationsfenster jetzt **eine** saubere Karte (kein Rahmen-im-
+    Rahmen — Foto innen schlicht). **Gear-Listen-Stil** als CMS-Option **`gear_style`** (plain/card/notes,
+    Standard card; eigener Schatten, CMS-Vorschau `GearStyleField`). **Kontakt-Textfeld** wächst wieder
+    mit (Auto-Grow-Port von `wwGrowMsg`). **Insta-Handle** überall `a3.flow` (war nie im Repo). ⚠️ Schema → Re-index.
 - **Offen (Reihenfolge, je Zwischenbericht + Warten):**
   7 EN-Felder im CMS abheben ·
   8 Kartenstil-Sofortvorschau (mit 3B/Karte denken) · 10 CMS-Orientierung „wo bin ich".
