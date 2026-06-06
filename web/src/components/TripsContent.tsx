@@ -15,7 +15,7 @@ import { viewStops, bi, tripTitle, sortTrips, type RawTrip, type Lang, type View
 // sofort; data-tina-field = Klick auf der Seite springt zum passenden Feld.
 
 type LinkedAlbum = { slug: string; name: { de?: string; en?: string } };
-type Props = { query: string; variables: object; data: any; lang: Lang; mapStyle?: string; initialSlug?: string; linkedAlbums?: Record<string, LinkedAlbum> };
+type Props = { query: string; variables: object; data: any; lang: Lang; mapStyle?: string; scrollZoom?: boolean; initialSlug?: string; linkedAlbums?: Record<string, LinkedAlbum> };
 
 function setMapLanguage(map: maplibregl.Map, lang: Lang) {
   if (!map.isStyleLoaded()) return;
@@ -211,17 +211,21 @@ export default function TripsContent(props: Props) {
   // Karte einmal erzeugen
   React.useEffect(() => {
     if (!mapElRef.current || mapRef.current) return;
+    // TEIL 5: Mausrad-Zoom per CMS-Schalter (map_scroll_zoom). Standard AN.
+    //  AN  -> cooperativeGestures aus: Mausrad zoomt direkt (Handy: 1 Finger bewegt Karte).
+    //  AUS -> wie Live: Mausrad scrollt die Seite, am Handy zwei Finger (cooperativeGestures an).
+    const scrollZoomOn = props.scrollZoom !== false;
     const map = new maplibregl.Map({
       container: mapElRef.current,
       style: styleUrl,
       center: [-110, 40],
       zoom: 3,
-      cooperativeGestures: true,
+      cooperativeGestures: !scrollZoomOn,
       attributionControl: { compact: true },
     });
     mapRef.current = map;
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
-    map.scrollZoom.disable();
+    if (scrollZoomOn) map.scrollZoom.enable(); else map.scrollZoom.disable();
     map.on('load', () => {
       readyRef.current = true;
       setMapLanguage(map, lang);

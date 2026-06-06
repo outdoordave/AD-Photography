@@ -377,6 +377,10 @@ export default defineConfig({
               { value: 'dark', label: 'Dark' },
             ],
           },
+          {
+            type: 'boolean', name: 'map_scroll_zoom', label: 'Karte: Mit Mausrad zoomen',
+            description: 'AN (Standard): Mausrad über der Karte zoomt die Karte (am Handy: ein Finger bewegt die Karte). AUS: Mausrad scrollt die Seite (am Handy zwei Finger für die Karte) — wie auf der alten Live-Seite.',
+          },
         ],
       },
       // --- Equipment / Gear: EIN Eintrag (Seitentexte + Liste) mit Live-Vorschau ---
