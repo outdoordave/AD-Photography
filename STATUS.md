@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-06** · letzter Commit `40faf3a` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-06** · letzter Commit `c34ade0` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -334,6 +334,10 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
     Rahmen — Foto innen schlicht). **Gear-Listen-Stil** als CMS-Option **`gear_style`** (plain/card/notes,
     Standard card; eigener Schatten, CMS-Vorschau `GearStyleField`). **Kontakt-Textfeld** wächst wieder
     mit (Auto-Grow-Port von `wwGrowMsg`). **Insta-Handle** überall `a3.flow` (war nie im Repo). ⚠️ Schema → Re-index.
+  - **Runde 3 (`c34ade0`):** Gear-**Reichweite** `gear_scope` (whole/groups) — Field-Notes als EIN ganzer
+    Zettel möglich (Standard notes+whole). Stationsfenster-Rahmen: Schatten auf den `.trip-detail-wrap`
+    gelegt (war von dessen `overflow:hidden` abgeschnitten → wirkte „unfertig"), hängt weiter am
+    globalen Schalter. ⚠️ Schema → Re-index.
 - **Offen (Reihenfolge, je Zwischenbericht + Warten):**
   7 EN-Felder im CMS abheben ·
   8 Kartenstil-Sofortvorschau (mit 3B/Karte denken) · 10 CMS-Orientierung „wo bin ich".

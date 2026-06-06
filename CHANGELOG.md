@@ -17,6 +17,21 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 13:13 — Gear: ganze Liste vs. Gruppe + Stationsfenster-Rahmen am Wrap (Clipping-Fix)
+- **Gear-Reichweite:** neue CMS-Einstellung **`gear_scope`** (whole | groups) — EIN Block um die ganze
+  Liste ODER je Kategorie ein Block. CSS scope-fähig (card + notes je Reichweite). **Field-Notes als
+  EIN ganzer Zettel** (whole): ein Kraftpapier-Block um die ganze Liste, eine Rand-Linie, Häkchen je
+  Eintrag. Standard auf Nutzer-Wunsch: `gear_style=notes` + `gear_scope=whole`.
+- **Stationsfenster (äußerer Rahmen):** Ursache des „unfertigen" Rahmens war, dass `.trip-detail-wrap`
+  (`overflow:hidden`) den Schatten der inneren `.trip-detail` **abschnitt**. Rahmen+Schatten daher auf
+  den **Wrap** gelegt (eigener Schatten wird nicht geclippt) → sieht jetzt aus wie die anderen Boxen und
+  hängt weiter am globalen Schalter (`--ww-ring/--ww-shadow`). Eigener Inset-Versuch wieder entfernt.
+- ⚠️ Schema-Feld `gear_scope` → tina-lock neu → **Re-index + Rebuild.** Build grün (29 Seiten).
+- Commit: `c34ade0`
+- **Klarstellung (online-Stand):** `origin/astro-umbau` war bei `c5241f9` — die große Überarbeitung +
+  Feedback-Runde 1 (bis `edb4234`) waren bereits online. Frühere „Deploy ist veraltet"-Annahme war falsch
+  (per `curl` korrigiert). Das Stationsfenster-Frame-im-Frame war der echte Live-Stand, nicht veraltet.
+
 ## 2026-06-06 12:49 — Stationsfenster = eine Karte + Gear-Listen-Stile (CMS-Option)
 - **Stationsfenster (Reisen):** kein Rahmen-im-Rahmen mehr — das innere Stationsfoto (`.trip-detail .ph`)
   aus der Schatten-Liste genommen; nur das äußere Panel (`.trip-detail`) ist gerahmt+erhaben, das Foto
