@@ -3,6 +3,7 @@ import { useTina, tinaField } from 'tinacms/dist/react';
 import { bi, type Lang } from '../lib/albums';
 import { normalizePath } from '../lib/stories';
 import { socialIcon, socialUrl } from '../lib/socialIcons';
+import PaperRip from './PaperRip';
 
 // Hero als LIVE-Insel (useTina startseite) — 1:1-Port von HomeHero.astro:
 // gleiche Klassen/Markup/Effekte (alle Politur-Effekte laufen über CSS-Klassen),
@@ -72,6 +73,7 @@ export default function HomeHeroLive(props: Props) {
 
   return (
     <div className={heroClass}>
+      <PaperRip idp="heroTopRip" className="band-rip band-rip-top" />
       <div className="hero-media" ref={mediaRef}>
         {mode === 'video' && hero.video ? (
           <video className="hero-vid" src={normalizePath(hero.video)} autoPlay loop muted playsInline preload="auto"

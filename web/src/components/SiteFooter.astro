@@ -2,6 +2,7 @@
 // Globaler Footer (1:1 aus index.html <footer>): Logo + 7 Footer-Links + Copyright
 // (mit Admin-Link → /admin) + Untertitel. Stories-Link nur wenn showStories.
 import { socialIcon, socialUrl } from '../lib/socialIcons';
+import PaperRip from './PaperRip';
 interface Props {
   lang: 'de' | 'en';
   logo?: string;
@@ -28,6 +29,7 @@ const linkHref = (href: string) => (href === '/' ? (isEn ? '/en/' : '/') : prefi
 const logoSrc = logo && logo.charAt(0) !== '/' && !/^https?:/.test(logo) ? '/' + logo : logo;
 ---
 <footer>
+  <PaperRip idp="footerRip" className="band-rip band-rip-top" />
   {logoSrc ? <div class="footer-logo"><img src={logoSrc} alt="Wide & Wild" loading="lazy" /></div> : null}
   <div class="footer-nav">
     {NAV.filter((i) => (!i.storiesOnly || showStories) && (!i.contactOnly || showContact)).map((i) => (
