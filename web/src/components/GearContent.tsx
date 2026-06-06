@@ -33,7 +33,7 @@ export default function GearContent(props: Props) {
         <p data-tina-field={tf(gear, 'intro')}>{t(gear, 'intro')}</p>
       </div>
 
-      <div className="gear-list">
+      <div className={`gear-list gear-style-${['plain', 'card', 'notes'].includes(gear.gear_style) ? gear.gear_style : 'card'}`}>
         {groups.map((g) => (
           <div className="gear-cat" key={g.cat}>
             <h3>{lang === 'en' ? g.en : g.de}</h3>

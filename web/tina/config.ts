@@ -5,6 +5,7 @@ import { EnglishOnlyField, EnglishOnlyTextField } from './fields/EnglishOnlyFiel
 import CropPhotoField from './fields/CropPhotoField';
 import StoryBodyField from './fields/StoryBodyField';
 import ImageFrameField from './fields/ImageFrameField';
+import GearStyleField from './fields/GearStyleField';
 import EnglishToggle from './fields/EnglishToggle';
 import LocationSearchField from './fields/LocationSearchField';
 import { backToSiteScreen } from './screens/BackToSiteScreen';
@@ -411,6 +412,17 @@ export default defineConfig({
           { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
           { type: 'string', name: 'intro_de', label: 'Beschreibung', ui: { component: 'textarea' } },
           { type: 'string', name: 'intro_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+          // --- Listen-Stil (Vorschau im CMS) ---
+          {
+            type: 'string', name: 'gear_style', label: 'Listen-Stil',
+            description: 'Aussehen der Ausrüstungs-Liste. Vorschau unten — einen Stil anklicken.',
+            ui: { component: GearStyleField },
+            options: [
+              { value: 'plain', label: 'Schlicht' },
+              { value: 'card', label: 'Karte (erhaben)' },
+              { value: 'notes', label: 'Field-Notes / Notizzettel' },
+            ],
+          },
           // --- Ausrüstungs-Liste ---
           {
             type: 'object',

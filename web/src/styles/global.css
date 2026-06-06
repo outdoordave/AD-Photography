@@ -671,7 +671,7 @@ body.ww-frame-strong {
 
 /* Helle Anzeige-Boxen: Rahmen + Schatten aus der Stufe */
 .story-card, .latest-card, .gallery .item, .random-box .item, .album-slideshow,
-.reader-body .story-album-embed .sae-tile, .trip-detail .ph, .reader-body img, .map-box {
+.reader-body .story-album-embed .sae-tile, .reader-body img, .map-box {
   box-shadow: var(--ww-ring), var(--ww-shadow);
 }
 /* Dunkle Boxen: helle Rahmenlinie + dunkler, weicher Schatten */
@@ -737,3 +737,33 @@ body.ww-album-hover .album-section:not(.open):hover { transform: translateY(-5px
 .band-rip-top { top: -1px; transform: scaleY(-1); }
 .band-rip-bottom { bottom: -1px; }
 @media (max-width: 640px) { .band-rip { height: 52px; } }
+
+/* ============ Gear-Listen-Stile (CMS: gear_style) — eigener Schatten, unabhängig vom globalen Rahmen ============
+   plain = bisheriger schlichter Listenstil (kein Zusatz-CSS). card = ruhige erhabene Karte je Kategorie.
+   notes = Field-Notes/Kraftpapier-Notizzettel (Rand-Linie + Häkchen je Eintrag, erhaben). */
+
+/* --- card: jede Kategorie eine erhabene Karte --- */
+.gear-list.gear-style-card .gear-cat {
+  background: var(--c-bg-alt); border-radius: var(--radius-sm);
+  padding: 20px 24px 6px; margin-bottom: 22px;
+  box-shadow: 0 0 0 1px rgba(46,36,24,0.06), 0 14px 32px -16px rgba(46,36,24,0.42);
+}
+.gear-list.gear-style-card .gear-cat h3 { border-bottom-color: var(--c-line); }
+
+/* --- notes: Field-Notes / Notizzettel --- */
+.gear-list.gear-style-notes .gear-cat {
+  position: relative; background: #ede1ca; border-radius: 3px;
+  padding: 22px 26px 12px 40px; margin-bottom: 26px;
+  box-shadow: 0 1px 2px rgba(46,36,24,0.15), 0 16px 34px -16px rgba(46,36,24,0.5);
+}
+.gear-list.gear-style-notes .gear-cat::before {
+  content: ""; position: absolute; top: 10px; bottom: 10px; left: 26px; width: 1.5px;
+  background: rgba(167,103,47,0.35);
+}
+.gear-list.gear-style-notes .gear-cat h3 {
+  border-bottom: none; color: var(--c-accent); margin-bottom: 8px;
+}
+.gear-list.gear-style-notes .gear-row { border-bottom: 1px dashed rgba(46,36,24,0.18); }
+.gear-list.gear-style-notes .gear-row .gr-name::before {
+  content: "✓"; display: inline-block; margin-right: 8px; color: var(--c-accent); font-weight: 700;
+}
