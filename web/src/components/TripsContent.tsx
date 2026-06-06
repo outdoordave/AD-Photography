@@ -33,6 +33,15 @@ function setMapLanguage(map: maplibregl.Map, lang: Lang) {
   }
 }
 
+// TEIL 8: liest map_style LIVE aus reisen_settings und meldet Änderungen nach oben.
+// Eigene Komponente, damit die useTina NUR mit echtem Query läuft (bedingt gerendert).
+function MapStyleWatcher({ query, variables, data, onStyle }: { query: string; variables: object; data: any; onStyle: (s: string) => void }) {
+  const { data: d } = useTina({ query, variables, data });
+  const style = (d as any)?.reisen_settings?.map_style;
+  React.useEffect(() => { if (style) onStyle(style); }, [style]);
+  return null;
+}
+
 export default function TripsContent(props: Props) {
   const { lang, mapStyle } = props;
   // tinaField auf das flache Feld der aktiven Sprache (…_de bzw. …_en) -> Klick
@@ -40,14 +49,11 @@ export default function TripsContent(props: Props) {
   const tf = (o: any, base: string) => tinaField(o, (lang === 'en' ? base + '_en' : base + '_de') as any);
   const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
   // TEIL 8: Kartenstil LIVE aus den Reisen-Einstellungen (Sofortvorschau im CMS).
-  // Fällt zurück auf den Build-Prop (statische Seite ändert sich nie -> stabil).
-  const settingsTina = useTina({
-    query: props.settingsQuery || '', variables: props.settingsVariables || {},
-    data: props.settingsData || {},
-  });
-  const liveMapStyle: string =
-    (settingsTina.data && (settingsTina.data as any).reisen_settings && (settingsTina.data as any).reisen_settings.map_style)
-    || mapStyle || 'liberty';
+  // WICHTIG: Die Settings-useTina läuft NUR in der Kind-Komponente <MapStyleWatcher>,
+  // und die wird nur gerendert, wenn ein echtes Query vorliegt — sonst würde
+  // useTina({query:''}) eine leere GraphQL-Abfrage absetzen ("Unexpected <EOF>").
+  // Ohne Settings-Query (z. B. Detail-Route ohne Props) bleibt der Build-Prop-Stil.
+  const [liveMapStyle, setLiveMapStyle] = React.useState<string>(mapStyle || 'liberty');
 
   // Reisen aus der Connection ableiten (live), nach order/Datum sortiert.
   const trips = React.useMemo(() => {
@@ -308,6 +314,14 @@ export default function TripsContent(props: Props) {
 
   return (
     <>
+      {props.settingsQuery ? (
+        <MapStyleWatcher
+          query={props.settingsQuery}
+          variables={props.settingsVariables || {}}
+          data={props.settingsData}
+          onStyle={setLiveMapStyle}
+        />
+      ) : null}
       <div className="trip-tabs" id="tripTabs">
         {trips.map((tp, i) => {
           // 1:1 wie Live: Tab zeigt exakt den CMS-Titel, KEIN automatisches Suffix.
