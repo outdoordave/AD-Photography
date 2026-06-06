@@ -17,6 +17,10 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 — CMS: fehlendes Emoji vor „Stories"-Collection ergänzt
+- Story-Collection-Label `Stories` → `📖 Stories` (Einstellungen hatte das 📖 schon, die Beiträge-
+  Collection nicht). Reines Label → **kein Re-index**, tina-lock unverändert.
+
 ## 2026-06-06 13:13 — Gear: ganze Liste vs. Gruppe + Stationsfenster-Rahmen am Wrap (Clipping-Fix)
 - **Gear-Reichweite:** neue CMS-Einstellung **`gear_scope`** (whole | groups) — EIN Block um die ganze
   Liste ODER je Kategorie ein Block. CSS scope-fähig (card + notes je Reichweite). **Field-Notes als

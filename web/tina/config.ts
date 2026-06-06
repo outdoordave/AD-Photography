@@ -225,7 +225,7 @@ export default defineConfig({
       },
       {
         name: 'story',
-        label: 'Stories',
+        label: '📖 Stories',
         path: 'src/content/stories',
         format: 'md',
         ui: {
