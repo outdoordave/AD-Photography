@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-06** · letzter Commit `5c0cb50` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-06** · letzter Commit `edb4234` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -324,7 +324,12 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   Personen-Karten (dunkle Variante); Hover-Erhebung auf Tabs/Kacheln. Buttons/Eingabefelder hinter
   Schalter `frame_controls` (Standard an, Hero-CTAs durchsichtiger Schatten). CMS-Vorschau im iOS-Stil
   (`ImageFrameField`, Mini-Vorschau je Stufe). Hero-Bild/Lightbox bleiben vollflächig. ⚠️ Schema → Re-index.
-  **Offen:** Abnahme.
+  - **Feedback-Runde (`edb4234`):** Reichweite erweitert auf Entdecken-Kacheln (`.teaser`),
+    Insta-/Social-Buttons (`.insta-link`, hell+dunkel), Stations-Pills (`.trip-stoplist` = wie
+    Reise-Tabs) und das Stationsfenster (`.trip-detail`). Hover an Story-Card-Vorbild angeglichen;
+    Hero-CTA-Hover vereinheitlicht (ghost hebt sich jetzt gleich). Neuer Schalter **`album_hover`**
+    (Standard an) für Album-Hover-Erhebung. **Über uns:** `PaperRip`-Komponente — dunkle Profil-Box
+    bekommt oben+unten die gerissene Papierkante (wie Hero). ⚠️ Schema → Re-index. **Offen:** Abnahme.
 - **Offen (Reihenfolge, je Zwischenbericht + Warten):**
   7 EN-Felder im CMS abheben ·
   8 Kartenstil-Sofortvorschau (mit 3B/Karte denken) · 10 CMS-Orientierung „wo bin ich".

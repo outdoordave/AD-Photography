@@ -17,6 +17,24 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 11:53 — TEIL 6 Feedback-Runde: alle Kästchen + einheitliche Hover + Über-uns-Riss
+- Weiteres Nutzer-Feedback (Story-Card = Vorbild für Hover/Rahmen):
+  - **Entdecken-Kacheln** (`.teaser`): Rahmen+Schatten + Hover-Erhebung (vorher ohne).
+  - **Instagram-/Social-Buttons** (`.insta-link`): Rahmen+Schatten (hell + dunkle Variante) + Hover.
+  - **Momentaufnahmen/Portfolio-Kacheln-Hover** an Vorbild-Schatten angeglichen.
+  - **Stations-Pills unten** (`.trip-stoplist button`) sehen jetzt aus wie die Reise-Tabs (Rahmen aus
+    Stufe + Hover-Erhebung + aktiv).
+  - **Stationsfenster** (`.trip-detail`): Alt-Rahmen raus, Rahmen+Schatten aus der Stufe.
+  - **Hero-CTAs:** einheitliche Hover-Animation (auch der ghost-Button hebt sich gleich an).
+  - **Portfolio-Album-Hover** als CMS-Schalter **`album_hover`** (Standard an; nur geschlossene Alben).
+  - **Über uns:** neue `PaperRip`-Komponente (Hero-Riss 1:1, eindeutige Filter-IDs) — dunkle
+    Profil-Box bekommt oben + unten die gerissene Papierkante (wie der Hero-Übergang).
+- ⚠️ Schema-Feld `album_hover` → tina-lock neu → **Re-index + Rebuild.** Build grün (29 Seiten);
+  body-Klassen (strong/controls/album-hover), alle 7 CSS-Regeln + Über-uns-Risse verifiziert.
+- Commit: `edb4234`
+- **Hinweis:** Merge-Konflikt in `appearance-settings.json` aufgelöst (CMS-Wahl `image_frame: strong`
+  behalten + `frame_controls` ergänzt; Tina-Commit `8677cbe`).
+
 ## 2026-06-06 10:45 — TEIL 6 überarbeitet: einheitliches Box-System (alle Kästchen) + CMS-Vorschau
 - Nutzer-Feedback: nicht alle Felder hatten Rahmen/Schatten, Rahmendicken ungleich, dunkle
   Bereiche, Hover-Signal + CMS-Vorschau gewünscht. Umgesetzt:
