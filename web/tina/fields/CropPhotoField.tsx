@@ -225,7 +225,10 @@ const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
       const ctx = canvas.getContext('2d'); if (!ctx) throw new Error('Canvas fehlt');
       ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, outW, outH);
       ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, outW, outH);
-      const base = (val.original.split('/').pop() || 'foto').replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]+/g, '-') + '-crop';
+      // Eindeutiger Name pro Speichern (Git-Medien überschreiben NICHT -> sonst
+      // "File already exists" beim erneuten Zuschneiden). Kurzer Zeitstempel-Suffix.
+      const stamp = Date.now().toString(36);
+      const base = (val.original.split('/').pop() || 'foto').replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]+/g, '-') + '-crop-' + stamp;
       const file = await encodeCanvas(canvas, mode, base);
       setProgress('Lade hoch …');
       const media = await cms.media.persist([{ directory: '', file }]);
