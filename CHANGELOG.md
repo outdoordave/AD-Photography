@@ -17,6 +17,13 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 — Fix TEIL 8: leere GraphQL-Abfrage („Unexpected <EOF>")
+- Bug aus `afa1b80`: TripsContent rief eine 2. `useTina` mit `query:''` auf, wenn keine Settings-Props
+  da waren (Detail-Route `/trips/<slug>`, die das CMS beim Öffnen einer Reise nutzt) → leere GraphQL-
+  Abfrage → CMS-Fehler „Syntax Error: Unexpected <EOF>". Fix: Settings-`useTina` jetzt in eigener
+  Kind-Komponente `<MapStyleWatcher>`, die NUR mit echtem Query gerendert wird (bedingtes Rendern statt
+  bedingtem Hook); Live-Stil als State, sonst statischer Build-Prop. Kein Schema-Touch. Commit: `3ac99e3`
+
 ## 2026-06-06 — TEIL 8: Kartenstil-Sofortvorschau im CMS
 - `TripsContent` liest den Kartenstil jetzt **live** aus `reisen_settings` (2. useTina, durchgereicht
   von `trips.astro` DE/EN). Bei Stilwechsel im CMS wird die bestehende Karte per `map.setStyle()`
