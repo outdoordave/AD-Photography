@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 — Portfolio: Alben-Überschrift „freigestellt" (Schlagschatten)
+- Auf Nutzer-Wunsch: Die Alben-Überschrift (`.gallery-group-title`, z. B. „USA 2023 → 5") wirkt
+  jetzt **freigestellt/schwebend** durch einen Buchstaben-Schlagschatten (`text-shadow`, **nicht**
+  box-shadow — der wirkt nur auf Kästchen).
+- Neue Variable `--ww-text-shadow` (default `none` / *soft* / *strong*) analog zu `--ww-shadow`,
+  an die bestehende Darstellungs-Stufe **gekoppelt** (CMS: keine/ausgewogen/kräftig) — kein Extra-Schalter.
+  Das Badge `.album-go-count` per `text-shadow:none` ausgenommen (Pill bleibt clean), der Pfeil schwebt mit.
+- Datei: `web/src/styles/global.css`. Reiner Code → tina-lock unverändert, **kein Re-index.**
+  Build grün (29 Seiten); alle drei Stufen im gebauten CSS verifiziert. Commit: `155178a`
+
 ## 2026-06-06 — Bild-Zuschnitt auf CSS-Zuschnitt umgestellt (kein eingebranntes Bild)
 - Auf Nutzer-Wunsch (nach „ewig"-Warten + „?" bei jedem Crop): Zuschnitt brennt **kein neues Bild**
   mehr ein. `CropPhotoField` → „Übernehmen" speichert **nur das crop-Rechteck** `{x,y,w,h}` (sofort,
