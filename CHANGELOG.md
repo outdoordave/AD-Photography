@@ -17,6 +17,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 — Bild-Zuschnitt auf CSS-Zuschnitt umgestellt (kein eingebranntes Bild)
+- Auf Nutzer-Wunsch (nach „ewig"-Warten + „?" bei jedem Crop): Zuschnitt brennt **kein neues Bild**
+  mehr ein. `CropPhotoField` → „Übernehmen" speichert **nur das crop-Rechteck** `{x,y,w,h}` (sofort,
+  kein Upload, keine neue Datei). Upload des Originals bleibt Auto-WebP @2400px.
+- Neuer Helfer `photoFrame(v)` in `lib/trips` → `{ src=Original, style=CSS-Positionierung }`; die
+  Besucherseite schneidet das **Original per CSS** auf das Rechteck zu (Frame-Seitenverhältnis = cropRatio:
+  Person 4/3, Station 16/10 = `--ar-media`). `AboutContent` (Personen) + `TripsContent`/`viewStops`
+  (Stationen) nutzen es. Bestehende Crops rendern via Original+crop (alte `-crop-*.webp` = Waisen).
+- **Folge:** nie wieder „?"/Deploy-Warten beim Zuschnitt, keine Extra-Dateien, keine Doppel-Kompression.
+  Fotos bleiben WebP (das Original). Reiner Code → tina-lock unverändert, **kein Re-index.** Build grün
+  (29 Seiten); CSS-Crop-Style im HTML verifiziert. Commit: `3505521`
+
 ## 2026-06-06 — Crop-Save-Fix + Riss-Übergang erweitert (Footer/Hero)
 - **Crop speichern gefixt** (`6b25569`): CropPhotoField erzeugte immer `<base>-crop.webp` → Git-Medien
   überschreiben nicht → „File already exists" beim erneuten Zuschneiden. Jetzt eindeutiger Zeitstempel-
