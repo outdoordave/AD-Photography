@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-06** · letzter Commit `c34ade0` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-06** · letzter Commit `4f46ea3` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -338,8 +338,10 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
     Zettel möglich (Standard notes+whole). Stationsfenster-Rahmen: Schatten auf den `.trip-detail-wrap`
     gelegt (war von dessen `overflow:hidden` abgeschnitten → wirkte „unfertig"), hängt weiter am
     globalen Schalter. ⚠️ Schema → Re-index.
+- **7 EN-Felder abheben ✅ (`4f46ea3`):** EnglishOnlyField/-TextField dezent in Erdtönen
+  (linker Akzentstreifen + warme Tönung + 🌐-Label); Story-Beiträge via neue immer-sichtbare
+  Variante `EnglishStyledField`. Rein kosmetisch → kein Re-index. **Offen:** Abnahme.
 - **Offen (Reihenfolge, je Zwischenbericht + Warten):**
-  7 EN-Felder im CMS abheben ·
   8 Kartenstil-Sofortvorschau (mit 3B/Karte denken) · 10 CMS-Orientierung „wo bin ich".
 
 ## 6. Strategische Entscheidung (laufend)

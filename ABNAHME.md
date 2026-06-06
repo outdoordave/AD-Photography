@@ -202,7 +202,7 @@ Alles im **CMS → 🏠 Startseite**:
 - [x] **Teil 4 – Bild-Kontrolle:** Optionen ausgearbeitet (§11, Live-Wahrheit + A/A-light/B/C/D/E mit Aufwand·Wirkung·Mobile + Empfehlung) — **wartet auf deine Auswahl**, kein Bau.
 - [x] **Teil 5 – Karten-Scroll-Zoom:** CMS-Schalter „Karte: Mit Mausrad zoomen" gebaut. **Standard AN** (auf deinen Wunsch — Abweichung von Live, das aus hat); AUS = Live-Verhalten. (`2879c11`) Wartet auf Abnahme.
 - [x] **Teil 6 – Rahmen + Schatten:** einheitliches Box-System (keine/ausgewogen/kräftig) — gleiche Rahmendicke pro Stufe, warm getönt, dunkle Variante für dunkle Bereiche. Gilt für ALLE Kästchen (Karten/Kacheln/Fotos/Reise-Tabs/Karte/Personen); Hover-Erhebung; Buttons/Eingabefelder per Schalter `frame_controls` (Hero-CTAs durchsichtig). CMS-Vorschau im iOS-Stil. Hero-Bild/Lightbox vollflächig. **Standard: Ausgewogen.** (`77bf13f`, überarbeitet `5c0cb50`) Wartet auf Abnahme.
-- [ ] **Teil 7 – EN-Felder im CMS** visuell abheben (dezent, Erdtöne).
+- [x] **Teil 7 – EN-Felder im CMS** visuell abheben: linker Erdton-Akzentstreifen + zarte warme Tönung + 🌐-Label. Greift bei allen Collections (inkl. Story-Beiträge via immer-sichtbarer Variante). Kein Re-index. (`4f46ea3`) Wartet auf Abnahme.
 - [ ] **Teil 8 – Kartenstil-Sofortvorschau** im CMS (wie früher Sveltia).
 - [ ] **Teil 9 – CMS-Benennung „Portfolio"** an die Website angleichen (+ Liste weiterer Abweichungen).
 - [ ] **Teil 10 – CMS-Orientierung „Wo bin ich"** (Klartext-Name oben, aktiver Menüpunkt markiert).

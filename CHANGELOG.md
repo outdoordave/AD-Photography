@@ -17,6 +17,14 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 — TEIL 7: EN-Felder im CMS dezent in Erdtönen abheben
+- `EnglishOnlyField`/`-TextField`: linker Akzentstreifen (`#b08a5e`) + zarte warme Tönung (`#f6efe1`)
+  + 🌐-Label → englische Felder auf einen Blick von den deutschen unterscheidbar. Greift bei allen
+  Collections mit EnglishOnlyField (Einstellungen, Equipment, Über uns, Kontakt, Alben, Startseite, Reisen).
+- Story-Beiträge (eigener `has_english` statt Sprach-Schalter): neue Variante `EnglishStyledField`/
+  `-TextField` (immer sichtbar + gleiche Markierung) auf Title/Category/Excerpt (EN). Body (EN) = Rich-Editor, unverändert.
+- Rein kosmetisch → **tina-lock unverändert, KEIN Re-index.** Build grün (29 Seiten). Commit: `4f46ea3`
+
 ## 2026-06-06 — CMS: fehlendes Emoji vor „Stories"-Collection ergänzt
 - Story-Collection-Label `Stories` → `📖 Stories` (Einstellungen hatte das 📖 schon, die Beiträge-
   Collection nicht). Reines Label → **kein Re-index**, tina-lock unverändert.
