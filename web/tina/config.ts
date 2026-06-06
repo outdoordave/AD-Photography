@@ -1,7 +1,7 @@
 import { defineConfig } from 'tinacms';
 import BulkPhotoField from './fields/BulkPhotoField';
 import SinglePhotoField from './fields/SinglePhotoField';
-import { EnglishOnlyField, EnglishOnlyTextField } from './fields/EnglishOnlyField';
+import { EnglishOnlyField, EnglishOnlyTextField, EnglishStyledField, EnglishStyledTextField } from './fields/EnglishOnlyField';
 import CropPhotoField from './fields/CropPhotoField';
 import StoryBodyField from './fields/StoryBodyField';
 import ImageFrameField from './fields/ImageFrameField';
@@ -262,9 +262,9 @@ export default defineConfig({
           { type: 'string', name: 'youtube_url', label: 'YouTube-URL (optional)' },
           // --- Englische Version ---
           { type: 'boolean', name: 'has_english', label: 'Englische Version anzeigen?' },
-          { type: 'string', name: 'title_en', label: 'Title (EN)' },
-          { type: 'string', name: 'category_en', label: 'Category (EN)' },
-          { type: 'string', name: 'excerpt_en', label: 'Excerpt (EN)', ui: { component: 'textarea' } },
+          { type: 'string', name: 'title_en', label: 'Title (EN)', ui: { component: EnglishStyledField } },
+          { type: 'string', name: 'category_en', label: 'Category (EN)', ui: { component: EnglishStyledField } },
+          { type: 'string', name: 'excerpt_en', label: 'Excerpt (EN)', ui: { component: EnglishStyledTextField } },
           { type: 'string', name: 'body_en', label: 'Body (EN)', ui: { component: StoryBodyField } },
         ],
       },
