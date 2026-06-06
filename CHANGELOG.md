@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 — Fix Build: tina-lock nach TEIL 7 neu generiert (war stale)
+- Cloudflare-Builds brachen ab („local schema doesn't match remote", auch nach Re-index 11:39).
+  Ursache: Das committete `tina-lock.json` war nach der TEIL-7-Änderung **nicht regeneriert**.
+  Die Story-EN-Felder bekamen eigene `ui`-Komponenten (`excerpt_en`: `'textarea'` → custom;
+  `title_en`/`category_en`: Komponente ergänzt) — **das ändert das Lock-Schema** (`ui.component`
+  schlägt sich im Lock nieder, anders als angenommen). Lock via `tinacms dev --no-server` neu
+  erzeugt (deterministisch, 2× gleicher Hash). Commit `010145a`.
+- **Lehre (wichtig):** Lock NACH **jeder** `tina/config`-Änderung neu erzeugen — auch bei reinen
+  `ui.component`-Änderungen. Nicht nur bei neuen Feldern/Typen.
+
 ## 2026-06-06 — TEIL 7: EN-Felder im CMS dezent in Erdtönen abheben
 - `EnglishOnlyField`/`-TextField`: linker Akzentstreifen (`#b08a5e`) + zarte warme Tönung (`#f6efe1`)
   + 🌐-Label → englische Felder auf einen Blick von den deutschen unterscheidbar. Greift bei allen

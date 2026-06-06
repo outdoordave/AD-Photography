@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-06** · letzter Commit `4f46ea3` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-06** · letzter Commit `010145a` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -113,12 +113,14 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 - **`<img>` kann kein `::after`** → Expand-Symbol braucht `.zoom-hint`-Span-Wrap.
 - **Lokaler `origin/main`-Stand kann veralten** (David pusht via GitHub Desktop) →
   Push-Status im Zweifel per `curl` gegen die Live-Seite prüfen, nicht blind `git rev-list`.
-- ⚠️ **`tina-lock.json` nach SCHEMA-Änderungen neu generieren** (neue Collection/Felder)
-  und committen — **sonst bricht der Cloudflare-Build ab** mit „local GraphQL schema doesn't
-  match remote". **Wichtig:** `tinacms build --local` aktualisiert die `tina-lock` **NICHT**;
-  nur der laufende **`tinacms dev`** (oder `npx tinacms dev --no-server`) regeneriert sie.
-  Danach: pushen → Tina Cloud **re-indexiert** aus der neuen `tina-lock` → Build grün.
-  (Reine Inhalts-/Code-Änderungen ohne Schema brauchen das nicht.)
+- ⚠️ **`tina-lock.json` nach JEDER `tina/config`-Änderung neu generieren** und committen —
+  **sonst bricht der Cloudflare-Build ab** mit „local schema doesn't match remote". **Wichtig:**
+  `tinacms build --local` aktualisiert die `tina-lock` **NICHT**; nur **`npx tinacms dev --no-server`**
+  regeneriert sie (deterministisch). Danach: pushen → Tina Cloud **re-indexiert** aus der neuen
+  `tina-lock` → Build grün. **Auch `ui.component`-Änderungen schlagen sich im Lock nieder** (z. B.
+  `'textarea'` → eigener Komponent), nicht nur neue Felder/Typen — also IMMER neu erzeugen, sicherheitshalber
+  vor dem Push einmal `dev --no-server` + `git status web/tina/tina-lock.json` prüfen.
+  (Reine Daten-/CSS-/Astro-Code-Änderungen ohne `tina/config`-Touch brauchen das nicht.)
 
 ## 5. Offene Punkte / Restposten
 - **Umbau Stufe 1 (Stories → Astro+Tina) in `web/`:** Schritte 0–5 **erledigt &
