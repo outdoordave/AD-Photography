@@ -367,7 +367,7 @@ export default function TripsContent(props: Props) {
         <div className="trip-detail-wrap">
           <div className="trip-detail" ref={trackRef}>
             {stops.map((s, i) => {
-              const cover = s.photo ? normalizePath(s.photo) : '';
+              const cover = s.frame.src; // CSS-Zuschnitt: Original + s.frame.style
               const yt = wwYouTubeEmbed(s.youtube);
               const rs = rawStops[i];
               return (
@@ -377,7 +377,7 @@ export default function TripsContent(props: Props) {
                   <div className="date" data-tina-field={rs ? tf(rs, 'date') : undefined}>{s.date}</div>
                   {cover ? (
                     <div className="ph ww-photo" style={{ aspectRatio: 'var(--ar-media)' }} data-tina-field={rs ? tinaField(rs, 'photo') : undefined} onClick={() => openStopLightbox(s, 0)}>
-                      <img src={cover} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--radius-sm)' }} />
+                      <img src={cover} alt="" style={s.frame.style} />
                     </div>
                   ) : (
                     <div className="ph" style={{ aspectRatio: 'var(--ar-media)' }} data-tina-field={rs ? tinaField(rs, 'photo') : undefined} />

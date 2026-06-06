@@ -1,15 +1,16 @@
 import React from 'react';
 import { useCMS, wrapFieldsWithMeta } from 'tinacms';
-import { fmt, detectEncoder, toOptimized, jsquashWebp, toBlobAsync, loadImage, MAX_WIDTH, CANVAS_WEBP_Q, JPEG_Q, type EncoderMode } from './webpEncode';
+import { detectEncoder, toOptimized, loadImage, type EncoderMode } from './webpEncode';
 import { toLocalMedia } from './mediaPath';
 
-// Zuschnitt-Foto-Feld (Slice 1): EIN gerahmtes Bild mit Zoom + Verschieben.
-// Wert ist ein OBJEKT: { original, display, crop }.
-//  - original = volles Bild (Lightbox / Neu-Zuschneiden), bleibt erhalten,
-//  - display  = eingebrannter Zuschnitt im Ziel-Seitenverhältnis (Besucher -> 1:1 überall),
-//  - crop     = JSON {x,y,w,h} (Bruchteile des Originals) zum Wieder-Öffnen.
-// Seitenverhältnis kommt aus field.cropRatio (Default 4/3). Touch: Ziehen = verschieben,
-// Pinch / Schieberegler = zoomen. „Übernehmen" brennt die display-WebP (jSquash, auch Safari).
+// Zuschnitt-Foto-Feld: EIN gerahmtes Bild mit Zoom + Verschieben. Wert = String-JSON
+// { original, crop }:
+//  - original = volles WebP-Bild (beim Upload Auto-WebP @2400px), bleibt erhalten,
+//  - crop     = {x,y,w,h} (Bruchteile des Originals).
+// „Übernehmen" speichert NUR den crop-Rahmen (kein neues Bild, kein Upload) -> sofort,
+// nie „?"/Warten. Die Besucherseite schneidet das Original per CSS zu (photoFrame in
+// lib/trips). Seitenverhältnis aus field.cropRatio (Default 4/3). Touch: Ziehen =
+// verschieben, Pinch/Regler = zoomen.
 
 type CropRect = { x: number; y: number; w: number; h: number };
 type Parsed = { original: string; display: string; crop: CropRect | null };
@@ -38,24 +39,6 @@ function parseVal(v: any): Parsed {
 function serialize(p: { original: string; display: string; crop: CropRect | null }): string {
   if (!p.original) return '';
   return JSON.stringify({ original: p.original, display: p.display || p.original, crop: p.crop || null });
-}
-
-async function encodeCanvas(canvas: HTMLCanvasElement, mode: EncoderMode, base: string): Promise<File> {
-  const ctx = canvas.getContext('2d');
-  if (mode === 'jsquash' && ctx) {
-    try {
-      const id = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const blob = await jsquashWebp(id);
-      return new File([blob], `${base}.webp`, { type: 'image/webp' });
-    } catch { /* Fallback */ }
-  }
-  if (mode !== 'jpeg') {
-    const blob = await toBlobAsync(canvas, 'image/webp', CANVAS_WEBP_Q);
-    if (blob && blob.type === 'image/webp') return new File([blob], `${base}.webp`, { type: 'image/webp' });
-  }
-  const jb = await toBlobAsync(canvas, 'image/jpeg', JPEG_Q);
-  if (!jb) throw new Error('Bild-Umwandlung fehlgeschlagen');
-  return new File([jb], `${base}.jpg`, { type: 'image/jpeg' });
 }
 
 const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
@@ -211,32 +194,13 @@ const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
     finally { setBusy(false); setProgress(''); }
   }
 
-  async function applyCrop() {
-    const img = imgRef.current, crop = currentCrop();
-    if (!img || !nat || !crop) return;
-    const mode = encoder === 'checking' ? await detectEncoder() : encoder;
-    setBusy(true); setError(''); setProgress('Schneide zu …');
-    try {
-      const srcX = crop.x * nat.w, srcY = crop.y * nat.h, srcW = crop.w * nat.w, srcH = crop.h * nat.h;
-      let outW = Math.round(srcW); if (outW > MAX_WIDTH) outW = MAX_WIDTH;
-      const outH = Math.round(outW / ratio);
-      const canvas = document.createElement('canvas');
-      canvas.width = outW; canvas.height = outH;
-      const ctx = canvas.getContext('2d'); if (!ctx) throw new Error('Canvas fehlt');
-      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, outW, outH);
-      ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, outW, outH);
-      // Eindeutiger Name pro Speichern (Git-Medien überschreiben NICHT -> sonst
-      // "File already exists" beim erneuten Zuschneiden). Kurzer Zeitstempel-Suffix.
-      const stamp = Date.now().toString(36);
-      const base = (val.original.split('/').pop() || 'foto').replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]+/g, '-') + '-crop-' + stamp;
-      const file = await encodeCanvas(canvas, mode, base);
-      setProgress('Lade hoch …');
-      const media = await cms.media.persist([{ directory: '', file }]);
-      const src = media.map((m: any) => m.src).filter(Boolean)[0];
-      if (!src) throw new Error('Upload ohne Ergebnis');
-      input.onChange(serialize({ original: val.original, display: src, crop }));
-    } catch (e: any) { setError(e?.message || 'Zuschnitt fehlgeschlagen'); }
-    finally { setBusy(false); setProgress(''); }
+  // Speichert NUR den crop-Rahmen (kein neues Bild, kein Upload) -> sofort. Die
+  // Besucherseite schneidet das Original per CSS zu (photoFrame). Kein „?"/Warten.
+  function applyCrop() {
+    const crop = currentCrop();
+    if (!crop) return;
+    setError('');
+    input.onChange(serialize({ original: val.original, display: val.original, crop }));
   }
 
   function resetCrop() { input.onChange(serialize({ original: val.original, display: val.original, crop: null })); }

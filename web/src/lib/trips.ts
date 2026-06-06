@@ -2,6 +2,8 @@
 // trip-JSONs sind bereits sauber ({de,en}-verschachtelt); hier nur Koordinaten aus
 // dem GeoJSON-Point lesen + Sprach-Helfer + zu Ansichts-Stops normalisieren.
 
+import { normalizePath } from './stories';
+
 export type Lang = 'de' | 'en';
 export type Bi = { de?: string; en?: string };
 
@@ -38,18 +40,43 @@ export function bi(obj: any, base: string, lang: Lang): string {
 }
 
 // Foto-Wert: reiner /uploads-Pfad ODER JSON-Blob {original,display,crop} (String-Feld)
-// ODER Alt-Objekt. -> Anzeige (display) bzw. voll (original).
-function parsePhotoVal(v: any): { original: string; display: string } {
-  if (!v) return { original: '', display: '' };
-  if (typeof v === 'object') return { original: v.original || '', display: v.display || v.original || '' };
+// ODER Alt-Objekt. -> original (voll) + crop-Rechteck (Bruchteile des Originals).
+type CropRect = { x: number; y: number; w: number; h: number };
+function parsePhotoVal(v: any): { original: string; display: string; crop: CropRect | null } {
+  if (!v) return { original: '', display: '', crop: null };
+  if (typeof v === 'object') return { original: v.original || '', display: v.display || v.original || '', crop: (v.crop as CropRect) || null };
   const s = String(v).trim();
   if (s.charAt(0) === '{') {
-    try { const o = JSON.parse(s); return { original: o.original || '', display: o.display || o.original || '' }; } catch { /* Pfad */ }
+    try { const o = JSON.parse(s); return { original: o.original || '', display: o.display || o.original || '', crop: (o.crop as CropRect) || null }; } catch { /* Pfad */ }
   }
-  return { original: s, display: s };
+  return { original: s, display: s, crop: null };
 }
 export function photoDisplay(v: any): string { return parsePhotoVal(v).display; }
 export function photoFull(v: any): string { return parsePhotoVal(v).original; }
+
+// CSS-Zuschnitt (kein eingebranntes Bild): zeigt das ORIGINAL und schneidet per CSS
+// auf das gespeicherte crop-Rechteck zu -> nie „?"/Warten, keine Extra-Datei.
+// Frame-Seitenverhältnis muss = cropRatio sein (Person 4/3, Station 16/10 = --ar-media).
+// Rückgabe: { src, style } für ein <img> in einem .ph (position:relative, overflow:hidden).
+export function photoFrame(v: any): { src: string; style: Record<string, any> } {
+  const p = parsePhotoVal(v);
+  const src = p.original ? normalizePath(p.original) : '';
+  if (!src) return { src: '', style: {} };
+  const c = p.crop;
+  if (c && c.w > 0 && c.h > 0) {
+    return {
+      src,
+      style: {
+        position: 'absolute',
+        width: `${100 / c.w}%`, height: `${100 / c.h}%`,
+        left: `${-(c.x / c.w) * 100}%`, top: `${-(c.y / c.h) * 100}%`,
+        maxWidth: 'none', maxHeight: 'none', objectFit: 'cover',
+      },
+    };
+  }
+  // Kein Crop -> Vollbild cover.
+  return { src, style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' } };
+}
 
 // Koordinate aus GeoJSON-Point-String: {"type":"Point","coordinates":[lon,lat]}
 export function pickCoord(location: string | undefined, which: 'lat' | 'lon'): number | null {
@@ -82,8 +109,9 @@ export type ViewStop = {
   title: string;
   date: string;
   text: string;
-  photo: string;      // Anzeige (zugeschnitten)
+  photo: string;      // Anzeige (Original-Pfad)
   photoFull: string;  // Original (Lightbox)
+  frame: { src: string; style: Record<string, any> }; // CSS-Zuschnitt (src + img-Style)
   photos: string[];
   video: string;
   youtube: string;
@@ -99,6 +127,7 @@ export function viewStops(trip: RawTrip, lang: Lang): ViewStop[] {
     text: bi(s, 'text', lang),
     photo: photoDisplay(s.photo),
     photoFull: photoFull(s.photo),
+    frame: photoFrame(s.photo),
     photos: Array.isArray(s.photos) ? s.photos.filter(Boolean) : [],
     video: s.video || '',
     youtube: s.youtube || '',

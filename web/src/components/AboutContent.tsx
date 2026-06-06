@@ -1,6 +1,5 @@
 import { useTina, tinaField } from 'tinacms/dist/react';
-import { normalizePath } from '../lib/stories';
-import { photoDisplay } from '../lib/trips';
+import { photoFrame } from '../lib/trips';
 import { ILLUS } from '../lib/illus';
 import PaperRip from './PaperRip';
 
@@ -48,8 +47,8 @@ export default function AboutContent(props: Props) {
           <div className="about-grid">
             {PERSON_STYLE.map((p, idx) => {
               const person = ((Array.isArray(about.persons) ? about.persons[idx] : null) ?? {}) as Record<string, any>;
-              const photoSrc = photoDisplay(person.photo);
-              const photo = photoSrc ? normalizePath(photoSrc) : '';
+              const frame = photoFrame(person.photo);
+              const photo = frame.src;
               const illusStyle = {
                 ['--ph-c1' as any]: p.c1,
                 ['--ph-c2' as any]: p.c2,
@@ -62,7 +61,7 @@ export default function AboutContent(props: Props) {
                     style={photo ? undefined : illusStyle}
                     data-tina-field={tinaField(person, 'photo')}
                   >
-                    {photo ? <img className="ww-person-img" src={photo} alt="" /> : null}
+                    {photo ? <img className="ww-person-img" src={photo} alt="" style={frame.style} /> : null}
                   </div>
                   <div className="info">
                     <h3 data-tina-field={tinaField(person, 'name')}>{person.name}</h3>
