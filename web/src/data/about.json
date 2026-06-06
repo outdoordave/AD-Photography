@@ -1,8 +1,14 @@
 {
+  "kicker_de": "Über uns",
+  "kicker_en": "About",
+  "title_de": "Wer hinter dem Logo steckt",
+  "title_en": "Who's behind the logo",
+  "intro_de": "Zwei Menschen, eine gemeinsame Leidenschaft für die Weite — und zwei sehr unterschiedliche Arten, sie einzufangen.",
+  "intro_en": "Two people, one shared love for wide open spaces — and two very different ways of capturing it.",
   "persons": [
     {
       "name": "Alexandra Apostel",
-      "photo": "/uploads/a7406523.jpg",
+      "photo": "{\"original\":\"/uploads/a7406523.jpg\",\"display\":\"https://assets.tina.io/defa5b44-687f-478c-a647-bad7355aedd3/a7406523-crop-mq2djyvy.webp\",\"crop\":{\"x\":7.306352038664269e-17,\"y\":0.350735920125841,\"w\":0.9999999999999999,\"h\":0.5003716982265184}}",
       "role_de": "Landschaft & Wildlife",
       "role_en": "Landscape & Wildlife",
       "bio_de": "Frisch verliebt in die Fotografie und schon nicht mehr zu bremsen. Alexandra hat das Auge für Tiere und Licht — und die Geduld, die beides braucht.",
@@ -12,7 +18,7 @@
     },
     {
       "name": "David Bastisch",
-      "photo": "/uploads/a7406566.jpg",
+      "photo": "{\"original\":\"/uploads/a7406566.jpg\",\"display\":\"https://assets.tina.io/defa5b44-687f-478c-a647-bad7355aedd3/a7406566-crop-mq2dkfpl.webp\",\"crop\":{\"x\":0.21701005119024033,\"y\":0.26350226567021234,\"w\":0.4807692307692308,\"h\":0.2418924976765594}}",
       "role_de": "Aus der Luft & Bewegung",
       "role_en": "Aerial & Motion",
       "bio_de": "Der Mann für die andere Perspektive. David schickt die Drohne hoch, hält mit der Action-Cam drauf und findet Blickwinkel, an die sonst keiner denkt.",
@@ -21,12 +27,6 @@
       "gear_en": "Gear: DJI Air 2S · DJI Osmo Action 4 · iPhone"
     }
   ],
-  "kicker_de": "Über uns",
-  "kicker_en": "About",
-  "title_de": "Wer hinter dem Logo steckt",
-  "title_en": "Who's behind the logo",
-  "intro_de": "Zwei Menschen, eine gemeinsame Leidenschaft für die Weite — und zwei sehr unterschiedliche Arten, sie einzufangen.",
-  "intro_en": "Two people, one shared love for wide open spaces — and two very different ways of capturing it.",
   "why_title_de": "Warum die USA?",
   "why_title_en": "Why the USA?",
   "why_text_de": "Weil kein anderes Land so viel Vielfalt auf einer einzigen Reise bietet: Wüsten, Canyons, Küsten, Wälder, Berge — und dazwischen Tiere, die man sonst nur aus Dokus kennt. Jede Tour ist anders, jedes Licht neu. Genau das hält uns draußen.",
