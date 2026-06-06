@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-06** · letzter Commit `010145a` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-06** · letzter Commit `afa1b80` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -343,8 +343,10 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 - **7 EN-Felder abheben ✅ (`4f46ea3`):** EnglishOnlyField/-TextField dezent in Erdtönen
   (linker Akzentstreifen + warme Tönung + 🌐-Label); Story-Beiträge via neue immer-sichtbare
   Variante `EnglishStyledField`. Rein kosmetisch → kein Re-index. **Offen:** Abnahme.
-- **Offen (Reihenfolge, je Zwischenbericht + Warten):**
-  8 Kartenstil-Sofortvorschau (mit 3B/Karte denken) · 10 CMS-Orientierung „wo bin ich".
+- **8 Kartenstil-Sofortvorschau ✅ (`afa1b80`):** TripsContent liest `map_style` live aus
+  `reisen_settings` (2. useTina); `map.setStyle()` bei Wechsel (Marker bleiben, Sprach-Labels neu).
+  Statische Seite unverändert. Kein Re-index. **Offen:** Abnahme.
+- **Offen:** 10 CMS-Orientierung „wo bin ich".
 
 ## 6. Strategische Entscheidung (laufend)
 **Evaluierung eines Umbaus** auf **Astro + ein CMS mit Live-Vorschau & Drag-&-Drop.**

@@ -17,6 +17,14 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 — TEIL 8: Kartenstil-Sofortvorschau im CMS
+- `TripsContent` liest den Kartenstil jetzt **live** aus `reisen_settings` (2. useTina, durchgereicht
+  von `trips.astro` DE/EN). Bei Stilwechsel im CMS wird die bestehende Karte per `map.setStyle()`
+  umgestylt (statt neu gebaut) → sofortige Vorschau. DOM-Marker überleben `setStyle`; danach nur
+  `setMapLanguage` auf `styledata` neu. Fallback auf Build-Prop → statische Besucher-Seite unverändert.
+- Reiner Komponenten-/Astro-Code → **tina-lock unverändert, KEIN Re-index.** Build grün (29 Seiten).
+  Commit: `afa1b80`
+
 ## 2026-06-06 — Fix Build: tina-lock nach TEIL 7 neu generiert (war stale)
 - Cloudflare-Builds brachen ab („local schema doesn't match remote", auch nach Re-index 11:39).
   Ursache: Das committete `tina-lock.json` war nach der TEIL-7-Änderung **nicht regeneriert**.
