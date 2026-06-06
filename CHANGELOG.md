@@ -17,6 +17,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 — Crop-Save-Fix + Riss-Übergang erweitert (Footer/Hero)
+- **Crop speichern gefixt** (`6b25569`): CropPhotoField erzeugte immer `<base>-crop.webp` → Git-Medien
+  überschreiben nicht → „File already exists" beim erneuten Zuschneiden. Jetzt eindeutiger Zeitstempel-
+  Suffix (`<base>-crop-<ts>.webp`). (Alte Crop-Dateien bleiben als Waisen in /uploads.)
+  - **Hinweis „?" auf der Live-Seite:** Git-Medien-Verzögerung — das zugeschnittene Bild wird ins
+    Repo committet, aber erst nach dem nächsten Cloudflare-Build ausgeliefert (wie jeder frische Upload).
+    Kein Pfad-Bug. Alternative ohne neue Datei (CSS-Zuschnitt aufs Original) bei Bedarf später.
+- **Riss-Übergang** (`fbd6013`): `PaperRip` (geflippte Creme-Kante) zusätzlich am **Footer jeder Seite**
+  (helle Seite reißt in den dunklen Footer) und an der **oberen Hero-Kante**. Globale Klasse
+  `.band-rip.band-rip-top`, eindeutige SVG-Filter-IDs je Instanz. Reiner Code/CSS → kein Re-index.
+  Build grün (29 Seiten).
+
 ## 2026-06-06 — TEIL 10: CMS-Orientierung „Du bist hier"-Banner (Sammel-Auftrag 1–10 komplett)
 - Neue Info-Komponente `SectionBanner`: oben in jeder Sektion ein Klartext-Banner „📍 Du bist hier:
   📖 Stories – Beitrag" o. ä. Reines Info-Feld (kein Eingabefeld, ruft nie onChange) → **schreibt
