@@ -1,6 +1,7 @@
 {
   "logo": "/uploads/Logo Website.webp",
   "image_frame": "soft",
+  "frame_controls": true,
   "show_hero_logo": true,
   "show_discover": true,
   "show_stories": true,

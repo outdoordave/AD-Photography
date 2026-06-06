@@ -102,28 +102,6 @@ button { font-family: var(--font-body); }
 .ph.has-illus::before { opacity: 0; }
 .ph.has-illus .ph-icon { display: none; }
 
-/* ---------- TEIL 6: globaler Bild-Rahmen & Schatten (CMS: image_frame) ----------
-   Per <body class="ww-frame-none|soft|strong"> gesetzte Variable, angewendet auf
-   die gerundeten Foto-Wrapper (Karten/Kacheln/Personen/Stationen/Beitragsbilder/
-   Album-Lightbox-Kacheln). „Rahmen" = feine warme Linie (Inset-Ring, kein Layout-
-   Sprung), „Schatten" = warm getönter Schlagschatten. Hero/Lightbox/Karte sind
-   bewusst NICHT in der Liste -> bleiben unberührt. Standard: soft. */
-:root { --ww-frame: none; }
-body.ww-frame-none   { --ww-frame: none; }
-body.ww-frame-soft   { --ww-frame: 0 0 0 1px rgba(46,36,24,0.06), 0 8px 22px -10px rgba(46,36,24,0.30); }
-body.ww-frame-strong { --ww-frame: 0 0 0 1px rgba(46,36,24,0.12), 0 18px 40px -12px rgba(46,36,24,0.50); }
-.story-card,
-.latest-card,
-.gallery .item,
-.random-box .item,
-.album-slideshow,
-.reader-body .story-album-embed .sae-tile,
-.person .ph,
-.trip-detail .ph,
-.reader-body img {
-  box-shadow: var(--ww-frame);
-}
-
 /* ---------- Layout-Helfer ---------- */
 .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
 section { padding: 84px 0; }
@@ -664,3 +642,58 @@ footer .fnote .ww-admin-link:hover { color: #f0c9a8; opacity: 1; }
 html.ww-adminbar-on body { padding-top: 38px; }
 html.ww-adminbar-on header { top: 38px; }
 @media (max-width: 640px) { html.ww-adminbar-on body { padding-top: 52px; } html.ww-adminbar-on header { top: 52px; } }
+
+/* ============ TEIL 6: einheitliches Rahmen-&-Schatten-System (CMS: image_frame) ============
+   EINE Quelle für ALLE Boxen: die Stufe (keine/ausgewogen/kräftig) setzt am <body>
+   die Variablen -> überall GLEICHE Rahmendicke + Schatten pro Stufe (Dicke skaliert
+   mit der Stufe: 0 / 1px / 2px). „Rahmen" = Ring via box-shadow (kein Layout-Sprung).
+   Helle Flächen: warm getönter Ring/Schatten. Dunkle Flächen (Über uns/Hero/Footer):
+   helle Rahmenlinie + dunkler Schatten (-d-Variablen). Buttons/Eingabefelder nur bei
+   <body class="ww-frame-controls"> (CMS-Schalter frame_controls). Hero-Bild/Lightbox
+   bleiben vollflächig ohne Rahmen. Dieser Block steht bewusst am Datei-ENDE, damit er
+   konkurrierende Alt-Rahmen/-Schatten per Quell-Reihenfolge überschreibt. */
+:root {
+  --ww-ring: 0 0 0 0 transparent;   --ww-shadow: 0 0 0 0 transparent;
+  --ww-ring-d: 0 0 0 0 transparent;  --ww-shadow-d: 0 0 0 0 transparent;
+}
+body.ww-frame-soft {
+  --ww-ring: 0 0 0 1px var(--c-line);
+  --ww-shadow: 0 8px 22px -10px rgba(46,36,24,0.30);
+  --ww-ring-d: 0 0 0 1px rgba(240,229,212,0.16);
+  --ww-shadow-d: 0 12px 28px -12px rgba(0,0,0,0.45);
+}
+body.ww-frame-strong {
+  --ww-ring: 0 0 0 2px var(--c-line);
+  --ww-shadow: 0 18px 40px -12px rgba(46,36,24,0.50);
+  --ww-ring-d: 0 0 0 2px rgba(240,229,212,0.22);
+  --ww-shadow-d: 0 22px 48px -14px rgba(0,0,0,0.6);
+}
+
+/* Helle Anzeige-Boxen: Rahmen + Schatten aus der Stufe */
+.story-card, .latest-card, .gallery .item, .random-box .item, .album-slideshow,
+.reader-body .story-album-embed .sae-tile, .trip-detail .ph, .reader-body img, .map-box {
+  box-shadow: var(--ww-ring), var(--ww-shadow);
+}
+/* Dunkle Boxen: helle Rahmenlinie + dunkler, weicher Schatten */
+.person { box-shadow: var(--ww-ring-d), var(--ww-shadow-d); }
+
+/* Dekorative Alt-Rahmen entfernen -> Rahmen kommt einzig aus der Stufe (gleiche Dicke) */
+.story-card { border: none; }
+.person { border: none; }
+.map-box { border-radius: var(--radius-sm); }
+
+/* Reise-Tabs: Rahmen aus der Stufe + Hover-Erhebung (zeigt Klickbarkeit) */
+.trip-tabs button { border-color: transparent; box-shadow: var(--ww-ring), var(--ww-shadow); }
+.trip-tabs button:hover { transform: translateY(-2px); box-shadow: var(--ww-ring), 0 12px 26px -10px rgba(46,36,24,0.40); }
+.trip-tabs button.active { box-shadow: var(--ww-ring), var(--ww-shadow); }
+
+/* Kacheln/Karten: Hover-Erhebung als Klick-Signal (Karten haben teils schon eigenes Hover) */
+.gallery .item, .random-box .item { transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease); }
+.gallery .item:hover, .random-box .item:hover { transform: translateY(-3px); box-shadow: var(--ww-ring), 0 14px 30px -12px rgba(46,36,24,0.40); }
+
+/* Buttons & Eingabefelder NUR bei aktiviertem CMS-Schalter (frame_controls) */
+body.ww-frame-controls .btn:not(.ghost) { box-shadow: var(--ww-ring), var(--ww-shadow); }
+body.ww-frame-controls .form-field input,
+body.ww-frame-controls .form-field textarea { box-shadow: var(--ww-shadow); }
+/* Hero-CTAs: durchsichtigerer Schatten, damit das Hero-Bild durchscheint */
+body.ww-frame-controls .hero-cta .btn { box-shadow: 0 8px 22px -10px rgba(0,0,0,0.38); }

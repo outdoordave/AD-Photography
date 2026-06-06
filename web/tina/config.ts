@@ -4,6 +4,7 @@ import SinglePhotoField from './fields/SinglePhotoField';
 import { EnglishOnlyField, EnglishOnlyTextField } from './fields/EnglishOnlyField';
 import CropPhotoField from './fields/CropPhotoField';
 import StoryBodyField from './fields/StoryBodyField';
+import ImageFrameField from './fields/ImageFrameField';
 import EnglishToggle from './fields/EnglishToggle';
 import LocationSearchField from './fields/LocationSearchField';
 import { backToSiteScreen } from './screens/BackToSiteScreen';
@@ -595,12 +596,17 @@ export default defineConfig({
           { type: 'image', name: 'logo', label: 'Logo (Nav / Hero / Footer)', ui: { component: SinglePhotoField } },
           {
             type: 'string', name: 'image_frame', label: 'Bild-Rahmen & Schatten',
-            description: 'Global für Fotos (Karten, Kacheln, Personen, Stationen, Beitragsbilder). Hero/Lightbox/Karte bleiben unberührt. Standard: Ausgewogen.',
+            description: 'Gilt global für ALLE Kästchen (Karten, Kacheln, Fotos, Reise-Tabs, Stationen, Karte, optional Buttons/Felder). Gleiche Rahmendicke pro Stufe. Hero-Bild & Lightbox bleiben vollflächig. Vorschau unten — eine Stufe anklicken.',
+            ui: { component: ImageFrameField },
             options: [
-              { value: 'none', label: 'Keine (flach, wie alte Live-Seite)' },
-              { value: 'soft', label: 'Ausgewogen (Standard) — zarte Linie + weicher Schatten' },
-              { value: 'strong', label: 'Kräftig — deutliche Linie + tiefer Schatten' },
+              { value: 'none', label: 'Keine' },
+              { value: 'soft', label: 'Ausgewogen' },
+              { value: 'strong', label: 'Kräftig' },
             ],
+          },
+          {
+            type: 'boolean', name: 'frame_controls', label: 'Auch Buttons & Eingabefelder rahmen?',
+            description: 'AN (Standard): auch Buttons/CTAs (im Hero mit durchsichtigem Schatten) und die Kontakt-Eingabefelder bekommen den Rahmen+Schatten. AUS: nur Anzeige-Boxen (Karten/Kacheln/Fotos/Tabs/Stationen/Karte).',
           },
           { type: 'boolean', name: 'show_hero_logo', label: 'Logo im Hero zeigen?' },
           { type: 'boolean', name: 'show_discover', label: '„Entdecken"-Bereich auf der Startseite zeigen?' },
