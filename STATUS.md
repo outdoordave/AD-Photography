@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-06** · letzter Commit `77bf13f` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-06** · letzter Commit `5c0cb50` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -317,10 +317,14 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   (`reisen_settings.map_scroll_zoom`). **Standard AN** (Mausrad/1-Finger zoomt; Abweichung von Live,
   auf Nutzer-Wunsch — Muster ab jetzt: Features Standard AN, im CMS abschaltbar). AUS = Live-Verhalten.
   ⚠️ Schema → Re-index. **Offen:** Abnahme.
-- **6 Rahmen+Schatten ✅ (`77bf13f`):** 3-Stufen-Darstellungs-Option `image_frame`
-  (none/soft/strong), Standard `soft`. `<body class=ww-frame-*>` + warme CSS-Variable `--ww-frame`
-  auf Content-Foto-Wrapper (Karten/Kacheln/Personen/Stationen/Beitragsbilder/Album-Kacheln);
-  Hero/Lightbox/Karte ausgenommen. ⚠️ Schema → Re-index. **Offen:** Abnahme.
+- **6 Rahmen+Schatten ✅ (`77bf13f`, überarbeitet `5c0cb50`):** 3-Stufen-Option `image_frame`
+  (none/soft/strong, Standard soft) als **einheitliches Box-System** über `<body class=ww-frame-*>`.
+  Eine Quelle (`--ww-ring/--ww-shadow` hell, `-d` dunkel) → **gleiche Rahmendicke pro Stufe** (0/1/2px),
+  warm getönt. Gilt für ALLE Kästchen: Karten, Kacheln, Fotos, Reise-Tabs, Karten-Container,
+  Personen-Karten (dunkle Variante); Hover-Erhebung auf Tabs/Kacheln. Buttons/Eingabefelder hinter
+  Schalter `frame_controls` (Standard an, Hero-CTAs durchsichtiger Schatten). CMS-Vorschau im iOS-Stil
+  (`ImageFrameField`, Mini-Vorschau je Stufe). Hero-Bild/Lightbox bleiben vollflächig. ⚠️ Schema → Re-index.
+  **Offen:** Abnahme.
 - **Offen (Reihenfolge, je Zwischenbericht + Warten):**
   7 EN-Felder im CMS abheben ·
   8 Kartenstil-Sofortvorschau (mit 3B/Karte denken) · 10 CMS-Orientierung „wo bin ich".

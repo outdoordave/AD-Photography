@@ -17,6 +17,27 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 10:45 — TEIL 6 überarbeitet: einheitliches Box-System (alle Kästchen) + CMS-Vorschau
+- Nutzer-Feedback: nicht alle Felder hatten Rahmen/Schatten, Rahmendicken ungleich, dunkle
+  Bereiche, Hover-Signal + CMS-Vorschau gewünscht. Umgesetzt:
+  - **Einheitliches, stufengesteuertes System** (global.css am Datei-Ende → überschreibt Alt-Rahmen):
+    EINE Quelle → **gleiche Rahmendicke pro Stufe** (0/1px/2px) + warmer Schatten. Variablen
+    `--ww-ring/--ww-shadow` (hell) + `--ww-ring-d/--ww-shadow-d` (dunkel: helle Linie + weicher
+    dunkler Schatten, für Über-uns/Hero/Footer).
+  - **Reichweite jetzt ALLE Kästchen:** Aktuell-/Stories-Karten, Portfolio-/Album-/Moments-/
+    Entdecken-Kacheln, Album-Diashow, Story-Album-Kacheln, Stations-/Beitragsbilder, **Reise-Tabs**,
+    **Karten-Container** (`.map-box`), **Personen-Karten** (dunkle Variante).
+  - **Hover-Erhebung** (Klick-Signal) auf Reise-Tabs + Kacheln.
+  - **Buttons/CTAs + Kontakt-Eingabefelder** hinter neuem CMS-Schalter **`frame_controls`** (Standard
+    an); **Hero-CTAs mit durchsichtigem Schatten** (Hero-Bild scheint durch).
+  - Dekorative Alt-Rahmen (`.story-card/.person/.trip-tabs`) entfernt → Rahmen kommt einzig aus der
+    Stufe (keine ungleichen Dicken mehr).
+  - **CMS-Vorschau (iOS-Stil):** `image_frame` nutzt `ImageFrameField` — pro Stufe eine Mini-Vorschau
+    (Foto-Kachel + Button) mit echten Rahmen/Schatten-Werten, klickbar.
+- ⚠️ Schema-Feld `frame_controls` → tina-lock neu → **Re-index + Rebuild.** Build grün (29 Seiten);
+  body-Klassen + alle CSS-Regeln (hell/dunkel/gate/hero/tabs/hover) verifiziert.
+- Commit: `5c0cb50`
+
 ## 2026-06-06 10:06 — TEIL 6: Bild-Rahmen & Schatten (3-Stufen-CMS-Einstellung, global)
 - Neue Darstellungs-Option **„Bild-Rahmen & Schatten"** (`darstellung.image_frame`:
   `none|soft|strong`), **Standard `soft` (ausgewogen)** — bewusste Abweichung von der Live-Seite

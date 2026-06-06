@@ -201,7 +201,7 @@ Alles im **CMS → 🏠 Startseite**:
 - [ ] **Teil 3 – CMS-Komfort:** (a) Zurück-Buttons (Bearbeitung→Übersicht, CMS→Website), (b) **Live-Vorschau auf jeder** CMS-Seite vereinheitlicht, (c) Admin-Banner auf der Website (an/aus, Standard aus).
 - [x] **Teil 4 – Bild-Kontrolle:** Optionen ausgearbeitet (§11, Live-Wahrheit + A/A-light/B/C/D/E mit Aufwand·Wirkung·Mobile + Empfehlung) — **wartet auf deine Auswahl**, kein Bau.
 - [x] **Teil 5 – Karten-Scroll-Zoom:** CMS-Schalter „Karte: Mit Mausrad zoomen" gebaut. **Standard AN** (auf deinen Wunsch — Abweichung von Live, das aus hat); AUS = Live-Verhalten. (`2879c11`) Wartet auf Abnahme.
-- [x] **Teil 6 – Rahmen + Schatten:** 3-Stufen-Darstellungs-Option „Bild-Rahmen & Schatten" (keine/ausgewogen/kräftig), warm getönte Schatten + feine Linie, global auf Content-Fotos (Hero/Lightbox/Karte ausgenommen). **Standard: Ausgewogen** (Abweichung von Live = flach). (`77bf13f`) Wartet auf Abnahme.
+- [x] **Teil 6 – Rahmen + Schatten:** einheitliches Box-System (keine/ausgewogen/kräftig) — gleiche Rahmendicke pro Stufe, warm getönt, dunkle Variante für dunkle Bereiche. Gilt für ALLE Kästchen (Karten/Kacheln/Fotos/Reise-Tabs/Karte/Personen); Hover-Erhebung; Buttons/Eingabefelder per Schalter `frame_controls` (Hero-CTAs durchsichtig). CMS-Vorschau im iOS-Stil. Hero-Bild/Lightbox vollflächig. **Standard: Ausgewogen.** (`77bf13f`, überarbeitet `5c0cb50`) Wartet auf Abnahme.
 - [ ] **Teil 7 – EN-Felder im CMS** visuell abheben (dezent, Erdtöne).
 - [ ] **Teil 8 – Kartenstil-Sofortvorschau** im CMS (wie früher Sveltia).
 - [ ] **Teil 9 – CMS-Benennung „Portfolio"** an die Website angleichen (+ Liste weiterer Abweichungen).
