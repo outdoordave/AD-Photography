@@ -6,6 +6,7 @@ import CropPhotoField from './fields/CropPhotoField';
 import StoryBodyField from './fields/StoryBodyField';
 import ImageFrameField from './fields/ImageFrameField';
 import GearStyleField from './fields/GearStyleField';
+import SectionBanner from './fields/SectionBanner';
 import EnglishToggle from './fields/EnglishToggle';
 import LocationSearchField from './fields/LocationSearchField';
 import { backToSiteScreen } from './screens/BackToSiteScreen';
@@ -55,6 +56,7 @@ export default defineConfig({
         // useTina-Inseln -> Formular + Klick-ins-Feld, kein „nothing to edit").
         ui: { allowedActions: { create: false, delete: false }, router: () => '/' },
         fields: [
+          { type: 'string', name: 'ww_here', label: '🏠 Startseite', ui: { component: SectionBanner } },
           {
             type: 'string', name: 'editor_language', label: 'Sprache',
             description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
@@ -168,6 +170,7 @@ export default defineConfig({
           router: ({ document }: any) => `/portfolio/${document._sys.filename}`,
         },
         fields: [
+          { type: 'string', name: 'ww_here', label: '🖼️ Portfolio – Album', ui: { component: SectionBanner } },
           {
             type: 'string', name: 'editor_language', label: 'Sprache',
             description: 'Nur Deutsch — oder Deutsch + Englisch. Gilt für alle Felder. (Nur Anzeige im Editor.)',
@@ -201,6 +204,7 @@ export default defineConfig({
         // useTina-Insel <SettingsHeader> -> Formular + Live-Update, kein „nothing to edit").
         ui: { allowedActions: { create: false, delete: false }, router: () => '/portfolio' },
         fields: [
+          { type: 'string', name: 'ww_here', label: '🖼️ Portfolio – Einstellungen', ui: { component: SectionBanner } },
           {
             type: 'string', name: 'editor_language', label: 'Sprache',
             description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
@@ -234,6 +238,7 @@ export default defineConfig({
           router: ({ document }) => `/stories/${document._sys.filename}`,
         },
         fields: [
+          { type: 'string', name: 'ww_here', label: '📖 Stories – Beitrag', ui: { component: SectionBanner } },
           // --- Deutsch (Haupt) ---
           { type: 'string', name: 'title_de', label: 'Titel', isTitle: true, required: true },
           { type: 'string', name: 'category_de', label: 'Ort / Kategorie' },
@@ -278,6 +283,7 @@ export default defineConfig({
         // Router -> Vorschau + Bearbeiten auf /stories (useTina-Insel <SettingsHeader>).
         ui: { allowedActions: { create: false, delete: false }, router: () => '/stories' },
         fields: [
+          { type: 'string', name: 'ww_here', label: '📖 Stories – Einstellungen', ui: { component: SectionBanner } },
           {
             type: 'string', name: 'editor_language', label: 'Sprache',
             description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
@@ -304,6 +310,7 @@ export default defineConfig({
           router: ({ document }: any) => `/trips/${document._sys.filename}`,
         },
         fields: [
+          { type: 'string', name: 'ww_here', label: '🧭 Reisen – Reise', ui: { component: SectionBanner } },
           {
             type: 'string', name: 'editor_language', label: 'Sprache',
             description: 'Schalter: nur Deutsch — oder Deutsch + Englisch. Gilt für alle Felder. (Nur Anzeige im Editor.)',
@@ -357,6 +364,7 @@ export default defineConfig({
         // Router -> Vorschau + Bearbeiten auf /trips (useTina-Insel <SettingsHeader>).
         ui: { allowedActions: { create: false, delete: false }, router: () => '/trips' },
         fields: [
+          { type: 'string', name: 'ww_here', label: '🧭 Reisen – Einstellungen', ui: { component: SectionBanner } },
           {
             type: 'string', name: 'editor_language', label: 'Sprache',
             description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
@@ -399,6 +407,7 @@ export default defineConfig({
           router: () => '/gear',
         },
         fields: [
+          { type: 'string', name: 'ww_here', label: '🎒 Equipment', ui: { component: SectionBanner } },
           // --- Sprach-Schalter (nur Editor; steuert die EN-Felder) ---
           {
             type: 'string', name: 'editor_language', label: 'Sprache',
@@ -480,6 +489,7 @@ export default defineConfig({
           router: () => '/about',
         },
         fields: [
+          { type: 'string', name: 'ww_here', label: '📄 Über uns', ui: { component: SectionBanner } },
           // --- Sprach-Schalter (nur Editor, nichts wird gespeichert) ---
           {
             type: 'string',
@@ -533,6 +543,7 @@ export default defineConfig({
           router: () => '/contact',
         },
         fields: [
+          { type: 'string', name: 'ww_here', label: '✉️ Kontakt', ui: { component: SectionBanner } },
           {
             type: 'string', name: 'editor_language', label: 'Sprache',
             description: 'Schalter: nur Deutsch — oder Deutsch + Englisch anzeigen. Gilt für alle Felder. (Nur Anzeige im Editor.)',
@@ -601,6 +612,7 @@ export default defineConfig({
         match: { include: 'highlights' },
         ui: { allowedActions: { create: false, delete: false } },
         fields: [
+          { type: 'string', name: 'ww_here', label: '⭐ Highlights', ui: { component: SectionBanner } },
           { type: 'image', name: 'images', label: 'Highlight-Fotos (Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
         ],
       },
@@ -613,6 +625,7 @@ export default defineConfig({
         match: { include: 'appearance-settings' },
         ui: { allowedActions: { create: false, delete: false } },
         fields: [
+          { type: 'string', name: 'ww_here', label: '🎨 Darstellung', ui: { component: SectionBanner } },
           { type: 'image', name: 'logo', label: 'Logo (Nav / Hero / Footer)', ui: { component: SinglePhotoField } },
           {
             type: 'string', name: 'image_frame', label: 'Bild-Rahmen & Schatten',
