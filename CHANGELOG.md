@@ -17,6 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 — TEIL 10: CMS-Orientierung „Du bist hier"-Banner (Sammel-Auftrag 1–10 komplett)
+- Neue Info-Komponente `SectionBanner`: oben in jeder Sektion ein Klartext-Banner „📍 Du bist hier:
+  📖 Stories – Beitrag" o. ä. Reines Info-Feld (kein Eingabefeld, ruft nie onChange) → **schreibt
+  nichts in die Daten**, nur ein Schema-Feld fürs Rendern. Per Skript in alle 12 Collections als
+  erstes Feld eingefügt (Label je Collection). Ergänzt Tinas native Breadcrumb + aktiven Menüpunkt.
+- ⚠️ Schema (12× `ww_here`) → tina-lock neu (deterministisch) → **Re-index + Rebuild.** Build grün
+  (29 Seiten); „Du bist hier" + 📍 im Admin-Bundle verifiziert. Commit: `42d90fb`
+- **Damit ist der Sammel-Auftrag TEIL 1–10 vollständig.**
+
 ## 2026-06-06 — Fix TEIL 8: leere GraphQL-Abfrage („Unexpected <EOF>")
 - Bug aus `afa1b80`: TripsContent rief eine 2. `useTina` mit `query:''` auf, wenn keine Settings-Props
   da waren (Detail-Route `/trips/<slug>`, die das CMS beim Öffnen einer Reise nutzt) → leere GraphQL-

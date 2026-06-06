@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-06** · letzter Commit `3ac99e3` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-06** · letzter Commit `42d90fb` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -346,7 +346,7 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 - **8 Kartenstil-Sofortvorschau ✅ (`afa1b80`):** TripsContent liest `map_style` live aus
   `reisen_settings` (2. useTina); `map.setStyle()` bei Wechsel (Marker bleiben, Sprach-Labels neu).
   Statische Seite unverändert. Kein Re-index. **Offen:** Abnahme.
-- **Offen:** 10 CMS-Orientierung „wo bin ich".
+- **10 CMS-Orientierung ✅ (`42d90fb`):** „Du bist hier"-Banner (SectionBanner) oben in jeder Sektion, reines Info-Feld (keine Daten). ⚠️ Schema → Re-index. **Sammel-Auftrag 1–10 komplett.**
 
 ## 6. Strategische Entscheidung (laufend)
 **Evaluierung eines Umbaus** auf **Astro + ein CMS mit Live-Vorschau & Drag-&-Drop.**

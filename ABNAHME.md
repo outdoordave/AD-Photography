@@ -205,7 +205,7 @@ Alles im **CMS → 🏠 Startseite**:
 - [x] **Teil 7 – EN-Felder im CMS** visuell abheben: linker Erdton-Akzentstreifen + zarte warme Tönung + 🌐-Label. Greift bei allen Collections (inkl. Story-Beiträge via immer-sichtbarer Variante). Kein Re-index. (`4f46ea3`) Wartet auf Abnahme.
 - [x] **Teil 8 – Kartenstil-Sofortvorschau** im CMS: TripsContent liest `map_style` live aus reisen_settings; `map.setStyle()` bei Wechsel (Marker bleiben, Sprach-Labels neu). Statische Seite unverändert, kein Re-index. (`afa1b80`) Wartet auf Abnahme.
 - [ ] **Teil 9 – CMS-Benennung „Portfolio"** an die Website angleichen (+ Liste weiterer Abweichungen).
-- [ ] **Teil 10 – CMS-Orientierung „Wo bin ich"** (Klartext-Name oben, aktiver Menüpunkt markiert).
+- [x] **Teil 10 – CMS-Orientierung „Wo bin ich"**: „📍 Du bist hier"-Banner (SectionBanner) ganz oben in jeder Sektion (Klartext-Name), zusätzlich zu Tinas nativem Breadcrumb + aktivem Menüpunkt. Reines Info-Feld (keine Daten). Schema → Re-index. (`42d90fb`) Wartet auf Abnahme.
 
 ---
 
