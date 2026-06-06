@@ -126,7 +126,7 @@ Alles im **CMS → 🏠 Startseite**:
 - [ ] Karte lädt, **Marker** je Station, aktiver Marker hervorgehoben, Popup mit Name/Datum.
 - [ ] Klick auf Marker → springt zur Station; Karte **fliegt** zur Station.
 - [ ] Sprach-Labels der Karte passen zur Seitensprache.
-- [ ] 🟰 **Scroll-Zoom** über der Karte: aktuell **aus** (wie Live, „cooperative gestures"). → wird Teil 5 (CMS-Schalter).
+- [x] 🟰 **Scroll-Zoom** über der Karte: jetzt **CMS-Schalter** „Karte: Mit Mausrad zoomen" (Reisen-Einstellungen). **Standard AN** (Mausrad zoomt die Karte; am Handy 1 Finger) — bewusste Abweichung von Live (dort aus). AUS = altes/Live-Verhalten (Seite scrollt, 2 Finger). (`2879c11`, Teil 5)
 
 ### Stationen
 - [ ] **Stations-Bahn** horizontal, einrastend (Snap), **‹/›-Pfeile**.
@@ -200,7 +200,7 @@ Alles im **CMS → 🏠 Startseite**:
 
 - [ ] **Teil 3 – CMS-Komfort:** (a) Zurück-Buttons (Bearbeitung→Übersicht, CMS→Website), (b) **Live-Vorschau auf jeder** CMS-Seite vereinheitlicht, (c) Admin-Banner auf der Website (an/aus, Standard aus).
 - [x] **Teil 4 – Bild-Kontrolle:** Optionen ausgearbeitet (§11, Live-Wahrheit + A/A-light/B/C/D/E mit Aufwand·Wirkung·Mobile + Empfehlung) — **wartet auf deine Auswahl**, kein Bau.
-- [ ] **Teil 5 – Karten-Scroll-Zoom:** als CMS-Schalter (Standard wie jetzt = aus).
+- [x] **Teil 5 – Karten-Scroll-Zoom:** CMS-Schalter „Karte: Mit Mausrad zoomen" gebaut. **Standard AN** (auf deinen Wunsch — Abweichung von Live, das aus hat); AUS = Live-Verhalten. (`2879c11`) Wartet auf Abnahme.
 - [ ] **Teil 6 – Rahmen + Schatten:** 3-Stufen-CMS-Einstellung (keine/ausgewogen/kräftig), warm getönte Schatten, global.
 - [ ] **Teil 7 – EN-Felder im CMS** visuell abheben (dezent, Erdtöne).
 - [ ] **Teil 8 – Kartenstil-Sofortvorschau** im CMS (wie früher Sveltia).

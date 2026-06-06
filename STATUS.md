@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-05** · letzter Commit `1cc96fc` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-06** · letzter Commit `2879c11` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -313,8 +313,12 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   inline, kein „?" (Fix `15bec1e`). **Hero/Portfolio bewusst ausgeschlossen** (Vollbild bzw. frisch
   aus Lightroom). **Stories: kein Zuschnitt** — stattdessen das Album-Einbettungs-Feature (s. o.).
   ⚠️ Schema → Re-index. **Offen:** iPad-Abnahme der Crop-Felder.
+- **5 Karten-Scroll-Zoom-Schalter ✅ (`2879c11`):** CMS-Schalter „Karte: Mit Mausrad zoomen"
+  (`reisen_settings.map_scroll_zoom`). **Standard AN** (Mausrad/1-Finger zoomt; Abweichung von Live,
+  auf Nutzer-Wunsch — Muster ab jetzt: Features Standard AN, im CMS abschaltbar). AUS = Live-Verhalten.
+  ⚠️ Schema → Re-index. **Offen:** Abnahme.
 - **Offen (Reihenfolge, je Zwischenbericht + Warten):**
-  5 Karten-Scroll-Zoom-Schalter · 6 Rahmen+Schatten (3 Stufen) · 7 EN-Felder im CMS abheben ·
+  6 Rahmen+Schatten (3 Stufen) · 7 EN-Felder im CMS abheben ·
   8 Kartenstil-Sofortvorschau (mit 3B/Karte denken) · 10 CMS-Orientierung „wo bin ich".
 
 ## 6. Strategische Entscheidung (laufend)

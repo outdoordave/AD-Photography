@@ -17,6 +17,20 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 09:47 — TEIL 5: Karten-Scroll-Zoom als CMS-Schalter (Standard AN)
+- Neuer Schalter **„Karte: Mit Mausrad zoomen"** in den Reisen-Einstellungen
+  (`reisen_settings.map_scroll_zoom`), **Standard AN** — bewusste Abweichung von der Live-Seite
+  (die Scroll-Zoom aus hat), auf Nutzer-Wunsch („Standard ein, im CMS abschaltbar").
+  - **AN:** `cooperativeGestures:false` + `scrollZoom.enable()` → Mausrad zoomt die Karte direkt
+    (am Handy bewegt 1 Finger die Karte).
+  - **AUS:** `cooperativeGestures:true` + `scrollZoom.disable()` → Mausrad scrollt die Seite, am
+    Handy 2 Finger für die Karte — exakt das bisherige/Live-Verhalten.
+- `TripsContent` bekommt `scrollZoom`-Prop (aus `trips-settings.json`, Default `true`); `trips.astro`
+  + `en/trips.astro` verdrahtet. (Der Prototyp `TripMapProto.tsx` bleibt unverändert.)
+- ⚠️ Schema-Feld → **tina-lock neu → Re-index + Rebuild nötig.** Offline-Build grün (29 Seiten);
+  enable/disable/cooperativeGestures + Default (`!== false`) im Bundle verifiziert.
+- Commit: `2879c11`
+
 ## 2026-06-05 21:30 — Stories-Feedback: Album-Vorschau live, Mediathek, Inline-Lightbox
 - Drei Punkte aus dem Nutzer-Test der Album-Funktion:
   1. **Album-Block in Live-Vorschau:** war nur beim Seitenbau aufgelöst → im Editor nur roher
