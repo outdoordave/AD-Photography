@@ -15,7 +15,9 @@ import { viewStops, bi, tripTitle, sortTrips, type RawTrip, type Lang, type View
 // sofort; data-tina-field = Klick auf der Seite springt zum passenden Feld.
 
 type LinkedAlbum = { slug: string; name: { de?: string; en?: string } };
-type Props = { query: string; variables: object; data: any; lang: Lang; mapStyle?: string; scrollZoom?: boolean; initialSlug?: string; linkedAlbums?: Record<string, LinkedAlbum> };
+type Props = { query: string; variables: object; data: any; lang: Lang; mapStyle?: string; scrollZoom?: boolean; initialSlug?: string; linkedAlbums?: Record<string, LinkedAlbum>;
+  // TEIL 8: reisen_settings live (Kartenstil-Sofortvorschau im CMS)
+  settingsQuery?: string; settingsVariables?: object; settingsData?: any };
 
 function setMapLanguage(map: maplibregl.Map, lang: Lang) {
   if (!map.isStyleLoaded()) return;
@@ -37,6 +39,15 @@ export default function TripsContent(props: Props) {
   // springt direkt ins Freitextfeld statt in ein DE/EN-Unterformular.
   const tf = (o: any, base: string) => tinaField(o, (lang === 'en' ? base + '_en' : base + '_de') as any);
   const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
+  // TEIL 8: Kartenstil LIVE aus den Reisen-Einstellungen (Sofortvorschau im CMS).
+  // Fällt zurück auf den Build-Prop (statische Seite ändert sich nie -> stabil).
+  const settingsTina = useTina({
+    query: props.settingsQuery || '', variables: props.settingsVariables || {},
+    data: props.settingsData || {},
+  });
+  const liveMapStyle: string =
+    (settingsTina.data && (settingsTina.data as any).reisen_settings && (settingsTina.data as any).reisen_settings.map_style)
+    || mapStyle || 'liberty';
 
   // Reisen aus der Connection ableiten (live), nach order/Datum sortiert.
   const trips = React.useMemo(() => {
@@ -90,7 +101,7 @@ export default function TripsContent(props: Props) {
     return list.map((s) => s.lon + ',' + s.lat + ',' + s.title + ',' + s.date + ',' + s.name).join('|');
   }
 
-  const styleUrl = 'https://tiles.openfreemap.org/styles/' + (mapStyle || 'liberty');
+  const styleUrl = 'https://tiles.openfreemap.org/styles/' + liveMapStyle;
 
   function drawMarkers() {
     const map = mapRef.current;
@@ -242,6 +253,20 @@ export default function TripsContent(props: Props) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // TEIL 8: Kartenstil-Sofortvorschau — bei Stilwechsel (CMS) die bestehende Karte live
+  // umstylen statt neu zu bauen. DOM-Marker überleben setStyle; nur die Sprach-Labels
+  // müssen nach dem neuen Style erneut gesetzt werden. Auf der statischen Seite ändert
+  // sich styleUrl nie -> Effekt läuft faktisch nicht (Karte bleibt wie gebaut).
+  const styleUrlRef = React.useRef(styleUrl);
+  React.useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !readyRef.current) return;        // erst nach erstem 'load'
+    if (styleUrlRef.current === styleUrl) return; // unverändert -> nichts tun
+    styleUrlRef.current = styleUrl;
+    map.setStyle(styleUrl);
+    map.once('styledata', () => { if (map.isStyleLoaded()) setMapLanguage(map, lang); });
+  }, [styleUrl, lang]);
 
   // Reise-/Sprachwechsel: Stops neu, Karte neu zeichnen + Bahn zuruecksetzen + neu beobachten
   React.useEffect(() => {
