@@ -423,6 +423,14 @@ export default defineConfig({
               { value: 'notes', label: 'Field-Notes / Notizzettel' },
             ],
           },
+          {
+            type: 'string', name: 'gear_scope', label: 'Reichweite des Stils',
+            description: 'Nur relevant bei „Karte" / „Field-Notes": EIN Block um die ganze Liste — oder je Kategorie ein eigener Block.',
+            options: [
+              { value: 'whole', label: 'Ganze Liste (ein Block / ein Zettel)' },
+              { value: 'groups', label: 'Nach Gruppe (je Kategorie ein Block)' },
+            ],
+          },
           // --- Ausrüstungs-Liste ---
           {
             type: 'object',

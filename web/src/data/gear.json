@@ -1,5 +1,6 @@
 {
-  "gear_style": "card",
+  "gear_style": "notes",
+  "gear_scope": "whole",
   "items": [
     {
       "name": "Sony A7 IV",
