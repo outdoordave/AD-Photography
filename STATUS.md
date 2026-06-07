@@ -94,6 +94,17 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 - ✅ Kontaktformular (`onSend`) — sendet echt via Web3Forms (W5, `671a742`); Datenschutz-Häkchen + Honeypot
 
 ## 4. Bekannte Eigenheiten / Fallen
+- ⚠️ **Offline-Build-grün fängt KEINE Laufzeitfehler** (z. B. Variablen-Shadowing/TDZ in einer
+  React-Insel). Beispiel diese Session: ein lokales `const track` überschattete die importierte
+  `track()`-Analytics-Funktion → ReferenceError beim Lightbox-Mount → ganze Galerie-Insel stürzte ab
+  („Foto verschwindet/leere Seite"). Build war trotzdem grün. **Lehre:** Interaktive Insel-Änderungen
+  (Klick/Lightbox/Scroll) möglichst im echten Browser gegentesten; aufpassen mit Namen, die einen
+  Import überschatten. (Die lokale Vorschau ist in der Assistent-Sandbox blockiert.)
+- **Mobile Scroll-Reihen (Reise-Tabs/Stations-Pills):** scrollen nur ≤640px (Desktop/iPad brechen um).
+  Fade + Pfeile (`:has(.ww-edge-*)`) als „geht-weiter"-Indikator, Scrollbalken sichtbar+dezent,
+  Snap-align center, aktiver Tab/Station wird per JS in die Mitte gescrollt (`centerInRow`).
+- **Portfolio-Album:** Diashow-Foto + Album-Unterseiten-Kacheln öffnen die Lightbox per `onClick`;
+  Lightbox schließt per Tipp neben das Foto (Hintergrund, 350ms-Sperre gegen Sofort-Schließen).
 - **Sichtbarkeits-Schalter + Direktaufruf-Sperre** (🎨 Darstellung): Stand committet —
   **Kontakt sichtbar** (`show_contact=true`), **Stories ausgeblendet** (`show_stories=false`).
   Ist ein Bereich aus, ist er **komplett** weg: Nav-/Footer-Link gefiltert **und** Direktaufruf
