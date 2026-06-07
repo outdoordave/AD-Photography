@@ -33,27 +33,42 @@ export default defineConfig({
   cmsCallback: (cms: any) => {
     try { cms.plugins.add(backToSiteScreen); } catch (e) { /* ignore */ }
     try { cms.plugins.add(logoutScreen); } catch (e) { /* ignore */ }
-    // Auch Tinas EINGEBAUTEN Logout abfangen: statt auf dem /admin-Login-Screen zu landen,
-    // nach dem Abmelden auf die Startseite „/" gehen. Best-effort + abgesichert: greift Tinas
-    // interne authProvider-API ggf. anders, passiert einfach nichts (try/catch).
+    // Auch Tinas EINGEBAUTEN Logout sauber zur Startseite führen (statt auf dem /admin-Login-
+    // Screen festzuhängen). Zwei abgesicherte Wege:
     try {
       const goHome = () => { try { (window.top || window).location.assign('/'); } catch (e) { window.location.assign('/'); } };
+      const clearTokens = () => {
+        try { for (let i = localStorage.length - 1; i >= 0; i--) { const k = localStorage.key(i); if (k && /tina/i.test(k)) localStorage.removeItem(k); } } catch (e) { /* ignore */ }
+        try { for (let i = sessionStorage.length - 1; i >= 0; i--) { const k = sessionStorage.key(i); if (k && /tina/i.test(k)) sessionStorage.removeItem(k); } } catch (e) { /* ignore */ }
+      };
+
+      // (a) Interne authProvider.logout-Methode patchen (falls in dieser Version vorhanden).
       const patch = (obj: any) => {
         if (obj && typeof obj.logout === 'function' && !obj.__wwPatched) {
           const orig = obj.logout.bind(obj);
           obj.logout = async function () { try { return await orig.apply(this, arguments); } finally { goHome(); } };
-          obj.__wwPatched = true;
-          return true;
+          obj.__wwPatched = true; return true;
         }
         return false;
       };
-      const tryPatch = () => {
-        let ok = false;
-        try { ok = patch(cms?.api?.tina?.authProvider) || ok; } catch (e) { /* ignore */ }
-        try { ok = patch(cms?.api?.tina) || ok; } catch (e) { /* ignore */ }
-        return ok;
-      };
+      const tryPatch = () => { let ok = false; try { ok = patch(cms?.api?.tina?.authProvider) || ok; } catch (e) {} try { ok = patch(cms?.api?.tina) || ok; } catch (e) {} return ok; };
       if (!tryPatch() && typeof setTimeout !== 'undefined') { setTimeout(tryPatch, 1500); setTimeout(tryPatch, 4000); }
+
+      // (b) Robuster Fallback: Klick auf Tinas „Log out"-Schaltfläche im /admin-Dokument
+      //     abfangen (Text-Erkennung) -> Tina seinen Logout machen lassen, dann hart heim.
+      if (typeof document !== 'undefined' && !(document as any).__wwLogoutHook) {
+        (document as any).__wwLogoutHook = true;
+        document.addEventListener('click', (e: any) => {
+          const start = e.target as HTMLElement;
+          const el = start && start.closest ? start.closest('button, a, [role="button"]') : null;
+          if (!el) return;
+          const txt = (el.textContent || '').trim().toLowerCase();
+          if (txt === 'log out' || txt === 'logout' || txt === 'sign out' || txt === 'abmelden') {
+            clearTokens();
+            setTimeout(goHome, 150); // kurz warten, damit Tinas eigener Logout noch durchläuft
+          }
+        }, true);
+      }
     } catch (e) { /* ignore */ }
     return cms;
   },
