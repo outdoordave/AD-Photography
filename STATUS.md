@@ -111,6 +111,8 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   (Lightbox-Öffnen, zentral) + `reise` (Tab-Wechsel) via `lib/track.ts`. Seitenaufrufe decken
   Story-/Reise-/Album-**Seiten** ab. **Offen:** Umami-„Share"-URL ins CMS-Feld `dashboard_url`
   → dann Auswertung eingebettet auf `/statistik` (sonst nur im Umami-Dashboard sichtbar).
+  **Zugang:** Link „📊 Statistik" in Nav + Admin-Leiste erscheint **nur für eingeloggte Admins**
+  (clientseitige Token-Erkennung, `fe92a6f`); Besucher sehen weder Link noch (via noindex/unverlinkt) die Seite.
 - **Datenschutz- + Impressum-Seite** (`c6aab1e`): CMS-Collections `datenschutz`/`impressum`
   (`/datenschutz`, `/impressum`, DE/EN), Footer-Links, Häkchen verlinkt die Datenschutzerklärung.
   ⚠️ **Nur Platzhalter-Text** — echten Rechtstext (Generator/anwaltlich) + Web3Forms/Cloudflare als

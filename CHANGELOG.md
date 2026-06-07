@@ -17,6 +17,17 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-07 — Admin-only „📊 Statistik"-Link (Nav + Admin-Leiste)
+- In der Hauptnavigation ein Link **„📊 Statistik"** (sprachrichtig `/statistik` bzw. `/en/statistik`),
+  standardmäßig `hidden`; ein clientseitiges Skript blendet ihn **nur ein, wenn im Tina-CMS angemeldet**
+  (gleiche localStorage-Token-Erkennung wie die Admin-Leiste). Besucher sehen ihn nie; erscheint in
+  Desktop-Nav **und** Burger-Menü.
+- **Admin-Leiste** (`SiteAdminBar`): zusätzlicher „📊 Statistik"-Link neben „CMS öffnen".
+- CSS `.ww-admin-only[hidden]{display:none!important}` → das `hidden` schlägt ein evtl. `display` der
+  Nav-Links (Besucher-Sicherheit).
+- Rein clientseitig → tina-lock unverändert, **kein Re-index.** Build grün (35 Seiten); Anker DE/EN
+  mit `hidden` + korrektem Link verifiziert. Commit: `fe92a6f`
+
 ## 2026-06-07 — Umami aktiviert + Klick-Events (Foto/Reise) + Datenschutz-Abschnitt
 - **Umami-Tracking aktiv** (`b66e15c`): `statistik.json` `enabled=true` + Umami-Snippet
   (cloud.umami.is, `data-website-id`, öffentlich) → BaseLayout lädt es site-weit, cookielos.
