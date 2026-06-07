@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-07 — Fix: leere Album-Unterseite (Galerie verschwand nach Hydration)
+- **Eigentliche Ursache der „keine Lightbox"/„leeren Seite":** NICHT die Lightbox. Beim Klick aufs
+  Album öffnet die Unterseite `/portfolio/<slug>` — die war leer. Serverseitig sind die Kacheln
+  korrekt da (im Build verifiziert: `2024-erste-fotos` = 8 Kacheln), aber die useTina-Insel bekam
+  **client-seitig leere Daten** → Galerie wurde nach der Hydration weggewischt.
+- **Fix (`f9c3350`):** `AlbumContent` + `GalleryContent` fallen auf die server-gerenderten Daten
+  (`props.data`) zurück, wenn die Live-Daten leer sind → Album-Unterseite + Portfolio-Übersicht
+  bleiben gefüllt.
+- Reiner Komponenten-Code → tina-lock unverändert, **kein Re-index.** Build grün (35 Seiten).
+
 ## 2026-06-07 — Mobil: Scroll-Reihen mit Fade + Pfeilen + Einrasten
 - Auf Nutzer-Wunsch kombiniert (Reise-Tabs + Stations-Pills), **nur mobil** (≤640px) — Desktop/iPad
   brechen die Reihen um (kein H-Scroll → nicht nötig; daher auch kein CMS-Schalter):
