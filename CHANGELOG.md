@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-07 — Mobil: Scroll-Reihen mit Fade + Pfeilen + Einrasten
+- Auf Nutzer-Wunsch kombiniert (Reise-Tabs + Stations-Pills), **nur mobil** (≤640px) — Desktop/iPad
+  brechen die Reihen um (kein H-Scroll → nicht nötig; daher auch kein CMS-Schalter):
+  - **Fade:** scroll-abhängig (`ww-edge-l/-r`), nur auf der Seite mit mehr Inhalt.
+  - **Pfeile ‹ ›:** jede Reihe in `.ww-scroller` gehüllt; Pfeile erscheinen via `:has(.ww-edge-*)`
+    nur wenn es weitergeht, klickbar (`scrollBy ±200px`, smooth).
+  - **Einrasten:** `scroll-snap-type: x proximity` + `scroll-snap-align: start`.
+- Scrollbalken bleiben sichtbar (separat, vereinheitlicht). Reiner Komponenten/CSS-Code → kein
+  Re-index. Build grün (35 Seiten); Pfeile/`:has`/Snap im Output verifiziert. Commit: `f65edd7`
+
 ## 2026-06-07 — Scrollbalken behalten/vereinheitlicht + Stations-Pills-Fade gefixt
 - **Korrektur:** Scrollbalken NICHT mehr ausgeblendet (Nutzer wollte sie behalten). Stattdessen den
   hellen Default-Balken der Stations-Pills (`.trip-stoplist`) auf denselben dezenten Stil wie die
