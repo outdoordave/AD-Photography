@@ -104,7 +104,11 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   aus, leitet auch die **CMS-Vorschau** des Bereichs um → zum Bearbeiten Schalter kurz an + bauen.
 - **Kontaktformular sendet echt** (W5 ✅, `671a742`): Web3Forms-POST, Key im CMS (`form_access_key`,
   Test → `davidbastisch@web.de`); ohne Key = Vorschau. Datenschutz-Pflicht-Häkchen + Honeypot.
-  Echtes Senden erst auf der deployten Seite testbar. Datenschutz-Seite verlinken vor Live-Gang (W5).
+  Echtes Senden erst auf der deployten Seite testbar.
+- **Datenschutz- + Impressum-Seite** (`c6aab1e`): CMS-Collections `datenschutz`/`impressum`
+  (`/datenschutz`, `/impressum`, DE/EN), Footer-Links, Häkchen verlinkt die Datenschutzerklärung.
+  ⚠️ **Nur Platzhalter-Text** — echten Rechtstext (Generator/anwaltlich) + Web3Forms/Cloudflare als
+  Auftragsverarbeiter muss der Nutzer noch einsetzen, bevor die Seite öffentlich live geht.
 - **`gallery-settings.json` alle drei `false` → Fallback „Alben".** Mindestens ein
   Sortiermodus sollte an sein.
 - **Sveltia-Version gepinnt (0.164.2).** Nicht blind hochziehen ohne Test.

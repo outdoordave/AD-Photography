@@ -17,6 +17,23 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 — Datenschutz- + Impressum-Seite (CMS-pflegbar) + Footer-/Consent-Links
+- Zwei neue, im CMS editierbare Rechtstext-Seiten als **Gerüst mit Platzhalter-Text** (zum
+  Selbstbefüllen/Ersetzen — Rechtstext bewusst NICHT von mir erfunden, klar als Platzhalter markiert):
+  - Collections `datenschutz` (`/datenschutz`) + `impressum` (`/impressum`), je DE/EN, mit Titel +
+    Stand + Markdown-Body (nimmt auch fertiges HTML aus einem Generator). `ui.router` für CMS-Live-
+    Vorschau; Inhalt rendert über den vorhandenen `mdToHtml`-Port in der neuen `LegalContent`-Insel
+    (`.reader-body`-Prosa, lesbar begrenzt). Platzhalter nennen bereits die echten
+    Auftragsverarbeiter (Web3Forms, Cloudflare) als Struktur.
+  - **Footer:** nicht ausblendbare Links „Impressum" + „Datenschutz" (sprachabhängig, DE/EN).
+  - **Kontakt-Häkchen:** Link auf die Datenschutzerklärung (DE → `/datenschutz`, EN → `/en/datenschutz`),
+    ohne das Häkchen umzuschalten.
+- ⚠️ Schema geändert (2 Collections) → `tina-lock` neu (`dev --no-server`, deterministisch, 2× Hash
+  `20c960e…`) → nach Push **Tina-Cloud-Re-index + Rebuild.** Build grün (**33 Seiten**, +4); Seiten +
+  Footer-/Consent-Links im dist verifiziert. Commit: `c6aab1e`
+- **Offen (Nutzer):** echten Rechtstext einsetzen (Generator/anwaltlich); Web3Forms + Cloudflare als
+  Auftragsverarbeiter ausformulieren.
+
 ## 2026-06-06 — Kontaktformular versendet echt (W5, Web3Forms) + Datenschutz-Häkchen
 - Auf Nutzer-Wunsch W5 umgesetzt: die Kontaktbox sendet jetzt wirklich. `ContactContent.onSend`
   macht einen POST an `api.web3forms.com/submit` mit dem Access-Key aus dem CMS

@@ -96,9 +96,11 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
   „Vorschau". Datenschutz-Pflicht-Häkchen + Honeypot-Spamschutz + Lade-/Fehler-Zustand drin.
 - **Offen davor:** nach Push **Tina-Cloud-Re-index + Rebuild** (Schema-Felder neu); echtes
   Senden erst auf der deployten Seite testbar (lokal blockiert die statische Vorschau den fetch ggf.).
-- **Datenschutz to-do vor echtem Live-Gang:** der Häkchen-Text verweist noch auf keine
-  Datenschutz-**Seite** — sobald es eine gibt, dort verlinken. Web3Forms verarbeitet die Daten
-  (Auftragsverarbeitung) → in die Datenschutzerklärung aufnehmen.
+- **Datenschutz/Impressum (Gerüst steht, `c6aab1e`):** CMS-Seiten `/datenschutz` + `/impressum`
+  (DE/EN) existieren, sind im Footer + am Kontakt-Häkchen verlinkt. ⚠️ **Noch Platzhalter-Text** →
+  vor echtem Live-Gang durch geprüften Text ersetzen (Generator/anwaltlich) und **Web3Forms +
+  Cloudflare als Auftragsverarbeiter** ausformulieren (USA-Übermittlung/Garantien). Bei Web3Forms
+  prüfen, ob die Speicherung der Einsendungen im Dashboard nötig ist (sonst deaktivieren).
 
 ### W5b · Eigenlösung statt Web3Forms — Cloudflare-Function + E-Mail-API — (B, Upgrade) — gemerkt
 - **Status:** offen, **auf Nutzer-Wunsch vorgemerkt** („merk dir mal 3"). Spätere, markeneigene
