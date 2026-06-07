@@ -17,6 +17,20 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-07 — Umami aktiviert + Klick-Events (Foto/Reise) + Datenschutz-Abschnitt
+- **Umami-Tracking aktiv** (`b66e15c`): `statistik.json` `enabled=true` + Umami-Snippet
+  (cloud.umami.is, `data-website-id`, öffentlich) → BaseLayout lädt es site-weit, cookielos.
+  (Merge-Konflikt mit einer älteren CMS-Version aufgelöst — Umami-Code behalten; Merge `92fe349`.)
+- **Klick-Events W5c** (`b3f2be0`): neuer Helfer `lib/track.ts` (`umami.track`, No-op wenn Umami aus).
+  `Lightbox.tsx` feuert beim Öffnen `foto` `{bild, album}` → erfasst zentral ALLE Foto-Ansichten
+  (Galerie/Album/Reisen/Stories/Momentaufnahmen). `TripsContent.tsx` feuert `reise` `{reise}` beim
+  Tab-Wechsel. Stories/Alben sind eigene URLs → über Seitenaufrufe abgedeckt.
+- **Datenschutz:** Abschnitt „Reichweitenmessung (Umami) & Cookies" (cookielos, keine Cookies,
+  Art. 6 Abs. 1 f; Anbieter-/AVV-Angaben noch zu ergänzen). Bleibt Platzhalter → prüfen.
+- Reiner Code/Daten → tina-lock unverändert, **kein Re-index.** Build grün (35 Seiten); Events im
+  Bundle + Datenschutz-Abschnitt verifiziert.
+- **Offen (Nutzer):** Umami „Share"-Link → CMS-Feld „Dashboard-URL" für die Einbettung auf `/statistik`.
+
 ## 2026-06-06 — Statistik: versteckte Auswerte-Seite (/statistik) + cookielose Web-Analyse (CMS)
 - **Befund (Live-Wahrheit):** Seite ist rein statisch (`output: 'static'`, kein Cloudflare-Adapter/
   keine Functions/KV). Eine Auswertung braucht daher zwingend einen externen cookielosen Dienst

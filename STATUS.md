@@ -105,12 +105,12 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 - **Kontaktformular sendet echt** (W5 ✅, `671a742`): Web3Forms-POST, Key im CMS (`form_access_key`,
   Test → `davidbastisch@web.de`); ohne Key = Vorschau. Datenschutz-Pflicht-Häkchen + Honeypot.
   Echtes Senden erst auf der deployten Seite testbar.
-- **Statistik/Auswertung** (`a78259a`): versteckte Seite `/statistik` (noindex, unverlinkt) +
-  CMS-Collection `📊 Statistik`. Anbieter-neutral (statische Seite hat kein Backend): David trägt
-  Tracking-`<script>` + Dashboard-URL eines **cookielosen** Diensts (Cloudflare Web Analytics /
-  Plausible / Umami) ein und schaltet `enabled` an → BaseLayout lädt den Code site-weit, das
-  Dashboard wird auf `/statistik` eingebettet. Standard **aus** = kein Tracking. Per-Foto-Events
-  (Lightbox) noch offen (anbieterspezifisch); Top-Seiten liefern „meistbesuchte Story/Reise" schon.
+- **Statistik/Auswertung** (`a78259a` + `b66e15c` + `b3f2be0`): versteckte Seite `/statistik`
+  (noindex, unverlinkt) + CMS-Collection `📊 Statistik`. **Dienst = Umami (aktiv, cookielos)** —
+  Snippet in `statistik.json`, `enabled=true`; BaseLayout lädt es site-weit. **Events:** `foto`
+  (Lightbox-Öffnen, zentral) + `reise` (Tab-Wechsel) via `lib/track.ts`. Seitenaufrufe decken
+  Story-/Reise-/Album-**Seiten** ab. **Offen:** Umami-„Share"-URL ins CMS-Feld `dashboard_url`
+  → dann Auswertung eingebettet auf `/statistik` (sonst nur im Umami-Dashboard sichtbar).
 - **Datenschutz- + Impressum-Seite** (`c6aab1e`): CMS-Collections `datenschutz`/`impressum`
   (`/datenschutz`, `/impressum`, DE/EN), Footer-Links, Häkchen verlinkt die Datenschutzerklärung.
   ⚠️ **Nur Platzhalter-Text** — echten Rechtstext (Generator/anwaltlich) + Web3Forms/Cloudflare als
