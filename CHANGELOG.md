@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-07 — Scrollbalken behalten/vereinheitlicht + Stations-Pills-Fade gefixt
+- **Korrektur:** Scrollbalken NICHT mehr ausgeblendet (Nutzer wollte sie behalten). Stattdessen den
+  hellen Default-Balken der Stations-Pills (`.trip-stoplist`) auf denselben dezenten Stil wie die
+  Reise-Tabs gebracht (thin, `ink-soft`/`c-line`).
+- **Stations-Pills harte Kante (mobil) gefixt:** Ursache war inline `justify-content:center` — bricht
+  auf dem Handy das Scrollen-von-links → Fade/Indikator griff nicht. Zentrierung in CSS verlagert
+  (Desktop zentriert, mobil `flex-start`) → Fade greift jetzt wie bei den Reise-Tabs. (`62dc8a1`)
+- Reiner Komponenten/CSS-Code → kein Re-index. Build grün. *(Lightbox-Glitch-Fix `a8ff45a` ist noch
+  ungepusht — muss deployt werden, bevor er greift.)*
+
 ## 2026-06-07 — Fix Lightbox-Glitch + Mobil-Scroll (Scrollbalken aus, Indikator-Fade)
 - **Kritischer Fix (`a8ff45a`):** Auf dem Handy schloss sich die gerade geöffnete Lightbox sofort
   wieder — der Öffnen-Tipp erzeugt direkt danach einen `click`, der auf den frischen Hintergrund
