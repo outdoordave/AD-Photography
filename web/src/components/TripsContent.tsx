@@ -128,6 +128,17 @@ export default function TripsContent(props: Props) {
     return () => cleanups.forEach((c) => c());
   }, [tripIdx, trips, lang]);
 
+  // Aktiven Tab/Station in die Mitte der Scroll-Reihe holen (nur wenn die Reihe scrollt).
+  function centerInRow(row: HTMLElement | null, idx: number) {
+    if (!row) return;
+    const btn = row.children[idx] as HTMLElement | undefined;
+    if (!btn) return;
+    const target = btn.offsetLeft - row.clientWidth / 2 + btn.clientWidth / 2;
+    row.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+  }
+  React.useEffect(() => { centerInRow(tabsElRef.current, tripIdx); }, [tripIdx]);
+  React.useEffect(() => { centerInRow(stopsElRef.current, active); }, [active]);
+
   // Signatur der karten-relevanten Stop-Daten (Koordinaten + Marker-/Popup-Texte).
   // Aendert sie sich (Ortssuche, Titel, Datum, Name), werden in der Live-Vorschau die
   // Marker neu gezeichnet; reine Fliesstext-Edits lassen die Karte in Ruhe.
