@@ -756,11 +756,16 @@ body.ww-frame-controls .hero-cta .btn { box-shadow: 0 8px 22px -10px rgba(0,0,0,
    Problem: overflow-x:auto klippt den weichen Schatten unten hart ab, und die Items
    laufen hart an den Bildschirmrand. Lösung: kompakterer Schatten (passt in den Platz)
    + weiches Ein-/Ausfaden an den Rändern (mask) + etwas Innenabstand. */
+/* Hülle für die Pfeil-Indikatoren der Scroll-Reihen (Pfeile selbst nur mobil sichtbar) */
+.ww-scroller { position: relative; }
+.ww-scroll-arrow { display: none; }
 @media (max-width: 640px) {
   .trip-tabs, .trip-stoplist {
     padding-left: 18px; padding-right: 18px; padding-top: 8px;
     scroll-padding-left: 18px; scroll-padding-right: 18px;
+    scroll-snap-type: x proximity; /* sanftes Einrasten beim Wischen */
   }
+  .trip-tabs button, .trip-stoplist button { scroll-snap-align: start; }
   /* mobil von LINKS scrollbar (statt zentriert) -> Fade/Indikator greift auch bei den Stationen */
   .trip-stoplist { justify-content: flex-start; }
   .trip-tabs { padding-bottom: 24px; }
@@ -782,6 +787,17 @@ body.ww-frame-controls .hero-cta .btn { box-shadow: 0 8px 22px -10px rgba(0,0,0,
     -webkit-mask-image: linear-gradient(to right, transparent, #000 26px, #000 calc(100% - 26px), transparent);
             mask-image: linear-gradient(to right, transparent, #000 26px, #000 calc(100% - 26px), transparent);
   }
+  /* Pfeile ‹ › — erscheinen nur, wenn es auf der Seite weitergeht (:has prüft die Edge-Klasse) */
+  .ww-scroll-arrow {
+    display: flex; align-items: center; justify-content: center;
+    position: absolute; top: 0; bottom: 14px; width: 30px; z-index: 3; padding: 0;
+    border: none; background: none; color: var(--c-ink); font-size: 1.7rem; line-height: 1;
+    cursor: pointer; opacity: 0; pointer-events: none; transition: opacity var(--dur-base) var(--ease);
+  }
+  .ww-scroll-arrow.left { left: -4px; }
+  .ww-scroll-arrow.right { right: -4px; }
+  .ww-scroller:has(.ww-edge-l) .ww-scroll-arrow.left { opacity: 0.85; pointer-events: auto; }
+  .ww-scroller:has(.ww-edge-r) .ww-scroll-arrow.right { opacity: 0.85; pointer-events: auto; }
 }
 
 /* Stationsfenster (rechte Box .trip-detail): Rahmen aus Stufe + Schatten (Alt-Rahmen raus) */

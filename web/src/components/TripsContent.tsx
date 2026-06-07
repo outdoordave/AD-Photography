@@ -350,6 +350,8 @@ export default function TripsContent(props: Props) {
           onStyle={setLiveMapStyle}
         />
       ) : null}
+      <div className="ww-scroller">
+        <button type="button" className="ww-scroll-arrow left" aria-label="Zurück" onClick={() => tabsElRef.current && tabsElRef.current.scrollBy({ left: -200, behavior: 'smooth' })}>‹</button>
       <div className="trip-tabs" id="tripTabs" ref={tabsElRef}>
         {trips.map((tp, i) => {
           // 1:1 wie Live: Tab zeigt exakt den CMS-Titel, KEIN automatisches Suffix.
@@ -367,6 +369,8 @@ export default function TripsContent(props: Props) {
               onClick={() => { setTripIdx(i); track('reise', { reise: label }); }}>{label}</button>
           );
         })}
+      </div>
+        <button type="button" className="ww-scroll-arrow right" aria-label="Weiter" onClick={() => tabsElRef.current && tabsElRef.current.scrollBy({ left: 200, behavior: 'smooth' })}>›</button>
       </div>
 
       <div className="trip-summary">
@@ -436,10 +440,14 @@ export default function TripsContent(props: Props) {
         </div>
       </div>
 
+      <div className="ww-scroller">
+        <button type="button" className="ww-scroll-arrow left" aria-label="Zurück" onClick={() => stopsElRef.current && stopsElRef.current.scrollBy({ left: -200, behavior: 'smooth' })}>‹</button>
       <div className="trip-stoplist" ref={stopsElRef}>
         {stops.map((s, i) => (
           <button key={i} className={i === active ? 'active' : ''} onClick={() => scrollToStop(i, true)}>{s.title || s.name}</button>
         ))}
+      </div>
+        <button type="button" className="ww-scroll-arrow right" aria-label="Weiter" onClick={() => stopsElRef.current && stopsElRef.current.scrollBy({ left: 200, behavior: 'smooth' })}>›</button>
       </div>
 
       {Array.isArray(trip.gallery) && trip.gallery.length ? (
