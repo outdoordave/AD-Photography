@@ -765,7 +765,7 @@ body.ww-frame-controls .hero-cta .btn { box-shadow: 0 8px 22px -10px rgba(0,0,0,
     scroll-padding-left: 18px; scroll-padding-right: 18px;
     scroll-snap-type: x proximity; /* sanftes Einrasten beim Wischen */
   }
-  .trip-tabs button, .trip-stoplist button { scroll-snap-align: start; }
+  .trip-tabs button, .trip-stoplist button { scroll-snap-align: center; }
   /* mobil von LINKS scrollbar (statt zentriert) -> Fade/Indikator greift auch bei den Stationen */
   .trip-stoplist { justify-content: flex-start; }
   .trip-tabs { padding-bottom: 24px; }
