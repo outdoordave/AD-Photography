@@ -17,6 +17,26 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 — Statistik: versteckte Auswerte-Seite (/statistik) + cookielose Web-Analyse (CMS)
+- **Befund (Live-Wahrheit):** Seite ist rein statisch (`output: 'static'`, kein Cloudflare-Adapter/
+  keine Functions/KV). Eine Auswertung braucht daher zwingend einen externen cookielosen Dienst
+  oder ein Backend → **anbieter-neutrale** Lösung gebaut (Konto/Setup macht David, kein Secret im Repo).
+- Neue CMS-Collection **`statistik`** (`statistik.json`): Schalter `enabled`, `analytics_snippet`
+  (Tracking-`<script>` des Diensts), `dashboard_url` (öffentlicher Einbett-Link), `intro_de/en`.
+  Router → `/statistik`.
+- **BaseLayout** bindet den Tracking-Code site-weit im `<head>` ein — **nur** wenn aktiviert UND
+  Code hinterlegt (sonst nichts). Neue `noindex`-Prop für Seiten.
+- Seiten **`/statistik` + `/en/statistik`** (versteckt: `noindex`, kein Nav-/Footer-Link). Insel
+  `StatsContent` bettet das Dashboard per iframe ein; ohne URL eine kurze Einrichtungs-Anleitung.
+  CSS für Embed + Setup-Box.
+- **„Meistgeklickt":** Story/Reise/Album sind je eigene URLs → Top-Seiten des Diensts liefern das
+  direkt. Per-Foto-Events (Lightbox) später, anbieterspezifisch.
+- Empfehlung: Cloudflare Web Analytics (Zahlen, kein Embed) ODER Plausible/Umami (einbettbar).
+  Cookielos → i. d. R. kein Cookie-Banner, aber Dienst in der Datenschutzerklärung nennen.
+- ⚠️ Schema geändert (neue Collection) → `tina-lock` neu (`dev --no-server`, deterministisch, 2× Hash
+  `a9d0db8…`) → nach Push **Tina-Cloud-Re-index + Rebuild.** Build grün (**35 Seiten**, +2);
+  Seite/`noindex`/Setup-Box/„kein Tracking solange aus" im dist verifiziert. Commit: `a78259a`
+
 ## 2026-06-06 — Rechtsseiten überarbeitet: kleinere Schrift + Datenschutz an echten Stack angepasst
 - **Schrift** der Rechtsseiten (`#page-legal`) bewusst klein/kompakt (Body `.78rem`, kleinere
   Überschriften) — Pflichttext, wird kaum gelesen. Gilt für Datenschutz + Impressum.

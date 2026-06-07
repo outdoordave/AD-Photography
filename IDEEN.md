@@ -112,6 +112,15 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
   MailChannels-Gratisweg für Cloudflare ist seit 2024 weg). Mehr Setup als Web3Forms, dafür
   unabhängiger. **Erst angehen, wenn eigene Domain steht.**
 
+### W5c · Statistik: Per-Inhalt-Events (welches Foto/Story/Reise am meisten) — (B, Ausbau)
+- **Status:** offen. Grundgerüst steht (`a78259a`): Seite `/statistik` + CMS-Collection „📊 Statistik";
+  cookielose Web-Analyse wird eingebunden, sobald David Konto + Code/Dashboard-URL einträgt.
+  **Seitenaufrufe + meistbesuchte Story/Reise/Album** liefert der Dienst direkt (jede ist eine URL).
+- **Was fehlt:** „meistgeklicktes **Foto**" (Lightbox ist keine eigene URL) → braucht **eigene Events**
+  (z. B. `umami.track('foto', {id})` / Plausible Custom Events) an Galerie-/Lightbox-/Teaser-Klicks.
+  Anzeige dann im Dashboard des Diensts (eingebettet) oder später in einer eigenen Auswerte-UI.
+- **Aufwand:** niedrig–mittel, **anbieterspezifisch** (erst Dienst festlegen). Cookielos bleibt erhalten.
+
 ### W6 · Karte höher/quadratischer im Reisen-Layout — (B, optische Abweichung)
 - **Status:** offen · **Zugeordnet:** Reisen-Vollausbau (David entscheidet im Kontext)
 - **Was:** die Reisen-Karte höher/quadratischer statt heute „1,5fr breit × 420px hoch".
