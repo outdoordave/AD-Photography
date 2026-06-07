@@ -28,6 +28,10 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
     `cmsCallback` registriert (wie „Zur Website").
 - cmsCallback-Plugin = kein Schema → **tina-lock unverändert** (2× gleicher Hash `a9d0db8…`),
   **kein Re-index.** Build grün (35 Seiten). Commit: `ca20d23`
+- **Nachtrag (`c5ff269`):** Auch Tinas **eingebauten** Logout abgefangen — `cmsCallback` patcht
+  (abgesichert) `authProvider.logout`, sodass auch darüber auf `/` statt auf den /admin-Login-
+  Screen weitergeleitet wird. Best-effort (try/catch + verzögerter Retry); greift Tinas Interna
+  anders, passiert nichts. Lock unverändert, kein Re-index.
 
 ## 2026-06-07 — Admin-only „📊 Statistik"-Link (Nav + Admin-Leiste)
 - In der Hauptnavigation ein Link **„📊 Statistik"** (sprachrichtig `/statistik` bzw. `/en/statistik`),
