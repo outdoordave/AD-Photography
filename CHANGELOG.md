@@ -17,6 +17,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-07 — Logout: sauber zur Startseite statt Tina-Fehler
+- Beim Abmelden warf Tina einen Fehler / ließ einen auf einer kaputten (Editier-)Seite zurück.
+  Jetzt definierter Landeplatz = **Startseite** — über beide Wege:
+  - **Banner** (`SiteAdminBar` „Abmelden"): löscht Tina-Tokens (localStorage **+** sessionStorage)
+    und geht aufs **Top-Fenster `/`** (statt `location.reload`, das die Editier-Seite neu lud →
+    Fehler; `window.top` bricht zusätzlich aus einem evtl. Editier-iframe aus).
+  - **CMS:** neues Screen-Plugin **„Abmelden"** (Kategorie „Site", `tina/screens/LogoutScreen.tsx`)
+    — löscht Tokens und leitet auf `/`. Sauberer Logout aus dem CMS ohne Tina-Fehler. Via
+    `cmsCallback` registriert (wie „Zur Website").
+- cmsCallback-Plugin = kein Schema → **tina-lock unverändert** (2× gleicher Hash `a9d0db8…`),
+  **kein Re-index.** Build grün (35 Seiten). Commit: `ca20d23`
+
 ## 2026-06-07 — Admin-only „📊 Statistik"-Link (Nav + Admin-Leiste)
 - In der Hauptnavigation ein Link **„📊 Statistik"** (sprachrichtig `/statistik` bzw. `/en/statistik`),
   standardmäßig `hidden`; ein clientseitiges Skript blendet ihn **nur ein, wenn im Tina-CMS angemeldet**

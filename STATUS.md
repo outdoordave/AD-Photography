@@ -113,6 +113,9 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   → dann Auswertung eingebettet auf `/statistik` (sonst nur im Umami-Dashboard sichtbar).
   **Zugang:** Link „📊 Statistik" in Nav + Admin-Leiste erscheint **nur für eingeloggte Admins**
   (clientseitige Token-Erkennung, `fe92a6f`); Besucher sehen weder Link noch (via noindex/unverlinkt) die Seite.
+- **Logout** (`ca20d23`): Abmelden (Banner **und** neuer CMS-Menüpunkt „Abmelden" / Kategorie Site)
+  löscht Tina-Tokens (local+session) und geht sauber auf `/` (Top-Fenster) — kein Tina-Fehler mehr.
+  Tinas eingebauten Logout möglichst nicht nutzen (der wirft den Fehler).
 - **Datenschutz- + Impressum-Seite** (`c6aab1e`): CMS-Collections `datenschutz`/`impressum`
   (`/datenschutz`, `/impressum`, DE/EN), Footer-Links, Häkchen verlinkt die Datenschutzerklärung.
   ⚠️ **Nur Platzhalter-Text** — echten Rechtstext (Generator/anwaltlich) + Web3Forms/Cloudflare als
