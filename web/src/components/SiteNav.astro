@@ -46,6 +46,7 @@ const logoSrc = logo && logo.charAt(0) !== '/' && !/^https?:/.test(logo) ? '/' +
       {NAV.filter((i) => (!i.storiesOnly || showStories) && (!i.contactOnly || showContact)).map((i) => (
         <a href={linkHref(i.href)} class={isActive(i) ? 'active' : ''}>{isEn ? i.en : i.de}</a>
       ))}
+      <a href={linkHref('/statistik')} class={`ww-admin-only${section === '/statistik' ? ' active' : ''}`} hidden>📊 Statistik</a>
       <div class="lang-toggle">
         <a href={deHref} class={!isEn ? 'active' : ''}>DE</a>
         <a href={enHref} class={isEn ? 'active' : ''}>EN</a>
@@ -58,6 +59,23 @@ const logoSrc = logo && logo.charAt(0) !== '/' && !/^https?:/.test(logo) ? '/' +
 </header>
 
 <script>
+  // Admin-only Links (z. B. 📊 Statistik) nur einblenden, wenn im Tina-CMS angemeldet
+  // (gleiche Token-Erkennung wie die Admin-Leiste). Besucher sehen sie nie.
+  (function () {
+    function loggedIn() {
+      try {
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && /tina/i.test(k) && (localStorage.getItem(k) || '').length > 20) return true;
+        }
+      } catch (e) {}
+      return false;
+    }
+    if (loggedIn()) {
+      document.querySelectorAll('.ww-admin-only').forEach((el) => { el.hidden = false; });
+    }
+  })();
+
   const burger = document.getElementById('burger');
   const links = document.getElementById('navLinks');
   burger?.addEventListener('click', () => {
