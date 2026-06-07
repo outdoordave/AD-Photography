@@ -17,6 +17,21 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-07 — Fix Lightbox-Glitch + Mobil-Scroll (Scrollbalken aus, Indikator-Fade)
+- **Kritischer Fix (`a8ff45a`):** Auf dem Handy schloss sich die gerade geöffnete Lightbox sofort
+  wieder — der Öffnen-Tipp erzeugt direkt danach einen `click`, der auf den frischen Hintergrund
+  traf → „Hintergrund schließt"-Logik schloss sie → Flacker/„Foto verschwindet" + Body-Scroll
+  blieb gesperrt (nicht mehr scrollbar). Jetzt ignoriert `bgClick` Hintergrund-Klicks 350 ms nach
+  dem Öffnen (`readyRef`). Body-overflow-Reset bleibt im Cleanup.
+- **Scrollbalken (`30df107`):** heller Balken unter Reise-Tabs + Stations-Pills entfernt
+  (`scrollbar-width:none` + `::-webkit-scrollbar{display:none}`). Andere Scroll-Container
+  (`album-track`/`trip-detail`/Lightbox) blendeten ihn schon aus → global sauber.
+- **Indikator-Fade (`30df107`):** statisches beidseitiges Fade ersetzt durch scroll-abhängiges —
+  JS (TripsContent) setzt `ww-edge-l/-r` je nach Scrollposition; Fade erscheint nur auf der Seite
+  mit mehr Inhalt = „geht-noch-weiter"-Indikator, an den Enden weg. Schmaler/schicker (26 px).
+- Reiner Komponenten/CSS-Code → tina-lock unverändert, **kein Re-index.** Build grün (35 Seiten);
+  Guard + Edge-Logik + CSS im Bundle verifiziert.
+
 ## 2026-06-07 — UX: Lightbox-/Burger-Schließen, Album-Tipp mobil, Scroll-Reihen weicher
 - **Lightbox:** Klick/Tipp **neben** das Foto (dunkler Hintergrund) schließt jetzt — `bgClick`
   schließt, außer das Ziel ist Foto, Pfeil, Schließen-Button oder Filmstreifen. (`Lightbox.tsx`)
