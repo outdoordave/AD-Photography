@@ -26,8 +26,9 @@
   --c-dark:      #1c1812;   /* tiefes Braunschwarz */
   --c-dark-alt:  #262019;
   --c-dark-ink:  #efe5d4;
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-body:    'Mulish', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Lokale Fontsource-Variable-Fonts ('… Variable'); 'Fraunces'/'Mulish' + System als Fallback. */
+  --font-display: 'Fraunces Variable', 'Fraunces', Georgia, serif;
+  --font-body:    'Mulish Variable', 'Mulish', -apple-system, BlinkMacSystemFont, sans-serif;
   --maxw: 1180px;
   --radius: 10px;
 

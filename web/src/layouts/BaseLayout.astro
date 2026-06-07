@@ -2,6 +2,12 @@
 // BaseLayout (Stufe 1, Schritt 2).
 // Globales Design-System aus index.html (Tokens, Reader-Styles) + Fonts.
 // Inhalte ab Schritt 3.
+// Schriften LOKAL via Fontsource (kein Google-CDN -> DSGVO). Variable Fonts, damit
+// Fraunces' Optical-Size-Achse (opsz) erhalten bleibt = exakt gleiches Rendering wie
+// die Google-Variante. full(-italic) deckt opsz+wght+Kursiv ab; Mulish nur wght (normal).
+import '@fontsource-variable/fraunces/full.css';
+import '@fontsource-variable/fraunces/full-italic.css';
+import '@fontsource-variable/mulish';
 import '../styles/global.css';
 import SiteNav from '../components/SiteNav.astro';
 import SiteFooter from '../components/SiteFooter.astro';
@@ -42,13 +48,8 @@ const showFooterSocial = !!(hm.social_show && hm.social_show.footer);
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <title>{title}</title>
     {analyticsSnippet && <Fragment set:html={analyticsSnippet} />}
-    <!-- Fonts identisch zur Live-Seite: Fraunces (Display) + Mulish (Body) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Mulish:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    {/* Fonts werden LOKAL via Fontsource gebündelt (Imports im Frontmatter) — KEINE
+        Google-Fonts-Links mehr (DSGVO: keine Besucher-IP an Google). */}
   </head>
   <body class={`ww-frame-${imageFrame}${frameControls ? ' ww-frame-controls' : ''}${albumHover ? ' ww-album-hover' : ''}`}>
     {showAdminBar && <SiteAdminBar />}
