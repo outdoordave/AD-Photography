@@ -17,6 +17,17 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-07 — Fix: Lightbox-Absturz beim Öffnen (Namens-Konflikt) + Tab/Station zentrieren
+- **DER Kern-Bug (`aaf073a`):** „Foto antippen → Galerie verschwindet, Footer rutscht hoch, leere
+  Seite". Ursache: im `useEffect` der Lightbox überschattete ein lokales `const track = trackRef.current`
+  (DOM-Element) die importierte Analytics-Funktion `track()`. Der `track('foto',…)`-Aufruf lief
+  dadurch in die **Temporal Dead Zone** → ReferenceError beim Mount → React warf die ganze
+  Galerie-Insel raus. Kam mit dem W5c-Event-Einbau rein; der Build merkt es nicht (Laufzeitfehler).
+  Fix: DOM-Element → `trackEl` umbenannt. **Lightbox öffnet jetzt wieder.**
+- **Einrasten/Zentrieren (`42babda`):** Klick auf Reise-Tab/Station scrollt das Element jetzt in die
+  Mitte der Scroll-Reihe (`centerInRow`, nur wenn die Reihe scrollt = mobil).
+- Reiner Komponenten-Code → tina-lock unverändert, **kein Re-index.** Build grün (35 Seiten).
+
 ## 2026-06-07 — Fix: leere Album-Unterseite (Galerie verschwand nach Hydration)
 - **Eigentliche Ursache der „keine Lightbox"/„leeren Seite":** NICHT die Lightbox. Beim Klick aufs
   Album öffnet die Unterseite `/portfolio/<slug>` — die war leer. Serverseitig sind die Kacheln
