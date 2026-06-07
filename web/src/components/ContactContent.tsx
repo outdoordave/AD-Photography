@@ -170,10 +170,15 @@ export default function ContactContent(props: Props) {
                 style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }}
               />
               {consentTxt ? (
-                <label className="form-consent" data-tina-field={tf(c, 'form_consent')}>
-                  <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-                  <span>{consentTxt}</span>
-                </label>
+                <div className="form-consent">
+                  <input id="ww-consent" type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
+                  <span>
+                    <label htmlFor="ww-consent" data-tina-field={tf(c, 'form_consent')}>{consentTxt}</label>{' '}
+                    <a href={lang === 'en' ? '/en/datenschutz' : '/datenschutz'} target="_blank" rel="noopener">
+                      {lang === 'en' ? 'Privacy policy' : 'Datenschutzerklärung'}
+                    </a>
+                  </span>
+                </div>
               ) : null}
               <button type="button" className="btn dark" data-tina-field={tf(c, 'form_send')} onClick={onSend} disabled={sending}>
                 {sending ? (lang === 'de' ? 'Senden …' : 'Sending …') : t(c, 'form_send')}

@@ -46,6 +46,10 @@ const logoSrc = logo && logo.charAt(0) !== '/' && !/^https?:/.test(logo) ? '/' +
       ))}
     </div>
   )}
+  <div class="footer-legal">
+    <a href={linkHref('/impressum')}>{isEn ? 'Imprint' : 'Impressum'}</a>
+    <a href={linkHref('/datenschutz')}>{isEn ? 'Privacy' : 'Datenschutz'}</a>
+  </div>
   <div class="fnote">
     <div>© 2026 Alexandra Apostel &amp; David Bastisch · <a class="ww-admin-link" href="/admin">Admin</a></div>
     <div>Travel &amp; Outdoor Photography</div>

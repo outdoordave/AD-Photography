@@ -663,6 +663,42 @@ export default defineConfig({
           { type: 'boolean', name: 'show_admin_bar', label: 'Admin-Leiste auf der Website zeigen? (nur sichtbar, wenn im CMS angemeldet)' },
         ],
       },
+      // --- Datenschutzerklärung: eigene Rechtstext-Seite (/datenschutz) ---
+      {
+        name: 'datenschutz',
+        label: '⚖️ Datenschutz',
+        path: 'src/data',
+        format: 'json',
+        match: { include: 'datenschutz' }, // nur src/data/datenschutz.json
+        ui: { allowedActions: { create: false, delete: false }, router: () => '/datenschutz' },
+        fields: [
+          { type: 'string', name: 'ww_here', label: '⚖️ Datenschutz', ui: { component: SectionBanner } },
+          { type: 'string', name: 'title_de', label: 'Titel' },
+          { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'updated_de', label: 'Stand (z. B. „Stand: Juni 2026")' },
+          { type: 'string', name: 'updated_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'body_de', label: 'Inhalt (Markdown: ## Überschrift, - Liste, [Text](Link))', description: 'Du kannst Text aus einem Datenschutz-Generator hier einfügen — Markdown ODER fertiges HTML funktioniert.', ui: { component: 'textarea' } },
+          { type: 'string', name: 'body_en', label: '↳ English (leer = Deutsch wird gezeigt)', ui: { component: EnglishOnlyTextField } },
+        ],
+      },
+      // --- Impressum: eigene Rechtstext-Seite (/impressum) ---
+      {
+        name: 'impressum',
+        label: '⚖️ Impressum',
+        path: 'src/data',
+        format: 'json',
+        match: { include: 'impressum' }, // nur src/data/impressum.json
+        ui: { allowedActions: { create: false, delete: false }, router: () => '/impressum' },
+        fields: [
+          { type: 'string', name: 'ww_here', label: '⚖️ Impressum', ui: { component: SectionBanner } },
+          { type: 'string', name: 'title_de', label: 'Titel' },
+          { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'updated_de', label: 'Stand (optional)' },
+          { type: 'string', name: 'updated_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'body_de', label: 'Inhalt (Markdown: ## Überschrift, - Liste, [Text](Link))', description: 'Du kannst Text aus einem Impressum-Generator hier einfügen — Markdown ODER fertiges HTML funktioniert.', ui: { component: 'textarea' } },
+          { type: 'string', name: 'body_en', label: '↳ English (leer = Deutsch wird gezeigt)', ui: { component: EnglishOnlyTextField } },
+        ],
+      },
     ],
   },
 });
