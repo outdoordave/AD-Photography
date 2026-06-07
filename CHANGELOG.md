@@ -32,6 +32,10 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   (abgesichert) `authProvider.logout`, sodass auch darüber auf `/` statt auf den /admin-Login-
   Screen weitergeleitet wird. Best-effort (try/catch + verzögerter Retry); greift Tinas Interna
   anders, passiert nichts. Lock unverändert, kein Re-index.
+- **Nachtrag 2 (`01be3c3`):** authProvider-Patch griff in der eingesetzten Tina-Version nicht →
+  zusätzlich ein capture-Click-Listener im `/admin`-Dokument, der Klicks auf „Log out/Logout/
+  Sign out/Abmelden" erkennt, Tina-Tokens löscht und nach 150 ms hart auf `/` geht (text-basiert,
+  unabhängig von Tina-Interna). Damit hängt man nicht mehr auf dem Login-Screen fest.
 
 ## 2026-06-07 — Admin-only „📊 Statistik"-Link (Nav + Admin-Leiste)
 - In der Hauptnavigation ein Link **„📊 Statistik"** (sprachrichtig `/statistik` bzw. `/en/statistik`),
