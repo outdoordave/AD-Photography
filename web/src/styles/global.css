@@ -531,9 +531,16 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 .footer-legal { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
 .footer-legal a { font-size: var(--fs-label); letter-spacing: var(--tracking-slight); color: #c8bba6; text-decoration: none; opacity: 0.85; transition: color var(--dur-base) var(--ease); }
 .footer-legal a:hover { color: #f0c9a8; opacity: 1; }
-/* Rechtstext-Seiten (Datenschutz/Impressum): Prosa zentriert, lesbar begrenzt */
-#page-legal .reader-body { max-width: 760px; margin-left: auto; margin-right: auto; }
-#page-legal .legal-updated { font-size: var(--fs-label); color: var(--c-ink-soft); margin-top: 6px; }
+/* Rechtstext-Seiten (Datenschutz/Impressum): bewusst klein & kompakt (Pflichttext,
+   wird kaum gelesen). Prosa zentriert, lesbar begrenzt. */
+#page-legal .page-title { margin-bottom: 18px; }
+#page-legal .page-title h1 { font-size: clamp(1.5rem, 3vw, 2rem); }
+#page-legal .legal-updated { font-size: 0.72rem; color: var(--c-ink-soft); margin-top: 4px; }
+#page-legal .reader-body { max-width: 720px; margin-left: auto; margin-right: auto; font-size: 0.78rem; line-height: 1.6; color: var(--c-ink-soft); }
+#page-legal .reader-body h2 { font-size: 0.95rem; margin-top: 1.6em; margin-bottom: 0.4em; color: var(--c-ink); }
+#page-legal .reader-body h3 { font-size: 0.85rem; margin-top: 1.2em; margin-bottom: 0.3em; color: var(--c-ink); }
+#page-legal .reader-body p, #page-legal .reader-body li { font-size: 0.78rem; margin-bottom: 0.45em; }
+#page-legal .reader-body a { color: var(--c-accent); }
 footer .fnote { font-size: var(--fs-label); opacity: 0.7; line-height: 1.8; }
 footer .fnote .ww-admin-link { color: inherit; text-decoration: none; opacity: 0.8; border-bottom: 1px dotted currentColor; }
 footer .fnote .ww-admin-link:hover { color: #f0c9a8; opacity: 1; }
