@@ -32,7 +32,7 @@ Begründung:
 - [ ] **Impressum** mit echten Angaben füllen (CMS „⚖️ Impressum").
 - [ ] Test-Mail `davidbastisch@web.de` ggf. auf die „richtige" Adresse umstellen (CMS „✉️ Kontakt").
 - [ ] **iPad-Test** mit Alexandra (CMS-Bedienung + Besucher-Ansicht).
-- [ ] Optional: Google Fonts lokal einbinden (vermeidet IP-Übertragung an Google).
+- [x] **Google Fonts lokal eingebunden** (Fontsource Variable, `62e4e93`) — keine IP mehr an Google. ✅
 
 ## Phase 3 — CUTOVER (wenn David „los" sagt) — Checkliste
 Ziel: Die Astro-Version wird die echte Seite unter der kanonischen URL.

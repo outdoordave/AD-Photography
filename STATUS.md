@@ -32,7 +32,7 @@
   |---|---|---|
   | MapLibre GL | **5.21.0** | unpkg (JS + CSS) |
   | Sveltia CMS | **0.164.2** (gepinnt) | unpkg, in `/admin` |
-  | Google Fonts | Fraunces + Mulish | fonts.googleapis.com |
+  | Schriften | Fraunces + Mulish | **Astro: LOKAL (Fontsource, Variable) — kein Google.** Alte `index.html`: noch fonts.googleapis.com |
   | OAuth-Backend | — | eigener Cloudflare-Worker |
 - **Build:** `build-indexes.js` (Node-Standard, kein npm) erzeugt beim Cloudflare-Deploy
   `content/albums-index.json`, `content/trips-index.json`, `content/stories-index.json`

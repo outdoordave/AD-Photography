@@ -17,6 +17,22 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-07 — Schriften lokal selbst hosten (Fontsource) statt Google Fonts (DSGVO)
+- **Live-Wahrheit:** Fraunces (Display: wght 400/500/600 + Kursiv, opsz-Achse 9..144) + Mulish
+  (Body: wght 300–700, kein Kursiv) — in Astro **und** alter `index.html` identisch via Google-`<link>`.
+- **Umgesetzt (`62e4e93`):** `@fontsource-variable/fraunces` (`full` + `full-italic` → opsz+wght+Kursiv)
+  + `@fontsource-variable/mulish` lokal installiert, im `BaseLayout`-Frontmatter importiert; die zwei
+  `preconnect` + der Google-Stylesheet-`<link>` aus dem `<head>` entfernt; CSS-Vars auf
+  `'Fraunces Variable'`/`'Mulish Variable'` (Fallbacks `Fraunces`/`Mulish`/System). **Variable Fonts**
+  → Fraunces' Optical-Size-Achse bleibt erhalten = 1:1-Rendering.
+- **Bewusst (Option a):** `.pullquote` rendert jetzt echtes Kursiv 500 (Google lieferte nur Kursiv 400)
+  → minimal kräftiger an genau dieser einen Stelle.
+- **Datenschutz-Seite** Abschnitt „Schriftarten" aktualisiert: lokal, **keine Verbindung zu Google,
+  keine IP-Übertragung**. (Alte `index.html`/`main` nutzt weiter Google Fonts — unangetastet.)
+- Verifiziert: Build grün (35 Seiten), **0 Google-Font-Referenzen im `dist`**, 11 lokale woff2 gebündelt.
+  Reiner Code/Assets → tina-lock unverändert, **kein Re-index**. *(Visueller 1:1-Vergleich im Browser
+  steht noch aus — Sandbox blockt lokale Vorschau.)*
+
 ## 2026-06-07 — Fix: Lightbox-Absturz beim Öffnen (Namens-Konflikt) + Tab/Station zentrieren
 - **DER Kern-Bug (`aaf073a`):** „Foto antippen → Galerie verschwindet, Footer rutscht hoch, leere
   Seite". Ursache: im `useEffect` der Lightbox überschattete ein lokales `const track = trackRef.current`
