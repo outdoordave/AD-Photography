@@ -28,6 +28,13 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   Mitte der Scroll-Reihe (`centerInRow`, nur wenn die Reihe scrollt = mobil).
 - Reiner Komponenten-Code → tina-lock unverändert, **kein Re-index.** Build grün (35 Seiten).
 
+## 2026-06-07 — Album direkt anklickbar + angeklicktes Element echt zentrieren (`45485d6`)
+- **Album-Diashow:** zurück auf simplen `onClick` (wie die alte Seite) → Foto-Tipp öffnet die
+  Lightbox direkt (nicht nur die Überschrift). Die Tipp-Erkennung war nur wegen des — jetzt
+  behobenen — Lightbox-Absturzes nötig erschienen.
+- **Tabs/Stations-Pills:** `scroll-snap-align: start` → `center`, damit das Einrasten in dieselbe
+  Richtung wie das JS-Zentrieren zieht → angeklicktes Element landet sauber in der Bildschirmmitte.
+
 ## 2026-06-07 — Fix: leere Album-Unterseite (Galerie verschwand nach Hydration)
 - **Eigentliche Ursache der „keine Lightbox"/„leeren Seite":** NICHT die Lightbox. Beim Klick aufs
   Album öffnet die Unterseite `/portfolio/<slug>` — die war leer. Serverseitig sind die Kacheln
