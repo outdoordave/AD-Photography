@@ -91,17 +91,20 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   `wwApplyAdminMode`, `wwAdminMapPanel` (~69 Kopplungsstellen)
 - 🟡 Logo-Steuerung (Nav/Hero/Footer aus CMS, `applyBranding`), Sichtbarkeits-Schalter
 - 🔴 Wisch-/Trackpad-/Wheel-Gesten (Lightbox + Stationen, nativer Scroll-Snap)
-- 🟡 Kontaktformular (`handleSend`)
+- ✅ Kontaktformular (`onSend`) — sendet echt via Web3Forms (W5, `671a742`); Datenschutz-Häkchen + Honeypot
 
 ## 4. Bekannte Eigenheiten / Fallen
-- **Kontakt + Stories aktuell ausgeblendet** (`show_contact=false`/`show_stories=false`,
-  🎨 Darstellung): Nav-/Footer-Link weg **und** Direktaufruf leitet auf die Startseite um
-  (Build-Zeit-Guard, DE → `/`, EN → `/en/`). Betrifft `/contact`+`/en/contact` sowie `/stories`,
-  `/en/stories` **und alle Einzelbeiträge** `/stories/<slug>`. Jeweiliger Schalter wieder **an**
-  → alles erscheint automatisch (kein Code-Eingriff). **Logik-Unterschied:** Kontakt sichtbar
-  außer `show_contact===false` (Standard an), Stories sichtbar NUR bei `show_stories===true`
-  (Standard aus). **Falle:** solange aus, leitet auch die **CMS-Vorschau** dieser Seiten um →
-  zum Bearbeiten Schalter kurz an + bauen.
+- **Sichtbarkeits-Schalter + Direktaufruf-Sperre** (🎨 Darstellung): Stand committet —
+  **Kontakt sichtbar** (`show_contact=true`), **Stories ausgeblendet** (`show_stories=false`).
+  Ist ein Bereich aus, ist er **komplett** weg: Nav-/Footer-Link gefiltert **und** Direktaufruf
+  leitet per Build-Zeit-Guard auf die Startseite um (DE → `/`, EN → `/en/`). Betrifft
+  `/contact`+`/en/contact` sowie `/stories`, `/en/stories` **und alle Einzelbeiträge**
+  `/stories/<slug>`. **Logik-Unterschied:** Kontakt sichtbar außer `show_contact===false`
+  (Standard an), Stories sichtbar NUR bei `show_stories===true` (Standard aus). **Falle:** solange
+  aus, leitet auch die **CMS-Vorschau** des Bereichs um → zum Bearbeiten Schalter kurz an + bauen.
+- **Kontaktformular sendet echt** (W5 ✅, `671a742`): Web3Forms-POST, Key im CMS (`form_access_key`,
+  Test → `davidbastisch@web.de`); ohne Key = Vorschau. Datenschutz-Pflicht-Häkchen + Honeypot.
+  Echtes Senden erst auf der deployten Seite testbar. Datenschutz-Seite verlinken vor Live-Gang (W5).
 - **`gallery-settings.json` alle drei `false` → Fallback „Alben".** Mindestens ein
   Sortiermodus sollte an sein.
 - **Sveltia-Version gepinnt (0.164.2).** Nicht blind hochziehen ohne Test.

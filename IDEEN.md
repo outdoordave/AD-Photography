@@ -89,20 +89,26 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
 - **Warum besser:** Zugänglichkeit + SEO, kostet im CMS quasi nichts.
 - **Aufwand:** niedrig · **Capability-Lock:** additiv.
 
-### W5 · Kontaktformular wirklich versenden, dann Kontakt wieder einblenden — (B, schließt fehlende Funktion)
-- **Status:** offen — **eigenständiges Vorhaben, David terminiert separat**
-- **Aktueller Zustand (06.06.2026):** Kontakt-Seite ist für Besucher **komplett ausgeblendet** —
-  Schalter 🎨 Darstellung → „Kontakt zeigen?" steht auf **aus**; Nav-/Footer-Link weg **und**
-  Direktaufruf `/contact` + `/en/contact` leiten auf die Startseite um (Build-Zeit-Guard in den
-  beiden `contact.astro`). Instagram ist auf der Startseite verlinkt, daher reicht das vorerst.
-- **Was (W5):** `handleSend` (heute nur Vorschau, kein echter Versand) an einen Gratis-Dienst
-  hängen (z. B. Formspree/Cloudflare). **Danach** den Schalter wieder auf **an** stellen → Seite +
-  beide Links erscheinen automatisch wieder (kein Code-Eingriff nötig).
-- **Hinweis Editieren:** Solange der Schalter aus ist, leitet auch die CMS-Live-**Vorschau** der
-  Kontakt-Seite auf „/" um (gleicher statischer Build). Zum Bearbeiten den Schalter kurz auf an
-  stellen + bauen.
-- **Warum besser:** macht eine aktuell **fehlende** Funktion echt.
-- **Aufwand:** niedrig–mittel · **Capability-Lock:** schließt Lücke, nimmt nichts weg.
+### W5 · Kontaktformular wirklich versenden — ✅ UMGESETZT (06.06.2026, Web3Forms)
+- **Status:** ✅ umgesetzt (Commit `671a742`). Kontaktbox sendet echt: POST an
+  `api.web3forms.com/submit` mit dem Access-Key aus dem CMS (`form_access_key`) → Mail landet im
+  beim Key hinterlegten Postfach (aktuell Test: `davidbastisch@web.de`). Ohne Key bleibt es brav
+  „Vorschau". Datenschutz-Pflicht-Häkchen + Honeypot-Spamschutz + Lade-/Fehler-Zustand drin.
+- **Offen davor:** nach Push **Tina-Cloud-Re-index + Rebuild** (Schema-Felder neu); echtes
+  Senden erst auf der deployten Seite testbar (lokal blockiert die statische Vorschau den fetch ggf.).
+- **Datenschutz to-do vor echtem Live-Gang:** der Häkchen-Text verweist noch auf keine
+  Datenschutz-**Seite** — sobald es eine gibt, dort verlinken. Web3Forms verarbeitet die Daten
+  (Auftragsverarbeitung) → in die Datenschutzerklärung aufnehmen.
+
+### W5b · Eigenlösung statt Web3Forms — Cloudflare-Function + E-Mail-API — (B, Upgrade) — gemerkt
+- **Status:** offen, **auf Nutzer-Wunsch vorgemerkt** („merk dir mal 3"). Spätere, markeneigene
+  Alternative zu Web3Forms: eine **Cloudflare Pages Function** (`/functions/contact`) nimmt das
+  Formular entgegen und verschickt über eine E-Mail-API (z. B. **Resend**) — eigene Absender-Domain,
+  keine Drittanbieter-Weiterleitung, volle Kontrolle.
+- **Aufwand/Voraussetzungen:** Account bei der E-Mail-API + **geheimer** API-Key (echtes Secret →
+  Cloudflare-Env, NICHT ins Repo), idealerweise eigene Domain (für verifizierten Absender;
+  MailChannels-Gratisweg für Cloudflare ist seit 2024 weg). Mehr Setup als Web3Forms, dafür
+  unabhängiger. **Erst angehen, wenn eigene Domain steht.**
 
 ### W6 · Karte höher/quadratischer im Reisen-Layout — (B, optische Abweichung)
 - **Status:** offen · **Zugeordnet:** Reisen-Vollausbau (David entscheidet im Kontext)

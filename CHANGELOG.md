@@ -17,6 +17,24 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 — Kontaktformular versendet echt (W5, Web3Forms) + Datenschutz-Häkchen
+- Auf Nutzer-Wunsch W5 umgesetzt: die Kontaktbox sendet jetzt wirklich. `ContactContent.onSend`
+  macht einen POST an `api.web3forms.com/submit` mit dem Access-Key aus dem CMS
+  (`form_access_key`) → Mail landet im hinterlegten Postfach (Test: `davidbastisch@web.de`).
+  Key `408e…` in `contact.json` gesetzt (öffentlicher Web3Forms-Key, kein Geheimnis). **Ohne
+  Key** bleibt das Formular „Vorschau" (sendet nichts) → bricht nichts, falls Key fehlt.
+- **Datenschutz:** Pflicht-Häkchen vor dem Senden (`form_consent_de/en`), sonst Absenden geblockt.
+  **Spam:** verstecktes Honeypot-Feld. **UX:** Button-Lade-Zustand (deaktiviert + „Senden …"),
+  Fehlermeldung (`form_error_de/en`) bei Misserfolg; Vorschau-Hinweis (`form_note`) nur noch
+  sichtbar, solange kein Key gesetzt ist.
+- Neue CMS-Felder in der Kontakt-Collection (Key/Consent/Fehler) + CSS (`.form-consent`,
+  `.form-error`, `:disabled`). Im gerenderten `/contact` verifiziert: Häkchen da, Key da,
+  web3forms im Bundle, Vorschau-Hinweis-Element weg. Build grün (29 Seiten).
+- ⚠️ **Schema geändert → `tina-lock` neu erzeugt** (`dev --no-server`, deterministisch, 2× gleicher
+  Hash `da2f425…`) → nach Push **Tina-Cloud-Re-index + Rebuild nötig.** Echtes Senden erst auf der
+  deployten Seite testbar. Spätere Eigenlösung (Cloudflare-Function + Resend) als W5b in IDEEN.md
+  vorgemerkt. Commit: `671a742`
+
 ## 2026-06-06 — Stories: Direktaufruf-Sperre (gleiche Lücke wie Kontakt)
 - Dieselbe Lücke wie bei Kontakt, jetzt für Stories geschlossen: `show_stories` blendete nur
   Nav-/Footer-Link aus; `/stories`, `/en/stories` **und die Einzelbeiträge** `/stories/<slug>`
