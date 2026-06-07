@@ -436,7 +436,7 @@ export default function TripsContent(props: Props) {
         </div>
       </div>
 
-      <div className="trip-stoplist" style={{ justifyContent: 'center' }} ref={stopsElRef}>
+      <div className="trip-stoplist" ref={stopsElRef}>
         {stops.map((s, i) => (
           <button key={i} className={i === active ? 'active' : ''} onClick={() => scrollToStop(i, true)}>{s.title || s.name}</button>
         ))}

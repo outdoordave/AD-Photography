@@ -265,11 +265,12 @@ section { padding: 84px 0; }
 .trip-tabs button { background: transparent; border: 1px solid var(--c-line); color: var(--c-ink-soft); padding: 10px 24px; border-radius: var(--radius-lg); font-size: var(--fs-ui); font-weight: var(--fw-bold); letter-spacing: var(--tracking-slight); cursor: pointer; transition: all var(--dur-base) var(--ease); }
 .trip-tabs button:hover { border-color: var(--c-accent); color: var(--c-accent); }
 .trip-tabs button.active { background: var(--c-accent); border-color: var(--c-accent); color: #fff; }
-.trip-tabs { scrollbar-width: thin; scrollbar-color: var(--c-ink-soft) var(--c-line); }
-.trip-tabs::-webkit-scrollbar { height: 6px; }
-.trip-tabs::-webkit-scrollbar-track { background: var(--c-line); border-radius: 3px; }
-.trip-tabs::-webkit-scrollbar-thumb { background: var(--c-ink-soft); border-radius: 3px; }
-.trip-tabs::-webkit-scrollbar-thumb:hover { background: var(--c-ink); }
+/* Scrollbalken (Reise-Tabs + Stations-Pills) einheitlich dezent — nicht der helle Default */
+.trip-tabs, .trip-stoplist { scrollbar-width: thin; scrollbar-color: var(--c-ink-soft) var(--c-line); }
+.trip-tabs::-webkit-scrollbar, .trip-stoplist::-webkit-scrollbar { height: 6px; }
+.trip-tabs::-webkit-scrollbar-track, .trip-stoplist::-webkit-scrollbar-track { background: var(--c-line); border-radius: 3px; }
+.trip-tabs::-webkit-scrollbar-thumb, .trip-stoplist::-webkit-scrollbar-thumb { background: var(--c-ink-soft); border-radius: 3px; }
+.trip-tabs::-webkit-scrollbar-thumb:hover, .trip-stoplist::-webkit-scrollbar-thumb:hover { background: var(--c-ink); }
 
 .trip-summary { max-width: 720px; margin: 0 auto 10px; text-align: center; }
 .trip-summary .meta { font-size: var(--fs-label); letter-spacing: var(--tracking-slight); color: var(--c-accent); font-weight: var(--fw-bold); text-transform: uppercase; margin-bottom: 10px; }
@@ -306,7 +307,7 @@ section { padding: 84px 0; }
 .ww-station-photos img { width: 100%; border-radius: var(--radius-sm); margin-bottom: 8px; display: block; break-inside: avoid; cursor: pointer; }
 .ww-station-video { width: 100%; border-radius: var(--radius-sm); display: block; margin-top: 12px; }
 
-.trip-stoplist { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.trip-stoplist { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; justify-content: center; }
 .trip-stoplist button { background: var(--c-bg); border: 1px solid var(--c-line); border-radius: var(--radius-lg); padding: 6px 14px; font-size: var(--fs-label); font-weight: var(--fw-semibold); cursor: pointer; color: var(--c-ink-soft); transition: all var(--dur-base) var(--ease); }
 .trip-stoplist button:hover, .trip-stoplist button.active { background: var(--c-accent); color: #fff; border-color: var(--c-accent); }
 
@@ -759,9 +760,9 @@ body.ww-frame-controls .hero-cta .btn { box-shadow: 0 8px 22px -10px rgba(0,0,0,
   .trip-tabs, .trip-stoplist {
     padding-left: 18px; padding-right: 18px; padding-top: 8px;
     scroll-padding-left: 18px; scroll-padding-right: 18px;
-    scrollbar-width: none; /* heller Scrollbalken unten weg */
   }
-  .trip-tabs::-webkit-scrollbar, .trip-stoplist::-webkit-scrollbar { display: none; }
+  /* mobil von LINKS scrollbar (statt zentriert) -> Fade/Indikator greift auch bei den Stationen */
+  .trip-stoplist { justify-content: flex-start; }
   .trip-tabs { padding-bottom: 24px; }
   .trip-stoplist { padding-bottom: 22px; }
   /* kompakter Schatten -> wird vom Scroll-Container nicht mehr hart abgeschnitten */
