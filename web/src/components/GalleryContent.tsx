@@ -141,7 +141,8 @@ export default function GalleryContent(props: Props) {
   const hrefPrefix = lang === 'en' ? '/en' : '';
 
   const albums = React.useMemo(() => {
-    const edges = (data as any)?.albenConnection?.edges || [];
+    // Absicherung: leere Live-Daten (Hydration) -> auf Server-Daten zurückfallen (keine leere Galerie).
+    const edges = ((data as any)?.albenConnection?.edges || (props.data as any)?.albenConnection?.edges) || [];
     return sortAlbums(
       edges.filter(Boolean).map((e: any) => ({ slug: e?.node?._sys?.filename || '', data: (e?.node || {}) as RawAlbum }))
     );

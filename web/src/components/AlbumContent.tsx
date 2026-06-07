@@ -14,7 +14,9 @@ type Props = { query: string; variables: object; data: any; lang: Lang };
 export default function AlbumContent(props: Props) {
   const { lang } = props;
   const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
-  const alb = ((data as any)?.alben || {}) as RawAlbum;
+  // Absicherung: Falls die Live-Daten (Hydration) leer/unvollständig zurückkommen, auf die
+  // serverseitig gerenderten Daten zurückfallen -> Galerie verschwindet nicht (leere Seite).
+  const alb = ((data as any)?.alben || (props.data as any)?.alben || {}) as RawAlbum;
 
   const photos = React.useMemo(() => albumPhotos(alb), [alb]);
   const name = (lang === 'en' ? alb.name_en || alb.name : alb.name) || '';
