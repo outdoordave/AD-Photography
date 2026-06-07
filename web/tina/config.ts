@@ -599,8 +599,19 @@ export default defineConfig({
           { type: 'string', name: 'form_message_en', label: '↳ English', ui: { component: EnglishOnlyField } },
           { type: 'string', name: 'form_send_de', label: 'Formular — Senden-Button' },
           { type: 'string', name: 'form_send_en', label: '↳ English', ui: { component: EnglishOnlyField } },
-          { type: 'string', name: 'form_note_de', label: 'Formular — Hinweis darunter', ui: { component: 'textarea' } },
+          { type: 'string', name: 'form_note_de', label: 'Formular — Hinweis darunter (nur sichtbar, solange KEIN Access-Key gesetzt ist)', ui: { component: 'textarea' } },
           { type: 'string', name: 'form_note_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+          // --- Echter Versand (Web3Forms) ---
+          {
+            type: 'string',
+            name: 'form_access_key',
+            label: '✉️ Formular-Versand: Web3Forms Access-Key',
+            description: 'Leer = Formular ist nur Vorschau (sendet nichts). Key holen auf web3forms.com (kostenlos, mit eurer E-Mail) und hier einfügen — dann versendet das Formular echt an dieses Postfach. Der Key ist öffentlich (kein Geheimnis).',
+          },
+          { type: 'string', name: 'form_consent_de', label: 'Formular — Datenschutz-Häkchen (Text)', description: 'Pflicht-Häkchen vor dem Senden. Leer = kein Häkchen.', ui: { component: 'textarea' } },
+          { type: 'string', name: 'form_consent_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+          { type: 'string', name: 'form_error_de', label: 'Formular — Fehlermeldung (wenn Senden scheitert)', ui: { component: 'textarea' } },
+          { type: 'string', name: 'form_error_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
         ],
       },
       // --- Highlights: album-übergreifende Lieblingsfotos (speisen die Home-Teaser) ---

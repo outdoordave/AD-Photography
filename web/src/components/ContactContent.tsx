@@ -4,9 +4,12 @@ import { socialIcon } from '../lib/socialIcons';
 
 // Kontakt als React-Insel (wie Stories/Gear/About): useTina = LIVE-Daten, data-tina-
 // field = Klick-ins-Feld. Aufbau 1:1 wie #page-contact: Seitenkopf + 2 Spalten
-// (links Direkt-Block + Kanal-Liste, rechts Formular). Formular ist VORSCHAU —
-// prueft auf gefuellte Felder (sonst Alert), zeigt Erfolgs-Meldung, leert die Felder;
-// es versendet (wie die Live-Seite) NICHTS.
+// (links Direkt-Block + Kanal-Liste, rechts Formular).
+// Formular-Versand (W5): wenn im CMS ein Web3Forms-Access-Key hinterlegt ist
+// (form_access_key), sendet das Formular die Nachricht per POST an api.web3forms.com
+// → landet im Postfach, das beim Key hinterlegt wurde. Ohne Key bleibt es „Vorschau"
+// (prüft Felder, zeigt Erfolg, sendet nichts) — so bricht nichts, bevor der Key da ist.
+// Datenschutz: Pflicht-Häkchen vor dem Senden. Spam-Schutz: verstecktes Honeypot-Feld.
 
 type Props = {
   query: string;
@@ -26,7 +29,16 @@ export default function ContactContent(props: Props) {
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [msg, setMsg] = React.useState('');
+  const [consent, setConsent] = React.useState(false);
+  const [honey, setHoney] = React.useState(''); // Honeypot: von Menschen unsichtbar, nur Bots füllen es
   const [sent, setSent] = React.useState(false);
+  const [sending, setSending] = React.useState(false);
+  const [error, setError] = React.useState('');
+
+  // Web3Forms-Key aus dem CMS (öffentlich, kein Geheimnis). Leer = „Vorschau"-Modus.
+  const accessKey = String(c.form_access_key || '').trim();
+  const hasKey = accessKey.length > 0;
+  const consentTxt = t(c, 'form_consent');
 
   // Nachrichten-Textfeld wächst mit dem Inhalt mit — bis zur max-height aus dem CSS
   // (300px), danach interner Scroll. 1:1-Port von wwGrowMsg (Live index.html).
@@ -39,15 +51,57 @@ export default function ContactContent(props: Props) {
     ta.style.height = Math.min(ta.scrollHeight, max) + 'px';
   }, [msg]);
 
-  const onSend = () => {
+  const clearForm = () => { setName(''); setEmail(''); setMsg(''); setConsent(false); };
+
+  const onSend = async () => {
     if (!name.trim() || !email.trim() || !msg.trim()) {
       alert(lang === 'de' ? 'Bitte fülle alle Felder aus.' : 'Please fill in all fields.');
       return;
     }
-    setSent(true);
-    setName('');
-    setEmail('');
-    setMsg('');
+    if (consentTxt && !consent) {
+      alert(lang === 'de'
+        ? 'Bitte stimme der Verarbeitung deiner Angaben zu, damit wir antworten können.'
+        : 'Please agree to your details being processed so we can reply.');
+      return;
+    }
+    // Honeypot gefüllt -> Bot: still „erfolgreich“ tun, aber nichts senden.
+    if (honey.trim()) { setSent(true); clearForm(); return; }
+
+    // Kein Key hinterlegt -> Vorschau-Modus (sendet nichts, wie bisher).
+    if (!hasKey) { setSent(true); clearForm(); return; }
+
+    setError('');
+    setSending(true);
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: accessKey,
+          subject: 'Neue Nachricht über das Kontaktformular — Wide & Wild',
+          from_name: 'Wide & Wild Website',
+          name: name.trim(),
+          email: email.trim(),
+          message: msg.trim(),
+          botcheck: '',
+        }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && (json as any).success) {
+        setSent(true);
+        clearForm();
+      } else {
+        setError(t(c, 'form_error') || (lang === 'de'
+          ? 'Senden fehlgeschlagen. Bitte später erneut versuchen oder direkt per E-Mail schreiben.'
+          : 'Sending failed. Please try again later or email us directly.'));
+      }
+    } catch {
+      setError(t(c, 'form_error') || (lang === 'de'
+        ? 'Senden fehlgeschlagen. Bitte später erneut versuchen oder direkt per E-Mail schreiben.'
+        : 'Sending failed. Please try again later or email us directly.'));
+    } finally {
+      setSending(false);
+    }
   };
 
   const channels: any[] = Array.isArray(c.channels) ? c.channels : [];
@@ -96,6 +150,7 @@ export default function ContactContent(props: Props) {
             {/* Rechts: Formular (Vorschau) */}
             <div className="contact-form">
               <div className={`form-success${sent ? ' show' : ''}`} data-tina-field={tf(c, 'form_success')}>{t(c, 'form_success')}</div>
+              {error ? <div className="form-error show" role="alert">{error}</div> : null}
               <div className="form-field">
                 <label data-tina-field={tf(c, 'form_name')}>{t(c, 'form_name')}</label>
                 <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
@@ -108,8 +163,22 @@ export default function ContactContent(props: Props) {
                 <label data-tina-field={tf(c, 'form_message')}>{t(c, 'form_message')}</label>
                 <textarea ref={msgRef} value={msg} onChange={(e) => setMsg(e.target.value)} />
               </div>
-              <button type="button" className="btn dark" data-tina-field={tf(c, 'form_send')} onClick={onSend}>{t(c, 'form_send')}</button>
-              <p className="form-note" data-tina-field={tf(c, 'form_note')}>{t(c, 'form_note')}</p>
+              {/* Honeypot: für Menschen unsichtbar; füllt ein Bot es aus, wird nicht gesendet. */}
+              <input
+                type="text" tabIndex={-1} autoComplete="off" aria-hidden="true"
+                value={honey} onChange={(e) => setHoney(e.target.value)}
+                style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }}
+              />
+              {consentTxt ? (
+                <label className="form-consent" data-tina-field={tf(c, 'form_consent')}>
+                  <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
+                  <span>{consentTxt}</span>
+                </label>
+              ) : null}
+              <button type="button" className="btn dark" data-tina-field={tf(c, 'form_send')} onClick={onSend} disabled={sending}>
+                {sending ? (lang === 'de' ? 'Senden …' : 'Sending …') : t(c, 'form_send')}
+              </button>
+              {!hasKey ? <p className="form-note" data-tina-field={tf(c, 'form_note')}>{t(c, 'form_note')}</p> : null}
             </div>
           </div>
         </div>

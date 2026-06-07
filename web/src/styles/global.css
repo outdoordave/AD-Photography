@@ -251,8 +251,14 @@ section { padding: 84px 0; }
 .form-note { font-size: var(--fs-label); color: var(--c-ink-soft); margin-top: 14px; }
 .form-success { display: none; background: #e6efd9; border: 1px solid #b8d089; color: #3b5510; padding: 16px 18px; border-radius: var(--radius-sm); margin-bottom: 18px; font-size: var(--fs-ui); }
 .form-success.show { display: block; }
+.form-error { display: none; background: #f6e2dc; border: 1px solid #e0a692; color: #7a2e15; padding: 16px 18px; border-radius: var(--radius-sm); margin-bottom: 18px; font-size: var(--fs-ui); }
+.form-error.show { display: block; }
+/* Datenschutz-Häkchen vor dem Senden */
+.form-consent { display: flex; align-items: flex-start; gap: 10px; margin: 4px 0 18px; font-size: var(--fs-label); color: var(--c-ink-soft); line-height: 1.5; cursor: pointer; }
+.form-consent input { margin-top: 3px; width: 16px; height: 16px; flex: 0 0 auto; accent-color: var(--c-accent); cursor: pointer; }
 .btn.dark { background: var(--c-ink); }
 .btn.dark:hover { background: #000; }
+.btn.dark:disabled { opacity: 0.6; cursor: progress; }
 
 /* ============ REISEN / TRIPS — 1:1 aus index.html ============ */
 .trip-tabs { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 36px 0 30px; }
