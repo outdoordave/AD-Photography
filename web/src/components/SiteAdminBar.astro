@@ -38,8 +38,16 @@
     const out = document.getElementById('wwAdminLogout');
     if (out) out.addEventListener('click', function (e) {
       e.preventDefault();
+      // Tina-Tokens aus localStorage UND sessionStorage entfernen ...
       try { tinaKeys().forEach(function (k) { localStorage.removeItem(k); }); } catch (e) {}
-      location.reload();
+      try {
+        for (var i = sessionStorage.length - 1; i >= 0; i--) {
+          var sk = sessionStorage.key(i);
+          if (sk && /tina/i.test(sk)) sessionStorage.removeItem(sk);
+        }
+      } catch (e) {}
+      // ... und sauber zur Startseite (Top-Fenster, falls im Editier-iframe) statt Reload.
+      try { (window.top || window).location.href = '/'; } catch (e) { window.location.href = '/'; }
     });
   })();
 </script>

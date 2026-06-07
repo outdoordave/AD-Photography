@@ -10,6 +10,7 @@ import SectionBanner from './fields/SectionBanner';
 import EnglishToggle from './fields/EnglishToggle';
 import LocationSearchField from './fields/LocationSearchField';
 import { backToSiteScreen } from './screens/BackToSiteScreen';
+import { logoutScreen } from './screens/LogoutScreen';
 
 // Tina-Cloud-Anbindung:
 //   clientId + branch sind OEFFENTLICH (clientId steht ohnehin im Browser-Bundle).
@@ -31,6 +32,7 @@ export default defineConfig({
   // TEIL 3A(b): globaler „Zur Website"-Menüpunkt in der CMS-Seitenleiste (Kategorie „Site").
   cmsCallback: (cms: any) => {
     try { cms.plugins.add(backToSiteScreen); } catch (e) { /* ignore */ }
+    try { cms.plugins.add(logoutScreen); } catch (e) { /* ignore */ }
     return cms;
   },
   build: {
