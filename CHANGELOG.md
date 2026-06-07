@@ -17,6 +17,23 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 — Kontakt komplett ausblendbar: Direktaufruf-Sperre
+- **Befund (Ist-Zustand geprüft):** Der Schalter `show_contact` (🎨 Darstellung →
+  „Kontakt zeigen?", aus Teil 2D) blendet **Nav- + Footer-Link** sauber aus (BaseLayout →
+  SiteNav/SiteFooter, Filter `!i.contactOnly || showContact`). **Lücke:** die Seiten
+  `/contact` + `/en/contact` rendern beim **Direktaufruf** trotzdem (kein Guard) — wie
+  Stories. Der Schalter-Text sagt das selbst („Nav-Link + Footer-Link").
+- **Fix:** Build-Zeit-Guard in beiden `contact.astro`: bei `show_contact === false`
+  `Astro.redirect` auf die Startseite (DE → `/`, EN → `/en/`). Logik = wie Nav/Footer
+  (aus = `false`, fehlend = sichtbar). `output: 'static'` → Astro baut eine Meta-Refresh-
+  Weiterleitung; das Kontaktformular wird nicht mehr ausgeliefert.
+- **Hinweis:** Solange aus, leitet auch die CMS-Live-Vorschau der Kontakt-Seite auf „/" um
+  (gleicher statischer Build). Zum Bearbeiten Schalter kurz an + bauen.
+- Reiner Seiten-Code → **tina-lock unverändert, kein Re-index.** Build grün (29 Seiten);
+  `dist/contact` = 248 B Refresh→`/`, `dist/en/contact` = Refresh→`/en/`, kein `page-contact`/
+  `<form>` mehr. W5 (echter Versand + danach wieder einblenden) in `IDEEN.md` aktualisiert.
+  Commit: `1c76a73`
+
 ## 2026-06-06 — Portfolio: Alben-Überschrift „freigestellt" (Schlagschatten)
 - Auf Nutzer-Wunsch: Die Alben-Überschrift (`.gallery-group-title`, z. B. „USA 2023 → 5") wirkt
   jetzt **freigestellt/schwebend** durch einen Buchstaben-Schlagschatten (`text-shadow`, **nicht**
