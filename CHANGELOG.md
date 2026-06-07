@@ -17,6 +17,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 — Rechtsseiten überarbeitet: kleinere Schrift + Datenschutz an echten Stack angepasst
+- **Schrift** der Rechtsseiten (`#page-legal`) bewusst klein/kompakt (Body `.78rem`, kleinere
+  Überschriften) — Pflichttext, wird kaum gelesen. Gilt für Datenschutz + Impressum.
+- **Datenschutz-Platzhalter** konkretisiert auf die im Code geprüften Dienste: Cloudflare
+  (Hosting/IP), Google Fonts (IP an Google, Hinweis „lokal einbinden"), OpenFreeMap (Karte),
+  YouTube-nocookie (Videos), Web3Forms (Kontakt) + Abschnitt „Cookies & Speicherung" (keine
+  Tracking-Cookies/keine Web-Analyse; `localStorage` nur im Admin-Bereich). Bleibt Platzhalter
+  → rechtlich prüfen. Befund nebenbei: **Seite setzt keine Tracking-Cookies** (kein
+  `document.cookie`/gtag/Analytics; `localStorage` nur SiteAdminBar).
+- Reiner Inhalt + CSS → tina-lock unverändert, **kein Re-index.** Build grün (33 Seiten);
+  Datenschutz rendert 9 Abschnitte, kleine Schrift im CSS verifiziert. Commit: `d4cf3b6`
+
 ## 2026-06-06 — Datenschutz- + Impressum-Seite (CMS-pflegbar) + Footer-/Consent-Links
 - Zwei neue, im CMS editierbare Rechtstext-Seiten als **Gerüst mit Platzhalter-Text** (zum
   Selbstbefüllen/Ersetzen — Rechtstext bewusst NICHT von mir erfunden, klar als Platzhalter markiert):
