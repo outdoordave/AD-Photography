@@ -47,6 +47,9 @@ export function Tile({ albName, ph, onOpen }: { albName: string; ph: ViewPhoto; 
 function AlbumSlideshow({ photos, onOpenAt }: { photos: ViewPhoto[]; onOpenAt: (i: number) => void }) {
   const trackRef = React.useRef<HTMLDivElement | null>(null);
   const autoRef = React.useRef<number | null>(null);
+  // Tipp-vs-Wisch: nur als „Tipp" werten (Lightbox öffnen), wenn der Finger kaum bewegt
+  // wurde. Auf dem Handy schluckt der Scroll-Container sonst das onClick.
+  const downRef = React.useRef<{ x: number; y: number; t: number } | null>(null);
 
   function currentCell(): number {
     const track = trackRef.current;
@@ -89,8 +92,14 @@ function AlbumSlideshow({ photos, onOpenAt }: { photos: ViewPhoto[]; onOpenAt: (
       <div
         className="album-track"
         ref={trackRef}
-        onClick={() => onOpenAt(currentCell())}
-        onPointerDown={stopAuto}
+        onPointerDown={(e) => { stopAuto(); downRef.current = { x: e.clientX, y: e.clientY, t: e.timeStamp }; }}
+        onPointerUp={(e) => {
+          const d = downRef.current; downRef.current = null;
+          if (!d) return;
+          const moved = Math.abs(e.clientX - d.x) > 10 || Math.abs(e.clientY - d.y) > 10;
+          const tooLong = (e.timeStamp - d.t) > 600;
+          if (!moved && !tooLong) onOpenAt(currentCell()); // echter Tipp -> Lightbox
+        }}
         onWheel={(e) => { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) stopAuto(); }}
       >
         {photos.map((p, i) => {

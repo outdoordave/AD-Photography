@@ -83,11 +83,19 @@ const logoSrc = logo && logo.charAt(0) !== '/' && !/^https?:/.test(logo) ? '/' +
     burger.classList.toggle('open', !!open);
     burger.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
-  links?.querySelectorAll('a').forEach((a) =>
-    a.addEventListener('click', () => {
-      links.classList.remove('open');
-      burger?.classList.remove('open');
-      burger?.setAttribute('aria-expanded', 'false');
-    })
-  );
+  function closeMenu() {
+    links?.classList.remove('open');
+    burger?.classList.remove('open');
+    burger?.setAttribute('aria-expanded', 'false');
+  }
+  links?.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeMenu));
+  // Geöffnetes Burger-Menü schließen, wenn man daneben (außerhalb) klickt/tippt.
+  document.addEventListener('click', (e) => {
+    if (!links || !links.classList.contains('open')) return;
+    const t = e.target as Node;
+    if (links.contains(t) || (burger && burger.contains(t))) return;
+    closeMenu();
+  });
+  // Auch mit ESC schließen.
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
 </script>

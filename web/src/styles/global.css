@@ -757,13 +757,13 @@ body.ww-frame-controls .hero-cta .btn { box-shadow: 0 8px 22px -10px rgba(0,0,0,
    + weiches Ein-/Ausfaden an den Rändern (mask) + etwas Innenabstand. */
 @media (max-width: 640px) {
   .trip-tabs, .trip-stoplist {
-    padding-left: 18px; padding-right: 18px;
-    scroll-padding-left: 18px; scroll-padding-right: 18px;
-    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 22px, #000 calc(100% - 22px), transparent 100%);
-            mask-image: linear-gradient(to right, transparent 0, #000 22px, #000 calc(100% - 22px), transparent 100%);
+    padding-left: 20px; padding-right: 20px; padding-top: 8px;
+    scroll-padding-left: 20px; scroll-padding-right: 20px;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 34px, #000 calc(100% - 34px), transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0, #000 34px, #000 calc(100% - 34px), transparent 100%);
   }
-  .trip-tabs { padding-bottom: 24px; }
-  .trip-stoplist { padding-bottom: 22px; }
+  .trip-tabs { padding-bottom: 28px; }
+  .trip-stoplist { padding-bottom: 26px; }
   /* sanfterer, kompakter Schatten -> wird vom Scroll-Container nicht mehr hart abgeschnitten */
   .trip-tabs button, .trip-stoplist button { box-shadow: var(--ww-ring), 0 4px 12px -4px rgba(46,36,24,0.28); }
   .trip-tabs button.active, .trip-stoplist button.active { box-shadow: var(--ww-ring), 0 5px 14px -5px rgba(46,36,24,0.32); }

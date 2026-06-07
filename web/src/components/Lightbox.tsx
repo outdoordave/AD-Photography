@@ -106,8 +106,12 @@ export default function Lightbox({ photos, startIndex, albumName = '', loop = tr
     }, 180);
   }
 
+  // Klick irgendwo auf den dunklen Hintergrund (auch NEBEN dem Foto) schließt die Lightbox.
+  // Ausgenommen: das Foto selbst, die Pfeile, der Schließen-Button und der Filmstreifen.
   function bgClick(e: React.MouseEvent) {
-    if (e.target === rootRef.current) onClose();
+    const t = e.target as HTMLElement;
+    if (t && t.closest && t.closest('.lb-track img, .lb-nav, .lb-close, .lb-filmstrip')) return;
+    onClose();
   }
 
   // --- Setup (Mount): instant zur Start-Slide, Observer, Strip-Handler, Tastatur ---
