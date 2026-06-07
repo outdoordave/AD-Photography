@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-07 — Mobil: schiebbare Reihen weicher (Reise-Tabs + Stations-Pills)
+- Auf dem iPhone werden Reise-Tabs (`.trip-tabs`) + Stations-Pills (`.trip-stoplist`) zu
+  horizontalen Scroll-Leisten (`overflow-x:auto`). Dabei (1) schnitt der weiche Schatten unten
+  **hart ab** (overflow klippt vertikal) und (2) liefen die Items **hart an den Bildschirmrand**.
+- Fix nur im Mobile-Media-Query (`max-width:640px`): kompakterer Schatten (`0 4px 12px -4px`,
+  passt in den Platz → keine harte Kante), `mask-image`-Verlauf links/rechts (Items faden weich
+  aus statt harter Kante), etwas `padding` + `scroll-padding`. Desktop unverändert.
+- Reines CSS → tina-lock unverändert, **kein Re-index.** Build grün; `mask-image`-Regel im
+  gebauten CSS verifiziert. Commit: `553c252`
+
 ## 2026-06-07 — Logout: sauber zur Startseite statt Tina-Fehler
 - Beim Abmelden warf Tina einen Fehler / ließ einen auf einer kaputten (Editier-)Seite zurück.
   Jetzt definierter Landeplatz = **Startseite** — über beide Wege:
