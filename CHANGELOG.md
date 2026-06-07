@@ -17,6 +17,19 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-07 — UX: Lightbox-/Burger-Schließen, Album-Tipp mobil, Scroll-Reihen weicher
+- **Lightbox:** Klick/Tipp **neben** das Foto (dunkler Hintergrund) schließt jetzt — `bgClick`
+  schließt, außer das Ziel ist Foto, Pfeil, Schließen-Button oder Filmstreifen. (`Lightbox.tsx`)
+- **Burger-Menü:** schließt bei Klick/Tipp **außerhalb** + per **ESC** (Listener in `SiteNav`).
+- **Portfolio-Album-Diashow (mobil):** `onClick` → **Tipp-Erkennung** (pointerdown/up + Bewegungs-/
+  Zeit-Schwelle). Der Scroll-Snap-Container schluckte auf dem Handy das `onClick` → Lightbox ging
+  nicht auf. Jetzt öffnet ein echter Tipp die Lightbox zuverlässig. (`GalleryContent.tsx`)
+- **Mobile schiebbare Reihen:** breiteres Ausfaden (`mask` 34 px) + mehr Innenabstand → kein
+  „abgeschnitten"-Eindruck mehr.
+- Reiner Komponenten/CSS-Code → tina-lock unverändert, **kein Re-index.** Build grün (35 Seiten).
+  Commit: `b9d646f`. *(Lightbox-Bug konnte hier nicht im Browser gegengetestet werden — Sandbox
+  blockt lokale Vorschau; Code-Pfade + Hydration geprüft, mobile Tap-Ursache adressiert.)*
+
 ## 2026-06-07 — Mobil: schiebbare Reihen weicher (Reise-Tabs + Stations-Pills)
 - Auf dem iPhone werden Reise-Tabs (`.trip-tabs`) + Stations-Pills (`.trip-stoplist`) zu
   horizontalen Scroll-Leisten (`overflow-x:auto`). Dabei (1) schnitt der weiche Schatten unten
