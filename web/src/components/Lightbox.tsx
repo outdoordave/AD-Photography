@@ -131,9 +131,11 @@ export default function Lightbox({ photos, startIndex, albumName = '', loop = tr
     track('foto', { bild: fileLabel(photos[startIndex]?.photo || ''), album: albumName || '—' });
 
     // IntersectionObserver: mittige Slide -> aktiv
+    // (DOM-Element heißt bewusst trackEl — NICHT track, sonst überschattet es die
+    //  importierte track()-Analytics-Funktion oben und wirft einen ReferenceError.)
     let io: IntersectionObserver | null = null;
-    const track = trackRef.current;
-    if (track && typeof IntersectionObserver !== 'undefined') {
+    const trackEl = trackRef.current;
+    if (trackEl && typeof IntersectionObserver !== 'undefined') {
       io = new IntersectionObserver(
         (entries) => {
           for (const en of entries) {
@@ -143,9 +145,9 @@ export default function Lightbox({ photos, startIndex, albumName = '', loop = tr
             }
           }
         },
-        { root: track, threshold: [0.6, 0.9] }
+        { root: trackEl, threshold: [0.6, 0.9] }
       );
-      track.querySelectorAll('.lb-slide').forEach((s) => io!.observe(s));
+      trackEl.querySelectorAll('.lb-slide').forEach((s) => io!.observe(s));
     }
 
     // Streifen: Wheel (entprellt), Touch, Scroll (treibt Hauptbild)
