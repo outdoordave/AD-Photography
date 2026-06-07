@@ -17,6 +17,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-06 — Stories: Direktaufruf-Sperre (gleiche Lücke wie Kontakt)
+- Dieselbe Lücke wie bei Kontakt, jetzt für Stories geschlossen: `show_stories` blendete nur
+  Nav-/Footer-Link aus; `/stories`, `/en/stories` **und die Einzelbeiträge** `/stories/<slug>`
+  (DE+EN) waren per Direkt-URL weiter erreichbar.
+- **Fix:** Build-Zeit-Guard in allen vier Seiten (`stories/index.astro`, `en/stories/index.astro`,
+  `stories/[slug].astro`, `en/stories/[slug].astro`): bei `show_stories !== true`
+  `Astro.redirect` auf die Startseite (DE → `/`, EN → `/en/`). Logik = wie Nav/Footer (sichtbar
+  NUR bei `show_stories === true`, Standard aus).
+- Reiner Seiten-Code → **tina-lock unverändert, kein Re-index.** Build grün (29 Seiten); im dist
+  verifiziert: alle vier Varianten = Meta-Refresh-Weiterleitung (+ `robots: noindex`), kein
+  `page-story`. Commit: `3fe9e01`
+
 ## 2026-06-06 — Kontakt komplett ausblendbar: Direktaufruf-Sperre
 - **Befund (Ist-Zustand geprüft):** Der Schalter `show_contact` (🎨 Darstellung →
   „Kontakt zeigen?", aus Teil 2D) blendet **Nav- + Footer-Link** sauber aus (BaseLayout →

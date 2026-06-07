@@ -94,12 +94,14 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 - 🟡 Kontaktformular (`handleSend`)
 
 ## 4. Bekannte Eigenheiten / Fallen
-- **Kontakt-Seite aktuell ausgeblendet** (`show_contact=false`, 🎨 Darstellung): Nav-/Footer-Link
-  weg **und** `/contact`+`/en/contact` leiten beim Direktaufruf auf die Startseite um (Build-Zeit-
-  Guard in den `contact.astro`). Schalter wieder **an** → alles erscheint automatisch. **Falle:**
-  solange aus, leitet auch die **CMS-Vorschau** der Kontakt-Seite um → zum Bearbeiten Schalter
-  kurz an + bauen. (Stories: gleicher Schalter, aber Stories-Seite hat noch KEINEN Direktaufruf-
-  Guard — derzeit ohnehin via `show_stories=false` versteckt, Link weg; Direktaufruf zeigt sie noch.)
+- **Kontakt + Stories aktuell ausgeblendet** (`show_contact=false`/`show_stories=false`,
+  🎨 Darstellung): Nav-/Footer-Link weg **und** Direktaufruf leitet auf die Startseite um
+  (Build-Zeit-Guard, DE → `/`, EN → `/en/`). Betrifft `/contact`+`/en/contact` sowie `/stories`,
+  `/en/stories` **und alle Einzelbeiträge** `/stories/<slug>`. Jeweiliger Schalter wieder **an**
+  → alles erscheint automatisch (kein Code-Eingriff). **Logik-Unterschied:** Kontakt sichtbar
+  außer `show_contact===false` (Standard an), Stories sichtbar NUR bei `show_stories===true`
+  (Standard aus). **Falle:** solange aus, leitet auch die **CMS-Vorschau** dieser Seiten um →
+  zum Bearbeiten Schalter kurz an + bauen.
 - **`gallery-settings.json` alle drei `false` → Fallback „Alben".** Mindestens ein
   Sortiermodus sollte an sein.
 - **Sveltia-Version gepinnt (0.164.2).** Nicht blind hochziehen ohne Test.
