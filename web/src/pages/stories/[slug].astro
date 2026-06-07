@@ -5,6 +5,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import StoryReaderContent from '../../components/StoryReaderContent.tsx';
 import { client } from '../../../tina/__generated__/client';
 import { buildStory } from '../../lib/stories';
+import appearance from '../../data/appearance-settings.json';
 
 export async function getStaticPaths() {
   const conn = await client.queries.storyConnection();
@@ -28,6 +29,8 @@ const { prev, next } = Astro.props as {
   prev: { slug: string; title: string } | null;
   next: { slug: string; title: string } | null;
 };
+// Stories ausgeblendet? Dann auch Einzelbeitrag /stories/<slug> nicht direkt zeigen.
+if ((appearance as any).show_stories !== true) return Astro.redirect('/');
 const res = await client.queries.story({ relativePath: `${slug}.md` });
 const title = buildStory(res.data.story as any).de.title;
 ---

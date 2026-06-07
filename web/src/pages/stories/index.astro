@@ -7,7 +7,13 @@ import SettingsHeader from '../../components/SettingsHeader.tsx';
 import { toSortedStories } from '../../lib/stories';
 import { tl } from '../../lib/albums';
 import settings from '../../data/stories-settings.json';
+import appearance from '../../data/appearance-settings.json';
 import { client } from '../../../tina/__generated__/client';
+
+// Stories für Besucher ausgeblendet? (Schalter 🎨 Darstellung → „Stories zeigen?", Standard aus).
+// Nav-/Footer-Link werden schon ausgeblendet; hier zusätzlich den Direktaufruf von /stories
+// sperren. Logik = wie Nav/Footer (sichtbar NUR bei show_stories === true).
+if ((appearance as any).show_stories !== true) return Astro.redirect('/');
 
 const entries = await getCollection('stories');
 const stories = toSortedStories(entries.map((e) => ({ slug: e.slug, data: e.data })));
