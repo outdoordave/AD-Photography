@@ -23,6 +23,7 @@ export default function Lightbox({ photos, startIndex, albumName = '', loop = tr
   const trackRef = React.useRef<HTMLDivElement | null>(null);
   const stripRef = React.useRef<HTMLDivElement | null>(null);
   const indexRef = React.useRef<number>(startIndex);
+  const readyRef = React.useRef<boolean>(false); // Hintergrund-Klick erst nach kurzem Moment aktiv
   const stripActiveRef = React.useRef<boolean>(false);
   const stripIdleRef = React.useRef<any>(null);
   const wheelIdleRef = React.useRef<any>(null);
@@ -108,7 +109,10 @@ export default function Lightbox({ photos, startIndex, albumName = '', loop = tr
 
   // Klick irgendwo auf den dunklen Hintergrund (auch NEBEN dem Foto) schließt die Lightbox.
   // Ausgenommen: das Foto selbst, die Pfeile, der Schließen-Button und der Filmstreifen.
+  // readyRef: der Öffnen-Tipp erzeugt direkt danach noch einen click -> erst nach kurzem
+  // Moment auf Hintergrund-Klicks reagieren, sonst schließt sich die Lightbox sofort wieder.
   function bgClick(e: React.MouseEvent) {
+    if (!readyRef.current) return;
     const t = e.target as HTMLElement;
     if (t && t.closest && t.closest('.lb-track img, .lb-nav, .lb-close, .lb-filmstrip')) return;
     onClose();
@@ -119,6 +123,9 @@ export default function Lightbox({ photos, startIndex, albumName = '', loop = tr
     document.body.style.overflow = 'hidden';
     scrollToIndex(startIndex, false);
     setCurrent(startIndex);
+
+    // Hintergrund-Klick erst nach kurzem Moment scharf schalten (siehe bgClick).
+    const readyT = setTimeout(() => { readyRef.current = true; }, 350);
 
     // Cookieloses Event: welches Bild wurde geöffnet (= angeklickt)? Album als Kontext.
     track('foto', { bild: fileLabel(photos[startIndex]?.photo || ''), album: albumName || '—' });
@@ -201,6 +208,7 @@ export default function Lightbox({ photos, startIndex, albumName = '', loop = tr
         strip.removeEventListener('scroll', onStripScroll);
       }
       document.removeEventListener('keydown', onKey);
+      clearTimeout(readyT);
       clearTimeout(stripIdleRef.current);
       clearTimeout(wheelIdleRef.current);
     };
