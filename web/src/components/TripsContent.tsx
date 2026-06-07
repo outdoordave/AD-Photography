@@ -100,6 +100,33 @@ export default function TripsContent(props: Props) {
   const ioRef = React.useRef<IntersectionObserver | null>(null);
   const coordSigRef = React.useRef('');
   const editSyncTimerRef = React.useRef<number | null>(null);
+  // Refs der schiebbaren Reihen (Reise-Tabs + Stations-Pills) für die Rand-Fade-Indikatoren.
+  const tabsElRef = React.useRef<HTMLDivElement | null>(null);
+  const stopsElRef = React.useRef<HTMLDivElement | null>(null);
+  // Rand-Fade als „geht-noch-weiter"-Indikator: Klasse ww-edge-l/-r je nach Scrollposition.
+  // Fade erscheint nur auf der Seite mit mehr Inhalt; an den Enden verschwindet es.
+  React.useEffect(() => {
+    const els = [tabsElRef.current, stopsElRef.current].filter(Boolean) as HTMLElement[];
+    if (!els.length) return;
+    const update = (el: HTMLElement) => {
+      const more = el.scrollWidth - el.clientWidth;
+      el.classList.toggle('ww-edge-l', more > 2 && el.scrollLeft > 4);
+      el.classList.toggle('ww-edge-r', more > 2 && el.scrollLeft < more - 4);
+    };
+    const cleanups: Array<() => void> = [];
+    els.forEach((el) => {
+      const h = () => update(el);
+      el.addEventListener('scroll', h, { passive: true });
+      cleanups.push(() => el.removeEventListener('scroll', h));
+      update(el);
+      const r = requestAnimationFrame(() => update(el)); // nach Layout (Schrift/Bilder) nochmal
+      cleanups.push(() => cancelAnimationFrame(r));
+    });
+    const onResize = () => els.forEach(update);
+    window.addEventListener('resize', onResize);
+    cleanups.push(() => window.removeEventListener('resize', onResize));
+    return () => cleanups.forEach((c) => c());
+  }, [tripIdx, trips, lang]);
 
   // Signatur der karten-relevanten Stop-Daten (Koordinaten + Marker-/Popup-Texte).
   // Aendert sie sich (Ortssuche, Titel, Datum, Name), werden in der Live-Vorschau die
@@ -323,7 +350,7 @@ export default function TripsContent(props: Props) {
           onStyle={setLiveMapStyle}
         />
       ) : null}
-      <div className="trip-tabs" id="tripTabs">
+      <div className="trip-tabs" id="tripTabs" ref={tabsElRef}>
         {trips.map((tp, i) => {
           // 1:1 wie Live: Tab zeigt exakt den CMS-Titel, KEIN automatisches Suffix.
           // (upcoming steuert nur Aktuell/Entdecken, nicht das Tab-Label.)
@@ -409,7 +436,7 @@ export default function TripsContent(props: Props) {
         </div>
       </div>
 
-      <div className="trip-stoplist" style={{ justifyContent: 'center' }}>
+      <div className="trip-stoplist" style={{ justifyContent: 'center' }} ref={stopsElRef}>
         {stops.map((s, i) => (
           <button key={i} className={i === active ? 'active' : ''} onClick={() => scrollToStop(i, true)}>{s.title || s.name}</button>
         ))}
