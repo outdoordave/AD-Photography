@@ -89,9 +89,18 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
 - **Warum besser:** Zugänglichkeit + SEO, kostet im CMS quasi nichts.
 - **Aufwand:** niedrig · **Capability-Lock:** additiv.
 
-### W5 · Kontaktformular wirklich versenden — (B, schließt fehlende Funktion)
+### W5 · Kontaktformular wirklich versenden, dann Kontakt wieder einblenden — (B, schließt fehlende Funktion)
 - **Status:** offen — **eigenständiges Vorhaben, David terminiert separat**
-- **Was:** `handleSend` (heute nur Vorschau, kein echter Versand) an einen Gratis-Dienst hängen (z. B. Formspree/Cloudflare).
+- **Aktueller Zustand (06.06.2026):** Kontakt-Seite ist für Besucher **komplett ausgeblendet** —
+  Schalter 🎨 Darstellung → „Kontakt zeigen?" steht auf **aus**; Nav-/Footer-Link weg **und**
+  Direktaufruf `/contact` + `/en/contact` leiten auf die Startseite um (Build-Zeit-Guard in den
+  beiden `contact.astro`). Instagram ist auf der Startseite verlinkt, daher reicht das vorerst.
+- **Was (W5):** `handleSend` (heute nur Vorschau, kein echter Versand) an einen Gratis-Dienst
+  hängen (z. B. Formspree/Cloudflare). **Danach** den Schalter wieder auf **an** stellen → Seite +
+  beide Links erscheinen automatisch wieder (kein Code-Eingriff nötig).
+- **Hinweis Editieren:** Solange der Schalter aus ist, leitet auch die CMS-Live-**Vorschau** der
+  Kontakt-Seite auf „/" um (gleicher statischer Build). Zum Bearbeiten den Schalter kurz auf an
+  stellen + bauen.
 - **Warum besser:** macht eine aktuell **fehlende** Funktion echt.
 - **Aufwand:** niedrig–mittel · **Capability-Lock:** schließt Lücke, nimmt nichts weg.
 
