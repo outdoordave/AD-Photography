@@ -699,6 +699,33 @@ export default defineConfig({
           { type: 'string', name: 'body_en', label: '↳ English (leer = Deutsch wird gezeigt)', ui: { component: EnglishOnlyTextField } },
         ],
       },
+      // --- Statistik: versteckte Auswerte-Seite (/statistik), cookielose Web-Analyse ---
+      {
+        name: 'statistik',
+        label: '📊 Statistik',
+        path: 'src/data',
+        format: 'json',
+        match: { include: 'statistik' }, // nur src/data/statistik.json
+        ui: { allowedActions: { create: false, delete: false }, router: () => '/statistik' },
+        fields: [
+          { type: 'string', name: 'ww_here', label: '📊 Statistik', ui: { component: SectionBanner } },
+          {
+            type: 'boolean', name: 'enabled', label: 'Statistik aktiv? (Tracking-Code auf der Website einbinden)',
+            description: 'AUS (Standard): es wird NICHTS getrackt. AN: der unten eingefügte Analytics-Code wird auf allen Seiten geladen. Nutze einen cookielosen Dienst, dann ist kein Cookie-Banner nötig.',
+          },
+          {
+            type: 'string', name: 'analytics_snippet', label: 'Analytics-Code (Tracking-Snippet deines Diensts)',
+            description: 'Den kompletten <script>…</script>-Schnipsel deines Analyse-Diensts (z. B. Cloudflare Web Analytics, Plausible, Umami) hier einfügen. Wird nur geladen, wenn „Statistik aktiv?" an ist. (Öffentlicher Code, kein Geheimnis.)',
+            ui: { component: 'textarea' },
+          },
+          {
+            type: 'string', name: 'dashboard_url', label: 'Dashboard-URL (öffentlicher Freigabe-Link zum Einbetten)',
+            description: 'Optional: die öffentliche „Shared Dashboard"-URL deines Diensts (Plausible/Umami) — dann erscheint die Auswertung direkt auf /statistik. Cloudflare Web Analytics lässt sich nicht einbetten; dort dann leer lassen.',
+          },
+          { type: 'string', name: 'intro_de', label: 'Einleitungstext', ui: { component: 'textarea' } },
+          { type: 'string', name: 'intro_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+        ],
+      },
     ],
   },
 });

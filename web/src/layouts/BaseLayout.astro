@@ -8,11 +8,16 @@ import SiteFooter from '../components/SiteFooter.astro';
 import SiteAdminBar from '../components/SiteAdminBar.astro';
 import appearance from '../data/appearance-settings.json';
 import home from '../data/home-settings.json';
+import statistik from '../data/statistik.json';
 interface Props {
   title?: string;
   lang?: 'de' | 'en';
+  noindex?: boolean;
 }
-const { title = 'Wide & Wild', lang = 'de' } = Astro.props;
+const { title = 'Wide & Wild', lang = 'de', noindex = false } = Astro.props;
+// Cookielose Web-Analyse: nur einbinden, wenn im CMS aktiviert UND ein Code hinterlegt ist.
+const st = statistik as any;
+const analyticsSnippet = st.enabled === true && st.analytics_snippet ? String(st.analytics_snippet) : '';
 const ap = appearance as any;
 const hm = home as any;
 const logo = ap.logo || '';
@@ -34,7 +39,9 @@ const showFooterSocial = !!(hm.social_show && hm.social_show.footer);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <title>{title}</title>
+    {analyticsSnippet && <Fragment set:html={analyticsSnippet} />}
     <!-- Fonts identisch zur Live-Seite: Fraunces (Display) + Mulish (Body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

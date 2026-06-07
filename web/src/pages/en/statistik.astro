@@ -1,0 +1,13 @@
+---
+// Statistics EN ('/en/statistik'). Hidden analytics page (noindex, not in menu).
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StatsContent from '../../components/StatsContent.tsx';
+import { client } from '../../../tina/__generated__/client';
+
+const res = await client.queries.statistik({ relativePath: 'statistik.json' });
+---
+<BaseLayout title="Statistics — Wide & Wild" lang="en" noindex={true}>
+  <div id="page-stats">
+    <StatsContent client:load query={res.query} variables={res.variables} data={res.data} lang="en" />
+  </div>
+</BaseLayout>
