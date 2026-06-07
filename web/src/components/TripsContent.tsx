@@ -4,6 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { useTina, tinaField } from 'tinacms/dist/react';
 import Lightbox, { type LbPhoto } from './Lightbox';
 import { normalizePath, wwYouTubeEmbed } from './../lib/stories';
+import { track } from '../lib/track';
 import { viewStops, bi, tripTitle, sortTrips, type RawTrip, type Lang, type ViewStop } from '../lib/trips';
 
 // Reisen-Insel (Vollausbau, 1:1 aus index.html): Reise-Tabs, Reise-Kopf, MapLibre-
@@ -336,7 +337,7 @@ export default function TripsContent(props: Props) {
               // öffentliche Seite nutzt weiter onClick). Tinas Klick wählt parallel das
               // Feld dieser Reise -> das Formular folgt mit.
               onMouseDown={() => { if (inEditorRef.current) setTripIdx(i); }}
-              onClick={() => setTripIdx(i)}>{label}</button>
+              onClick={() => { setTripIdx(i); track('reise', { reise: label }); }}>{label}</button>
           );
         })}
       </div>
