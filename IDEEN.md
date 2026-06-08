@@ -260,6 +260,58 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
 
 ---
 
+## Video-Clips (kurze Clips 5–30 s) — Analyse
+
+**Status:** `offen` · **Typ:** (B) neue Fähigkeit · **kein Cutover-Blocker.** (Stand 2026-06-08)
+
+**Wunsch:** Kurze Clips (5–30 s) direkt vom Handy hochladen (iPhone liefert `.mov`),
+**automatische** Umwandlung zu web-tauglichem **MP4/H.264**, git-basiert, kostenlos,
+**kein manuelles Vor-Konvertieren**.
+
+### Live-Wahrheit — wie Video aktuell genutzt wird
+- **Alte Sveltia-Seite:** Hero erlaubt **MP4-Datei-Upload** (`admin/config.yml` → „Video (MP4)",
+  `widget: file`) + Poster; `<video>` im Hero. Längere/Story-Videos via **YouTube** (youtube-nocookie).
+- **Astro/Tina-Version:**
+  - **Hero** (`tina/config.ts`): mode-Select inkl. `video`; Feld `video` = **String-Pfad zu `/uploads/`**,
+    Beschreibung wörtlich **„Video vorher lokal komprimieren (HandBrake/CapCut)"**; dazu `video_poster`.
+    Render: `HomeHeroLive.tsx` → `<video src={normalizePath(hero.video)}>`.
+  - **Stationen/Reisen:** optionales Feld `video` („Video-Loop (optional)") — gleiche
+    „vorher lokal komprimieren"-Beschreibung.
+  - **Stories:** YouTube via `wwYouTubeEmbed` (youtube-nocookie).
+  - **Aktuell liegt KEINE Videodatei in `/uploads`** → Hero/Stationen nutzen derzeit Bilder.
+- **Kernbefund:** Der aktuelle Entwurf **erwartet manuelles Vor-Komprimieren** (HandBrake/CapCut) —
+  genau das will der Nutzer NICHT. **Auto-Konvertierung ist eine neue Fähigkeit.**
+
+### iPhone-Formate (ehrliche Antwort)
+- iPhone-Kamera: „High Efficiency" = **HEVC/H.265 in `.mov`** (Standard); „Most Compatible" = **H.264 in `.mov`**.
+- **HEVC läuft in Safari, aber nicht zuverlässig in Chrome/Firefox.** „Läuft überall" = **MP4-Container +
+  H.264 (AVC) + AAC**. iOS kodiert beim Web-Upload HEVC **manchmal**, aber **nicht verlässlich** zu H.264 →
+  nicht drauf verlassen.
+
+### Wege (ehrlich bewertet)
+- **(a) Browser-Transcoding beim Upload (wie jSquash für Bilder):** bräuchte **ffmpeg.wasm**
+  (~25–30 MB WASM, SharedArrayBuffer + COOP/COEP-Header). **Auf iPhone/iPad/Safari unzuverlässig**
+  (Speicherlimits killen Tabs, HEVC-Decode heikel, langsam). **Urteil: NICHT zuverlässig — nicht versprechen.**
+  (Anders als Bilder: dort geht jSquash, bei Video nicht.)
+- **(b) Umwandlung beim Build/CI (GitHub Action mit ffmpeg):** `.mov` → MP4/H.264 automatisch beim Commit;
+  kostenlos (Actions-Freikontingent), zuverlässig. **Aber:** Video-Originale im git = **Repo-Bloat**
+  (Video ist groß, git schlecht für Binärvideo) → ggf. git-lfs / `.mov` nach Transcode entfernen; Referenz-Handling nötig.
+- **(c) Externer Dienst (Cloudflare Stream / Mux):** löst Transcode + Thumbnails + Streaming sauber —
+  **kostenpflichtig, nicht git-basiert.** Raus per Constraints.
+- **(d) YouTube/Vimeo (wie heute für Stories):** kostenlos, zuverlässig, kein Transcode, kein git-Bloat.
+  **Aber** für kurze Hintergrund-Clips klobig (Branding/Controls); DSGVO: youtube-nocookie verbindet beim
+  Abspielen doch zu Google. Vimeo sauberer, Free-Tier begrenzt.
+
+### Empfehlung
+- Browser-Transcoding **(a): nein** (iOS unzuverlässig — ehrlich, kein Versprechen).
+- Beste git+kostenlos+Auto-Konvert-Lösung: **(b) CI-Transcode (GitHub Action, ffmpeg)** — mit Vorbehalt
+  **Repo-Bloat** (nur wirklich kurze Clips; `.mov` nach Transcode entfernen oder git-lfs).
+- Wenn Repo-Bloat inakzeptabel: **externer Dienst (c)** (löst es sauber, kostet aber).
+- Da Video **kein Cutover-Blocker** ist und aktuell **kein** Clip genutzt wird: **vorerst zurückstellen.**
+  Wenn gewünscht: Pilot mit (b) an **einem** Hero-Clip; `video_poster` als Standbild beibehalten.
+
+---
+
 _Quelle der Ideen: tiefe Live-Code-Analyse (siehe `ANALYSE-Reisen.md`) + Bau von
 Stufe 1 (Stories) und dem Foto-Upload-Feld. Pflege: Status pro Punkt aktualisieren,
 sobald David ihn im jeweiligen Schritt freigibt/umsetzt._
