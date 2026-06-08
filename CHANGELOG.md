@@ -17,6 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-08 — Scroll-Pfeile: gemessene Pillen-Mitte statt Magic-Pixel (Schluss mit Raten)
+- Nach mehreren Pixel-Iterationen (14→10→16→18→21/18→23/24) auf eine **robuste** Lösung umgestellt:
+  JS (edge-fade-Effekt in `TripsContent.tsx`) misst die echte Pillen-Mitte je Reihe via
+  `getBoundingClientRect` und setzt `--ww-arrow-y` auf den `.ww-scroller`; CSS pinnt den Pfeil per
+  `top:var(--ww-arrow-y)/translateY(-50%)`. Selbstkorrigierend (Scroll/Resize/Tab-Wechsel/Fonts-Load),
+  `:has(.trip-tabs)`-Sonderregel entfällt. Ursache war: Zentrierung gegen die Scroller-Box inkl.
+  22–24px Scrollbar-Zone → geometrische Mitte ≠ Pillen-Mitte. TS-Check sauber.
+- betroffene Dateien: `web/src/styles/global.css`, `web/src/components/TripsContent.tsx`. Commit: `6e4d1b9`.
+
 ## 2026-06-08 — Korrektur Scroll-Pfeile (vertikal mittig, bottom 10px→16px)
 - Vorheriger Pfeil-Fix (`652b9db`, 14→10px) ging in die **falsche Richtung** (Annahme „‹/›-Glyphe sitzt
   optisch hoch" war falsch → Pfeile danach zu tief). Korrigiert auf `bottom:16px` = rechnerische Mitte

@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-08** · letzter Commit `aef420f` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-08** · letzter Commit `6e4d1b9` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -105,9 +105,10 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 - **Mobile Scroll-Reihen (Reise-Tabs/Stations-Pills):** scrollen nur ≤640px (Desktop/iPad brechen um).
   Fade + Pfeile (`:has(.ww-edge-*)`) als „geht-weiter"-Indikator, Scrollbalken sichtbar+dezent,
   Snap-align center, aktiver Tab/Station wird per JS in die Mitte gescrollt (`centerInRow`).
-  Pfeile vertikal mittig — **pro Reihe getrennt** (`aef420f`), da unterschiedlich hoch:
-  Stationen (`.trip-stoplist`, pb22) `bottom:18px`; Reise-Tabs (`.trip-tabs`, pb24) `bottom:21px`
-  via `.ww-scroller:has(.trip-tabs)`. Skala: je +2px `bottom` ~1px höher.
+  Pfeile vertikal mittig — **gemessen statt Magic-Pixel** (`6e4d1b9`): JS im edge-fade-Effekt
+  (TripsContent) misst die echte Pillen-Mitte je Reihe (`getBoundingClientRect`) und setzt
+  `--ww-arrow-y` auf den `.ww-scroller`; CSS pinnt den Pfeil per `top:var(--ww-arrow-y)/translateY(-50%)`.
+  Selbstkorrigierend, re-misst bei Scroll/Resize/Tab-Wechsel/Fonts-Load. (Davor: endloses Pixel-Raten 14→…→24.)
 - **Portfolio-Album:** Diashow-Foto + Album-Unterseiten-Kacheln öffnen die Lightbox per `onClick`;
   Lightbox schließt per Tipp neben das Foto (Hintergrund, 350ms-Sperre gegen Sofort-Schließen).
 - **Sichtbarkeits-Schalter + Direktaufruf-Sperre** (🎨 Darstellung): Stand committet —
