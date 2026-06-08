@@ -34,6 +34,21 @@ function setMapLanguage(map: maplibregl.Map, lang: Lang) {
   }
 }
 
+// Scroll-Pfeil als SVG-Chevron (kein Font-Versatz -> exakt zentrierbar). Der Pfad ist
+// symmetrisch um die vertikale viewBox-Mitte (y 5..19 um 12) => SVG-Mitte == Box-Mitte.
+// Zusammen mit --ww-arrow-y (gemessene Pillen-Mitte, s. u.) sitzt der Chevron exakt mittig.
+function Chev({ dir }: { dir: 'left' | 'right' }) {
+  return (
+    <svg className="ww-chev" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path
+        d={dir === 'left' ? 'M15 5 L8 12 L15 19' : 'M9 5 L16 12 L9 19'}
+        fill="none" stroke="currentColor" strokeWidth="2.4"
+        strokeLinecap="round" strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 // TEIL 8: liest map_style LIVE aus reisen_settings und meldet Änderungen nach oben.
 // Eigene Komponente, damit die useTina NUR mit echtem Query läuft (bedingt gerendert).
 function MapStyleWatcher({ query, variables, data, onStyle }: { query: string; variables: object; data: any; onStyle: (s: string) => void }) {
@@ -112,6 +127,16 @@ export default function TripsContent(props: Props) {
       const more = el.scrollWidth - el.clientWidth;
       el.classList.toggle('ww-edge-l', more > 2 && el.scrollLeft > 4);
       el.classList.toggle('ww-edge-r', more > 2 && el.scrollLeft < more - 4);
+      // Pfeil-Box vertikal auf die GEMESSENE Pillen-Mitte setzen. --ww-arrow-y = Mitte der ersten
+      // Pille relativ zum .ww-scroller; der SVG-Pfeil pinnt per top:var(--ww-arrow-y)/translateY(-50%)
+      // darauf. SVG hat keinen Font-Versatz -> Chevron-Mitte == Box-Mitte == Pillen-Mitte (exakt).
+      const scroller = el.parentElement;
+      const pill = el.firstElementChild as HTMLElement | null;
+      if (scroller && pill) {
+        const sRect = scroller.getBoundingClientRect();
+        const pRect = pill.getBoundingClientRect();
+        scroller.style.setProperty('--ww-arrow-y', `${pRect.top - sRect.top + pRect.height / 2}px`);
+      }
     };
     const cleanups: Array<() => void> = [];
     els.forEach((el) => {
@@ -125,6 +150,9 @@ export default function TripsContent(props: Props) {
     const onResize = () => els.forEach(update);
     window.addEventListener('resize', onResize);
     cleanups.push(() => window.removeEventListener('resize', onResize));
+    // Webfonts können die Button-Höhe minimal ändern -> nach dem Laden nochmal messen.
+    const fonts = (document as any).fonts;
+    if (fonts && fonts.ready) fonts.ready.then(() => els.forEach(update)).catch(() => {});
     return () => cleanups.forEach((c) => c());
   }, [tripIdx, trips, lang]);
 
@@ -362,7 +390,7 @@ export default function TripsContent(props: Props) {
         />
       ) : null}
       <div className="ww-scroller">
-        <button type="button" className="ww-scroll-arrow left" aria-label="Zurück" onClick={() => tabsElRef.current && tabsElRef.current.scrollBy({ left: -200, behavior: 'smooth' })}>‹</button>
+        <button type="button" className="ww-scroll-arrow left" aria-label="Zurück" onClick={() => tabsElRef.current && tabsElRef.current.scrollBy({ left: -200, behavior: 'smooth' })}><Chev dir="left" /></button>
       <div className="trip-tabs" id="tripTabs" ref={tabsElRef}>
         {trips.map((tp, i) => {
           // 1:1 wie Live: Tab zeigt exakt den CMS-Titel, KEIN automatisches Suffix.
@@ -381,7 +409,7 @@ export default function TripsContent(props: Props) {
           );
         })}
       </div>
-        <button type="button" className="ww-scroll-arrow right" aria-label="Weiter" onClick={() => tabsElRef.current && tabsElRef.current.scrollBy({ left: 200, behavior: 'smooth' })}>›</button>
+        <button type="button" className="ww-scroll-arrow right" aria-label="Weiter" onClick={() => tabsElRef.current && tabsElRef.current.scrollBy({ left: 200, behavior: 'smooth' })}><Chev dir="right" /></button>
       </div>
 
       <div className="trip-summary">
@@ -452,13 +480,13 @@ export default function TripsContent(props: Props) {
       </div>
 
       <div className="ww-scroller">
-        <button type="button" className="ww-scroll-arrow left" aria-label="Zurück" onClick={() => stopsElRef.current && stopsElRef.current.scrollBy({ left: -200, behavior: 'smooth' })}>‹</button>
+        <button type="button" className="ww-scroll-arrow left" aria-label="Zurück" onClick={() => stopsElRef.current && stopsElRef.current.scrollBy({ left: -200, behavior: 'smooth' })}><Chev dir="left" /></button>
       <div className="trip-stoplist" ref={stopsElRef}>
         {stops.map((s, i) => (
           <button key={i} className={i === active ? 'active' : ''} onClick={() => scrollToStop(i, true)}>{s.title || s.name}</button>
         ))}
       </div>
-        <button type="button" className="ww-scroll-arrow right" aria-label="Weiter" onClick={() => stopsElRef.current && stopsElRef.current.scrollBy({ left: 200, behavior: 'smooth' })}>›</button>
+        <button type="button" className="ww-scroll-arrow right" aria-label="Weiter" onClick={() => stopsElRef.current && stopsElRef.current.scrollBy({ left: 200, behavior: 'smooth' })}><Chev dir="right" /></button>
       </div>
 
       {Array.isArray(trip.gallery) && trip.gallery.length ? (
