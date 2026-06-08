@@ -17,6 +17,12 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-08 — Scroll-Pfeile Politur: filigranerer Chevron + weiches Fade
+- Chevron kleiner & dünner (16px statt 22px, `stroke-width` 2 statt 2.4) → näher am alten Text-Design.
+- Rand-Fade von `mask-image` (nicht animierbar → wirkte „instant") auf **Opacity-Overlay** umgestellt
+  (`.ww-scroller::before/::after`, Farbe `--c-bg`) → blendet in 320ms weich ein/aus. Pfeil-Opacity-Transition
+  250ms → 320ms. Commit: `5a6ca03`.
+
 ## 2026-06-08 — Scroll-Pfeile: SVG-Chevron + gemessene Pillen-Mitte (Endlösung)
 - Ursache des ganzen Hin und Her: `‹/›` waren **Text-Glyphen** mit font-abhängigem Versatz in der Zeilenbox.
   Ersetzt durch geometrisch zentrierten **SVG-Chevron** (`Chev`-Komponente, Pfad symmetrisch um die

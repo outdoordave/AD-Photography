@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-08** · letzter Commit `41d4be7` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-08** · letzter Commit `5a6ca03` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -110,6 +110,8 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   JS misst die Pillen-Mitte je Reihe (`getBoundingClientRect`) → `--ww-arrow-y` auf `.ww-scroller`; CSS pinnt
   per `top:var(--ww-arrow-y)/translateY(-50%)`. ⇒ Chevron-Mitte == Pillen-Mitte, deterministisch, beide Reihen,
   selbstkorrigierend (Scroll/Resize/Tab/Fonts). Box 30×40 = Tap-Ziel. `.stop-arrow` (Station vor/zurück) unverändert.
+  Politur (`5a6ca03`): Chevron filigraner (16px/stroke 2); Rand-Fade von mask-image → **Opacity-Overlay**
+  (`.ww-scroller::before/::after`, Farbe `--c-bg`) + Pfeil-Transition 320ms → weiches Ein-/Ausblenden statt instant.
 - **Portfolio-Album:** Diashow-Foto + Album-Unterseiten-Kacheln öffnen die Lightbox per `onClick`;
   Lightbox schließt per Tipp neben das Foto (Hintergrund, 350ms-Sperre gegen Sofort-Schließen).
 - **Sichtbarkeits-Schalter + Direktaufruf-Sperre** (🎨 Darstellung): Stand committet —
