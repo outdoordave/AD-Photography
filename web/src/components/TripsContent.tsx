@@ -42,7 +42,7 @@ function Chev({ dir }: { dir: 'left' | 'right' }) {
     <svg className="ww-chev" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <path
         d={dir === 'left' ? 'M15 5 L8 12 L15 19' : 'M9 5 L16 12 L9 19'}
-        fill="none" stroke="currentColor" strokeWidth="2.4"
+        fill="none" stroke="currentColor" strokeWidth="2"
         strokeLinecap="round" strokeLinejoin="round"
       />
     </svg>

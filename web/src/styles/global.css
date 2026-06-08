@@ -774,20 +774,17 @@ body.ww-frame-controls .hero-cta .btn { box-shadow: 0 8px 22px -10px rgba(0,0,0,
   /* kompakter Schatten -> wird vom Scroll-Container nicht mehr hart abgeschnitten */
   .trip-tabs button, .trip-stoplist button { box-shadow: var(--ww-ring), 0 4px 12px -4px rgba(46,36,24,0.28); }
   .trip-tabs button.active, .trip-stoplist button.active { box-shadow: var(--ww-ring), 0 5px 14px -5px rgba(46,36,24,0.32); }
-  /* Rand-Fade = „geht-noch-weiter"-Indikator: nur auf der Seite mit mehr Inhalt
-     (JS in TripsContent setzt ww-edge-l/-r je nach Scrollposition). Schmaler/schicker (26px). */
-  .trip-tabs.ww-edge-r, .trip-stoplist.ww-edge-r {
-    -webkit-mask-image: linear-gradient(to right, #000, #000 calc(100% - 26px), transparent);
-            mask-image: linear-gradient(to right, #000, #000 calc(100% - 26px), transparent);
+  /* Rand-Fade = „geht-noch-weiter"-Indikator (nur Seite mit mehr Inhalt; JS setzt ww-edge-l/-r).
+     WEICHES Ein-/Ausblenden via Opacity-Overlay statt mask-image (mask laesst sich nicht animieren).
+     Farbe = Section-Hintergrund (--c-bg) -> deckt die Rand-Pillen sanft zu und blendet weich. */
+  .ww-scroller::before, .ww-scroller::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 28px; z-index: 2;
+    pointer-events: none; opacity: 0; transition: opacity 320ms var(--ease);
   }
-  .trip-tabs.ww-edge-l, .trip-stoplist.ww-edge-l {
-    -webkit-mask-image: linear-gradient(to right, transparent, #000 26px, #000);
-            mask-image: linear-gradient(to right, transparent, #000 26px, #000);
-  }
-  .trip-tabs.ww-edge-l.ww-edge-r, .trip-stoplist.ww-edge-l.ww-edge-r {
-    -webkit-mask-image: linear-gradient(to right, transparent, #000 26px, #000 calc(100% - 26px), transparent);
-            mask-image: linear-gradient(to right, transparent, #000 26px, #000 calc(100% - 26px), transparent);
-  }
+  .ww-scroller::before { left: 0;  background: linear-gradient(to right, var(--c-bg), transparent); }
+  .ww-scroller::after  { right: 0; background: linear-gradient(to left,  var(--c-bg), transparent); }
+  .ww-scroller:has(.ww-edge-l)::before { opacity: 1; }
+  .ww-scroller:has(.ww-edge-r)::after  { opacity: 1; }
   /* Pfeile — SVG-Chevron (kein Font-Versatz): SVG-Mitte == Box-Mitte. JS (TripsContent) misst die
      echte Pillen-Mitte je Reihe und setzt --ww-arrow-y auf den .ww-scroller; der Pfeil pinnt per
      top:var(--ww-arrow-y)/translateY(-50%) exakt darauf => Chevron-Mitte == Pillen-Mitte, deterministisch.
@@ -797,9 +794,10 @@ body.ww-frame-controls .hero-cta .btn { box-shadow: 0 8px 22px -10px rgba(0,0,0,
     position: absolute; top: var(--ww-arrow-y, 50%); transform: translateY(-50%);
     width: 30px; height: 40px; z-index: 3; padding: 0;
     border: none; background: none; color: var(--c-ink);
-    cursor: pointer; opacity: 0; pointer-events: none; transition: opacity var(--dur-base) var(--ease);
+    cursor: pointer; opacity: 0; pointer-events: none; transition: opacity 320ms var(--ease);
   }
-  .ww-scroll-arrow .ww-chev { width: 22px; height: 22px; display: block; }
+  /* filigran (kleiner + duenner) -> Richtung altes Text-Chevron */
+  .ww-scroll-arrow .ww-chev { width: 16px; height: 16px; display: block; }
   .ww-scroll-arrow.left { left: -4px; }
   .ww-scroll-arrow.right { right: -4px; }
   .ww-scroller:has(.ww-edge-l) .ww-scroll-arrow.left { opacity: 0.85; pointer-events: auto; }
