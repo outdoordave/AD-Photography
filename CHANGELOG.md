@@ -17,6 +17,13 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-08 — Scroll-Pfeile: Mess-Ansatz verworfen, zurück zu Pixel-Werten (Stationen 26 / Tabs 27)
+- Der gemessene Ansatz (`6e4d1b9`) war live **schlechter**: Er zentriert die **Box** auf die Pillen-Mitte,
+  aber die `‹/›`-**Text-Glyphe** sitzt in ihrer Zeilenbox tief → Chevron zu tief. Zurück zur bottom-Methode,
+  pro Reihe, etwas höher: Stationen `26px`, Reise-Tabs `27px` (`:has(.trip-tabs)`); Messung aus `TripsContent` entfernt.
+- **Erkenntnis:** Pfeil-Zentrierung ist headless **nicht pixelgenau** lösbar (Font-Metrik der Glyphe + kein Rendering).
+  Exakt nur per Live-Messung im Browser; saubere Endlösung wäre ein **SVG-Chevron** (kein Font-Versatz). Commit: `74c2f84`.
+
 ## 2026-06-08 — Scroll-Pfeile: gemessene Pillen-Mitte statt Magic-Pixel (Schluss mit Raten)
 - Nach mehreren Pixel-Iterationen (14→10→16→18→21/18→23/24) auf eine **robuste** Lösung umgestellt:
   JS (edge-fade-Effekt in `TripsContent.tsx`) misst die echte Pillen-Mitte je Reihe via
