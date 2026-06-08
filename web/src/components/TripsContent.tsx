@@ -112,16 +112,6 @@ export default function TripsContent(props: Props) {
       const more = el.scrollWidth - el.clientWidth;
       el.classList.toggle('ww-edge-l', more > 2 && el.scrollLeft > 4);
       el.classList.toggle('ww-edge-r', more > 2 && el.scrollLeft < more - 4);
-      // Pfeile vertikal exakt auf die GEMESSENE Pillen-Mitte setzen (kein Magic-Pixel mehr):
-      // --ww-arrow-y = Mitte der ersten Pille relativ zum .ww-scroller; die Pfeile pinnen per
-      // top:var(--ww-arrow-y)/translateY(-50%) darauf. Pro Reihe eigener Wert, selbstkorrigierend.
-      const scroller = el.parentElement;
-      const pill = el.firstElementChild as HTMLElement | null;
-      if (scroller && pill) {
-        const sRect = scroller.getBoundingClientRect();
-        const pRect = pill.getBoundingClientRect();
-        scroller.style.setProperty('--ww-arrow-y', `${pRect.top - sRect.top + pRect.height / 2}px`);
-      }
     };
     const cleanups: Array<() => void> = [];
     els.forEach((el) => {
@@ -135,9 +125,6 @@ export default function TripsContent(props: Props) {
     const onResize = () => els.forEach(update);
     window.addEventListener('resize', onResize);
     cleanups.push(() => window.removeEventListener('resize', onResize));
-    // Webfonts können die Button-Höhe minimal ändern -> nach dem Laden nochmal messen.
-    const fonts = (document as any).fonts;
-    if (fonts && fonts.ready) fonts.ready.then(() => els.forEach(update)).catch(() => {});
     return () => cleanups.forEach((c) => c());
   }, [tripIdx, trips, lang]);
 
