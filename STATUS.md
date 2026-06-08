@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-06** · letzter Commit `3505521` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-08** · letzter Commit `652b9db` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -16,8 +16,10 @@
 > editierbar, Live-Vorschau; „passt erstmal"), **Galerie/Alben ✅ abgenommen**. **Startseite
 > in Arbeit** (4 Etappen): **1 Nav-Shell ✅ gebaut** (Header/Menü/Footer/DE-EN/Burger in
 > BaseLayout); **2 Hero ✅**, **3 Home-Teaser ✅**, **4 Social-Row ✅** → **Startseite vollständig**.
-> **Alle großen Sektionen portiert.** **Als Nächstes: Gesamt-Abnahme + Cutover + Audit.** Offen separat:
-> Kontaktformular-Senden (W5), Reisen-Vorschau-Feinschliff.
+> **Alle großen Sektionen portiert.** **Live-Check/Audit erledigt (2026-06-08) → Befunde in `MAENGEL.md`**
+> (Fonts wirklich lokal/0× Google live bestätigt; 0 kaputte Bilder; Guards ok). **Vor Cutover zwingend:
+> echte Rechtstexte + Geräte-Smoke-Test (Safari/iPad).** Offen separat: Bild-Performance (MAENGEL P1 — Roh-JPGs),
+> Reisen-Vorschau-Feinschliff. (Kontaktformular-Senden W5 ✅ erledigt.)
 
 ---
 
@@ -103,6 +105,7 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 - **Mobile Scroll-Reihen (Reise-Tabs/Stations-Pills):** scrollen nur ≤640px (Desktop/iPad brechen um).
   Fade + Pfeile (`:has(.ww-edge-*)`) als „geht-weiter"-Indikator, Scrollbalken sichtbar+dezent,
   Snap-align center, aktiver Tab/Station wird per JS in die Mitte gescrollt (`centerInRow`).
+  Pfeile sitzen vertikal mittig auf den Pillen (`.ww-scroll-arrow` `bottom:10px`, `652b9db`).
 - **Portfolio-Album:** Diashow-Foto + Album-Unterseiten-Kacheln öffnen die Lightbox per `onClick`;
   Lightbox schließt per Tipp neben das Foto (Hintergrund, 350ms-Sperre gegen Sofort-Schließen).
 - **Sichtbarkeits-Schalter + Direktaufruf-Sperre** (🎨 Darstellung): Stand committet —
@@ -204,7 +207,8 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
   on TinaCloud"; bei Unterordner zwingend „Path To Tina Folder".
 - **Bestätigte Bau-Reihenfolge (nach Schritt 6):** Stories ✅ → Gear ✅ → Über uns ✅
   → Kontakt ✅ → Reisen ✅ → Galerie/Alben ✅ (abgenommen) → **Startseite (in Arbeit):
-  1 Nav-Shell ✅ → 2 Hero ✅ → 3 Home-Teaser ✅ → 4 Social-Row ✅** → **Cutover ← als Nächstes → Audit.**
+  1 Nav-Shell ✅ → 2 Hero ✅ → 3 Home-Teaser ✅ → 4 Social-Row ✅** → **Audit ✅ (Befunde in `MAENGEL.md`)
+  → Cutover** (zwingend davor: echte Rechtstexte + Geräte-Smoke-Test Safari/iPad).
 - **Startseite Etappe 4 (Social-Row) — gebaut (`8ea67c2`):** `insta-row` im Intro (Alexandra/David),
   `socialUrl()` in `socialIcons.ts`, CMS-Social-Liste im „🏠 Startseite". **Startseite vollständig.**
 - **Startseite Etappe 3 (Home-Teaser) — gebaut (`2b369bb`):** `lib/home.ts` + `HomeIntro.astro`,

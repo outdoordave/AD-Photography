@@ -17,6 +17,22 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-08 — Live-Check Astro-Vorschau (Audit) + MAENGEL.md/IDEEN.md + Pfeil-Fix
+- **Read-only-Audit** der Vorschau (`aandd-photography-astro.pages.dev`, Stand `fd48c39`) + Quellcode.
+  Kernergebnisse: Google-Fonts wirklich weg (deployte CSS 0× google, 11× lokale woff2 — Erst-Treffer
+  war stale Edge-Cache); externe Hosts auf Besucherseiten nur umami/openfreemap-Kacheln/web3forms/instagram-Links;
+  0 kaputte Bilder; keine Alaska-Hardcodes; Guards korrekt; Footer-Links ok. Mängel: Rechtstexte Platzhalter (🔴),
+  Geräte-Smoke-Test offen (🔴), Bild-Performance (8–13 MB Roh-JPGs, kein Cache, 🟡), Tina-CDN-Bild im utah-Story-Body (🟡),
+  Soft-404/kein robots/kein Sitemap (🟡), diverse Kleinpunkte.
+- **MAENGEL.md** neu: priorisierte, abhakbare Mängelliste (🔴/🟡/⚪) inkl. Bild-Performance-Optionen (a–e)
+  + Empfehlung (Cache-Header sofort + Sharp-Build-Schritt) + Geräte-Test-Checkliste.
+- **IDEEN.md**: Analyse „Video-Clips" angehängt (Live-Wahrheit Hero/Stationen erwarten manuelles
+  Vor-Komprimieren; iPhone=HEVC/.mov, „überall"=MP4/H.264; Browser-Transcoding auf iOS unzuverlässig;
+  beste git+kostenlos = CI-ffmpeg, Vorbehalt Repo-Bloat; kein Cutover-Blocker → zurückstellen).
+- **Fix:** Scroll-Pfeile der Reise-Tabs/Stationen (mobil) vertikal mittig (`.ww-scroll-arrow` bottom 14px→10px).
+- betroffene Dateien: `MAENGEL.md` (neu), `IDEEN.md`, `web/src/styles/global.css`.
+- Commits: `f5b238c` (MAENGEL.md), `f3126f5` (IDEEN.md Video), `652b9db` (Pfeil-Fix). **Nichts gebaut außer dem Pfeil-Fix; nichts gepusht.**
+
 ## 2026-06-07 — Schriften lokal selbst hosten (Fontsource) statt Google Fonts (DSGVO)
 - **Live-Wahrheit:** Fraunces (Display: wght 400/500/600 + Kursiv, opsz-Achse 9..144) + Mulish
   (Body: wght 300–700, kein Kursiv) — in Astro **und** alter `index.html` identisch via Google-`<link>`.
