@@ -23,6 +23,7 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   `(H-16)/2 == 8 + Buttonhöhe/2` (button-höhen-unabhängig), bestätigt durch die Beobachtungen (14px leicht
   tief, 10px deutlich tief → Mitte 16px).
 - betroffene Dateien: `web/src/styles/global.css`. Commit: `a808ad9`.
+- **Feinschliff am Gerät:** `16px` war noch einen Hauch zu tief → final `bottom:18px` (mittig). Commit: `da8f090`.
 
 ## 2026-06-08 — Live-Check Astro-Vorschau (Audit) + MAENGEL.md/IDEEN.md + Pfeil-Fix
 - **Read-only-Audit** der Vorschau (`aandd-photography-astro.pages.dev`, Stand `fd48c39`) + Quellcode.
