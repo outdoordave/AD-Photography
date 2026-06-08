@@ -17,6 +17,13 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-08 — Korrektur Scroll-Pfeile (vertikal mittig, bottom 10px→16px)
+- Vorheriger Pfeil-Fix (`652b9db`, 14→10px) ging in die **falsche Richtung** (Annahme „‹/›-Glyphe sitzt
+  optisch hoch" war falsch → Pfeile danach zu tief). Korrigiert auf `bottom:16px` = rechnerische Mitte
+  `(H-16)/2 == 8 + Buttonhöhe/2` (button-höhen-unabhängig), bestätigt durch die Beobachtungen (14px leicht
+  tief, 10px deutlich tief → Mitte 16px).
+- betroffene Dateien: `web/src/styles/global.css`. Commit: `a808ad9`.
+
 ## 2026-06-08 — Live-Check Astro-Vorschau (Audit) + MAENGEL.md/IDEEN.md + Pfeil-Fix
 - **Read-only-Audit** der Vorschau (`aandd-photography-astro.pages.dev`, Stand `fd48c39`) + Quellcode.
   Kernergebnisse: Google-Fonts wirklich weg (deployte CSS 0× google, 11× lokale woff2 — Erst-Treffer
