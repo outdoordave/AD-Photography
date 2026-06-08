@@ -17,6 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-08 — Scroll-Pfeile: SVG-Chevron + gemessene Pillen-Mitte (Endlösung)
+- Ursache des ganzen Hin und Her: `‹/›` waren **Text-Glyphen** mit font-abhängigem Versatz in der Zeilenbox.
+  Ersetzt durch geometrisch zentrierten **SVG-Chevron** (`Chev`-Komponente, Pfad symmetrisch um die
+  viewBox-Mitte → SVG-Mitte == Box-Mitte). JS misst die echte Pillen-Mitte je Reihe und setzt `--ww-arrow-y`
+  auf den `.ww-scroller`; CSS pinnt den Pfeil per `top:var(--ww-arrow-y)/translateY(-50%)`.
+  ⇒ Chevron-Mitte == Pillen-Mitte, **deterministisch** für beide Reihen, selbstkorrigierend
+  (Scroll/Resize/Tab-Wechsel/Fonts). Box 30×40 = Tap-Ziel. `.stop-arrow` (Station vor/zurück) unverändert. TS sauber.
+- betroffene Dateien: `web/src/components/TripsContent.tsx`, `web/src/styles/global.css`. Commit: `41d4be7`.
+
 ## 2026-06-08 — Scroll-Pfeile: Mess-Ansatz verworfen, zurück zu Pixel-Werten (Stationen 26 / Tabs 27)
 - Der gemessene Ansatz (`6e4d1b9`) war live **schlechter**: Er zentriert die **Box** auf die Pillen-Mitte,
   aber die `‹/›`-**Text-Glyphe** sitzt in ihrer Zeilenbox tief → Chevron zu tief. Zurück zur bottom-Methode,

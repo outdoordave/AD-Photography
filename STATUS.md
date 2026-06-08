@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-08** · letzter Commit `74c2f84` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-08** · letzter Commit `41d4be7` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -105,11 +105,11 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 - **Mobile Scroll-Reihen (Reise-Tabs/Stations-Pills):** scrollen nur ≤640px (Desktop/iPad brechen um).
   Fade + Pfeile (`:has(.ww-edge-*)`) als „geht-weiter"-Indikator, Scrollbalken sichtbar+dezent,
   Snap-align center, aktiver Tab/Station wird per JS in die Mitte gescrollt (`centerInRow`).
-  Pfeile vertikal — **bottom-Pixelwert pro Reihe** (`74c2f84`): Stationen `bottom:26px`,
-  Reise-Tabs `bottom:27px` (`:has(.trip-tabs)`). Mess-Ansatz (`6e4d1b9`) wieder verworfen, weil er
-  nur die BOX zentriert, die `‹/›`-Text-Glyphe aber in ihrer Zeilenbox tief sitzt → Chevron zu tief.
-  **Pixelgenau nur per Live-Messung im Browser bestätigbar** (headless nicht). Offen: ggf. SVG-Chevron
-  (kein Font-Versatz) als endgültige Lösung.
+  Pfeile vertikal — **SVG-Chevron + gemessene Pillen-Mitte** (`41d4be7`, Endlösung): Text-Glyphe `‹/›`
+  (Font-Versatz) ersetzt durch geometrisch zentrierten SVG (`Chev`-Komponente, symmetrisch um viewBox-Mitte).
+  JS misst die Pillen-Mitte je Reihe (`getBoundingClientRect`) → `--ww-arrow-y` auf `.ww-scroller`; CSS pinnt
+  per `top:var(--ww-arrow-y)/translateY(-50%)`. ⇒ Chevron-Mitte == Pillen-Mitte, deterministisch, beide Reihen,
+  selbstkorrigierend (Scroll/Resize/Tab/Fonts). Box 30×40 = Tap-Ziel. `.stop-arrow` (Station vor/zurück) unverändert.
 - **Portfolio-Album:** Diashow-Foto + Album-Unterseiten-Kacheln öffnen die Lightbox per `onClick`;
   Lightbox schließt per Tipp neben das Foto (Hintergrund, 350ms-Sperre gegen Sofort-Schließen).
 - **Sichtbarkeits-Schalter + Direktaufruf-Sperre** (🎨 Darstellung): Stand committet —
