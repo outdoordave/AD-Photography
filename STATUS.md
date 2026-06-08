@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-08** · letzter Commit `da8f090` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-08** · letzter Commit `aef420f` (Branch `astro-umbau`) ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
@@ -105,8 +105,9 @@ Bilder als Lightbox-Gruppe, DE/EN — `renderStory`, `buildStory`
 - **Mobile Scroll-Reihen (Reise-Tabs/Stations-Pills):** scrollen nur ≤640px (Desktop/iPad brechen um).
   Fade + Pfeile (`:has(.ww-edge-*)`) als „geht-weiter"-Indikator, Scrollbalken sichtbar+dezent,
   Snap-align center, aktiver Tab/Station wird per JS in die Mitte gescrollt (`centerInRow`).
-  Pfeile vertikal mittig auf den Pillen (`.ww-scroll-arrow` `bottom:18px`, `da8f090`; iterativ
-  am Gerät justiert: 14→10 zu tief, 16 Hauch tief, **18px = mittig**; je +2px ~1px höher).
+  Pfeile vertikal mittig — **pro Reihe getrennt** (`aef420f`), da unterschiedlich hoch:
+  Stationen (`.trip-stoplist`, pb22) `bottom:18px`; Reise-Tabs (`.trip-tabs`, pb24) `bottom:21px`
+  via `.ww-scroller:has(.trip-tabs)`. Skala: je +2px `bottom` ~1px höher.
 - **Portfolio-Album:** Diashow-Foto + Album-Unterseiten-Kacheln öffnen die Lightbox per `onClick`;
   Lightbox schließt per Tipp neben das Foto (Hintergrund, 350ms-Sperre gegen Sofort-Schließen).
 - **Sichtbarkeits-Schalter + Direktaufruf-Sperre** (🎨 Darstellung): Stand committet —
