@@ -102,6 +102,12 @@ export default function TripsContent(props: Props) {
   }, []);
 
   const trip: any = trips[tripIdx]?.data || {};
+  // Eindeutiger Schluessel der aktiven Reise. Wird an ALLE reise-spezifischen Bloecke gehaengt
+  // (Summary, Detail-Spur, Stations-Pillen, Galerie). Beim Reise-Wechsel ersetzt React damit den
+  // ganzen DOM-Knoten (frischer Anstrich) statt nur Text zu tauschen -> verhindert den Safari-
+  // Repaint-Geist (Stationen der vorigen Reise blieben untergemalt). Dynamisch aus dem Slug ->
+  // gilt automatisch fuer alle (auch kuenftige) Reisen. Die Karte bleibt bewusst montiert (kein key).
+  const tripKey = trips[tripIdx]?.slug ?? tripIdx;
   const rawStops: any[] = Array.isArray(trip.stops) ? trip.stops : [];
   const stops: ViewStop[] = React.useMemo(() => viewStops(trip, lang), [trip, lang]);
 
@@ -412,7 +418,7 @@ export default function TripsContent(props: Props) {
         <button type="button" className="ww-scroll-arrow right" aria-label="Weiter" onClick={() => tabsElRef.current && tabsElRef.current.scrollBy({ left: 200, behavior: 'smooth' })}><Chev dir="right" /></button>
       </div>
 
-      <div className="trip-summary">
+      <div className="trip-summary" key={tripKey}>
         <div className="meta" data-tina-field={tf(trip, 'meta')}>{bi(trip, 'meta', lang)}</div>
         <p data-tina-field={tf(trip, 'summary')}>{bi(trip, 'summary', lang)}</p>
         {/* Verknüpftes Album (linked_trip === aktuelle Reise) -> Link zur Album-Unterseite. */}
@@ -436,7 +442,7 @@ export default function TripsContent(props: Props) {
         </div>
 
         <div className="trip-detail-wrap">
-          <div className="trip-detail" ref={trackRef}>
+          <div className="trip-detail" ref={trackRef} key={tripKey}>
             {stops.map((s, i) => {
               const cover = s.frame.src; // CSS-Zuschnitt: Original + s.frame.style
               const yt = wwYouTubeEmbed(s.youtube);
@@ -481,7 +487,7 @@ export default function TripsContent(props: Props) {
 
       <div className="ww-scroller">
         <button type="button" className="ww-scroll-arrow left" aria-label="Zurück" onClick={() => stopsElRef.current && stopsElRef.current.scrollBy({ left: -200, behavior: 'smooth' })}><Chev dir="left" /></button>
-      <div className="trip-stoplist" ref={stopsElRef}>
+      <div className="trip-stoplist" ref={stopsElRef} key={tripKey}>
         {stops.map((s, i) => (
           <button key={i} className={i === active ? 'active' : ''} onClick={() => scrollToStop(i, true)}>{s.title || s.name}</button>
         ))}
@@ -490,7 +496,7 @@ export default function TripsContent(props: Props) {
       </div>
 
       {Array.isArray(trip.gallery) && trip.gallery.length ? (
-        <div className="story-gallery" style={{ marginTop: 30 }}>
+        <div className="story-gallery" style={{ marginTop: 30 }} key={tripKey}>
           {trip.gallery.map((g: any, i: number) => (
             <img key={i} src={normalizePath(g.image)} alt={bi(g, 'caption', lang)} loading="lazy"
               data-tina-field={tinaField(g, 'image')}
