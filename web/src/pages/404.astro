@@ -1,0 +1,23 @@
+---
+// 404-Seite. Astro erzeugt daraus dist/404.html; Cloudflare Pages liefert diese Datei
+// fuer unbekannte Pfade mit HTTP 404 aus (behebt den Soft-404, der vorher die Startseite
+// mit Status 200 zurueckgab). Eine Seite fuer DE + EN (Cloudflare serviert sie
+// pfadunabhaengig). noindex, damit Fehlerseiten nicht indexiert werden.
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Seite nicht gefunden — Wide & Wild" lang="de" noindex={true}>
+  <section>
+    <div class="wrap" style="text-align:center; padding:clamp(60px,12vh,140px) 0;">
+      <div class="kicker">404</div>
+      <h1>Seite nicht gefunden</h1>
+      <p style="max-width:46ch; margin:0 auto 30px;">
+        Diese Seite gibt es leider nicht (mehr).<br />
+        <span style="opacity:.65;">This page could not be found.</span>
+      </p>
+      <p style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <a class="btn" href="/">Zur Startseite</a>
+        <a class="btn ghost" href="/portfolio">Portfolio ansehen</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
