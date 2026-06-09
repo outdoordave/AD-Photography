@@ -1,6 +1,7 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-09** · letzter Commit `146dd72` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-09** · letzter Commit `66df209` (Branch `astro-umbau`) ·
+> **Fix:** Reise-Tabs/Stations-Pillen brechen bei 641–860px um statt abzuschneiden (Scroll/Fade/Pfeile nur noch ≤640px; behebt auch Hover-Aufpoppen). ·
 > **Neu:** P1 Bild-Performance ✅ · K2 Insta zentral aus Kontakt ✅ · K4 EN-Rechtstexte ✅ · P2 utah-Bild→/uploads ✅ ·
 > P3 echte 404 + env-gesteuertes Vorschau-noindex ✅ (`robots.txt`/Sitemap offen). ·
 > ⚠️ **Offene Cloudflare-Aktionen:** (1) **Tina-Cloud-Re-Index** nach K2 (Schema-Änderung, falls noch nicht erfolgt).

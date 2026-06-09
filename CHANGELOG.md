@@ -17,6 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-09 — Fix: Reise-Tabs/Stations-Pillen brechen bei 641–860px um (statt Abschneiden + Hover-Pop)
+- Befund: Bei Fensterbreite 641–860px standen die Pillen-Reihen auf `nowrap`/`overflow-x:auto` (seit jeher,
+  `@media max-width:860px`), aber Fade/Pfeile erst ≤640px → Pillen wurden **abgeschnitten ohne Indikator**.
+  Zusätzlich „poppten" sie beim Hover, weil `overflow-x:auto` automatisch `overflow-y:auto` erzwingt und die
+  Hover-Anhebung (`translateY(-2px)` + Schatten, `.trip-*-button:hover`) oben/unten beschnitt.
+- Fix: Scroll-Modus von ≤860px auf **≤640px** verschoben; bei 641–860px gilt die Basis `flex-wrap:wrap`
+  (umbrechen, alles sichtbar, kein Overflow → Hover-Anhebung sauber). Scroll + Fade + Pfeile jetzt konsistent
+  nur ≤640px. Nur CSS → kein Re-Index. Commit: `66df209`.
+
 ## 2026-06-09 — EN-Rechtstexte (K4) + P2 (Story-Bild) + P3 (404 + Vorschau-noindex)
 - **K4** (`d7d52df`): `body_en` von Datenschutz + Impressum mit fachlicher EN-Übersetzung gefüllt
   (GDPR-Terminologie; DDG/MStV/TDDDG beibehalten; Dienste/Anschrift unverändert; YouTube-Link `hl=en`),
