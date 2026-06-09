@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "tinacms dev -c \"astro dev\"",
-    "build": "node scripts/copy-uploads.mjs && node scripts/gen-uploads-manifest.mjs && tinacms build -c \"astro build\"",
+    "build": "node scripts/copy-uploads.mjs && node scripts/gen-uploads-manifest.mjs && tinacms build -c \"astro build\" && node scripts/optimize-uploads.mjs",
     "astro:dev": "astro dev",
     "astro:build": "astro build",
     "preview": "astro preview",
@@ -26,6 +26,7 @@
     "tinacms": "^2.2.9"
   },
   "devDependencies": {
-    "@tinacms/cli": "^1.6.4"
+    "@tinacms/cli": "^1.6.4",
+    "sharp": "^0.34.5"
   }
 }
