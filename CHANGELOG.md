@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-08 — K2: Instagram-Handles zentral aus der Kontaktseite (eine Pflegestelle)
+- Home-Intro-Social-Reihe (`HomeIntroLive`) zieht die Insta-Links jetzt aus `contact.json` (`channels`,
+  Typ ≠ email/phone) statt aus `home-settings.json`. **Build-Time-Import → funktioniert auch bei
+  ausgeblendeter Kontaktseite** (`show_contact:false`). Einzelquelle = Kontakt.
+- `social`-Feld aus der Startseite-CMS-Maske (`tina/config.ts`) entfernt; nur `social_show.intro`
+  bleibt (Social-Reihe an/aus). `intro.social` aus `home-settings.json` entfernt.
+- Korrekte Handles `@david.bastisch` + `@shot.by.alx_` (a3.flow raus, im Build verifiziert).
+- Schema-Änderung → `tina-lock.json` neu generiert (deterministisch, 2× gleiche md5 `d23f79…`),
+  Offline-Build grün (35 Seiten). **⚠️ Nach Push: Tina-Cloud-Re-Index nötig.** Commit: `d5ffe73`.
+
 ## 2026-06-08 — Scroll-Pfeile Politur: filigranerer Chevron + weiches Fade
 - Chevron kleiner & dünner (16px statt 22px, `stroke-width` 2 statt 2.4) → näher am alten Text-Design.
 - Rand-Fade von `mask-image` (nicht animierbar → wirkte „instant") auf **Opacity-Overlay** umgestellt

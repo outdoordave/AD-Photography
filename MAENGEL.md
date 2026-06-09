@@ -13,7 +13,7 @@
 
 ## 🔴 Kritisch — zwingend vor Cutover
 
-- [ ] **R1 · Rechtstexte sind Platzhalter** (Datenschutz **und** Impressum).
+- [x] **R1 · Rechtstexte** — ✅ **DE gefüllt** (Datenschutz + Impressum, echte Angaben, live). Offen nur: `body_en` leer → EN fällt auf DE zurück (s. K4).
   - *Ursache:* `web/src/data/datenschutz.json` + `impressum.json` enthalten PLATZHALTER-Text
     (deutsche Felder mit `[eckigen Klammern]`); **`body_en` ist leer** → EN fällt auf den
     deutschen Platzhalter zurück.
@@ -76,7 +76,7 @@
   - *Fix:* `display`-URL auf `/uploads/` zurückschreiben.
   - *Cutover-Blocker:* Nein.
 
-- [ ] **K2 · Instagram-Handles inkonsistent.**
+- [x] **K2 · Instagram-Handles** — ✅ **erledigt** (`d5ffe73`): zentral aus der Kontaktseite (`contact.json`), Home leitet ab; `@david.bastisch` + `@shot.by.alx_`. ⚠️ Re-Index nach Push.
   - *Ursache:* Footer/Home zeigen `a3.flow` + `david.bastisch`; Kontaktseite zeigt
     `david.bastisch` + `shot.by.alx_`.
   - *Fix:* **Klärung durch David — welche Handles stimmen?** Dann angleichen.
