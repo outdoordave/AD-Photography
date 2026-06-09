@@ -10,7 +10,7 @@ body_de: |-
 
   Wir nannten die Drohne irgendwann Kevin. Kevin hat ein Talent dafür, genau dann eine Sturmwarnung zu blinken, wenn das Licht am besten ist. An diesem Tag in Utah hielt Kevin durch.
 
-  ![](https://assets.tina.io/defa5b44-687f-478c-a647-bad7355aedd3/DJI_0019_edit.webp)
+  ![](/uploads/DJI_0019_edit.webp)
 
   > Von oben sieht die Wüste aus wie ein Gemälde, das jemand mit dem Daumen verwischt hat.
 
