@@ -1,8 +1,10 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-08** · letzter Commit `7d1079c` (Branch `astro-umbau`) ·
-> ⚠️ **Offene Aktion nach Push: Tina-Cloud-Re-Index** (Schema-Änderung K2 — `social`-Feld aus Startseite entfernt). ·
-> **Neu:** P1 Bild-Performance (Sharp-Build-Optimierung dist/uploads 132→11 MB + Cache-Header) ✅. ·
+> **Stand: 2026-06-09** · letzter Commit `146dd72` (Branch `astro-umbau`) ·
+> **Neu:** P1 Bild-Performance ✅ · K2 Insta zentral aus Kontakt ✅ · K4 EN-Rechtstexte ✅ · P2 utah-Bild→/uploads ✅ ·
+> P3 echte 404 + env-gesteuertes Vorschau-noindex ✅ (`robots.txt`/Sitemap offen). ·
+> ⚠️ **Offene Cloudflare-Aktionen:** (1) **Tina-Cloud-Re-Index** nach K2 (Schema-Änderung, falls noch nicht erfolgt).
+> (2) Im **Vorschau**-Projekt Build-Env **`PUBLIC_PREVIEW_NOINDEX=true`** setzen — **NIEMALS im Live-Projekt** (sonst Live aus Google). ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >

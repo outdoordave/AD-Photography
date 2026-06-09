@@ -17,6 +17,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-09 — EN-Rechtstexte (K4) + P2 (Story-Bild) + P3 (404 + Vorschau-noindex)
+- **K4** (`d7d52df`): `body_en` von Datenschutz + Impressum mit fachlicher EN-Übersetzung gefüllt
+  (GDPR-Terminologie; DDG/MStV/TDDDG beibehalten; Dienste/Anschrift unverändert; YouTube-Link `hl=en`),
+  `updated_en` = „June 2026". EN fällt nicht mehr auf DE zurück.
+- **P2** (`6697937`): utah-Story-Inline-Bild `assets.tina.io` → `/uploads/DJI_0019_edit.webp` (letztes echtes Laufzeit-tina.io-Bild weg).
+- **P3-a** (`e58d25e`): echte `404.astro` → `dist/404.html` (HTTP 404 für unbekannte Pfade statt Startseite/200), noindex.
+- **P3-b** (`146dd72`): **env-gesteuertes** Vorschau-noindex — BaseLayout setzt `<meta robots noindex>` nur bei
+  Build-Env `PUBLIC_PREVIEW_NOINDEX === 'true'`. Var **nur im Vorschau-Projekt** → Live-Projekt (ohne Var)
+  indexiert normal, **kein Cutover-Code-Eingriff**, Live kann nicht versehentlich deindexiert werden.
+  FAHRPLAN Phase 2/3 dokumentiert. Offline-Build verifiziert (Var an → noindex; Var aus → indexierbar).
+- **Alle vier: KEIN `tina/config` berührt → KEIN Re-Index nötig.** (K1 bewusst gelassen — totes Restdatum.)
+
 ## 2026-06-08 — P1: Bild-Performance (Cache-Header + Sharp-Optimierung im Build)
 - `web/public/_headers`: `/uploads/* → Cache-Control: public, max-age=604800` (vorher CF-Default
   `max-age=0` → Bilder bei jedem Aufruf neu geladen).

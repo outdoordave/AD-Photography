@@ -49,7 +49,7 @@
   - *Cutover-Blocker:* **Nein, aber für eine Foto-Seite grenzwertig** — auf Mobil das
     auffälligste Qualitätsproblem.
 
-- [ ] **P2 · Tina-CDN-Bild im Story-Body** (`utah-drohne-kevin`).
+- [x] **P2 · Tina-CDN-Bild im Story-Body** (`utah-drohne-kevin`) — ✅ **erledigt** (`6697937`): md-Bild auf `/uploads/DJI_0019_edit.webp` umgebogen. Kein tina.io-Laufzeitbild mehr.
   - *Ursache:* Inline-Markdown-Bild `![](https://assets.tina.io/.../DJI_0019_edit.webp)` in
     `web/src/content/stories/utah-drohne-kevin.md`. `normalizePath()` (`web/src/lib/stories.ts`)
     biegt nur **Bild-Felder** auf `/uploads/` zurück — **Markdown-Body nicht** → dieses eine Bild
@@ -58,7 +58,7 @@
     `assets.tina.io → /uploads`-Ersetzung erweitern (deckt künftige Body-Bilder ab).
   - *Cutover-Blocker:* Nein (aber DSGVO-Konsistenz + Langlebigkeit).
 
-- [ ] **P3 · Soft-404 / SEO: unbekannte URLs liefern die Startseite mit HTTP 200.**
+- [x] **P3 (teilw.) · Soft-404 / SEO** — ✅ **404.astro** (`e58d25e`, echtes 404) + ✅ **Vorschau-noindex env-gesteuert** (`146dd72`, `PUBLIC_PREVIEW_NOINDEX`). Offen für Launch: `robots.txt` + Sitemap. *(Befund war: unbekannte URLs → Startseite mit HTTP 200.)*
   - *Ursache:* Kein `404.astro`, kein `robots.txt`, **kein Sitemap** (`@astrojs/sitemap` fehlt;
     `/sitemap*.xml` liefert die Startseite). `/gibtsnicht`, `/robots.txt`, `/sitemap.xml` → 200 + Home.
     Zudem **kein `meta robots`** → Vorschau-Domain ist **indexierbar** (Duplicate-Content-Risiko
@@ -89,7 +89,7 @@
   - *Fix:* optional zu `logo-website.webp` umbenennen + Referenzen anpassen.
   - *Cutover-Blocker:* Nein.
 
-- [ ] **K4 · EN-Inhaltslücken (Fallback auf Deutsch).**
+- [x] **K4 (teilw.) · EN-Inhaltslücken** — ✅ **Rechtstexte EN** gefüllt (`d7d52df`). Offen: Album-Excerpts/Beschreibungen fallen bei fehlender Übersetzung weiter auf Deutsch zurück (CMS-Pflege).
   - *Ursache:* Album-Excerpts/Beschreibungen + Rechtstexte fallen bei fehlender Übersetzung
     auf Deutsch zurück (z. B. EN-Portfolio „Erstes Album, mit einigen unserer Werke";
     Album `2026-usa-2023` hat `has_english:false`). **Kein Bug** — Inhalts-Vollständigkeit.
