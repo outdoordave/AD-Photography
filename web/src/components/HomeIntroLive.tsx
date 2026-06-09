@@ -1,6 +1,7 @@
 import { useTina, tinaField } from 'tinacms/dist/react';
 import { bi, type Lang } from '../lib/albums';
-import { socialIcon, socialUrl } from '../lib/socialIcons';
+import { socialIcon } from '../lib/socialIcons';
+import contact from '../data/contact.json';
 
 // Intro-Block als LIVE-Insel (useTina startseite) — 1:1-Port von HomeIntro.astro.
 // data-tina-field auf Zwischenüberschrift + Text. Social-Platzierung „intro".
@@ -18,8 +19,14 @@ export default function HomeIntroLive(props: Props) {
   const subline = bi(intro, 'subline', lang);
   const subtext = bi(intro, 'subtext', lang);
   const socialShow = st.social_show || {};
-  const social: any[] = Array.isArray(intro.social) ? intro.social : [];
-  const links = socialShow.intro !== false ? social.filter((s) => s && s.username) : [];
+  // Social-Links kommen ZENTRAL aus der Kontaktseite (contact.json -> channels): nur EINE
+  // Pflegestelle, funktioniert auch wenn /contact ausgeblendet ist (Build-Time-Import).
+  // E-Mail/Telefon werden hier ausgefiltert (nur Social-Pillen).
+  const channels: any[] = Array.isArray((contact as any).channels) ? (contact as any).channels : [];
+  const links =
+    socialShow.intro !== false
+      ? channels.filter((c) => c && c.url && c.type && c.type !== 'email' && c.type !== 'phone')
+      : [];
 
   return (
     <section>
@@ -30,10 +37,10 @@ export default function HomeIntroLive(props: Props) {
           <p data-tina-field={tf(intro, 'subtext')}>{subtext}</p>
           {links.length > 0 && (
             <div className="insta-row">
-              {links.map((s, i) => (
-                <a className="insta-link" href={socialUrl(s.platform, s.username)} target="_blank" rel="noopener" key={i}>
-                  <span className="ig-ic" dangerouslySetInnerHTML={{ __html: socialIcon(s.platform || 'instagram') }} />
-                  @{s.username}
+              {links.map((c, i) => (
+                <a className="insta-link" href={c.url} target="_blank" rel="noopener" key={i}>
+                  <span className="ig-ic" dangerouslySetInnerHTML={{ __html: socialIcon(c.type) }} />
+                  {c.label || c.url}
                 </a>
               ))}
             </div>

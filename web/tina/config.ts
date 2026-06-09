@@ -151,23 +151,9 @@ export default defineConfig({
               { type: 'string', name: 'subline_en', label: '↳ English', ui: { component: EnglishOnlyField } },
               { type: 'string', name: 'subtext_de', label: 'Intro-Text', ui: { component: 'textarea' } },
               { type: 'string', name: 'subtext_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
-              {
-                type: 'object', name: 'social', label: 'Social-Links (z. B. Instagram)', list: true,
-                ui: { itemProps: (i: any) => ({ label: i?.username ? '@' + i.username : 'Neuer Link' }) },
-                fields: [
-                  {
-                    type: 'string', name: 'platform', label: 'Plattform',
-                    options: [
-                      { value: 'instagram', label: 'Instagram' },
-                      { value: 'tiktok', label: 'TikTok' },
-                      { value: 'youtube', label: 'YouTube' },
-                      { value: 'facebook', label: 'Facebook' },
-                      { value: 'x', label: 'X (Twitter)' },
-                    ],
-                  },
-                  { type: 'string', name: 'username', label: 'Benutzername (ohne @)' },
-                ],
-              },
+              // Social-Links (Instagram etc.) werden NICHT mehr hier gepflegt, sondern zentral
+              // auf der KONTAKTSEITE (✉️ Kontakt -> Kanäle / contact.json -> channels). Die Intro-
+              // Reihe zieht ihre Links von dort -> nur EINE Pflegestelle. An/aus via social_show.intro.
             ],
           },
           {
@@ -189,7 +175,7 @@ export default defineConfig({
           },
           {
             type: 'object', name: 'social_show', label: 'Social-Links anzeigen — wo?',
-            description: 'Wo die Instagram-Links (aus dem Intro-Block) erscheinen. Standard: nur Intro (wie Live).',
+            description: 'Wo die Instagram-Links (aus der Kontaktseite) erscheinen. Standard: nur Intro (wie Live).',
             fields: [
               { type: 'boolean', name: 'intro', label: 'Im Intro-Block (unter dem Hero)' },
               { type: 'boolean', name: 'hero', label: 'Im Hero (unter den Buttons)' },
