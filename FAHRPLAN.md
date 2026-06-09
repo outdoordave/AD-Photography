@@ -27,12 +27,16 @@ Begründung:
 - `main`/alt bleibt live.
 
 ## Phase 2 — VOR „öffentlich" (Pflicht vor echtem Publikum)
-- [ ] **Datenschutzerklärung** mit echtem Text füllen (CMS „⚖️ Datenschutz"); Web3Forms +
-      Cloudflare + Umami + Google Fonts als Verarbeiter nennen (Generator e-recht24 / anwaltlich).
-- [ ] **Impressum** mit echten Angaben füllen (CMS „⚖️ Impressum").
+- [x] **Datenschutzerklärung** gefüllt (DE via CMS; EN-Übersetzung `body_en`, `d7d52df`). Dienste genannt
+      (Cloudflare, Umami, OpenFreeMap/Hyperknot, YouTube, Web3Forms). ✅
+- [x] **Impressum** gefüllt (DE + EN `body_en`, `d7d52df`). ✅
 - [ ] Test-Mail `davidbastisch@web.de` ggf. auf die „richtige" Adresse umstellen (CMS „✉️ Kontakt").
 - [ ] **iPad-Test** mit Alexandra (CMS-Bedienung + Besucher-Ansicht).
 - [x] **Google Fonts lokal eingebunden** (Fontsource Variable, `62e4e93`) — keine IP mehr an Google. ✅
+- [ ] **Vorschau-noindex aktivieren:** Im **Vorschau**-Cloudflare-Projekt (`aandd-photography-astro`) die
+      Build-Env-Variable **`PUBLIC_PREVIEW_NOINDEX` = `true`** setzen (Plaintext, Build-Topf). Dann trägt jede
+      Vorschau-Seite `<meta robots noindex,nofollow>` → Google indexiert die Test-Version nicht.
+      ⚠️ **NUR im Vorschau-Projekt — NIEMALS im Live-Projekt** (sonst fliegt die echte Seite aus Google).
 
 ## Phase 3 — CUTOVER (wenn David „los" sagt) — Checkliste
 Ziel: Die Astro-Version wird die echte Seite unter der kanonischen URL.
@@ -48,7 +52,11 @@ Ziel: Die Astro-Version wird die echte Seite unter der kanonischen URL.
 3. [ ] **Tina Cloud:** Branch `main` aktiv **indexieren** (Lock muss zum Branch passen);
        „Path To Tina Folder = web"; Site-URL der Live-Domain in Tina ergänzen (OAuth/Preview).
 4. [ ] **Build grün** auf der Live-Domain prüfen (Hard-Reload, Strg/Cmd+F5).
-5. [ ] **Redirects/SEO:** alte Pfade prüfen; `noindex` der Vorschau-Domain bedenken; Sitemap.
+5. [ ] **SEO/Indexierung:** Im **Live**-Projekt die Env-Var **`PUBLIC_PREVIEW_NOINDEX` NICHT setzen**
+       (bzw. entfernen, falls vom Vorschau-Projekt übernommen) → Live-Seite indexiert normal. Das noindex
+       steckt NICHT im Code, nur an dieser Var (env-gesteuert) → **kein Code-Eingriff beim Cutover nötig**,
+       und die Live-Seite kann nicht versehentlich deindexiert werden. Echte 404 via `404.astro` vorhanden;
+       Sitemap noch offen (P3 in MAENGEL.md). Alte Pfade/Redirects prüfen.
 6. [ ] **Funktions-Smoke-Test** live: Lightbox, Karte, Kontaktformular-Versand (echte Mail kommt an?),
        Statistik (Umami zählt), Datenschutz/Impressum verlinkt.
 7. [ ] **Vorschau-Domain** danach optional abschalten oder auf die Live-Domain weiterleiten.
