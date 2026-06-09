@@ -31,7 +31,8 @@
 
 ## 🟡 Sollte — stark empfohlen
 
-- [ ] **P1 · Bild-Performance: 8–13 MB Roh-JPGs, unoptimiert, kein Browser-Cache.**
+- [x] **P1 · Bild-Performance** — ✅ **erledigt** (`7d1079c`): (d) Cache-Header (`_headers`, /uploads 7 Tage) + (e) Sharp-Build-Schritt (`scripts/optimize-uploads.mjs`, optimiert `dist/uploads`, Originale bleiben). Test: 132 MB → 11 MB (~92 %).
+  <details><summary>(ursprünglicher Befund)</summary>8–13 MB Roh-JPGs, unoptimiert, kein Browser-Cache.</details>
   - *Ursache:* `/uploads/` enthält Roh-JPGs bis **13,2 MB** (`img_1418-2.jpg` 13,2 MB ·
     `img_4101.jpg` live als **12.762.456 Bytes** bestätigt · `a7406566.jpg` 12,6 MB · …).
     Keine Astro-Bildoptimierung (`<img src="/uploads/…">` direkt, **0× `/_astro`-WebP**),

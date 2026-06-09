@@ -1,7 +1,8 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-08** · letzter Commit `d5ffe73` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-08** · letzter Commit `7d1079c` (Branch `astro-umbau`) ·
 > ⚠️ **Offene Aktion nach Push: Tina-Cloud-Re-Index** (Schema-Änderung K2 — `social`-Feld aus Startseite entfernt). ·
+> **Neu:** P1 Bild-Performance (Sharp-Build-Optimierung dist/uploads 132→11 MB + Cache-Header) ✅. ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >

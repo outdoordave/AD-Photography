@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-08 — P1: Bild-Performance (Cache-Header + Sharp-Optimierung im Build)
+- `web/public/_headers`: `/uploads/* → Cache-Control: public, max-age=604800` (vorher CF-Default
+  `max-age=0` → Bilder bei jedem Aufruf neu geladen).
+- `scripts/optimize-uploads.mjs` (sharp): optimiert **nur `dist/uploads`** NACH `astro build`
+  (max 2400px, JPG/WebP q80, dateinamenstreu) → Repo-Originale (root/uploads + public/uploads)
+  bleiben unberührt, kein Qualitätsverlust über Builds. `build`-Script um den Schritt erweitert,
+  `sharp` als devDependency.
+- **Test: `dist/uploads` 132 MB → 11 MB** (~113 MB / ~92 % gespart, 29 Bilder; `img_4101.jpg`
+  12,8 MB → 0,73 MB, weiterhin valide). Reiner Build/Asset-Schritt → **kein Re-Index**. Commit: `7d1079c`.
+
 ## 2026-06-08 — K2: Instagram-Handles zentral aus der Kontaktseite (eine Pflegestelle)
 - Home-Intro-Social-Reihe (`HomeIntroLive`) zieht die Insta-Links jetzt aus `contact.json` (`channels`,
   Typ ≠ email/phone) statt aus `home-settings.json`. **Build-Time-Import → funktioniert auch bei
