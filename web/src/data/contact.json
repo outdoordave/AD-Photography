@@ -13,11 +13,6 @@
   "location_en": "On the road in the USA & home in Germany",
   "channels": [
     {
-      "type": "email",
-      "label": "davidbastisch@web.de",
-      "url": "mailto:davidbastisch@web.de"
-    },
-    {
       "type": "instagram",
       "label": "@david.bastisch",
       "url": "https://instagram.com/david.bastisch"
