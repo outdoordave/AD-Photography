@@ -323,10 +323,10 @@ section { padding: 84px 0; }
   .about-grid { grid-template-columns: 1fr; }
   .contact-grid { grid-template-columns: 1fr; gap: 30px; }
   .map-layout { grid-template-columns: 1fr; }
-  .trip-tabs { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 14px; }
-  .trip-tabs button { flex: 0 0 auto; white-space: nowrap; }
-  .trip-stoplist { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 6px; }
-  .trip-stoplist button { flex: 0 0 auto; white-space: nowrap; }
+  /* Reise-Tabs/Stationen brechen bei 641-860px bewusst UM (flex-wrap:wrap aus der Basis),
+     statt seitlich abzuschneiden. Horizontaler Scroll-Modus (nowrap/overflow + Fade/Pfeile)
+     gibt es nur noch ≤640px (s. weiter unten). Behebt Abschneiden UND Hover-Aufpoppen
+     (overflow-x:auto erzwingt overflow-y:auto -> klippt die Hover-Anhebung). */
   section { padding: 56px 0; }
 }
 @media (max-width: 700px) { .map-box { height: 300px; } }
@@ -762,11 +762,12 @@ body.ww-frame-controls .hero-cta .btn { box-shadow: 0 8px 22px -10px rgba(0,0,0,
 .ww-scroll-arrow { display: none; }
 @media (max-width: 640px) {
   .trip-tabs, .trip-stoplist {
+    flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; -webkit-overflow-scrolling: touch;
     padding-left: 18px; padding-right: 18px; padding-top: 8px;
     scroll-padding-left: 18px; scroll-padding-right: 18px;
     scroll-snap-type: x proximity; /* sanftes Einrasten beim Wischen */
   }
-  .trip-tabs button, .trip-stoplist button { scroll-snap-align: center; }
+  .trip-tabs button, .trip-stoplist button { flex: 0 0 auto; white-space: nowrap; scroll-snap-align: center; }
   /* mobil von LINKS scrollbar (statt zentriert) -> Fade/Indikator greift auch bei den Stationen */
   .trip-stoplist { justify-content: flex-start; }
   .trip-tabs { padding-bottom: 24px; }
