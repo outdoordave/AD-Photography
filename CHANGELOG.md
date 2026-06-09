@@ -17,6 +17,20 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-09 — Fix: Safari-Repaint-Geist der Stationsreihe beim Reise-Wechsel (React-key je Reise)
+- Symptom: Beim Anzeigen/Wechseln einer Reise erschienen die Stationen **zweier Reisen übereinander**
+  (z. B. „Las Vegas Vegas", „Albıhoe" = west + birthday), erst ein Fenster-Resize räumte den „Geist" weg.
+  Tritt bei mehreren Reisen auf (allgemein).
+- Ursache (per Safari-Konsole eingegrenzt): SSR rendert `trips[0]` (Geburtstag); beim Wechsel tauschte
+  React nur den **Text** der vorhandenen Pillen/Detail aus → Safari zeichnete die alte Beschriftung nicht
+  sauber neu. **Reines Paint-Problem** (Geometrie war korrekt: stoplist `flexWrap=wrap`, `scrollW=clientW`,
+  keine Seiten-Überlauf).
+- Fix: zentraler `tripKey = trips[tripIdx]?.slug` als React-`key` an alle reise-spezifischen Blöcke
+  (`.trip-summary`, `.trip-detail`, `.trip-stoplist`, Galerie) → React ersetzt beim Wechsel den DOM-Knoten
+  komplett (frischer Anstrich) statt Text zu tauschen. **Dynamisch → gilt für alle (auch künftige) Reisen.**
+  Die Karte bleibt bewusst montiert (kein key; wird per `flyTo` aktualisiert). TS + Offline-Build grün;
+  Safari-Repaint headless nicht prüfbar → Nutzer-Gegentest. Commit: `15fc8b1`.
+
 ## 2026-06-09 — Fix: Reise-Tabs/Stations-Pillen brechen bei 641–860px um (statt Abschneiden + Hover-Pop)
 - Befund: Bei Fensterbreite 641–860px standen die Pillen-Reihen auf `nowrap`/`overflow-x:auto` (seit jeher,
   `@media max-width:860px`), aber Fade/Pfeile erst ≤640px → Pillen wurden **abgeschnitten ohne Indikator**.
