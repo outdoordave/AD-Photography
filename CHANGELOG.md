@@ -17,6 +17,22 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-10 20:47 — P3: robots.txt (env-gesteuert) + Sitemap
+- **Sitemap** (`ce0ef12`): `@astrojs/sitemap@3.2.1` (Astro-4-kompatibel — 3.7.x nutzt den
+  Astro-5-Hook `astro:routes:resolved` → Build-Crash). Erzeugt `sitemap-index.xml` +
+  `sitemap-0.xml` mit **allen 35 Seiten** (DE auf `/`, EN auf `/en/`).
+- **`site`** in `astro.config.mjs` = `https://aandd-photography.pages.dev` (per Env
+  `SITE_URL` überschreibbar, z. B. späterer Custom-Domain).
+- **robots.txt als Endpoint** (`src/pages/robots.txt.ts`) mit derselben selbstkorrigierenden
+  Logik wie das noindex: `PUBLIC_PREVIEW_NOINDEX=true` → `Disallow: /` (nur Vorschau-Projekt);
+  Live (Var nicht gesetzt) → `Allow: /` + Sitemap-Verweis. **Kein Cutover-Eingriff nötig.**
+- Sitemap-`i18n`-Option bewusst weggelassen (setzt Locale-Präfix auf JEDER Seite voraus;
+  mit `prefixDefaultLocale:false` crasht der Build). hreflang-Alternates entfallen daher;
+  alle Seiten bleiben vollständig enthalten.
+- Dateien: `web/astro.config.mjs`, `web/package.json`, `web/package-lock.json`,
+  `web/src/pages/robots.txt.ts`. Kein `tina/config` berührt → **kein Re-Index**.
+  Offline-Build grün; beide robots-Varianten verifiziert.
+
 ## 2026-06-09 — UX: Footer-Logo klickbar + globaler „Nach oben"-Button (B)
 - **Footer-Logo klickbar** (`bdf7efe`): Logo-Img in `<a href=linkHref('/')>` → Startseite sprachrichtig
   (DE `/`, EN `/en/`), `aria-label`. Dezenter Hover (Cursor-Pointer + Aufhellung 0.95→1), Footer-Look sonst unverändert.

@@ -1,13 +1,16 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-09** · letzter Commit `a5ad983` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-10** · letzter Commit `ce0ef12` (Branch `astro-umbau`) ·
+> **P3 abgeschlossen:** `robots.txt` (Endpoint, env-gesteuert wie noindex: Vorschau→`Disallow: /`,
+> Live→`Allow`+Sitemap) + **Sitemap** (`@astrojs/sitemap@3.2.1`, Astro-4-kompatibel; 35 Seiten DE+EN);
+> `site=https://aandd-photography.pages.dev` (per Env `SITE_URL` überschreibbar). Kein `tina/config` → kein Re-Index. ·
 > **UX (B):** Footer-Logo klickbar → Startseite (sprachrichtig) · globaler „Nach oben"-Button (BaseLayout,
 > erscheint nach Scrollen, smooth + reduced-motion, unten rechts safe-area, kollisionsfrei z1090). ·
 > **Fix:** Safari-Repaint-Geist der Stationsreihe beim Reise-Wechsel behoben (React-`key`=Reise-Slug an
 > alle reise-spezifischen Blöcke; Karte bleibt montiert). Allgemein + zukunftssicher. ·
 > **Fix:** Reise-Tabs/Stations-Pillen brechen bei 641–860px um statt abzuschneiden (Scroll/Fade/Pfeile nur noch ≤640px; behebt auch Hover-Aufpoppen). ·
 > **Neu:** P1 Bild-Performance ✅ · K2 Insta zentral aus Kontakt ✅ · K4 EN-Rechtstexte ✅ · P2 utah-Bild→/uploads ✅ ·
-> P3 echte 404 + env-gesteuertes Vorschau-noindex ✅ (`robots.txt`/Sitemap offen). ·
+> P3 (404 + Vorschau-noindex + robots.txt + Sitemap) **vollständig ✅**. ·
 > ⚠️ **Offene Cloudflare-Aktionen:** (1) **Tina-Cloud-Re-Index** nach K2 (Schema-Änderung, falls noch nicht erfolgt).
 > (2) Im **Vorschau**-Projekt Build-Env **`PUBLIC_PREVIEW_NOINDEX=true`** setzen — **NIEMALS im Live-Projekt** (sonst Live aus Google). ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie

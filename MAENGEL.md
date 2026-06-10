@@ -58,7 +58,7 @@
     `assets.tina.io → /uploads`-Ersetzung erweitern (deckt künftige Body-Bilder ab).
   - *Cutover-Blocker:* Nein (aber DSGVO-Konsistenz + Langlebigkeit).
 
-- [x] **P3 (teilw.) · Soft-404 / SEO** — ✅ **404.astro** (`e58d25e`, echtes 404) + ✅ **Vorschau-noindex env-gesteuert** (`146dd72`, `PUBLIC_PREVIEW_NOINDEX`). Offen für Launch: `robots.txt` + Sitemap. *(Befund war: unbekannte URLs → Startseite mit HTTP 200.)*
+- [x] **P3 · Soft-404 / SEO** — ✅ **vollständig**: **404.astro** (`e58d25e`, echtes HTTP-404) + ✅ **Vorschau-noindex env-gesteuert** (`146dd72`, `PUBLIC_PREVIEW_NOINDEX`) + ✅ **robots.txt + Sitemap** (`ce0ef12`, `@astrojs/sitemap@3.2.1`, 35 Seiten DE+EN; robots.txt als Endpoint mit derselben env-Logik: Vorschau→`Disallow: /`, Live→`Allow`+Sitemap). *(Befund war: unbekannte URLs → Startseite mit HTTP 200.)*
   - *Ursache:* Kein `404.astro`, kein `robots.txt`, **kein Sitemap** (`@astrojs/sitemap` fehlt;
     `/sitemap*.xml` liefert die Startseite). `/gibtsnicht`, `/robots.txt`, `/sitemap.xml` → 200 + Home.
     Zudem **kein `meta robots`** → Vorschau-Domain ist **indexierbar** (Duplicate-Content-Risiko
