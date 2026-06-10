@@ -17,6 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-09 — UX: Footer-Logo klickbar + globaler „Nach oben"-Button (B)
+- **Footer-Logo klickbar** (`bdf7efe`): Logo-Img in `<a href=linkHref('/')>` → Startseite sprachrichtig
+  (DE `/`, EN `/en/`), `aria-label`. Dezenter Hover (Cursor-Pointer + Aufhellung 0.95→1), Footer-Look sonst unverändert.
+- **Globaler Scroll-to-top-Button** (`a5ad983`): diskreter runder Button unten rechts in `BaseLayout` (alle Seiten),
+  erscheint erst nach >400px Scrollen (JS `.is-visible`), weiches Opacity-Fade; sanftes Hochscrollen (smooth),
+  respektiert `prefers-reduced-motion` (dann `behavior:auto` + kein Transform). Erdtöne + dezenter Schatten,
+  Safe-Area unten/rechts, z-index 1090 (unter Mobil-Nav 1099 / Lightbox 1100 / Adminbar 1200 → kollisionsfrei).
+- Beide rein Komponente/CSS/Inline-Skript → **kein Re-Index**. Offline-Build grün, Button auf allen Seitentypen verifiziert.
+
 ## 2026-06-09 — Fix: Safari-Repaint-Geist der Stationsreihe beim Reise-Wechsel (React-key je Reise)
 - Symptom: Beim Anzeigen/Wechseln einer Reise erschienen die Stationen **zweier Reisen übereinander**
   (z. B. „Las Vegas Vegas", „Albıhoe" = west + birthday), erst ein Fenster-Resize räumte den „Geist" weg.

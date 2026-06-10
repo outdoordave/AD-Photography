@@ -1,6 +1,8 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-09** · letzter Commit `15fc8b1` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-09** · letzter Commit `a5ad983` (Branch `astro-umbau`) ·
+> **UX (B):** Footer-Logo klickbar → Startseite (sprachrichtig) · globaler „Nach oben"-Button (BaseLayout,
+> erscheint nach Scrollen, smooth + reduced-motion, unten rechts safe-area, kollisionsfrei z1090). ·
 > **Fix:** Safari-Repaint-Geist der Stationsreihe beim Reise-Wechsel behoben (React-`key`=Reise-Slug an
 > alle reise-spezifischen Blöcke; Karte bleibt montiert). Allgemein + zukunftssicher. ·
 > **Fix:** Reise-Tabs/Stations-Pillen brechen bei 641–860px um statt abzuschneiden (Scroll/Fade/Pfeile nur noch ≤640px; behebt auch Hover-Aufpoppen). ·
