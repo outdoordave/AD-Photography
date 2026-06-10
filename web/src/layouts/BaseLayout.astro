@@ -64,5 +64,21 @@ const showFooterSocial = !!(hm.social_show && hm.social_show.footer);
       <slot />
     </main>
     <SiteFooter lang={lang} logo={logo} showStories={showStories} showContact={showContact} social={footerSocial} showSocial={showFooterSocial} />
+    {/* Nach-oben-Button (global). Erscheint erst nach Scrollen; sanftes Hochscrollen, respektiert reduced-motion. */}
+    <button id="wwToTop" class="ww-totop" type="button" aria-label="Nach oben scrollen" title="Nach oben">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14 L12 8 L18 14" /></svg>
+    </button>
+    <script>
+      const wwToTop = document.getElementById('wwToTop');
+      if (wwToTop) {
+        const onScroll = () => { wwToTop.classList.toggle('is-visible', window.scrollY > 400); };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+        wwToTop.addEventListener('click', () => {
+          const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+        });
+      }
+    </script>
   </body>
 </html>
