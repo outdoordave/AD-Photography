@@ -525,8 +525,11 @@ header { position: sticky; top: 0; z-index: 1100; background: rgba(244,237,225,0
 .burger span { display: block; width: 24px; height: 2px; background: var(--c-ink); transition: var(--dur-base) var(--ease); }
 
 footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-align: center; position: relative; overflow: hidden; }
-.footer-logo { width: 200px; margin: 0 auto 22px; opacity: 0.95; }
-.footer-logo img { width: 100%; }
+.footer-logo { width: 200px; margin: 0 auto 22px; opacity: 0.95; transition: opacity var(--dur-base) var(--ease); }
+.footer-logo img { width: 100%; display: block; }
+/* Logo im Footer ist ein Link zur Startseite -> dezenter Hinweis: Cursor-Pointer (vom <a>) + minimale Aufhellung beim Hover. */
+.footer-logo a { display: block; }
+.footer-logo:hover { opacity: 1; }
 .footer-nav { display: flex; gap: 26px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
 .footer-nav a { font-size: var(--fs-label); letter-spacing: var(--tracking-slight); text-transform: uppercase; font-weight: var(--fw-bold); color: #c8bba6; cursor: pointer; transition: color var(--dur-base) var(--ease); text-decoration: none; }
 .footer-nav a:hover { color: #f0c9a8; }

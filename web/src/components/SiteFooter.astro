@@ -30,7 +30,7 @@ const logoSrc = logo && logo.charAt(0) !== '/' && !/^https?:/.test(logo) ? '/' +
 ---
 <footer>
   <PaperRip idp="footerRip" className="band-rip band-rip-top" />
-  {logoSrc ? <div class="footer-logo"><img src={logoSrc} alt="Wide & Wild" loading="lazy" /></div> : null}
+  {logoSrc ? <div class="footer-logo"><a href={linkHref('/')} aria-label={isEn ? 'Home' : 'Zur Startseite'}><img src={logoSrc} alt="Wide & Wild" loading="lazy" /></a></div> : null}
   <div class="footer-nav">
     {NAV.filter((i) => (!i.storiesOnly || showStories) && (!i.contactOnly || showContact)).map((i) => (
       <a href={linkHref(i.href)}>{isEn ? i.en : i.de}</a>
