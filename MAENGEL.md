@@ -100,14 +100,14 @@
     „USA 2023" sind sprachneutral → `name_en` bleibt leer (Fallback korrekt).
   - *Cutover-Blocker:* Nein.
 
-- [ ] **K5 · verwaiste `/uploads`-Dateien (präzisiert: genau 4, ~27 MB).**
-  - *Befund (2026-06-10):* `/uploads` hat 22 getrackte Dateien (vorher 29 → zwischenzeitlich
+- [x] **K5 · verwaiste `/uploads`-Dateien — ✅ entfernt (`3010df0`, 4 Dateien, ~27 MB).**
+  - *Befund (2026-06-10):* `/uploads` hatte 22 getrackte Dateien (vorher 29 → zwischenzeitlich
     bereinigt). Voller Scan gegen **echte Verwendung** (Astro-Inhalt `web/src/**` + Live-`index.html`;
     ohne Doku/`prototype-astro`/generiertes `uploads-manifest.json`): **kein** dynamisches
-    Verzeichnis-Laden (Bilder werden explizit referenziert) → diese 4 sind sicher verwaist:
-    `DJI_0769-HDR.jpg` (12,3 MB), `IMG_5618.jpg` (7,6 MB), `img_6027.jpg` (6,8 MB),
-    `IMG_5534.webp` (0,35 MB; das alte CMS-Testbild). Alle git-getrackt.
-  - *Fix:* **Wartet auf Davids Freigabe** — `git rm` in einem Commit (über Git-Historie wiederherstellbar).
+    Verzeichnis-Laden → diese 4 waren sicher verwaist: `DJI_0769-HDR.jpg` (12,3 MB),
+    `IMG_5618.jpg` (7,6 MB), `img_6027.jpg` (6,8 MB), `IMG_5534.webp` (0,35 MB, altes CMS-Testbild).
+  - *Erledigt:* mit Davids Freigabe per `git rm` entfernt (über Git-Historie wiederherstellbar).
+    Verbleibende 18 Uploads alle referenziert (gegengeprüft).
   - *Cutover-Blocker:* Nein.
 
 - [ ] **K6 · Video-Clips: kein Auto-Workflow (offener Wunsch).** → Details in **IDEEN.md, Punkt „Video-Clips"**.

@@ -17,6 +17,11 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-10 — K5: 4 verwaiste Upload-Testbilder entfernt
+- `git rm` (`3010df0`) von 4 nicht referenzierten Uploads (~27 MB): `DJI_0769-HDR.jpg`,
+  `IMG_5618.jpg`, `img_6027.jpg`, `IMG_5534.webp` (altes CMS-Testbild). Mit Davids
+  Freigabe; über Git-Historie wiederherstellbar. Verbleibende 18 Uploads alle referenziert.
+
 ## 2026-06-10 — K4: EN-Album-Notiz + EN-Lücken-Scan
 - **Album „Firsts" `note_en`** gefüllt (`6f73753`): englische Besucher sahen dort die
   deutsche Notiz (Alben haben kein `has_english`-Opt-out → Fallback DE). Reine Daten,
