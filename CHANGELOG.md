@@ -17,6 +17,17 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-10 — K4: EN-Album-Notiz + EN-Lücken-Scan
+- **Album „Firsts" `note_en`** gefüllt (`6f73753`): englische Besucher sahen dort die
+  deutsche Notiz (Alben haben kein `has_english`-Opt-out → Fallback DE). Reine Daten,
+  kein Re-Index. `note_en` = „Our first album, with a few of our works".
+- **Vollständiger EN-Scan** (`_de`/`_en` + `{de,en}`-Schema über `web/src/data` + Reisen +
+  Stories): **keine weiteren echten Lücken.** Story `utah-drohne-kevin` hat
+  `has_english:false` → absichtlich Deutsch auf EN (kein Mangel; Flag-Umschaltung wäre
+  Autoren-Entscheidung). Album-Namen „Firsts"/„USA 2023" sprachneutral.
+- **K5 präzisiert** (kein Code-Change): genau **4 verwaiste Uploads** (~27 MB) statt „~10"
+  — wartet auf Freigabe zum Löschen (siehe `MAENGEL.md`).
+
 ## 2026-06-10 20:47 — P3: robots.txt (env-gesteuert) + Sitemap
 - **Sitemap** (`ce0ef12`): `@astrojs/sitemap@3.2.1` (Astro-4-kompatibel — 3.7.x nutzt den
   Astro-5-Hook `astro:routes:resolved` → Build-Crash). Erzeugt `sitemap-index.xml` +

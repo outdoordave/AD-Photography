@@ -1,6 +1,9 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-10** · letzter Commit `ce0ef12` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-10** · letzter Commit `6f73753` (Branch `astro-umbau`) ·
+> **K4 abgeschlossen:** Album-Notiz „Firsts" EN gefüllt; voller EN-Scan → keine weiteren echten Lücken
+> (utah-Story `has_english:false` = absichtlich DE auf EN). **K5 präzisiert:** genau 4 verwaiste Uploads
+> (~27 MB) — wartet auf Lösch-Freigabe. ·
 > **P3 abgeschlossen:** `robots.txt` (Endpoint, env-gesteuert wie noindex: Vorschau→`Disallow: /`,
 > Live→`Allow`+Sitemap) + **Sitemap** (`@astrojs/sitemap@3.2.1`, Astro-4-kompatibel; 35 Seiten DE+EN);
 > `site=https://aandd-photography.pages.dev` (per Env `SITE_URL` überschreibbar). Kein `tina/config` → kein Re-Index. ·

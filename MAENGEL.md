@@ -89,16 +89,25 @@
   - *Fix:* optional zu `logo-website.webp` umbenennen + Referenzen anpassen.
   - *Cutover-Blocker:* Nein.
 
-- [x] **K4 (teilw.) · EN-Inhaltslücken** — ✅ **Rechtstexte EN** gefüllt (`d7d52df`). Offen: Album-Excerpts/Beschreibungen fallen bei fehlender Übersetzung weiter auf Deutsch zurück (CMS-Pflege).
-  - *Ursache:* Album-Excerpts/Beschreibungen + Rechtstexte fallen bei fehlender Übersetzung
-    auf Deutsch zurück (z. B. EN-Portfolio „Erstes Album, mit einigen unserer Werke";
-    Album `2026-usa-2023` hat `has_english:false`). **Kein Bug** — Inhalts-Vollständigkeit.
-  - *Fix:* fehlende `*_en`-Felder im CMS nachpflegen.
+- [x] **K4 · EN-Inhaltslücken** — ✅ **Rechtstexte EN** (`d7d52df`) + ✅ **Album-Notiz „Firsts" EN** (`6f73753`, `note_en` = „Our first album, with a few of our works"). Vollständiger Daten-Scan: **keine weiteren echten EN-Lücken**.
+  - *Ursache:* Felder fielen bei fehlender Übersetzung auf Deutsch zurück. Voller Scan
+    (`_de`/`_en` **und** `{de,en}`-Schema über `web/src/data` + Reisen + Stories) ergab als
+    einzige echte Lücke die Album-Notiz „Firsts" (jetzt gefüllt).
+  - **Bewusst NICHT angefasst:** Story `utah-drohne-kevin` hat `has_english:false` →
+    Code zeigt sie auf der EN-Seite **absichtlich** auf Deutsch (wie Live). Leere
+    `title_en/excerpt_en/body_en` sind hier gewollt, **kein Mangel**. Flag-Umschaltung =
+    Autoren-Entscheidung (David/Alexandra), nicht durch Claude. Album-Namen „Firsts"/
+    „USA 2023" sind sprachneutral → `name_en` bleibt leer (Fallback korrekt).
   - *Cutover-Blocker:* Nein.
 
-- [ ] **K5 · ~10 ungenutzte `/uploads`-Dateien.**
-  - *Ursache:* 19 von 29 Dateien werden auf den geprüften Seiten referenziert; ~10 evtl. Altlasten.
-  - *Fix:* nach Bestätigung aufräumen (vorsichtig — Lightbox/Album lädt evtl. dynamisch nach).
+- [ ] **K5 · verwaiste `/uploads`-Dateien (präzisiert: genau 4, ~27 MB).**
+  - *Befund (2026-06-10):* `/uploads` hat 22 getrackte Dateien (vorher 29 → zwischenzeitlich
+    bereinigt). Voller Scan gegen **echte Verwendung** (Astro-Inhalt `web/src/**` + Live-`index.html`;
+    ohne Doku/`prototype-astro`/generiertes `uploads-manifest.json`): **kein** dynamisches
+    Verzeichnis-Laden (Bilder werden explizit referenziert) → diese 4 sind sicher verwaist:
+    `DJI_0769-HDR.jpg` (12,3 MB), `IMG_5618.jpg` (7,6 MB), `img_6027.jpg` (6,8 MB),
+    `IMG_5534.webp` (0,35 MB; das alte CMS-Testbild). Alle git-getrackt.
+  - *Fix:* **Wartet auf Davids Freigabe** — `git rm` in einem Commit (über Git-Historie wiederherstellbar).
   - *Cutover-Blocker:* Nein.
 
 - [ ] **K6 · Video-Clips: kein Auto-Workflow (offener Wunsch).** → Details in **IDEEN.md, Punkt „Video-Clips"**.
