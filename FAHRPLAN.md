@@ -30,13 +30,14 @@ Begründung:
 - [x] **Datenschutzerklärung** gefüllt (DE via CMS; EN-Übersetzung `body_en`, `d7d52df`). Dienste genannt
       (Cloudflare, Umami, OpenFreeMap/Hyperknot, YouTube, Web3Forms). ✅
 - [x] **Impressum** gefüllt (DE + EN `body_en`, `d7d52df`). ✅
-- [ ] Test-Mail `davidbastisch@web.de` ggf. auf die „richtige" Adresse umstellen (CMS „✉️ Kontakt").
+- [x] **Kontaktformular-Versand** (Web3Forms) von David **real getestet → Mail kommt an** (2026-06-10). ✅
+      (Empfänger-Adresse ggf. später im CMS „✉️ Kontakt" auf die endgültige umstellen — optional.)
 - [ ] **iPad-Test** mit Alexandra (CMS-Bedienung + Besucher-Ansicht).
 - [x] **Google Fonts lokal eingebunden** (Fontsource Variable, `62e4e93`) — keine IP mehr an Google. ✅
-- [ ] **Vorschau-noindex aktivieren:** Im **Vorschau**-Cloudflare-Projekt (`aandd-photography-astro`) die
-      Build-Env-Variable **`PUBLIC_PREVIEW_NOINDEX` = `true`** setzen (Plaintext, Build-Topf). Dann trägt jede
-      Vorschau-Seite `<meta robots noindex,nofollow>` → Google indexiert die Test-Version nicht.
-      ⚠️ **NUR im Vorschau-Projekt — NIEMALS im Live-Projekt** (sonst fliegt die echte Seite aus Google).
+- [x] **Vorschau-noindex aktiviert:** Build-Env-Variable **`PUBLIC_PREVIEW_NOINDEX` = `true`** ist im
+      **Vorschau**-Cloudflare-Projekt (`aandd-photography-astro`) gesetzt (greift ab dem nächsten Build).
+      Jede Vorschau-Seite trägt dann `<meta robots noindex,nofollow>` + `robots.txt` liefert `Disallow: /`. ✅
+      ⚠️ **NUR im Vorschau-Projekt — NIEMALS im Live-Projekt** (sonst fliegt die echte Seite aus Google). → Cutover-Merkposten Phase 3, Schritt 5.
 
 ## Phase 3 — CUTOVER (wenn David „los" sagt) — Checkliste
 Ziel: Die Astro-Version wird die echte Seite unter der kanonischen URL.
@@ -55,8 +56,10 @@ Ziel: Die Astro-Version wird die echte Seite unter der kanonischen URL.
 5. [ ] **SEO/Indexierung:** Im **Live**-Projekt die Env-Var **`PUBLIC_PREVIEW_NOINDEX` NICHT setzen**
        (bzw. entfernen, falls vom Vorschau-Projekt übernommen) → Live-Seite indexiert normal. Das noindex
        steckt NICHT im Code, nur an dieser Var (env-gesteuert) → **kein Code-Eingriff beim Cutover nötig**,
-       und die Live-Seite kann nicht versehentlich deindexiert werden. Echte 404 via `404.astro` vorhanden;
-       Sitemap noch offen (P3 in MAENGEL.md). Alte Pfade/Redirects prüfen.
+       und die Live-Seite kann nicht versehentlich deindexiert werden. Echte 404 via `404.astro` +
+       `robots.txt`-Endpoint + Sitemap vorhanden (P3 in MAENGEL.md ✅). Alte Pfade/Redirects prüfen.
+       ⚠️ **Erinnerung:** `PUBLIC_PREVIEW_NOINDEX` ist im **Vorschau**-Projekt gesetzt — diese Variable
+       darf das **Live**-Projekt **niemals** bekommen.
 6. [ ] **Funktions-Smoke-Test** live: Lightbox, Karte, Kontaktformular-Versand (echte Mail kommt an?),
        Statistik (Umami zählt), Datenschutz/Impressum verlinkt.
 7. [ ] **Vorschau-Domain** danach optional abschalten oder auf die Live-Domain weiterleiten.

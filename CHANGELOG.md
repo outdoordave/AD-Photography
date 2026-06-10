@@ -17,6 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-10 — Doku: Vorschau-noindex gesetzt + Test-Mail bestätigt
+- **Nur Doku** (keine Seitenänderung) — Commit zum Pushen, damit ein neuer Vorschau-Build
+  läuft und die im Cloudflare-Vorschau-Projekt gesetzte Env-Var `PUBLIC_PREVIEW_NOINDEX=true` greift.
+- `STATUS.md` + `FAHRPLAN.md`: **Vorschau-noindex aktiviert** (Var gesetzt; ⚠️ Live-Projekt
+  bekommt sie NIEMALS → als Cutover-Merkposten in FAHRPLAN Phase 3/Schritt 5 + Phase 2 festgehalten).
+- **Kontaktformular-Versand (Web3Forms)** von David real getestet → **Mail kommt an**: als erledigt vermerkt.
+- STATUS: klarer „Offen – braucht David"-Block (Push · Safari/iPad-Konsole · iPad-Test Alexandra ·
+  ggf. K2-Re-Index · dann Cutover).
+
 ## 2026-06-10 — K5: 4 verwaiste Upload-Testbilder entfernt
 - `git rm` (`3010df0`) von 4 nicht referenzierten Uploads (~27 MB): `DJI_0769-HDR.jpg`,
   `IMG_5618.jpg`, `img_6027.jpg`, `IMG_5534.webp` (altes CMS-Testbild). Mit Davids

@@ -1,6 +1,9 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-10** · letzter Commit `3010df0` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-10** · Doku-Update nach `3010df0` (Branch `astro-umbau`) ·
+> **Vorschau-noindex AKTIV:** `PUBLIC_PREVIEW_NOINDEX=true` ist im **Vorschau**-Projekt gesetzt (greift ab nächstem Build:
+> `<meta robots noindex>` + `robots.txt`→`Disallow: /`). ⚠️ **Live-Projekt bekommt diese Var NIEMALS** (Cutover-Merkposten, sonst Live aus Google). ·
+> **Kontaktformular-Versand (Web3Forms) real getestet → Mail kommt an ✅.** ·
 > **K5 abgeschlossen:** 4 verwaiste Upload-Testbilder (~27 MB) mit Freigabe entfernt; 18 Uploads bleiben
 > (alle referenziert). ·
 > **K4 abgeschlossen:** Album-Notiz „Firsts" EN gefüllt; voller EN-Scan → keine weiteren echten Lücken
@@ -15,8 +18,10 @@
 > **Fix:** Reise-Tabs/Stations-Pillen brechen bei 641–860px um statt abzuschneiden (Scroll/Fade/Pfeile nur noch ≤640px; behebt auch Hover-Aufpoppen). ·
 > **Neu:** P1 Bild-Performance ✅ · K2 Insta zentral aus Kontakt ✅ · K4 EN-Rechtstexte ✅ · P2 utah-Bild→/uploads ✅ ·
 > P3 (404 + Vorschau-noindex + robots.txt + Sitemap) **vollständig ✅**. ·
-> ⚠️ **Offene Cloudflare-Aktionen:** (1) **Tina-Cloud-Re-Index** nach K2 (Schema-Änderung, falls noch nicht erfolgt).
-> (2) Im **Vorschau**-Projekt Build-Env **`PUBLIC_PREVIEW_NOINDEX=true`** setzen — **NIEMALS im Live-Projekt** (sonst Live aus Google). ·
+> ⚠️ **Offen – braucht David (vor Cutover):** (1) **Push** der offenen Commits. (2) **Safari/iPad-Konsolen-Check**
+> (Laufzeitfehler). (3) **iPad-Test mit Alexandra** (CMS-Bedienung + Besucher-Ansicht). (4) **Tina-Cloud-Re-Index**
+> nach K2 (Schema-Änderung, falls noch nicht erfolgt). (5) Dann **Cutover** (FAHRPLAN Phase 3). ·
+> ✅ **Erledigt:** Vorschau-noindex-Var gesetzt · Test-Mail (Web3Forms) bestätigt · Rechtstexte DE+EN · P1/P2/P3/K2/K4/K5. ·
 > Diese Datei wird bei jeder Session **überschrieben** (Momentaufnahme, nie
 > veraltet). Historie → `CHANGELOG.md`.
 >
