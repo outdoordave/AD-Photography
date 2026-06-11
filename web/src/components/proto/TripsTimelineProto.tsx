@@ -99,6 +99,7 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
   const centersRef = React.useRef<number[]>([]);   // Punkt-Mitten, absolute Dokument-Y
   const firstAbsRef = React.useRef(0);             // Mitte des 1. Punkts (für Balken-Bezug)
   const rafRef = React.useRef<number | null>(null);
+  const snapAnimRef = React.useRef<number | null>(null); // laufender Snap-Tween
 
   const routeRef = React.useRef(buildRoute(stops));
   const vehicleRef = React.useRef<maplibregl.Marker | null>(null);
@@ -316,8 +317,29 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     list.style.setProperty('--fill', Math.max(0, Math.min(lineH, anchorDoc - firstAbsRef.current)) + 'px');
   }
 
+  function cancelSnap() { if (snapAnimRef.current != null) { cancelAnimationFrame(snapAnimRef.current); snapAnimRef.current = null; } }
+
+  // Sanft (fluffig) zu einer Ziel-Scrollposition gleiten — eigener Tween statt nativem
+  // smooth-scroll (das „schnippt"). easeInOut, distanzabhängige Dauer, weicher Ausklang.
+  function smoothScrollTo(target: number) {
+    cancelSnap();
+    const start = window.scrollY;
+    const dist = target - start;
+    if (Math.abs(dist) < 2) return;
+    const dur = Math.min(900, 460 + Math.abs(dist) * 0.55);
+    const t0 = performance.now();
+    const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+    const stepFn = (now: number) => {
+      const u = Math.min(1, (now - t0) / dur);
+      window.scrollTo(0, start + dist * ease(u));
+      if (u < 1) snapAnimRef.current = requestAnimationFrame(stepFn);
+      else snapAnimRef.current = null;
+    };
+    snapAnimRef.current = requestAnimationFrame(stepFn);
+  }
+
   // Magnetisches Snapping per JS (zuverlässiger als CSS-scroll-snap, v. a. Safari):
-  // wenn das Scrollen ruht, sanft die nächstgelegene Station an den Anker rücken.
+  // wenn das Scrollen ruht, fluffig die nächstgelegene Station an den Anker rücken.
   function snapToNearest() {
     if (prefersReduced()) return;
     const centers = centersRef.current;
@@ -330,7 +352,7 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     for (let i = 0; i < centers.length; i++) { const d = Math.abs(centers[i] - sy - anchorY); if (d < bestD) { bestD = d; best = i; } }
     const target = Math.round(centers[best] - anchorY);
     if (Math.abs(target - sy) < 3) return; // schon angedockt
-    window.scrollTo({ top: target, behavior: 'smooth' });
+    smoothScrollTo(target);
   }
 
   // Karte einmal erzeugen
@@ -376,12 +398,21 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
       rafRef.current = requestAnimationFrame(() => { rafRef.current = null; update(); });
     };
     const onResize = () => { if (mapRef.current) mapRef.current.resize(); measure(); };
+    // Eigene Nutzer-Eingaben brechen den laufenden Snap-Tween ab (man kann übernehmen).
+    const onUserInput = () => cancelSnap();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize);
+    window.addEventListener('wheel', onUserInput, { passive: true });
+    window.addEventListener('touchstart', onUserInput, { passive: true });
+    window.addEventListener('keydown', onUserInput);
     return () => {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
+      window.removeEventListener('wheel', onUserInput);
+      window.removeEventListener('touchstart', onUserInput);
+      window.removeEventListener('keydown', onUserInput);
       if (snapTimer) window.clearTimeout(snapTimer);
+      cancelSnap();
       if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
