@@ -104,6 +104,8 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
   const vehicleRef = React.useRef<maplibregl.Marker | null>(null);
   const vehicleIconRef = React.useRef<HTMLSpanElement | null>(null);
   const vehicleModeRef = React.useRef<'car' | 'plane'>('car');
+  const vehicleAtRef = React.useRef(0);            // Station, an der das Fahrzeug ruht/animiert-von
+  const animRef = React.useRef<number | null>(null);
 
   const styleUrl = 'https://tiles.openfreemap.org/styles/' + STYLE;
 
@@ -208,6 +210,49 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     if (c) placeVehicle(c[0], c[1], false, 0, 1);
   }
 
+  // Punkte einer Etappe (toIdx-1 -> toIdx): Fahrt = Gerade, Flug = gekrümmter Bogen.
+  function legPoints(toIdx: number): { pts: [number, number][]; flight: boolean } {
+    const { coords, legFlight, flightArcs } = routeRef.current;
+    if (legFlight[toIdx]) { const arc = flightArcs.find((x) => x.i === toIdx); return { pts: arc ? arc.pts : [coords[toIdx - 1], coords[toIdx]], flight: true }; }
+    return { pts: [coords[toIdx - 1], coords[toIdx]], flight: false };
+  }
+
+  // Fahrzeug sanft (langsam, easing) zur aktiven Station gleiten lassen — entlang der echten
+  // Etappen (Auto gerade, Flugzeug die Kurve). Station-treu: ruht immer AN einer Station.
+  function animateVehicleTo(target: number) {
+    if (!vehicleRef.current) return;
+    const from = vehicleAtRef.current;
+    if (target === from) return;
+    if (animRef.current != null) { cancelAnimationFrame(animRef.current); animRef.current = null; }
+    if (prefersReduced()) { vehicleAtRef.current = target; placeVehicleAtStop(target); return; }
+    const dir = target > from ? 1 : -1;
+    const flat: { p: [number, number]; flight: boolean }[] = [];
+    for (let k = from; k !== target; k += dir) {
+      const toIdx = dir > 0 ? k + 1 : k;
+      const lp = legPoints(toIdx);
+      const pts = dir < 0 ? lp.pts.slice().reverse() : lp.pts;
+      pts.forEach((p, j) => { if (flat.length && j === 0) return; flat.push({ p, flight: lp.flight }); });
+    }
+    if (flat.length < 2) { vehicleAtRef.current = target; placeVehicleAtStop(target); return; }
+    const segLen: number[] = []; let total = 0;
+    for (let j = 1; j < flat.length; j++) { const a = flat[j - 1].p, b = flat[j].p; const d = Math.hypot(b[0] - a[0], b[1] - a[1]); segLen.push(d); total += d; }
+    const dur = Math.min(2000, 600 + 500 * Math.abs(target - from)); // langsam „hinterher"
+    const t0 = performance.now();
+    const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+    const stepFn = (now: number) => {
+      const u = Math.min(1, (now - t0) / dur);
+      const want = ease(u) * total;
+      let acc = 0, j = 1;
+      while (j < flat.length && acc + segLen[j - 1] < want) { acc += segLen[j - 1]; j++; }
+      j = Math.min(j, flat.length - 1);
+      const a = flat[j - 1].p, b = flat[j].p; const sl = segLen[j - 1] || 1; const f = (want - acc) / sl;
+      placeVehicle(a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, flat[j].flight, bearingDeg(a, b), b[0] - a[0]);
+      if (u < 1) { animRef.current = requestAnimationFrame(stepFn); }
+      else { animRef.current = null; vehicleAtRef.current = target; placeVehicleAtStop(target); }
+    };
+    animRef.current = requestAnimationFrame(stepFn);
+  }
+
   // --- Vermessung: Punkt-Mitten (absolute Dokument-Y) + Linien-Geometrie + Snap-Padding ---
   function measure() {
     const list = listRef.current;
@@ -253,7 +298,7 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     }
     if (best !== activeRef.current) {
       activeRef.current = best; setActive(best); drawMarkers(); mapFollow(best);
-      placeVehicleAtStop(best); // station-treu (sanftes Gleiten folgt im naechsten Schritt)
+      animateVehicleTo(best); // sanftes, station-treues Gleiten zur neuen aktiven Station
     }
     // Fortschrittsbalken zieht KONTINUIERLICH mit dem Scroll mit (gleitet, schnippt nicht),
     // geklemmt zwischen erstem und letztem Punkt. Bezug = derselbe Anker.
@@ -304,6 +349,7 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     });
     map.on('error', () => { /* Tile-/Style-Aussetzer schlucken */ });
     return () => {
+      if (animRef.current != null) { cancelAnimationFrame(animRef.current); animRef.current = null; }
       markersRef.current.forEach((m) => m.remove());
       if (vehicleRef.current) { vehicleRef.current.remove(); vehicleRef.current = null; }
       map.remove(); mapRef.current = null; readyRef.current = false;
