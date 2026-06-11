@@ -28,7 +28,8 @@ export default defineConfig({
     // Pfad-Praefix auf JEDER Seite voraus — bei prefixDefaultLocale:false haben unsere
     // DE-Seiten aber keinen Praefix, was den Build crasht. hreflang-Alternates entfallen
     // daher bewusst; alle Seiten sind trotzdem vollstaendig in der Sitemap enthalten.
-    sitemap(),
+    // /proto/* sind interne Vorschauen (noindex) -> nicht in die Sitemap aufnehmen.
+    sitemap({ filter: (page) => !page.includes('/proto/') }),
   ],
   i18n: {
     defaultLocale: 'de',
