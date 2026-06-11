@@ -29,6 +29,22 @@ function setMapLanguage(map: maplibregl.Map, lang: Lang) {
 const prefersReduced = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// Route aus den Stopps: Koordinaten in Reihenfolge + Etappen-Segmente getrennt nach
+// Fahrt (durchgezogen) und Flug (gestrichelt). legFlight[i] = Etappe von i-1 -> i ist Flug.
+function buildRoute(stops: TLStop[]) {
+  const coords: [number, number][] = stops.map((s) => [s.lon, s.lat]);
+  const driveSegs: [number, number][][] = [];
+  const flightSegs: [number, number][][] = [];
+  const legFlight: boolean[] = [false];
+  for (let i = 1; i < coords.length; i++) {
+    const seg = [coords[i - 1], coords[i]] as [number, number][];
+    const isFlight = stops[i].arriveBy === 'flight';
+    legFlight[i] = isFlight;
+    (isFlight ? flightSegs : driveSegs).push(seg);
+  }
+  return { coords, driveSegs, flightSegs, legFlight };
+}
+
 export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lang }) {
   const trip = ALASKA_TIMELINE_DEMO;
   const stops = trip.stops;
@@ -43,6 +59,7 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
   const activeRef = React.useRef(0);
   const ioRef = React.useRef<IntersectionObserver | null>(null);
 
+  const routeRef = React.useRef(buildRoute(stops));             // Routen-Geometrie (Fahrt/Flug)
   const scrollRef = React.useRef<HTMLDivElement | null>(null);  // Fade-Fenster (scrollt)
   const listRef = React.useRef<HTMLOListElement | null>(null);  // Timeline-Inhalt
   const offsetsRef = React.useRef<number[]>([]);                // Punkt-Mitten (Content-Koordinate)
@@ -88,6 +105,33 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     const bounds = new maplibregl.LngLatBounds();
     pts.forEach((s) => bounds.extend([s.lon, s.lat]));
     map.fitBounds(bounds, { padding: 60, duration: prefersReduced() ? 0 : 600 });
+  }
+
+  // Routenlinie auf der Karte: Fahrt durchgezogen, Flug gestrichelt (warmer Akzent).
+  function drawRoute() {
+    const map = mapRef.current;
+    if (!map || !map.isStyleLoaded()) return;
+    const { driveSegs, flightSegs } = routeRef.current;
+    const addLine = (id: string, segs: [number, number][][], dashed: boolean) => {
+      if (!segs.length) return;
+      const data = { type: 'Feature', properties: {}, geometry: { type: 'MultiLineString', coordinates: segs } } as any;
+      if (map.getSource(id)) { (map.getSource(id) as any).setData(data); return; }
+      map.addSource(id, { type: 'geojson', data });
+      map.addLayer({
+        id: id + '-layer',
+        type: 'line',
+        source: id,
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+        paint: {
+          'line-color': '#a7672f',
+          'line-width': dashed ? 2 : 2.5,
+          'line-opacity': dashed ? 0.6 : 0.8,
+          ...(dashed ? { 'line-dasharray': [1.6, 1.6] } : {}),
+        },
+      });
+    };
+    addLine('route-drive', driveSegs, false);
+    addLine('route-flight', flightSegs, true);
   }
 
   function flyToStop(idx: number) {
@@ -164,6 +208,7 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     map.on('load', () => {
       readyRef.current = true;
       setMapLanguage(map, lang);
+      drawRoute();
       drawMarkers();
       fitAll();
     });
@@ -322,6 +367,10 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
         <div className="tl-map-col">
           <div className="tl-map map-box">
             <div ref={mapElRef} style={{ width: '100%', height: '100%' }} />
+            <div className="tl-legend" aria-hidden="true">
+              <span><i className="tl-leg-drive" />Fahrt</span>
+              <span><i className="tl-leg-flight" />Flug</span>
+            </div>
           </div>
         </div>
       </div>
