@@ -1,0 +1,101 @@
+/* PROTOTYP-Styles — Variante B (vertikale Timeline). NUR von
+   src/pages/proto/reisen-timeline.astro importiert. global.css bleibt unangetastet.
+   Nutzt die globalen Design-Tokens (Farben/Fonts/Radien aus :root). */
+
+.tl-note {
+  background: var(--c-bg-alt, #efe6d6);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: var(--fs-ui);
+  color: var(--c-ink-soft);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+.tl-note strong { color: var(--c-ink); }
+
+.tl-head { margin-bottom: 22px; }
+.tl-head .tl-meta {
+  font-size: var(--fs-label); letter-spacing: var(--tracking-wide);
+  text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold);
+  margin-bottom: 6px;
+}
+.tl-head h2 { font-family: var(--font-display); font-size: var(--fs-heading); font-weight: var(--fw-medium); line-height: 1.1; }
+.tl-summary { font-size: var(--fs-lead); color: var(--c-ink-soft); line-height: 1.6; margin-top: 8px; max-width: 70ch; }
+
+/* --- Layout: Desktop = Timeline links, Karte rechts (sticky). Karte steht im DOM zuerst
+   (mobil Hero oben) und wird hier per grid-column/row in die rechte Spalte gelegt. --- */
+.tl-layout { display: grid; grid-template-columns: minmax(0, 1fr) 440px; gap: 36px; align-items: start; }
+.tl-map-col { grid-column: 2; grid-row: 1 / 9999; position: sticky; top: 84px; }
+.tl-track { grid-column: 1; grid-row: 1; min-width: 0; }
+.tl-map-col .tl-map { height: min(72vh, 600px); width: 100%; }
+.tl-map .maplibregl-map { height: 100%; }
+
+/* --- Timeline --- */
+.tl-list { list-style: none; margin: 0; padding: 0; position: relative; }
+.tl-stop { display: grid; grid-template-columns: 34px 1fr; gap: 16px; align-items: stretch; }
+.tl-rail { position: relative; display: flex; justify-content: center; }
+/* durchgehende Linie */
+.tl-rail::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 2px;
+  transform: translateX(-50%); background: var(--c-line);
+}
+/* erster/letzter Punkt: Linie nicht über den Rand hinaus */
+.tl-stop:first-child .tl-rail::before { top: 14px; }
+.tl-stop:last-child .tl-rail::before { bottom: calc(100% - 16px); }
+.tl-dot {
+  position: relative; z-index: 1; margin-top: 8px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--c-bg); border: 2.5px solid var(--c-accent);
+  transition: transform var(--dur-base) var(--ease), background var(--dur-base) var(--ease);
+}
+.tl-main > .tl-rail .tl-dot { width: 16px; height: 16px; }
+.tl-stop.is-active .tl-dot { background: var(--c-accent); transform: scale(1.25); box-shadow: 0 0 0 4px rgba(167,103,47,.18); }
+
+.tl-body { padding: 0 0 40px; min-width: 0; }
+.tl-step {
+  font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase;
+  color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 6px;
+}
+.tl-title { font-family: var(--font-display); font-weight: var(--fw-medium); line-height: 1.2; margin-bottom: 4px; }
+.tl-date { font-size: var(--fs-label); color: var(--c-ink-soft); margin-bottom: 12px; }
+.tl-text { font-size: var(--fs-ui); color: var(--c-ink-soft); line-height: 1.7; margin-bottom: 10px; }
+
+/* Hauptstation: volle Größe + Hero + Filmstreifen */
+.tl-main .tl-title { font-size: var(--fs-title-lg); }
+.tl-hero {
+  aspect-ratio: var(--ar-media); border-radius: var(--radius-sm); overflow: hidden;
+  margin-bottom: 14px; cursor: zoom-in; background: var(--c-bg-alt, #efe6d6);
+}
+.tl-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tl-strip { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; }
+.tl-strip img {
+  flex: 0 0 auto; width: 132px; height: 88px; object-fit: cover;
+  border-radius: var(--radius-sm); cursor: zoom-in; display: block;
+}
+
+/* Zwischenstopp: schlank + dezenter Block + optional EIN Thumbnail */
+.tl-inter .tl-body {
+  background: var(--c-bg-alt, #efe6d6); border: 1px solid var(--c-line);
+  border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 18px;
+}
+.tl-inter .tl-title { font-size: var(--fs-title-sm); }
+.tl-text-slim { margin-bottom: 0; }
+.tl-thumb {
+  width: 160px; aspect-ratio: var(--ar-card); border-radius: var(--radius-sm);
+  overflow: hidden; margin-top: 10px; cursor: zoom-in;
+}
+.tl-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.tl-demo { color: var(--c-accent); font-size: .8em; vertical-align: super; }
+
+/* --- Mobil: einspaltig, Karte als Hero oben, danach die Timeline --- */
+@media (max-width: 860px) {
+  .tl-layout { display: block; }
+  .tl-map-col { position: static; margin-bottom: 24px; }
+  .tl-map-col .tl-map { height: 300px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tl-dot { transition: none; }
+}
