@@ -32,6 +32,10 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   (easing) entlang der echten Etappe zur neuen Station (Auto gerade, Flugzeug die Kurve) und ruht
   IMMER an einer Station (z. B. Flugzeug steht in FRA, nicht auf halbem Weg). Bei schnellem Scrollen
   ohne Rücksprung; `prefers-reduced-motion` → sofort am Stopp.
+- **Nachschärfung (2. Feedback):** Snapping **fluffiger** (`f584c26`) — eigener easeInOut-rAF-Tween
+  (460–900ms) statt nativem smooth-scroll (das „schnippte"); per Wheel/Touch/Tastatur unterbrechbar.
+  **Fade-Lücke oben geschlossen** (`2c9a79b`) — Fade beginnt bündig direkt unter der Überschrift
+  (Kopf-Unterabstand 12→6px, Fade-Start snap-pad−4px); keine ~3–4 mm Lücke mehr.
 - Offline-Build grün (37 Seiten). **Browser-/Safari-Test offen** (Sandbox blockt Server → David).
 
 ## 2026-06-11 — Prototyp Variante B: Desktop-Feinschliff (Single-Scroll, Flüge, SUV)

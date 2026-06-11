@@ -1,10 +1,10 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-11** · letzter Commit `97fada7` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-11** · letzter Commit `2c9a79b` (Branch `astro-umbau`) ·
 > **Proto-Korrekturen nach Live-Test:** Kopf klebt bündig unter der Nav (keine Stationen mehr dazwischen),
-> Fade sanfter/tiefer (Überschrift lesbar); **JS-Snapping** beim Ruhen (statt CSS, Safari-robust);
-> Fortschrittsbalken **gleitet** (kein Schnippen); **Fahrzeug gleitet station-treu** (Flugzeug steht in
-> FRA statt auf halbem Weg, langsames Easing, reduced-motion=still). ·
+> Fade bündig direkt unter der Überschrift (keine Lücke); **JS-Snapping fluffig** (eigener easeInOut-Tween,
+> unterbrechbar; statt CSS/native — Safari-robust); Fortschrittsbalken **gleitet** (kein Schnippen);
+> **Fahrzeug gleitet station-treu** (Flugzeug steht in FRA statt auf halbem Weg, langsames Easing, reduced-motion=still). ·
 > **NEU (Prototyp, isoliert, DESKTOP):** Reisen-Redesign „Variante B / vertikale Timeline" unter
 > **`/proto/reisen-timeline`** (noindex, aus Sitemap) — diese Runde apple-like Feinschliff:
 > **EIN Scroll-Kontext** (kein innerer Container; Kopf+Karte `sticky`, Overlay-Fade statt mask) → behebt
