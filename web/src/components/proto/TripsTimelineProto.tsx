@@ -253,34 +253,30 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     }
     if (best !== activeRef.current) {
       activeRef.current = best; setActive(best); drawMarkers(); mapFollow(best);
+      placeVehicleAtStop(best); // station-treu (sanftes Gleiten folgt im naechsten Schritt)
     }
-    // Balken endet EXAKT an der Mitte des aktiven Punkts (kein Überscrollen)
-    list.style.setProperty('--fill', Math.max(0, centers[best] - firstAbsRef.current) + 'px');
+    // Fortschrittsbalken zieht KONTINUIERLICH mit dem Scroll mit (gleitet, schnippt nicht),
+    // geklemmt zwischen erstem und letztem Punkt. Bezug = derselbe Anker.
+    const anchorDoc = sy + anchorY;
+    const lineH = centers[centers.length - 1] - firstAbsRef.current;
+    list.style.setProperty('--fill', Math.max(0, Math.min(lineH, anchorDoc - firstAbsRef.current)) + 'px');
+  }
 
-    // Fahrzeug scroll-gekoppelt (kontinuierlich) zwischen den Punkten
-    if (!prefersReduced() && vehicleRef.current && centers.length > 1) {
-      const vy = (k: number) => centers[k] - sy;
-      let i = 0, frac = 0;
-      if (anchorY <= vy(0)) { i = 0; frac = 0; }
-      else if (anchorY >= vy(centers.length - 1)) { i = centers.length - 2; frac = 1; }
-      else { for (let k = 0; k < centers.length - 1; k++) { if (vy(k) <= anchorY && anchorY <= vy(k + 1)) { i = k; frac = (anchorY - vy(k)) / ((vy(k + 1) - vy(k)) || 1); break; } } }
-      const { coords, legFlight, flightArcs } = routeRef.current;
-      const a = coords[i], b = coords[i + 1];
-      if (a && b) {
-        if (legFlight[i + 1]) {
-          // Flugetappe: entlang des gekrümmten Bogens fliegen (Tangente = Kurs).
-          const arc = flightArcs.find((x) => x.i === i + 1);
-          const pts = arc ? arc.pts : [a, b];
-          const f = frac * (pts.length - 1);
-          const k = Math.min(pts.length - 2, Math.max(0, Math.floor(f)));
-          const t = f - k;
-          const p0 = pts[k], p1 = pts[k + 1];
-          placeVehicle(p0[0] + (p1[0] - p0[0]) * t, p0[1] + (p1[1] - p0[1]) * t, true, bearingDeg(p0, p1), p1[0] - p0[0]);
-        } else {
-          placeVehicle(a[0] + (b[0] - a[0]) * frac, a[1] + (b[1] - a[1]) * frac, false, bearingDeg(a, b), b[0] - a[0]);
-        }
-      }
-    }
+  // Magnetisches Snapping per JS (zuverlässiger als CSS-scroll-snap, v. a. Safari):
+  // wenn das Scrollen ruht, sanft die nächstgelegene Station an den Anker rücken.
+  function snapToNearest() {
+    if (prefersReduced()) return;
+    const centers = centersRef.current;
+    if (centers.length < 2) return;
+    const vh = window.innerHeight, sy = window.scrollY;
+    let headBottom = navHRef.current + headHRef.current;
+    if (headRef.current) headBottom = Math.min(Math.max(headRef.current.getBoundingClientRect().bottom, 0), vh);
+    const anchorY = (headBottom + vh) / 2;
+    let best = 0, bestD = Infinity;
+    for (let i = 0; i < centers.length; i++) { const d = Math.abs(centers[i] - sy - anchorY); if (d < bestD) { bestD = d; best = i; } }
+    const target = Math.round(centers[best] - anchorY);
+    if (Math.abs(target - sy) < 3) return; // schon angedockt
+    window.scrollTo({ top: target, behavior: 'smooth' });
   }
 
   // Karte einmal erzeugen
@@ -315,9 +311,12 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Single-Scroll: auf window-Scroll + resize hören (rAF-gedrosselt).
+  // Single-Scroll: auf window-Scroll + resize hören (rAF-gedrosselt). Beim Ruhen -> Snap.
   React.useEffect(() => {
+    let snapTimer: number | undefined;
+    const armSnap = () => { if (snapTimer) window.clearTimeout(snapTimer); snapTimer = window.setTimeout(snapToNearest, 150); };
     const onScroll = () => {
+      armSnap();
       if (rafRef.current != null) return;
       rafRef.current = requestAnimationFrame(() => { rafRef.current = null; update(); });
     };
@@ -327,6 +326,7 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     return () => {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
+      if (snapTimer) window.clearTimeout(snapTimer);
       if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

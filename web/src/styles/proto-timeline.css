@@ -69,9 +69,10 @@
 /* Fortschrittslinie: blasse Grundlinie + kräftige Füllung (endet exakt am aktiven Punkt) */
 .tl-line, .tl-line-fill { position: absolute; left: 17px; width: 2px; transform: translateX(-50%); border-radius: 2px; }
 .tl-line      { top: var(--line-top, 0); height: var(--line-h, 0); background: var(--c-line); }
-.tl-line-fill { top: var(--line-top, 0); height: var(--fill, 0); background: var(--c-accent); transition: height var(--dur-base) var(--ease); }
+/* kontinuierlich scroll-getrieben -> kein CSS-Übergang (sonst „hängt" der Balken hinterher) */
+.tl-line-fill { top: var(--line-top, 0); height: var(--fill, 0); background: var(--c-accent); }
 
-.tl-stop { display: grid; grid-template-columns: 34px 1fr; gap: 16px; scroll-snap-align: center; }
+.tl-stop { display: grid; grid-template-columns: 34px 1fr; gap: 16px; }
 .tl-rail { position: relative; display: flex; justify-content: center; }
 .tl-dot {
   position: relative; z-index: 2; margin-top: 6px;
@@ -100,7 +101,7 @@
 .tl-thumb { width: 150px; aspect-ratio: var(--ar-card); border-radius: var(--radius-sm); overflow: hidden; margin-top: 10px; cursor: zoom-in; }
 .tl-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-.tl-divider { padding: 24px 0 8px 34px; scroll-snap-align: none; }
+.tl-divider { padding: 24px 0 8px 34px; }
 .tl-divider span { display: inline-block; font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); }
 .tl-divider span::after { content: ""; display: block; width: 38px; height: 2px; margin-top: 6px; background: var(--c-line); border-radius: 2px; }
 
