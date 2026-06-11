@@ -17,6 +17,25 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-11 — Prototyp: Reisen als vertikale Timeline (Variante B), isoliert
+- **Reine Vorschau, nichts Bestehendes verändert.** Neue Route **`/proto/reisen-timeline`**
+  (`noindex`, aus Sitemap gefiltert). Echte Reisen-Seite `/trips`, `TripsContent.tsx`,
+  Tina-`reisen`-Schema und Content unberührt.
+- Neue Dateien: `src/pages/proto/reisen-timeline.astro`, `src/components/proto/TripsTimelineProto.tsx`,
+  `src/components/proto/alaskaTimelineDemo.ts` (Demo-Daten als TS → Tina scannt es nie),
+  `src/styles/proto-timeline.css` (nur von der Proto-Seite importiert; `global.css` unberührt).
+  `astro.config.mjs`: Sitemap-`filter` schließt `/proto/*` aus.
+- **Inhalt:** vertikale Timeline mit zwei Stop-Klassen (Hauptstation: Titel/Datum/Hero/Text/
+  Filmstreifen → bestehende **Lightbox** wiederverwendet; Zwischenstopp: schlank, 1 Satz, opt. 1 Thumb).
+  MapLibre-Karte folgt per IntersectionObserver dem beim Scrollen aktiven Stopp (Desktop sticky
+  daneben + flyTo; mobil Hero oben mit Gesamtroute).
+- **Datenbasis:** längste reale Reise `alaska2026` (10 Stops, datengetrieben gewählt). Heuristik
+  Haupt/Zwischen + klar markierte Demo-Füllung (`source:'demo'`: Yosemite/Denali/Coldfoot als
+  Demo-Hauptstationen, Lake-Tahoe-Thumb). Details in `CAPABILITIES.md`.
+- Commits: `fc8121b` (CAPABILITIES-Analyse), `f7b4f3d` (Demo-Daten), `3ab7838` (Komponente+CSS),
+  `2d8c995` (Route + Sitemap-Filter). Offline-Build grün (37 Seiten). **Browser-/Safari-Test offen
+  (Sandbox blockt Server → David prüft lokal).**
+
 ## 2026-06-10 — Doku: Vorschau-noindex gesetzt + Test-Mail bestätigt
 - **Nur Doku** (keine Seitenänderung) — Commit zum Pushen, damit ein neuer Vorschau-Build
   läuft und die im Cloudflare-Vorschau-Projekt gesetzte Env-Var `PUBLIC_PREVIEW_NOINDEX=true` greift.

@@ -1,6 +1,13 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-10** · Doku-Update nach `3010df0` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-11** · letzter Commit `2d8c995` (Branch `astro-umbau`) ·
+> **NEU (Prototyp, isoliert):** Reisen-Redesign „Variante B / vertikale Timeline" als reine Vorschau unter
+> **`/proto/reisen-timeline`** (noindex, aus Sitemap). Echte Reisen-Seite `/trips` + Tina-Schema + Content
+> **unverändert**. Daten: längste reale Reise `alaska2026` (10 Stops) + markierte Demo-Füllung. Lightbox
+> wiederverwendet; Karte folgt per IntersectionObserver (Desktop sticky, mobil Hero). Analyse in `CAPABILITIES.md`.
+> **Offen:** Browser-/Safari-Test (Sandbox blockt Server → David lokal), dann Entscheidung über echten Umbau
+> (u. a. Stop-Typ-Feld `kind`, backward-kompatibel: ohne `kind` = Hauptstation). ·
+> **Doku-Update nach `3010df0`:** ·
 > **Vorschau-noindex AKTIV:** `PUBLIC_PREVIEW_NOINDEX=true` ist im **Vorschau**-Projekt gesetzt (greift ab nächstem Build:
 > `<meta robots noindex>` + `robots.txt`→`Disallow: /`). ⚠️ **Live-Projekt bekommt diese Var NIEMALS** (Cutover-Merkposten, sonst Live aus Google). ·
 > **Kontaktformular-Versand (Web3Forms) real getestet → Mail kommt an ✅.** ·
