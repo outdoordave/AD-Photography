@@ -756,3 +756,79 @@ Album „Firsts" (Bild 1–4 von 8) + „+4", Link `/portfolio/2024-erste-fotos`
 Marker-Leak im sichtbaren Text, kein Block ohne Album. Test-Verknüpfung zurückgesetzt.
 Commit `053ffeb`. **Offen:** Re-index + Rebuild, dann Nutzer-Abnahme (iPad: Knöpfe +
 Upload, Lightbox-Touch).
+
+---
+
+# Reisen-Redesign „Variante B — vertikale Timeline / Reise-Journal" (PROTOTYP) — 2026-06-11
+
+> **Status: reine Vorschau/Prototyp, NICHT abgenommen, NICHT der echte Umbau.** Bestehende
+> Reisen-Seite (`TripsContent.tsx`, Route `/trips`), Tina-Schema (`reisen`-Collection) und
+> echter Content (`src/data/trips/*.json`) bleiben **unverändert**. Der Prototyp liegt isoliert
+> unter `src/pages/proto/reisen-timeline.astro` + `src/components/proto/*` + eigener CSS-Datei.
+
+## Schritt 0 — Live-Wahrheit (echte Code-Fundstellen, Branch astro-umbau)
+Analysiert wurde der **echte** aktuelle Astro-Code (nicht index.html), da die Reisen bereits
+portiert sind:
+- **Seite/Insel:** `src/pages/trips.astro` (+ `src/pages/trips/[slug].astro`, `en/trips.astro`)
+  rendert **eine** React-Insel `src/components/TripsContent.tsx` (`client:load`). Daten kommen
+  per `client.queries.reisenConnection({first:100})` (SSR) → `useTina` in der Insel (Live-Vorschau).
+  Album-Links via `linkedAlbumsByTrip`, Karten-Einstellungen via `reisen_settings`.
+- **Datenmodell:** `src/lib/trips.ts` — `RawTrip`/`RawStop`, `viewStops()` normalisiert,
+  `pickCoord()` liest `location` (GeoJSON-Point-String), `photoFrame()` (CSS-Crop), `bi()` (DE/EN-
+  Fallback), `sortTrips()` (order, dann Datum).
+- **Tina-Schema (`reisen`, `tina/config.ts:325`):** Reise = order, title(+_en), date, meta(_de/_en),
+  summary(_de/_en), upcoming, **stops[]**, gallery[]. **Stop** = name(req), location(GeoJSON via
+  `LocationSearchField`), title(_de/_en), date(_de/_en), text(_de/_en, textarea), photo(Crop 16:10),
+  photos[](BulkPhoto), video, youtube. **→ Es gibt KEIN Typ-Feld (Haupt/Zwischen) pro Stop.**
+
+## A — Extrahierte Capabilities der heutigen Reisen-Seite (Ist-Stand, einzufrieren für 1:1-Umbau)
+1. **Reise-Tabs** (`.trip-tabs`): horizontal scrollbar, aktiver markiert, Rand-Fade + Chevron-Pfeile,
+   Auto-Zentrierung des aktiven Tabs, Klick wechselt Reise (`setTripIdx`), Analytics `track('reise')`.
+2. **Reise-Kopf** (`.trip-summary`): meta-Zeile + summary (DE/EN), optional Album-Link.
+3. **MapLibre-Karte** (`.map-box`, in `.map-layout` 2-spaltig): 1× erzeugt, `style` aus
+   `reisen_settings.map_style` (live umstylebar via `setStyle`), `NavigationControl`, scrollZoom per
+   CMS-Schalter (`cooperativeGestures`), Sprach-Labels (`setMapLanguage`, coalesce name:de/latin/name).
+4. **Marker** (`drawMarkers`): DOM-Marker je Stop mit Koordinate; aktiver = größer/anders gefärbt
+   (#f0c9a8/Rand #a7672f vs. #a7672f/Rand creme); Popup (Titel+Datum); **Klick auf Marker →
+   `scrollToStop`** (Karte treibt die Stationsauswahl).
+5. **Kopplung Karte↔Station (HEUTE):** Die durchblätterbare Bahn `.trip-detail` (horizontaler
+   Scroll-Snap, `flex 0 0 100%` je `.trip-slide`) ist via **IntersectionObserver** (root=Bahn,
+   threshold 0.6/0.9) an `activateStop(idx)` gekoppelt → setzt `active`, `drawMarkers` (Highlight),
+   **`map.flyTo({center, zoom:max(zoom,5), duration:600})`**, Editor-Sync. Pfeile `‹/›` (`stepStop`)
+   und Stop-Pillen (`.trip-stoplist`) rufen `scrollToStop` → IO meldet → Karte folgt. **Trigger heute
+   = horizontaler Scroll der Bahn**, nicht vertikaler Seiten-Scroll.
+6. **Stations-Karte** (`.trip-slide`): „Station X/Y", Titel (h3), Datum, **Titelbild** (CSS-Crop 16:10,
+   Klick → Lightbox), Text, **weitere Fotos** (`.ww-station-photos`, Klick → Lightbox-Gruppe),
+   optional Video-Loop + YouTube-Embed.
+7. **Stop-Liste** (`.trip-stoplist`): Pillen je Stop, aktive markiert, Klick → `scrollToStop`,
+   Rand-Fade + Pfeile, Auto-Zentrierung.
+8. **„Reisefazit"-Galerie** (`.story-gallery`): optionales Bildraster → Lightbox-Gruppe.
+9. **Lightbox/Filmstreifen** (`src/components/Lightbox.tsx`): eigenständige, **ohne Umbau
+   wiederverwendbare** Komponente. Props: `photos: {photo,caption?}[]`, `startIndex`, `loop`,
+   `albumName?`, `onClose`. Eigener Filmstreifen, Wheel/Touch/Tastatur/IO, Body-Scroll-Lock.
+10. **Sprache:** alle Texte DE/EN über `bi()`/`tl()` mit DE-Fallback; `lang` als Prop.
+
+## Für den Prototyp getroffene Entscheidungen
+- **Längste reale Reise = `alaska2026.json` (10 Stops)** — datengetrieben gewählt (Stop-Zählung:
+  alaska 10, west 9, florida 9, birthday 7, robin 4).
+- **Haupt/Zwischen-Heuristik (da Schema kein Typ-Feld hat):** *Hauptstation* = hat Titelbild ODER
+  ≥1 weiteres Foto ODER Text ≥ ~25 Wörter; sonst *Zwischenstopp*. Auf die **echten** alaska-Daten
+  angewandt: nur „San Francisco" ist Hauptstation (echtes Titelbild + 2 Fotos), die übrigen 9 sind
+  Zwischenstopps (je 1 kurzer echter Satz, keine Bilder).
+- **Demo-Füllung (klar gekennzeichnet, `_source:'demo-fill'` im Demo-Modul):** Da 1 Haupt / 9 Zwischen
+  die volle Hauptstations-Klasse (Hero + Filmstreifen) kaum zeigt, wurden im **lokalen Demo-Modul**
+  3 weitere Stops (Yosemite, Denali, Coldfoot) zu Hauptstationen aufgewertet — mit **echten,
+  vorhandenen** `/uploads`-Bildern als Hero+Filmstreifen und verlängertem Demo-Text. Alle Namen,
+  Daten, Koordinaten und Originaltexte bleiben aus den echten alaska-Daten. **Echt vs. Demo** ist
+  pro Stop im Modul markiert.
+
+## Offene Fragen vor dem echten Umbau (zu klären mit David)
+- **Typ-Feld im echten Schema?** Vorschlag: neues Stop-Feld `kind` (Auswahl „Hauptstation/
+  Zwischenstopp", Default **Hauptstation**). **Backward-kompatibel:** bestehende Stops ohne `kind`
+  gelten automatisch als Hauptstation (kein Re-Index-Datenverlust). Schema-Änderung ⇒ `tina-lock`
+  neu + Re-Index.
+- Soll die heutige **horizontale** Bahn ersetzt oder als Option behalten werden?
+- Karten-Verhalten mobil: nur Gesamtroute (Hero) oder doch pro Stop nachziehen?
+- Filmstreifen-Klasse für Zwischenstopp: wirklich „kein Filmstreifen, max. 1 Thumbnail"?
+
+(Schritt B/C/D des echten Umbaus folgen nach Freigabe — der Prototyp dient nur der Anschauung.)
