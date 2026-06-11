@@ -30,19 +30,35 @@ function setMapLanguage(map: maplibregl.Map, lang: Lang) {
 const prefersReduced = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// Route: Koordinaten in Reihenfolge + Etappen nach Fahrt/Flug getrennt.
+// Gekrümmter Flugbogen (quadratische Bézier): Kontrollpunkt = Mitte + Senkrechte (poleward),
+// damit Flüge als Bogen statt gerader Luftlinie verlaufen. Liefert n+1 Punkte entlang der Kurve.
+function arcPoints(a: [number, number], b: [number, number], bow: number, n: number): [number, number][] {
+  const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
+  const dx = b[0] - a[0], dy = b[1] - a[1];
+  let perp: [number, number] = [dy, -dx];        // senkrecht zur Strecke
+  if (perp[1] < 0) perp = [-dy, dx];             // Bogen nach Norden (poleward) ausrichten
+  const cx = mx + perp[0] * bow, cy = my + perp[1] * bow;
+  const pts: [number, number][] = [];
+  for (let t = 0; t <= n; t++) {
+    const u = t / n, v = 1 - u;
+    pts.push([v * v * a[0] + 2 * v * u * cx + u * u * b[0], v * v * a[1] + 2 * v * u * cy + u * u * b[1]]);
+  }
+  return pts;
+}
+
+// Route: Koordinaten + Fahretappen (gerade) + Flugetappen (gekrümmte Bögen).
 function buildRoute(stops: TLStop[]) {
   const coords: [number, number][] = stops.map((s) => [s.lon, s.lat]);
   const driveSegs: [number, number][][] = [];
-  const flightSegs: [number, number][][] = [];
+  const flightArcs: { i: number; pts: [number, number][] }[] = [];
   const legFlight: boolean[] = [false];
   for (let i = 1; i < coords.length; i++) {
-    const seg = [coords[i - 1], coords[i]] as [number, number][];
     const isFlight = stops[i].arriveBy === 'flight';
     legFlight[i] = isFlight;
-    (isFlight ? flightSegs : driveSegs).push(seg);
+    if (isFlight) flightArcs.push({ i, pts: arcPoints(coords[i - 1], coords[i], 0.15, 48) });
+    else driveSegs.push([coords[i - 1], coords[i]]);
   }
-  return { coords, driveSegs, flightSegs, legFlight };
+  return { coords, driveSegs, flightArcs, legFlight };
 }
 
 // Reduzierte Silhouetten (kein Foto): SUV (Seitenansicht) + Flugzeug (Draufsicht).
@@ -128,7 +144,7 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
   function drawRoute() {
     const map = mapRef.current;
     if (!map || !map.isStyleLoaded()) return;
-    const { driveSegs, flightSegs } = routeRef.current;
+    const { driveSegs } = routeRef.current;
     const addLine = (id: string, segs: [number, number][][], dashed: boolean) => {
       if (!segs.length) return;
       const data = { type: 'Feature', properties: {}, geometry: { type: 'MultiLineString', coordinates: segs } } as any;
@@ -144,7 +160,7 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
       });
     };
     addLine('route-drive', driveSegs, false);
-    addLine('route-flight', flightSegs, true);
+    addLine('route-flight', routeRef.current.flightArcs.map((a) => a.pts), true);
   }
 
   // Karte folgt dem aktiven Stopp.
@@ -152,6 +168,19 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     const map = mapRef.current;
     const s = stops[idx];
     if (!map || !readyRef.current || !s) return;
+    // Flug beteiligt? (aktiver Stopp = Ankunft ODER Abflug einer Flugetappe) -> ganzen Bogen zeigen.
+    const arrFlight = stops[idx].arriveBy === 'flight';
+    const depFlight = !!(stops[idx + 1] && stops[idx + 1].arriveBy === 'flight');
+    if (arrFlight || depFlight) {
+      const j = arrFlight ? idx : idx + 1; // Ankunfts-Index der Flugetappe
+      const arc = routeRef.current.flightArcs.find((x) => x.i === j);
+      const pts = arc ? arc.pts : [routeRef.current.coords[j - 1], routeRef.current.coords[j]];
+      const b = new maplibregl.LngLatBounds();
+      pts.forEach((p) => b.extend(p as [number, number]));
+      map.fitBounds(b, { padding: 70, duration: prefersReduced() ? 0 : 900 });
+      if (prefersReduced()) placeVehicleAtStop(idx);
+      return;
+    }
     if (prefersReduced()) { map.jumpTo({ center: [s.lon, s.lat] }); placeVehicleAtStop(idx); return; }
     map.flyTo({ center: [s.lon, s.lat], zoom: Math.max(map.getZoom(), 4.2), duration: 800, essential: true });
   }
@@ -226,12 +255,21 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
       if (anchorY <= vy(0)) { i = 0; frac = 0; }
       else if (anchorY >= vy(centers.length - 1)) { i = centers.length - 2; frac = 1; }
       else { for (let k = 0; k < centers.length - 1; k++) { if (vy(k) <= anchorY && anchorY <= vy(k + 1)) { i = k; frac = (anchorY - vy(k)) / ((vy(k + 1) - vy(k)) || 1); break; } } }
-      const { coords, legFlight } = routeRef.current;
+      const { coords, legFlight, flightArcs } = routeRef.current;
       const a = coords[i], b = coords[i + 1];
       if (a && b) {
-        const lng = a[0] + (b[0] - a[0]) * frac;
-        const lat = a[1] + (b[1] - a[1]) * frac;
-        placeVehicle(lng, lat, !!legFlight[i + 1], bearingDeg(a, b), b[0] - a[0]);
+        if (legFlight[i + 1]) {
+          // Flugetappe: entlang des gekrümmten Bogens fliegen (Tangente = Kurs).
+          const arc = flightArcs.find((x) => x.i === i + 1);
+          const pts = arc ? arc.pts : [a, b];
+          const f = frac * (pts.length - 1);
+          const k = Math.min(pts.length - 2, Math.max(0, Math.floor(f)));
+          const t = f - k;
+          const p0 = pts[k], p1 = pts[k + 1];
+          placeVehicle(p0[0] + (p1[0] - p0[0]) * t, p0[1] + (p1[1] - p0[1]) * t, true, bearingDeg(p0, p1), p1[0] - p0[0]);
+        } else {
+          placeVehicle(a[0] + (b[0] - a[0]) * frac, a[1] + (b[1] - a[1]) * frac, false, bearingDeg(a, b), b[0] - a[0]);
+        }
       }
     }
   }
