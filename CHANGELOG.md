@@ -17,6 +17,24 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-11 — Prototyp Variante B: Desktop-Ausbau (Fade-Fenster, Route, Fahrzeug)
+- Reiner Prototyp-Ausbau (`/proto/reisen-timeline`), DESKTOP-Fokus; echte Reisen-Seite/
+  Schema/Content weiter unberührt. Mobiles Verhalten bewusst später.
+- **Demo-Daten** auf **18 Stopps** erweitert (`e51d1e3`): 9 Haupt / 9 Zwischen, Felder
+  `arriveBy` (drive/flight) + `stage` (Etappen-Trenner). Inhalte frei erfunden, Bilder = vorhandene /uploads.
+- **Fixes Fade-Fenster** (`b71bf9a`): Kopf + Karte bleiben fix (Grid-Bühne), nur die Timeline
+  scrollt in `.tl-scroll` mit weicher Ober-/Unterkante (`mask-image`); sanftes proximity-Snapping
+  (snap-align center); mitscrollende Fortschrittslinie (JS-Var `--fill` aus gemessenen Punkt-Mitten);
+  aktiver Punkt wächst (IntersectionObserver, root = Fade-Fenster); Karte folgt per `flyTo`;
+  3 Etappen-Trenner (Kalifornien-Küste / Hoher Norden / Arktis & Polarkreis).
+- **Routenlinie** (`dc82e1b`): Fahretappen durchgezogen, Flug Kalifornien→Alaska **gestrichelt**
+  (keine Luftlinie übers Meer), warmer Akzent; dezente Karten-Legende Fahrt/Flug.
+- **Fahrendes Fahrzeug** (`9dee0d3`): Expedition-**Silhouette** (kein Foto) gleitet scroll-gekoppelt
+  zwischen den Stopps; auf der Flugetappe Flugzeug-Symbol (in Kursrichtung); `prefers-reduced-motion`
+  → steht still am aktiven Stopp.
+- Offline-Build grün (37 Seiten); SSR-Markup + Client-Bundle + CSS geprüft. **Browser-/Safari-Test
+  offen** (Sandbox blockt Server → David lokal/online: sticky, mask-image, scroll-snap, flyTo, IO).
+
 ## 2026-06-11 — Prototyp: Reisen als vertikale Timeline (Variante B), isoliert
 - **Reine Vorschau, nichts Bestehendes verändert.** Neue Route **`/proto/reisen-timeline`**
   (`noindex`, aus Sitemap gefiltert). Echte Reisen-Seite `/trips`, `TripsContent.tsx`,

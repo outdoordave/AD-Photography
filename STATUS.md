@@ -1,12 +1,16 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-11** · letzter Commit `2d8c995` (Branch `astro-umbau`) ·
-> **NEU (Prototyp, isoliert):** Reisen-Redesign „Variante B / vertikale Timeline" als reine Vorschau unter
-> **`/proto/reisen-timeline`** (noindex, aus Sitemap). Echte Reisen-Seite `/trips` + Tina-Schema + Content
-> **unverändert**. Daten: längste reale Reise `alaska2026` (10 Stops) + markierte Demo-Füllung. Lightbox
-> wiederverwendet; Karte folgt per IntersectionObserver (Desktop sticky, mobil Hero). Analyse in `CAPABILITIES.md`.
-> **Offen:** Browser-/Safari-Test (Sandbox blockt Server → David lokal), dann Entscheidung über echten Umbau
-> (u. a. Stop-Typ-Feld `kind`, backward-kompatibel: ohne `kind` = Hauptstation). ·
+> **Stand: 2026-06-11** · letzter Commit `9dee0d3` (Branch `astro-umbau`) ·
+> **NEU (Prototyp, isoliert, DESKTOP):** Reisen-Redesign „Variante B / vertikale Timeline" unter
+> **`/proto/reisen-timeline`** (noindex, aus Sitemap) — diese Runde Desktop-Ausbau: fixes **Fade-Fenster**
+> (Kopf+Karte fix, Timeline scrollt mit `mask-image`-Kante), proximity-**Snapping**, mitscrollende
+> **Fortschrittslinie**, **Karte folgt** per flyTo (IO), **Routenlinie** (Fahrt durchgezogen / Flug gestrichelt),
+> **fahrende Expedition-Silhouette** (scroll-gekoppelt, Flugzeug auf Flugetappe, reduced-motion=still),
+> **Etappen-Trenner**, **18 Demo-Stopps** (frei erfunden). Echte Reisen-Seite `/trips` + Tina-Schema + Content
+> **unverändert**. Reisen-Capabilities/Analyse in `CAPABILITIES.md`.
+> **Offen:** Browser-/Safari-Test (Sandbox blockt Server → David lokal/online prüfen: sticky, mask-image,
+> scroll-snap, flyTo, IO), **mobiles Verhalten** (kommt separat), dann Entscheidung echter Umbau
+> (u. a. Stop-Typ-Feld `kind`, backward-kompatibel: ohne `kind` = Hauptstation; fahrendes Auto final ja/nein → Alexandra). ·
 > **Doku-Update nach `3010df0`:** ·
 > **Vorschau-noindex AKTIV:** `PUBLIC_PREVIEW_NOINDEX=true` ist im **Vorschau**-Projekt gesetzt (greift ab nächstem Build:
 > `<meta robots noindex>` + `robots.txt`→`Disallow: /`). ⚠️ **Live-Projekt bekommt diese Var NIEMALS** (Cutover-Merkposten, sonst Live aus Google). ·
