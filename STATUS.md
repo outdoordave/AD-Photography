@@ -1,16 +1,18 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-11** · letzter Commit `9dee0d3` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-11** · letzter Commit `e1cecff` (Branch `astro-umbau`) ·
 > **NEU (Prototyp, isoliert, DESKTOP):** Reisen-Redesign „Variante B / vertikale Timeline" unter
-> **`/proto/reisen-timeline`** (noindex, aus Sitemap) — diese Runde Desktop-Ausbau: fixes **Fade-Fenster**
-> (Kopf+Karte fix, Timeline scrollt mit `mask-image`-Kante), proximity-**Snapping**, mitscrollende
-> **Fortschrittslinie**, **Karte folgt** per flyTo (IO), **Routenlinie** (Fahrt durchgezogen / Flug gestrichelt),
-> **fahrende Expedition-Silhouette** (scroll-gekoppelt, Flugzeug auf Flugetappe, reduced-motion=still),
-> **Etappen-Trenner**, **18 Demo-Stopps** (frei erfunden). Echte Reisen-Seite `/trips` + Tina-Schema + Content
-> **unverändert**. Reisen-Capabilities/Analyse in `CAPABILITIES.md`.
-> **Offen:** Browser-/Safari-Test (Sandbox blockt Server → David lokal/online prüfen: sticky, mask-image,
-> scroll-snap, flyTo, IO), **mobiles Verhalten** (kommt separat), dann Entscheidung echter Umbau
-> (u. a. Stop-Typ-Feld `kind`, backward-kompatibel: ohne `kind` = Hauptstation; fahrendes Auto final ja/nein → Alexandra). ·
+> **`/proto/reisen-timeline`** (noindex, aus Sitemap) — diese Runde apple-like Feinschliff:
+> **EIN Scroll-Kontext** (kein innerer Container; Kopf+Karte `sticky`, Overlay-Fade statt mask) → behebt
+> überscrollten Kopf + Hängenbleiben; **proximity-Snapping auf dem Dokument** mit gemeinsamem Anker
+> (aktive Station = Balken-Ende = Snap, gemessene Punkt-Mitte); **Karte folgt** (flyTo/IO); **2 echte
+> Flugetappen** (Frankfurt→SF, LAX→Anchorage) mit Flughäfen, **gekrümmte gestrichelte Flugbögen** +
+> **Flug-Zoom** (fitBounds raus/rein), **Flugzeug** fliegt die Kurve; **saubere Ford-Expedition-Silhouette**;
+> Etappen-Trenner; **18 Demo-Stopps** (frei erfunden); Karte gedeckelt (≤62vh). Echte Reisen-Seite `/trips`
+> + Tina-Schema + Content **unverändert**. Analyse in `CAPABILITIES.md`.
+> **Offen:** Browser-/Safari-Test (Sandbox blockt Server → David lokal/online: sticky, Overlay-Fade,
+> scroll-snap proximity, IO, Flug-Zoom/Bogen), **mobiles Verhalten** (separat), dann Entscheidung echter
+> Umbau (Stop-Typ-Feld `kind`, backward-kompatibel: ohne `kind` = Hauptstation; fahrendes Auto final → Alexandra). ·
 > **Doku-Update nach `3010df0`:** ·
 > **Vorschau-noindex AKTIV:** `PUBLIC_PREVIEW_NOINDEX=true` ist im **Vorschau**-Projekt gesetzt (greift ab nächstem Build:
 > `<meta robots noindex>` + `robots.txt`→`Disallow: /`). ⚠️ **Live-Projekt bekommt diese Var NIEMALS** (Cutover-Merkposten, sonst Live aus Google). ·

@@ -17,6 +17,26 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-11 — Prototyp Variante B: Desktop-Feinschliff (Single-Scroll, Flüge, SUV)
+- Reiner Prototyp-Feinschliff (`/proto/reisen-timeline`) nach Live-Test; echte Reisen-Seite/
+  Schema/Content unberührt. Leitprinzip apple-like (ein Scroll-Kontext, ruhig).
+- **Single-Scroll-Architektur** (`e43db2a`): kein innerer Scroll-Container mehr — Wurzel-Fix für
+  beide Test-Bugs (überscrollter Kopf, Hängenbleiben am Anfang/Ende). Kopf + Karte `position:sticky`,
+  lösen sich am Timeline-Ende. Fade jetzt als **Overlay-Verlauf** (Hintergrund→transparent) sticky
+  an Ober-/Unterkante (negative Margins). Snapping auf dem **Dokument-Scroller**
+  (`scroll-snap-type:y proximity`, `scroll-padding-top`=Nav+Kopf). Aktive Station, Balken-Ende und
+  Snap nutzen **denselben Anker** (gemessene Punkt-Mitte) → Balken endet exakt an der aktiven Punkt-
+  Mitte. Vorlauf kompakter; Karte gedeckelt auf `min(62vh,540px)`.
+- **Zwei echte Flugetappen + Flughäfen** (`ef903cd`): Frankfurt→SF, LAX→Anchorage (je Ab-/Ankunft),
+  18 Stopps, 4 Etappen-Trenner.
+- **Gekrümmte Flugbögen** (`1ddcfd8`): Flüge als poleward gewölbte Bézier-Bögen (gestrichelt) statt
+  gerader Luftlinie; Karte zoomt für den Flug per `fitBounds` auf den ganzen Bogen heraus und beim
+  Weiterfahren wieder hinein; Flugzeug fliegt die Kurve scroll-gekoppelt ab.
+- **Saubere Ford-Expedition-Silhouette** (`e1cecff`): Full-Size-SUV-Seitenprofil (kastig, hohe Dachlinie,
+  3 Fenster als Aussparungen, große Radkästen); vorab gerendert/visuell geprüft.
+- Offline-Build grün (37 Seiten); SSR/Bundle/CSS geprüft. **Browser-/Safari-Test offen** (Sandbox blockt
+  Server → David lokal/online: sticky, Overlay-Fade, scroll-snap proximity, IO, Flug-Zoom/Bogen).
+
 ## 2026-06-11 — Prototyp Variante B: Desktop-Ausbau (Fade-Fenster, Route, Fahrzeug)
 - Reiner Prototyp-Ausbau (`/proto/reisen-timeline`), DESKTOP-Fokus; echte Reisen-Seite/
   Schema/Content weiter unberührt. Mobiles Verhalten bewusst später.
