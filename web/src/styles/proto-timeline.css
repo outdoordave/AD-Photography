@@ -1,42 +1,47 @@
-/* PROTOTYP-Styles — Variante B (vertikale Timeline), DESKTOP-Fokus. NUR von
+/* PROTOTYP-Styles — Variante B (vertikale Timeline), DESKTOP. NUR von
    src/pages/proto/reisen-timeline.astro importiert. global.css bleibt unangetastet.
-   Nutzt die globalen Design-Tokens (:root). Mobiles Verhalten kommt später. */
+   EIN Scroll-Kontext: Seite scrollt normal, Kopf + Karte sind sticky. */
 
+:root { --ww-sticky-top: 96px; }   /* unter der globalen Nav (88px) */
+
+/* Schlanker Hinweis (scrollt weg) */
 .tl-note {
-  background: var(--c-bg-alt, #efe6d6);
-  border: 1px solid var(--c-line);
-  border-radius: var(--radius-sm);
-  padding: 12px 16px;
-  font-size: var(--fs-ui);
-  color: var(--c-ink-soft);
-  line-height: 1.6;
-  margin-bottom: 20px;
+  background: var(--c-bg-alt, #efe6d6); border: 1px solid var(--c-line);
+  border-radius: var(--radius-sm); padding: 8px 14px;
+  font-size: var(--fs-label); color: var(--c-ink-soft); line-height: 1.5; margin-bottom: 14px;
 }
 .tl-note strong { color: var(--c-ink); }
 
-/* ── Bühne: Kopf (oben) + Timeline-Fenster (links) + Karte (rechts, volle Höhe) ──
-   Kopf und Karte stehen fix; nur .tl-scroll scrollt intern. */
+/* ── Bühne: linke Spalte (Kopf sticky + Timeline) · rechte Spalte (Karte sticky) ── */
 .tl-stage {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 460px;
+  grid-template-columns: minmax(0, 1fr) 420px;
   grid-template-rows: auto 1fr;
   column-gap: 36px;
-  height: clamp(540px, calc(100vh - 170px), 980px);
 }
-.tl-head { grid-column: 1; grid-row: 1; padding-bottom: 14px; }
+
+/* Reise-Kopf: sticky, klebt während die Timeline läuft, löst sich am Ende */
+.tl-head {
+  grid-column: 1; grid-row: 1;
+  position: sticky; top: var(--ww-sticky-top); z-index: 4;
+  background: var(--c-bg); padding: 6px 0 10px;
+}
 .tl-head .tl-meta {
   font-size: var(--fs-label); letter-spacing: var(--tracking-wide);
-  text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 6px;
+  text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 4px;
 }
-.tl-head h2 { font-family: var(--font-display); font-size: var(--fs-heading); font-weight: var(--fw-medium); line-height: 1.1; }
-.tl-summary { font-size: var(--fs-ui); color: var(--c-ink-soft); line-height: 1.6; margin-top: 6px; max-width: 60ch; }
+.tl-head h2 { font-family: var(--font-display); font-size: var(--fs-title-lg); font-weight: var(--fw-medium); line-height: 1.1; }
+.tl-summary { font-size: var(--fs-ui); color: var(--c-ink-soft); line-height: 1.55; margin-top: 4px; max-width: 56ch; }
 
-/* Karte: rechte Spalte, volle Bühnenhöhe, bleibt stehen. */
+/* Karte: rechte Spalte, sticky, gedeckelte Höhe (nicht volle Fensterhöhe) */
 .tl-map-col { grid-column: 2; grid-row: 1 / -1; min-width: 0; }
-.tl-map-col .tl-map { height: 100%; width: 100%; position: relative; }
+.tl-map-col .tl-map {
+  position: sticky; top: var(--ww-sticky-top);
+  height: min(62vh, 540px); width: 100%;
+}
 .tl-map .maplibregl-map { height: 100%; }
 
-/* Karten-Legende: Fahrt (durchgezogen) vs. Flug (gestrichelt) */
+/* Karten-Legende */
 .tl-legend {
   position: absolute; left: 12px; bottom: 12px; z-index: 3;
   display: flex; gap: 14px; align-items: center;
@@ -48,30 +53,19 @@
 .tl-legend i { width: 22px; height: 0; display: inline-block; border-top: 2.5px solid var(--c-accent); }
 .tl-legend .tl-leg-flight { border-top-style: dashed; opacity: .8; }
 
-/* ── Fade-Fenster: scrollt intern, weiche Ober-/Unterkante via mask-image ── */
-.tl-scroll {
-  grid-column: 1; grid-row: 2;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-  scroll-snap-type: y proximity;          /* sanft, NICHT mandatory */
-  scrollbar-width: none;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 11%, #000 86%, transparent 100%);
-          mask-image: linear-gradient(to bottom, transparent 0, #000 11%, #000 86%, transparent 100%);
-}
-.tl-scroll::-webkit-scrollbar { display: none; }
+/* ── Timeline (normaler Fluss) ── */
+.tl-list { grid-column: 1; grid-row: 2; list-style: none; margin: 0; padding: 4vh 0 42vh; position: relative; }
 
-/* ── Timeline-Inhalt ── */
-.tl-list {
-  list-style: none; margin: 0; padding: 40vh 0;   /* Lead-in/-out: erste/letzte Station zentrierbar */
-  position: relative;
-}
-/* Fortschrittslinie: blasse Grundlinie + kräftige Füllung (Höhe = Scrollstand, JS-Var --fill) */
-.tl-line,
-.tl-line-fill { position: absolute; left: 17px; width: 2px; transform: translateX(-50%); border-radius: 2px; }
+/* Overlay-Fade als Verlauf (Hintergrund -> transparent), sticky an Ober-/Unterkante des
+   sichtbaren Timeline-Bandes. Negative Margins -> kein zusätzlicher Platzverbrauch. */
+.tl-fade { position: sticky; left: 0; right: 0; height: 88px; z-index: 3; pointer-events: none; }
+.tl-fade-top { top: var(--ww-snap-pad, 200px); margin-bottom: -88px; background: linear-gradient(var(--c-bg), rgba(244,237,225,0)); }
+.tl-fade-bottom { bottom: 0; margin-top: -88px; background: linear-gradient(rgba(244,237,225,0), var(--c-bg)); }
+
+/* Fortschrittslinie: blasse Grundlinie + kräftige Füllung (endet exakt am aktiven Punkt) */
+.tl-line, .tl-line-fill { position: absolute; left: 17px; width: 2px; transform: translateX(-50%); border-radius: 2px; }
 .tl-line      { top: var(--line-top, 0); height: var(--line-h, 0); background: var(--c-line); }
-.tl-line-fill { top: var(--line-top, 0); height: var(--fill, 0); background: var(--c-accent); transition: height .12s linear; }
+.tl-line-fill { top: var(--line-top, 0); height: var(--fill, 0); background: var(--c-accent); transition: height var(--dur-base) var(--ease); }
 
 .tl-stop { display: grid; grid-template-columns: 34px 1fr; gap: 16px; scroll-snap-align: center; }
 .tl-rail { position: relative; display: flex; justify-content: center; }
@@ -85,59 +79,32 @@
 .tl-stop.is-active .tl-dot { background: var(--c-accent); transform: scale(1.4); box-shadow: 0 0 0 5px rgba(167,103,47,.16); }
 
 .tl-body { padding: 0 0 34px; min-width: 0; }
-.tl-step {
-  font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase;
-  color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 6px;
-}
+.tl-step { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 6px; }
 .tl-title { font-family: var(--font-display); font-weight: var(--fw-medium); line-height: 1.2; margin-bottom: 4px; }
 .tl-date { font-size: var(--fs-label); color: var(--c-ink-soft); margin-bottom: 12px; }
 .tl-text { font-size: var(--fs-ui); color: var(--c-ink-soft); line-height: 1.7; margin-bottom: 10px; }
 
-/* Hauptstation */
 .tl-main .tl-title { font-size: var(--fs-title-lg); }
-.tl-hero {
-  aspect-ratio: var(--ar-media); border-radius: var(--radius-sm); overflow: hidden;
-  margin-bottom: 14px; cursor: zoom-in; background: var(--c-bg-alt, #efe6d6);
-}
+.tl-hero { aspect-ratio: var(--ar-media); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: 14px; cursor: zoom-in; background: var(--c-bg-alt, #efe6d6); }
 .tl-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .tl-strip { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; }
 .tl-strip img { flex: 0 0 auto; width: 132px; height: 88px; object-fit: cover; border-radius: var(--radius-sm); cursor: zoom-in; display: block; }
 
-/* Zwischenstopp: schlank, dezenter Block, optional EIN Thumbnail */
-.tl-inter .tl-body {
-  background: var(--c-bg-alt, #efe6d6); border: 1px solid var(--c-line);
-  border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 16px;
-}
+.tl-inter .tl-body { background: var(--c-bg-alt, #efe6d6); border: 1px solid var(--c-line); border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 16px; }
 .tl-inter .tl-title { font-size: var(--fs-title-sm); }
 .tl-text-slim { margin-bottom: 0; }
 .tl-thumb { width: 150px; aspect-ratio: var(--ar-card); border-radius: var(--radius-sm); overflow: hidden; margin-top: 10px; cursor: zoom-in; }
 .tl-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-/* Etappen-Trenner: ruhige Orientierung, schneidet nicht hart */
-.tl-divider { padding: 26px 0 8px 34px; scroll-snap-align: none; }
-.tl-divider span {
-  display: inline-block; position: relative;
-  font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase;
-  color: var(--c-accent); font-weight: var(--fw-bold);
-}
-.tl-divider span::after {
-  content: ""; display: block; width: 38px; height: 2px; margin-top: 6px;
-  background: var(--c-line); border-radius: 2px;
-}
+.tl-divider { padding: 24px 0 8px 34px; scroll-snap-align: none; }
+.tl-divider span { display: inline-block; font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); }
+.tl-divider span::after { content: ""; display: block; width: 38px; height: 2px; margin-top: 6px; background: var(--c-line); border-radius: 2px; }
 
 /* Fahrzeug-Marker: reduzierte Silhouette auf dezenter, heller Münze */
-.tl-vehicle {
-  width: 32px; height: 32px; border-radius: 50%;
-  background: rgba(244,237,225,.92); border: 1px solid var(--c-line);
-  box-shadow: 0 2px 8px rgba(0,0,0,.3);
-  display: flex; align-items: center; justify-content: center;
-}
+.tl-vehicle { width: 34px; height: 34px; border-radius: 50%; background: rgba(244,237,225,.92); border: 1px solid var(--c-line); box-shadow: 0 2px 8px rgba(0,0,0,.3); display: flex; align-items: center; justify-content: center; }
 .tl-vehicle-ic { display: flex; color: var(--c-ink); transition: transform var(--dur-base) var(--ease); }
 .tl-vehicle-ic svg { display: block; }
 
 @media (prefers-reduced-motion: reduce) {
-  .tl-dot { transition: none; }
-  .tl-line-fill { transition: none; }
-  .tl-vehicle-ic { transition: none; }
-  .tl-scroll { scroll-behavior: auto; }
+  .tl-dot, .tl-line-fill, .tl-vehicle-ic { transition: none; }
 }
