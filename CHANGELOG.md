@@ -17,6 +17,23 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-11 — Prototyp Variante B: Desktop-Korrekturen nach Live-Test
+- Reiner Prototyp (`/proto/reisen-timeline`), 5 Punkte aus Davids Test behoben; echte
+  Reisen-Seite/Schema/Content unberührt.
+- **Kopf bündig unter Nav** (`2f982ed`): Nav-Höhe gemessen → `--ww-sticky-top` = Nav-Höhe; Kopf
+  klebt bündig darunter, `box-shadow` deckt den Spalt solide ab. Behebt: zwischen Überschrift und
+  oberer Leiste schienen Stationen durch. **Fade** beginnt erst unter dem Kopf (+8px) und fadet nur
+  kurz (52px) → Überschrift bleibt beim Snappen lesbar, Fade geht nicht zu weit ins Bild.
+- **Snapping zuverlässig** (`b8c42bd`): CSS-scroll-snap raus, stattdessen **JS-Snap beim Ruhen**
+  (`snapToNearest`, 150ms nach letztem Scroll → nächste Station sanft an den Anker). Robust, v. a. Safari.
+- **Fortschrittsbalken gleitet** (`b8c42bd`): zieht kontinuierlich mit dem Scroll mit (Anker-Bezug),
+  CSS-Transition raus → kein Schnippen zur nächsten Station mehr.
+- **Fahrzeug gleitet station-treu** (`542c3f6`, `97fada7`): bei Stationswechsel gleitet es langsam
+  (easing) entlang der echten Etappe zur neuen Station (Auto gerade, Flugzeug die Kurve) und ruht
+  IMMER an einer Station (z. B. Flugzeug steht in FRA, nicht auf halbem Weg). Bei schnellem Scrollen
+  ohne Rücksprung; `prefers-reduced-motion` → sofort am Stopp.
+- Offline-Build grün (37 Seiten). **Browser-/Safari-Test offen** (Sandbox blockt Server → David).
+
 ## 2026-06-11 — Prototyp Variante B: Desktop-Feinschliff (Single-Scroll, Flüge, SUV)
 - Reiner Prototyp-Feinschliff (`/proto/reisen-timeline`) nach Live-Test; echte Reisen-Seite/
   Schema/Content unberührt. Leitprinzip apple-like (ein Scroll-Kontext, ruhig).
