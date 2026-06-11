@@ -26,7 +26,7 @@
 .tl-head {
   grid-column: 1; grid-row: 1;
   position: sticky; top: var(--ww-sticky-top); z-index: 4;
-  background: var(--c-bg); padding: 4px 0 12px;
+  background: var(--c-bg); padding: 4px 0 6px;
   box-shadow: 0 -60px 0 0 var(--c-bg);
 }
 .tl-head .tl-meta {
@@ -62,8 +62,9 @@
 /* Overlay-Fade als Verlauf (Hintergrund -> transparent), sticky an Ober-/Unterkante des
    sichtbaren Timeline-Bandes. Negative Margins -> kein zusätzlicher Platzverbrauch. */
 .tl-fade { position: sticky; left: 0; right: 0; z-index: 3; pointer-events: none; }
-/* Oben: erst unter dem Kopf beginnen (kleiner Abstand) und nur kurz ins Bild faden. */
-.tl-fade-top { top: calc(var(--ww-snap-pad, 200px) + 8px); height: 52px; margin-bottom: -52px; background: linear-gradient(var(--c-bg), rgba(244,237,225,0)); }
+/* Oben: bündig direkt unter der Überschrift beginnen (leicht untergetuckt, der Kopf liegt
+   mit z4 darüber -> keine Lücke) und nur kurz ins Bild faden. */
+.tl-fade-top { top: calc(var(--ww-snap-pad, 200px) - 4px); height: 52px; margin-bottom: -52px; background: linear-gradient(var(--c-bg), rgba(244,237,225,0)); }
 .tl-fade-bottom { bottom: 0; height: 56px; margin-top: -56px; background: linear-gradient(rgba(244,237,225,0), var(--c-bg)); }
 
 /* Fortschrittslinie: blasse Grundlinie + kräftige Füllung (endet exakt am aktiven Punkt) */
