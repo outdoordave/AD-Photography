@@ -61,11 +61,14 @@ function buildRoute(stops: TLStop[]) {
   return { coords, driveSegs, flightArcs, legFlight };
 }
 
-// Reduzierte Silhouetten (kein Foto): SUV (Seitenansicht) + Flugzeug (Draufsicht).
+// Reduzierte Silhouetten (kein Foto): Full-Size-SUV im Stil eines Ford Expedition (langer
+// kastiger Körper, hohe gerade Dachlinie über die ganze Länge, 3 Seitenfenster als
+// Aussparungen via fill-rule evenodd, große Radkästen, aufrechte Front) + Flugzeug (Draufsicht).
 const CAR_SVG =
-  '<svg viewBox="0 0 64 30" width="26" height="13" fill="currentColor" aria-hidden="true">' +
-  '<path d="M3 20 V14.5 Q3 13.5 4 13.5 L13.5 13.5 L19 8 Q19.6 7.5 20.5 7.5 L40 7.5 Q41 7.5 41.7 8.2 L47 13.5 L59 14.5 Q61 14.8 61 16.5 L61 20 Q61 21 60 21 L55.5 21 A4.2 4.2 0 0 0 47 21 L21.5 21 A4.2 4.2 0 0 0 13 21 L4 21 Q3 21 3 20 Z"/>' +
-  '<circle cx="17" cy="21.5" r="3.6"/><circle cx="51" cy="21.5" r="3.6"/></svg>';
+  '<svg viewBox="0 0 96 34" width="30" height="11" fill="currentColor" fill-rule="evenodd" aria-hidden="true">' +
+  '<path d="M5 28 L5 10 L7 8 L52 8 L60 16 L85 16 Q88 16 88 18 L88 28 L81 28 A6.5 6.5 0 0 0 68 28 L32 28 A6.5 6.5 0 0 0 19 28 L5 28 Z ' +
+  'M10 9.4 h13 v5 h-13 z M25 9.4 h13 v5 h-13 z M40 9.4 h11 v5 h-11 z"/>' +
+  '<circle cx="25.5" cy="28.5" r="6.5"/><circle cx="74.5" cy="28.5" r="6.5"/></svg>';
 const PLANE_SVG =
   '<svg viewBox="0 0 32 32" width="20" height="20" fill="currentColor" aria-hidden="true">' +
   '<path d="M16 2 Q18 2 18 7 L18 13 L29 20 L29 23 L18 19 L18 26 L22 29 L22 31 L16 29 L10 31 L10 29 L14 26 L14 19 L3 23 L3 20 L14 13 L14 7 Q14 2 16 2 Z"/></svg>';
