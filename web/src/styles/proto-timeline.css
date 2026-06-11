@@ -125,8 +125,19 @@
   background: var(--c-line); border-radius: 2px;
 }
 
+/* Fahrzeug-Marker: reduzierte Silhouette auf dezenter, heller Münze */
+.tl-vehicle {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(244,237,225,.92); border: 1px solid var(--c-line);
+  box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  display: flex; align-items: center; justify-content: center;
+}
+.tl-vehicle-ic { display: flex; color: var(--c-ink); transition: transform var(--dur-base) var(--ease); }
+.tl-vehicle-ic svg { display: block; }
+
 @media (prefers-reduced-motion: reduce) {
   .tl-dot { transition: none; }
   .tl-line-fill { transition: none; }
+  .tl-vehicle-ic { transition: none; }
   .tl-scroll { scroll-behavior: auto; }
 }
