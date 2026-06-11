@@ -95,6 +95,7 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
   const headRef = React.useRef<HTMLDivElement | null>(null);
   const listRef = React.useRef<HTMLOListElement | null>(null);
   const headHRef = React.useRef(0);
+  const navHRef = React.useRef(STICKY_TOP);        // gemessene Höhe der globalen Sticky-Nav
   const centersRef = React.useRef<number[]>([]);   // Punkt-Mitten, absolute Dokument-Y
   const firstAbsRef = React.useRef(0);             // Mitte des 1. Punkts (für Balken-Bezug)
   const rafRef = React.useRef<number | null>(null);
@@ -224,7 +225,12 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     list.style.setProperty('--line-h', lastRel - firstRel + 'px');
     const headH = headRef.current ? headRef.current.getBoundingClientRect().height : 0;
     headHRef.current = headH;
-    document.documentElement.style.setProperty('--ww-snap-pad', STICKY_TOP + headH + 'px');
+    // Globale Nav messen -> Kopf klebt bündig darunter (kein Spalt, in dem Stationen durchscheinen).
+    const nav = document.querySelector('header');
+    const navH = nav ? Math.round(nav.getBoundingClientRect().height) : STICKY_TOP;
+    navHRef.current = navH;
+    document.documentElement.style.setProperty('--ww-sticky-top', navH + 'px');
+    document.documentElement.style.setProperty('--ww-snap-pad', navH + headH + 'px');
     update();
   }
 
@@ -235,7 +241,7 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     if (!centers.length || !list) return;
     const vh = window.innerHeight;
     const sy = window.scrollY;
-    let headBottom = STICKY_TOP + headHRef.current;
+    let headBottom = navHRef.current + headHRef.current;
     if (headRef.current) headBottom = Math.min(Math.max(headRef.current.getBoundingClientRect().bottom, 0), vh);
     const anchorY = (headBottom + vh) / 2; // Anker = Mitte des sichtbaren Timeline-Bandes
 

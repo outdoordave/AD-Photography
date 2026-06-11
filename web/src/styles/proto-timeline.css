@@ -20,11 +20,14 @@
   column-gap: 36px;
 }
 
-/* Reise-Kopf: sticky, klebt während die Timeline läuft, löst sich am Ende */
+/* Reise-Kopf: sticky, klebt während die Timeline läuft, löst sich am Ende.
+   box-shadow nach OBEN = solide Abdeckung bis zur Nav, damit zwischen Nav und Kopf
+   keine Station durchscheint. (Die Nav liegt mit z1100 darüber.) */
 .tl-head {
   grid-column: 1; grid-row: 1;
   position: sticky; top: var(--ww-sticky-top); z-index: 4;
-  background: var(--c-bg); padding: 6px 0 10px;
+  background: var(--c-bg); padding: 4px 0 12px;
+  box-shadow: 0 -60px 0 0 var(--c-bg);
 }
 .tl-head .tl-meta {
   font-size: var(--fs-label); letter-spacing: var(--tracking-wide);
@@ -58,9 +61,10 @@
 
 /* Overlay-Fade als Verlauf (Hintergrund -> transparent), sticky an Ober-/Unterkante des
    sichtbaren Timeline-Bandes. Negative Margins -> kein zusätzlicher Platzverbrauch. */
-.tl-fade { position: sticky; left: 0; right: 0; height: 88px; z-index: 3; pointer-events: none; }
-.tl-fade-top { top: var(--ww-snap-pad, 200px); margin-bottom: -88px; background: linear-gradient(var(--c-bg), rgba(244,237,225,0)); }
-.tl-fade-bottom { bottom: 0; margin-top: -88px; background: linear-gradient(rgba(244,237,225,0), var(--c-bg)); }
+.tl-fade { position: sticky; left: 0; right: 0; z-index: 3; pointer-events: none; }
+/* Oben: erst unter dem Kopf beginnen (kleiner Abstand) und nur kurz ins Bild faden. */
+.tl-fade-top { top: calc(var(--ww-snap-pad, 200px) + 8px); height: 52px; margin-bottom: -52px; background: linear-gradient(var(--c-bg), rgba(244,237,225,0)); }
+.tl-fade-bottom { bottom: 0; height: 56px; margin-top: -56px; background: linear-gradient(rgba(244,237,225,0), var(--c-bg)); }
 
 /* Fortschrittslinie: blasse Grundlinie + kräftige Füllung (endet exakt am aktiven Punkt) */
 .tl-line, .tl-line-fill { position: absolute; left: 17px; width: 2px; transform: translateX(-50%); border-radius: 2px; }
