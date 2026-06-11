@@ -221,8 +221,17 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
   // Etappen (Auto gerade, Flugzeug die Kurve). Station-treu: ruht immer AN einer Station.
   function animateVehicleTo(target: number) {
     if (!vehicleRef.current) return;
-    const from = vehicleAtRef.current;
-    if (target === from) return;
+    // Bei laufender Animation von der AKTUELLEN Fahrzeugposition (nächster Stopp) weiter,
+    // statt zur ursprünglichen Start-Station zurückzuspringen.
+    let from = vehicleAtRef.current;
+    if (animRef.current != null) {
+      const cur = vehicleRef.current.getLngLat();
+      const cs = routeRef.current.coords;
+      let nb = from, nd = Infinity;
+      for (let i = 0; i < cs.length; i++) { const d = Math.hypot(cs[i][0] - cur.lng, cs[i][1] - cur.lat); if (d < nd) { nd = d; nb = i; } }
+      from = nb;
+    }
+    if (target === from) { vehicleAtRef.current = target; return; }
     if (animRef.current != null) { cancelAnimationFrame(animRef.current); animRef.current = null; }
     if (prefersReduced()) { vehicleAtRef.current = target; placeVehicleAtStop(target); return; }
     const dir = target > from ? 1 : -1;
