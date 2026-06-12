@@ -15,6 +15,32 @@ type Lang = 'de' | 'en';
 const STYLE = 'fiord';
 const STICKY_TOP = 96; // unter der globalen Nav (Höhe 88px) — = CSS --ww-sticky-top
 
+// ─────────────────────────────────────────────────────────────────────────────────────────
+// JUSTIER-KONSTANTEN (Proto). Hier zentral drehen und live vergleichen.
+// HINWEIS: SNAP_ENABLED und SPOTLIGHT_STRENGTH werden beim echten /trips-Umbau zu GLOBALEN
+// CMS-Feldern (NICHT pro Reise). In dieser Runde bleiben es nur Konstanten (kein Tina-Schema).
+// ─────────────────────────────────────────────────────────────────────────────────────────
+
+// CMS später → Toggle „Stationen einrasten" (global), Default AUS.
+// false = Timeline scrollt frei, die Position wird NIE gekapert (Lesen wird nicht gestört).
+const SNAP_ENABLED = false;
+
+// CMS später → Regler „Spotlight-Stärke" (global), Default 70, Schritte 10, Bereich 0–90.
+//   Hilfetext: „Spotlight-Stärke – wie stark Stationen abseits des Lesefokus zurücktreten.
+//   Empfohlen: 70 %. Höher = klarer Spotlight, niedriger = ruhiger/gleichmäßiger."
+// gedimmte Deckkraft = 1 − SPOTLIGHT_STRENGTH/100  (70 → 0.30).
+const SPOTLIGHT_STRENGTH = 70;
+
+// Dezente Verkleinerung der gedimmten Stationen (bei voller Stärke). Separat justierbar.
+const DIM_SCALE = 0.975;
+
+// Fahrzeug-Marker: Münzen-Durchmesser in px (Bewegungs-Anker, „wir sind unterwegs").
+const VEHICLE_SIZE = 42;
+
+// Reveal (erstes Erscheinen): nur ein Hauch — kleiner Versatz + kurze Dauer.
+const REVEAL_SHIFT = 10; // px
+const REVEAL_DUR = 420;  // ms
+
 function setMapLanguage(map: maplibregl.Map, lang: Lang) {
   if (!map.isStyleLoaded()) return;
   const expr: any = ['coalesce', ['get', 'name:' + lang], ['get', 'name:latin'], ['get', 'name']];
@@ -391,7 +417,9 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
   // Single-Scroll: auf window-Scroll + resize hören (rAF-gedrosselt). Beim Ruhen -> Snap.
   React.useEffect(() => {
     let snapTimer: number | undefined;
-    const armSnap = () => { if (snapTimer) window.clearTimeout(snapTimer); snapTimer = window.setTimeout(snapToNearest, 150); };
+    // Auto-Snapping nur, wenn aktiviert (Default AUS) -> sonst scrollt die Timeline frei,
+    // die Position wird beim Ruhen nie gekapert.
+    const armSnap = () => { if (!SNAP_ENABLED) return; if (snapTimer) window.clearTimeout(snapTimer); snapTimer = window.setTimeout(snapToNearest, 150); };
     const onScroll = () => {
       armSnap();
       if (rafRef.current != null) return;
