@@ -229,7 +229,7 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     if (!m || !icon) return;
     m.setLngLat([lng, lat]);
     const mode = flight ? 'plane' : 'car';
-    if (vehicleModeRef.current !== mode) { icon.innerHTML = flight ? PLANE_SVG : CAR_SVG; vehicleModeRef.current = mode; }
+    if (vehicleModeRef.current !== mode) { icon.innerHTML = flight ? PLANE_SVG : CAR_SVG; icon.classList.toggle('is-plane', flight); vehicleModeRef.current = mode; }
     icon.style.transform = flight ? `rotate(${bearing}deg)` : `scaleX(${dx < 0 ? -1 : 1})`;
   }
   function placeVehicleAtStop(idx: number) {
