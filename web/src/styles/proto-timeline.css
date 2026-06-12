@@ -95,7 +95,7 @@
 /* kontinuierlich scroll-getrieben -> kein CSS-Übergang (sonst „hängt" der Balken hinterher) */
 .tl-line-fill { top: var(--line-top, 0); height: var(--fill, 0); background: var(--c-accent); }
 
-.tl-stop { display: grid; grid-template-columns: 34px 1fr; gap: 16px; }
+.tl-stop { display: grid; grid-template-columns: 34px 1fr; gap: 16px; margin-bottom: 14px; }
 /* Reveal (erstes Erscheinen): nur ein Hauch — leichtes Aufsteigen + Einblenden, EINMAL.
    Ruhezustand (ohne Klasse) ist sichtbar -> kein Blank-Risiko; die Insel löst die Animation
    per IntersectionObserver aus. Versatz/Dauer aus den Konstanten. */
@@ -103,7 +103,7 @@
 .tl-stop.is-revealing { animation: tlReveal var(--ww-reveal-dur, 420ms) var(--ease) both; }
 .tl-rail { position: relative; display: flex; justify-content: center; }
 .tl-dot {
-  position: relative; z-index: 2; margin-top: 6px;
+  position: relative; z-index: 2; margin-top: 16px;   /* auf Höhe des Karten-Kopfs (Polster oben) */
   width: 13px; height: 13px; border-radius: 50%;
   background: var(--c-bg); border: 2.5px solid var(--c-accent);
   transition: transform var(--dur-base) var(--ease), background var(--dur-base) var(--ease);
@@ -117,15 +117,26 @@
    den Konstanten (--ww-dim-op / --ww-dim-scale). Skaliert wird nur der Inhalt (.tl-body),
    nicht die Schiene/Punkte -> die Messung der Punkt-Mitten bleibt stabil. */
 .tl-body {
-  padding: 0 0 34px; min-width: 0;
+  /* Polster/Radius IMMER vorhanden (Karte) -> beim Aktivwerden gibt es nur Fläche/Rahmen/
+     Schatten dazu (box-shadow + background, kein Layout-Sprung). */
+  padding: 14px 16px; min-width: 0;
+  border-radius: var(--radius-sm); background: transparent;
   opacity: var(--ww-dim-op, 0.3);
   transform: scale(var(--ww-dim-scale, 0.975));
   transform-origin: left center;
   /* fluffig: lange Dauer + weiche Landung (easeOutQuint-artig) */
-  transition: opacity var(--ww-dim-fade, 650ms) cubic-bezier(0.22, 1, 0.36, 1),
-              transform var(--ww-dim-fade, 650ms) cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity var(--ww-dim-fade, 800ms) cubic-bezier(0.22, 1, 0.36, 1),
+              transform var(--ww-dim-fade, 800ms) cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow var(--ww-dim-fade, 800ms) cubic-bezier(0.22, 1, 0.36, 1),
+              background-color var(--ww-dim-fade, 800ms) cubic-bezier(0.22, 1, 0.36, 1);
 }
-.tl-stop.is-active .tl-body { opacity: 1; transform: none; }
+/* aktive Station = gerahmte, angehobene Karte — derselbe Schatten/Ring wie das globale
+   Design (Frame-Stufe none/soft/strong, --ww-ring + --ww-shadow). */
+.tl-stop.is-active .tl-body {
+  opacity: 1; transform: none;
+  background: var(--c-bg-alt, #efe6d6);
+  box-shadow: var(--ww-ring), var(--ww-shadow);
+}
 .tl-step { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 6px; }
 .tl-title { font-family: var(--font-display); font-weight: var(--fw-medium); line-height: 1.2; margin-bottom: 4px; }
 .tl-date { font-size: var(--fs-label); color: var(--c-ink-soft); margin-bottom: 12px; }
@@ -137,7 +148,8 @@
 .tl-strip { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; }
 .tl-strip img { flex: 0 0 auto; width: 132px; height: 88px; object-fit: cover; border-radius: var(--radius-sm); cursor: zoom-in; display: block; }
 
-.tl-inter .tl-body { background: var(--c-bg-alt, #efe6d6); border: 1px solid var(--c-line); border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 16px; }
+/* Zwischenstopp: schlanker (kleinerer Titel). Karte/Schatten kommt – wie bei Hauptstationen –
+   nur im aktiven Zustand (siehe .tl-stop.is-active .tl-body). */
 .tl-inter .tl-title { font-size: var(--fs-title-sm); }
 .tl-text-slim { margin-bottom: 0; }
 .tl-thumb { width: 150px; aspect-ratio: var(--ar-card); border-radius: var(--radius-sm); overflow: hidden; margin-top: 10px; cursor: zoom-in; }
