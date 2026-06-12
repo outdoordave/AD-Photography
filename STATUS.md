@@ -1,7 +1,12 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-11** · letzter Commit `2c9a79b` (Branch `astro-umbau`) ·
-> **Proto-Korrekturen nach Live-Test:** Kopf klebt bündig unter der Nav (keine Stationen mehr dazwischen),
+> **Stand: 2026-06-12** · letzter Commit `71f2be6` (Branch `astro-umbau`) ·
+> **Proto-Scroll-Gefühl neu (apple-like):** **Auto-Snapping AUS** per `SNAP_ENABLED=false` (frei scrollbar,
+> Position wird nie gekapert); **Fokus-Dimming** als Kernverhalten (aktive Station voll, andere gedimmt+kleiner,
+> wandert weich mit; `SPOTLIGHT_STRENGTH=70`→gedimmt 0.30, `DIM_SCALE=0.975`); dezente **Reveals**
+> (`REVEAL_SHIFT/-DUR`); **Fahrzeug prominenter** (`VEHICLE_SIZE=42`). Justier-Konstanten oben gruppiert,
+> mit CMS-Wording (später globale Felder „Stationen einrasten" + „Spotlight-Stärke"). ·
+> **Proto-Korrekturen (Vorrunde):** Kopf klebt bündig unter der Nav (keine Stationen mehr dazwischen),
 > Fade bündig direkt unter der Überschrift (keine Lücke); **JS-Snapping fluffig** (eigener easeInOut-Tween,
 > unterbrechbar; statt CSS/native — Safari-robust); Fortschrittsbalken **gleitet** (kein Schnippen);
 > **Fahrzeug gleitet station-treu** (Flugzeug steht in FRA statt auf halbem Weg, langsames Easing, reduced-motion=still). ·

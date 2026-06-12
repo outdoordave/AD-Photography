@@ -17,6 +17,24 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-12 — Prototyp Variante B: Scroll-Gefühl auf Fokus-Dimming (apple-like)
+- Reiner Prototyp (`/proto/reisen-timeline`); echte `/trips`-Seite, Tina-Schema, Content unberührt.
+  Leitbild: ruhig/editorial, nichts kapert die Leseposition.
+- **Auto-Snapping standardmäßig AUS** (`d851190`): Konstante **`SNAP_ENABLED = false`** — Timeline
+  scrollt frei, Snap-Logik bleibt hinter dem Schalter. Justier-Konstanten zentral oben gruppiert,
+  mit CMS-Wording als Kommentar (später globale Felder „Stationen einrasten" + „Spotlight-Stärke").
+- **Fokus-Dimming als Herzstück** (`666369a`): aktive Station (nächste zum Lese-Anker) voll präsent
+  (Deckkraft 1, Skalierung 1), alle anderen gedimmt + minimal kleiner; Fokus **wandert weich mit**
+  (is-active laufend per Scroll gesetzt, weiche CSS-Transition, kein Einrasten). Stärke über
+  **`SPOTLIGHT_STRENGTH = 70`** (gedimmt 0.30), Skalierung **`DIM_SCALE = 0.975`**; als CSS-Vars.
+  Skaliert nur der Inhalt (`.tl-body`) → Punkt-Messung bleibt stabil.
+- **Reveals dezent** (`b1a0d7c`): einmaliges leichtes Aufsteigen + Einblenden je Station
+  (`REVEAL_SHIFT=10px`, `REVEAL_DUR=420ms`), als CSS-Animation per IntersectionObserver; Ruhezustand
+  sichtbar (kein Blank-Risiko); reduced-motion → keine Bewegung.
+- **Fahrzeug prominenter** (`71f2be6`): Münzen-Größe über **`VEHICLE_SIZE = 42`** (vorher 34) + etwas
+  stärkerer Schatten; Silhouette skaliert mit (Auto 0.74×, Flugzeug 0.6×). reduced-motion unverändert.
+- Offline-Build grün (37 Seiten). **Browser-/Safari-Test offen** (Sandbox blockt Server → David live).
+
 ## 2026-06-11 — Prototyp Variante B: Desktop-Korrekturen nach Live-Test
 - Reiner Prototyp (`/proto/reisen-timeline`), 5 Punkte aus Davids Test behoben; echte
   Reisen-Seite/Schema/Content unberührt.
