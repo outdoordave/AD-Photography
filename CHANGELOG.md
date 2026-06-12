@@ -17,6 +17,22 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-12 — Prototyp Variante B: Dimming-Timing, Karte sichtbar, Live-Regler
+- Reiner Prototyp (`/proto/reisen-timeline`); echte `/trips`-Seite, Tina-Schema, Content unberührt.
+- **Karte bleibt sichtbar** (`4fd1838`): Grid-Falle behoben — `.tl-list`/`.tl-head` (Spalte 1) hatten kein
+  `min-width:0`, dadurch konnte die Timeline-Spalte nicht schrumpfen und schob die 420px-Kartenspalte
+  aus dem Bild (Fahrzeug/Karte „nicht auffindbar"). `min-width:0` + `max-width:100%` auf der Bühne.
+- **Dim-Timing block-basiert** (`5c32389`): aktive Station = die, in deren **Block** der Lese-Anker liegt
+  (statt „nächster Punkt"). Große Hauptstationen bleiben aktiv, solange der Großteil sichtbar ist; kurze
+  Zwischenstopps werden erst aktiv, wenn sie wirklich dran sind — behebt zu frühes Ein-/Ausblenden.
+  Block-Messung layout-/offset-basiert → transform-stabil (kein Flackern).
+- **Fluffigeres Ein-/Ausblenden** (`0396624`): Übergangsdauer `DIM_FADE_MS` (Default 650ms, vorher 380) +
+  weiche Landung (easeOutQuint-artig).
+- **On-page „Proto-Regler"** (`c7ddf26`): diskretes Panel unten links zum **Live-Vergleichen** ohne Rebuild —
+  Toggle „Stationen einrasten" (Default aus), Slider „Spotlight-Stärke" (0–90, Default 70) und
+  „Übergang/fluffig" (200–1200ms). Spiegelt die späteren globalen CMS-Felder; Konstanten oben = Defaults.
+- Offline-Build grün (37 Seiten). **Browser-/Safari-Test offen** (Sandbox blockt Server → David live).
+
 ## 2026-06-12 — Prototyp Variante B: Scroll-Gefühl auf Fokus-Dimming (apple-like)
 - Reiner Prototyp (`/proto/reisen-timeline`); echte `/trips`-Seite, Tina-Schema, Content unberührt.
   Leitbild: ruhig/editorial, nichts kapert die Leseposition.

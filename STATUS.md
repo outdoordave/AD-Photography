@@ -1,7 +1,10 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-12** · letzter Commit `71f2be6` (Branch `astro-umbau`) ·
-> **Proto-Scroll-Gefühl neu (apple-like):** **Auto-Snapping AUS** per `SNAP_ENABLED=false` (frei scrollbar,
+> **Stand: 2026-06-12** · letzter Commit `c7ddf26` (Branch `astro-umbau`) ·
+> **Proto-Nachschärfung:** Karte wieder sichtbar (Grid-`min-width:0`-Fix); **Dim-Timing block-basiert**
+> (große Stationen bleiben aktiv solange Großteil sichtbar; kurze erst wenn dran); **fluffigeres** Ein/Ausblenden
+> (`DIM_FADE_MS=650`); **On-page „Proto-Regler"** unten links (Snapping-Toggle + Spotlight + Übergang, live ohne Rebuild). ·
+> **Proto-Scroll-Gefühl (apple-like):** **Auto-Snapping AUS** per `SNAP_ENABLED=false` (frei scrollbar,
 > Position wird nie gekapert); **Fokus-Dimming** als Kernverhalten (aktive Station voll, andere gedimmt+kleiner,
 > wandert weich mit; `SPOTLIGHT_STRENGTH=70`→gedimmt 0.30, `DIM_SCALE=0.975`); dezente **Reveals**
 > (`REVEAL_SHIFT/-DUR`); **Fahrzeug prominenter** (`VEHICLE_SIZE=42`). Justier-Konstanten oben gruppiert,
