@@ -461,6 +461,17 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Justier-Konstanten -> CSS-Variablen (einmal). So steuern die Konstanten oben das Aussehen.
+  React.useEffect(() => {
+    const r = document.documentElement.style;
+    const dimOp = Math.max(0, Math.min(1, 1 - SPOTLIGHT_STRENGTH / 100)); // 70 -> 0.30
+    r.setProperty('--ww-dim-op', String(dimOp));
+    r.setProperty('--ww-dim-scale', String(DIM_SCALE));
+    r.setProperty('--ww-vehicle-size', VEHICLE_SIZE + 'px');
+    r.setProperty('--ww-reveal-shift', REVEAL_SHIFT + 'px');
+    r.setProperty('--ww-reveal-dur', REVEAL_DUR + 'ms');
+  }, []);
+
   function openLightbox(s: TLStop, photoIndex: number) {
     const all = (s.hero ? [s.hero] : []).concat(s.photos || []).filter(Boolean);
     if (!all.length) return;

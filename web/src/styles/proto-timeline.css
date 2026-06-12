@@ -84,7 +84,19 @@
 .tl-main > .tl-rail .tl-dot { width: 15px; height: 15px; }
 .tl-stop.is-active .tl-dot { background: var(--c-accent); transform: scale(1.4); box-shadow: 0 0 0 5px rgba(167,103,47,.16); }
 
-.tl-body { padding: 0 0 34px; min-width: 0; }
+/* Fokus-Dimming (Spotlight): aktive Station voll präsent, alle anderen gedimmt + minimal
+   kleiner. Der Fokus wandert per Scroll mit (is-active wird laufend neu gesetzt), die weiche
+   Transition macht den Übergang ruhig — es rastet NICHTS ein. Stärke/Skalierung kommen aus
+   den Konstanten (--ww-dim-op / --ww-dim-scale). Skaliert wird nur der Inhalt (.tl-body),
+   nicht die Schiene/Punkte -> die Messung der Punkt-Mitten bleibt stabil. */
+.tl-body {
+  padding: 0 0 34px; min-width: 0;
+  opacity: var(--ww-dim-op, 0.3);
+  transform: scale(var(--ww-dim-scale, 0.975));
+  transform-origin: left center;
+  transition: opacity 380ms var(--ease), transform 380ms var(--ease);
+}
+.tl-stop.is-active .tl-body { opacity: 1; transform: none; }
 .tl-step { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 6px; }
 .tl-title { font-family: var(--font-display); font-weight: var(--fw-medium); line-height: 1.2; margin-bottom: 4px; }
 .tl-date { font-size: var(--fs-label); color: var(--c-ink-soft); margin-bottom: 12px; }
@@ -112,5 +124,5 @@
 .tl-vehicle-ic svg { display: block; }
 
 @media (prefers-reduced-motion: reduce) {
-  .tl-dot, .tl-line-fill, .tl-vehicle-ic { transition: none; }
+  .tl-dot, .tl-line-fill, .tl-vehicle-ic, .tl-body { transition: none; }
 }
