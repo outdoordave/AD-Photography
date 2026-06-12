@@ -17,6 +17,23 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-12 — Prototyp Variante B: Mobile-Variante + Reveal-Regler
+- Reiner Prototyp (`/proto/reisen-timeline`); echte `/trips`-Seite, Tina-Schema, Content unberührt.
+- **Reveal-Dauer auf Proto-Regler** (`f0dff84`): Slider „Reveal (Erscheinen)" 0–900ms (Default 420);
+  setzt `--ww-reveal-dur` live. **`DIM_FADE_MS` Default 650→800** (von David eingefroren).
+- **Mobile-Variante < 768px** (`be22b62`) — **iPad/Desktop (≥768px) unverändert**:
+  - **Breakpoint über BREITE** (`max-width:767px`), NICHT Touch → iPad (auch quer) behält das
+    Desktop-Layout mit Karte daneben (Alexandras Hauptgerät).
+  - **Gestapelt, ein Scroll-Kontext** (kein verschachteltes Scrollen): schlanke sticky **Nav-Zeile**
+    (großer Kopf scrollt weg und **kollabiert** hinein — Titel blendet ein per `.is-collapsed`,
+    scrollbasiert, ohne Re-Render) → darunter sticky **Mini-Karte** (volle Breite, niedrig) mit
+    progressiver Route + Fahrzeug + flyTo → darunter die Timeline.
+  - **Anker** rechnet mobil unter Nav + Nav-Zeile + Mini-Karte (`anchorViewportY`-Helper, auch fürs
+    Snapping). **Dimming etwas schwächer** (Deckkraft ≥ 0.40 via CSS `max()`). **Filmstreifen →
+    swipebare Galerie** (scroll-snap-x, größere Bilder).
+- Offline-Build grün (37 Seiten). **Browser-/Safari-Test offen** (Sandbox blockt Server → David live:
+  iOS-Handy + iPad + Mac/Safari; v. a. dass der Breakpoint sauber trennt).
+
 ## 2026-06-12 — Prototyp Variante B: Dimming-Timing, Karte sichtbar, Live-Regler
 - Reiner Prototyp (`/proto/reisen-timeline`); echte `/trips`-Seite, Tina-Schema, Content unberührt.
 - **Karte bleibt sichtbar** (`4fd1838`): Grid-Falle behoben — `.tl-list`/`.tl-head` (Spalte 1) hatten kein

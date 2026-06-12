@@ -1,6 +1,10 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-12** · letzter Commit `c7ddf26` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-12** · letzter Commit `be22b62` (Branch `astro-umbau`) ·
+> **Mobile-Variante gebaut (< 768px; iPad/Desktop ≥768px unverändert):** Breakpoint über **Breite** (nicht Touch);
+> gestapelt mit schlanker sticky Nav-Zeile (großer Kopf **kollabiert** hinein) + sticky **Mini-Karte** (progressive
+> Route/Fahrzeug/flyTo), ein Scroll-Kontext; Dimming schwächer (≥0.40); Filmstreifen → Swipe-Galerie. **Reveal-Dauer
+> jetzt auf dem Proto-Regler** (0–900ms); Dim-Fade-Default eingefroren auf **800 ms**. ·
 > **Proto-Nachschärfung:** Karte wieder sichtbar (Grid-`min-width:0`-Fix); **Dim-Timing block-basiert**
 > (große Stationen bleiben aktiv solange Großteil sichtbar; kurze erst wenn dran); **fluffigeres** Ein/Ausblenden
 > (`DIM_FADE_MS=650`); **On-page „Proto-Regler"** unten links (Snapping-Toggle + Spotlight + Übergang, live ohne Rebuild). ·
