@@ -34,8 +34,8 @@ const SPOTLIGHT_STRENGTH = 70;
 // Dezente Verkleinerung der gedimmten Stationen (bei voller Stärke). Separat justierbar.
 const DIM_SCALE = 0.975;
 
-// Ein-/Ausblend-Dauer des Fokus-Dimmings (ms). Höher = fluffiger/weicher.
-const DIM_FADE_MS = 650;
+// Ein-/Ausblend-Dauer des Fokus-Dimmings (ms). Höher = fluffiger/weicher. Eingefrorener Default.
+const DIM_FADE_MS = 800;
 
 // Fahrzeug-Marker: Münzen-Durchmesser in px (Bewegungs-Anker, „wir sind unterwegs").
 const VEHICLE_SIZE = 42;
@@ -119,6 +119,7 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
   const [snapOn, setSnapOn] = React.useState(SNAP_ENABLED);
   const [spotlight, setSpotlight] = React.useState(SPOTLIGHT_STRENGTH);
   const [dimMs, setDimMs] = React.useState(DIM_FADE_MS);
+  const [revealMs, setRevealMs] = React.useState(REVEAL_DUR);
   const snapOnRef = React.useRef(snapOn);
   React.useEffect(() => { snapOnRef.current = snapOn; }, [snapOn]);
 
@@ -499,16 +500,16 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     r.setProperty('--ww-dim-scale', String(DIM_SCALE));
     r.setProperty('--ww-vehicle-size', VEHICLE_SIZE + 'px');
     r.setProperty('--ww-reveal-shift', REVEAL_SHIFT + 'px');
-    r.setProperty('--ww-reveal-dur', REVEAL_DUR + 'ms');
   }, []);
 
-  // Live-Regler -> CSS-Variablen (Spotlight-Stärke + Übergangsdauer).
+  // Live-Regler -> CSS-Variablen (Spotlight-Stärke + Übergangsdauer + Reveal-Dauer).
   React.useEffect(() => {
     const r = document.documentElement.style;
     const dimOp = Math.max(0, Math.min(1, 1 - spotlight / 100)); // 70 -> 0.30
     r.setProperty('--ww-dim-op', String(dimOp));
     r.setProperty('--ww-dim-fade', dimMs + 'ms');
-  }, [spotlight, dimMs]);
+    r.setProperty('--ww-reveal-dur', revealMs + 'ms');
+  }, [spotlight, dimMs, revealMs]);
 
   function openLightbox(s: TLStop, photoIndex: number) {
     const all = (s.hero ? [s.hero] : []).concat(s.photos || []).filter(Boolean);
@@ -604,6 +605,10 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
         <label className="tl-dev-row">
           <span>Übergang (fluffig) <b>{dimMs} ms</b></span>
           <input type="range" min={200} max={1200} step={50} value={dimMs} onChange={(e) => setDimMs(+e.target.value)} />
+        </label>
+        <label className="tl-dev-row">
+          <span>Reveal (Erscheinen) <b>{revealMs} ms</b></span>
+          <input type="range" min={0} max={900} step={30} value={revealMs} onChange={(e) => setRevealMs(+e.target.value)} />
         </label>
       </div>
 
