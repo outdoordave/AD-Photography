@@ -1,6 +1,8 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-12** · letzter Commit `be22b62` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-12** · letzter Commit `52b3890` (Branch `astro-umbau`) ·
+> **Aktive Station = gerahmte, angehobene Karte** (Ring + Schatten aus dem globalen Frame-Design,
+> `--ww-ring`/`--ww-shadow`; layout-stabil, fluffig); eingefrorene Defaults Übergang **800** + Reveal **800**. ·
 > **Mobile-Variante gebaut (< 768px; iPad/Desktop ≥768px unverändert):** Breakpoint über **Breite** (nicht Touch);
 > gestapelt mit schlanker sticky Nav-Zeile (großer Kopf **kollabiert** hinein) + sticky **Mini-Karte** (progressive
 > Route/Fahrzeug/flyTo), ein Scroll-Kontext; Dimming schwächer (≥0.40); Filmstreifen → Swipe-Galerie. **Reveal-Dauer

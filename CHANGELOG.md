@@ -17,6 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-12 — Prototyp Variante B: aktive Station als Karte + Defaults 800/800
+- Reiner Prototyp (`/proto/reisen-timeline`); echte `/trips`-Seite, Tina-Schema, Content unberührt.
+- **Reveal-Default 420→800** (`a853594`): beide eingefrorenen Defaults (Übergang + Reveal) jetzt 800 ms.
+- **Aktive Station = gerahmte, angehobene Karte** (`52b3890`): die fokussierte Station bekommt Fläche +
+  **Ring + Schatten** wie das globale Frame-Design (`--ww-ring` + `--ww-shadow`, folgt der gewählten Stufe
+  none/soft/strong). Layout-stabil (Polster/Radius immer da, beim Aktivwerden nur `background` + `box-shadow`
+  dazu → kein Sprung), fluffig über dieselbe Dim-Fade-Dauer. Die Zwischenstopp-Dauerbox entfällt →
+  Karte/Schatten erscheint einheitlich nur im Fokus.
+
 ## 2026-06-12 — Prototyp Variante B: Mobile-Variante + Reveal-Regler
 - Reiner Prototyp (`/proto/reisen-timeline`); echte `/trips`-Seite, Tina-Schema, Content unberührt.
 - **Reveal-Dauer auf Proto-Regler** (`f0dff84`): Slider „Reveal (Erscheinen)" 0–900ms (Default 420);
