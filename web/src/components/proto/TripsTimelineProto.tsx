@@ -34,6 +34,9 @@ const SPOTLIGHT_STRENGTH = 70;
 // Dezente Verkleinerung der gedimmten Stationen (bei voller Stärke). Separat justierbar.
 const DIM_SCALE = 0.975;
 
+// Ein-/Ausblend-Dauer des Fokus-Dimmings (ms). Höher = fluffiger/weicher.
+const DIM_FADE_MS = 650;
+
 // Fahrzeug-Marker: Münzen-Durchmesser in px (Bewegungs-Anker, „wir sind unterwegs").
 const VEHICLE_SIZE = 42;
 
@@ -489,6 +492,7 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     const dimOp = Math.max(0, Math.min(1, 1 - SPOTLIGHT_STRENGTH / 100)); // 70 -> 0.30
     r.setProperty('--ww-dim-op', String(dimOp));
     r.setProperty('--ww-dim-scale', String(DIM_SCALE));
+    r.setProperty('--ww-dim-fade', DIM_FADE_MS + 'ms');
     r.setProperty('--ww-vehicle-size', VEHICLE_SIZE + 'px');
     r.setProperty('--ww-reveal-shift', REVEAL_SHIFT + 'px');
     r.setProperty('--ww-reveal-dur', REVEAL_DUR + 'ms');

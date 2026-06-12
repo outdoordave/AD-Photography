@@ -100,7 +100,9 @@
   opacity: var(--ww-dim-op, 0.3);
   transform: scale(var(--ww-dim-scale, 0.975));
   transform-origin: left center;
-  transition: opacity 380ms var(--ease), transform 380ms var(--ease);
+  /* fluffig: lange Dauer + weiche Landung (easeOutQuint-artig) */
+  transition: opacity var(--ww-dim-fade, 650ms) cubic-bezier(0.22, 1, 0.36, 1),
+              transform var(--ww-dim-fade, 650ms) cubic-bezier(0.22, 1, 0.36, 1);
 }
 .tl-stop.is-active .tl-body { opacity: 1; transform: none; }
 .tl-step { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 6px; }
