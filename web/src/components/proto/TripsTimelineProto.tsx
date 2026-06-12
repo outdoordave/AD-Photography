@@ -131,6 +131,8 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
 
   const headRef = React.useRef<HTMLDivElement | null>(null);
   const listRef = React.useRef<HTMLOListElement | null>(null);
+  const mapColRef = React.useRef<HTMLDivElement | null>(null);   // Karten-Spalte (mobil sticky Mini-Karte)
+  const miniNavRef = React.useRef<HTMLDivElement | null>(null);  // mobile schlanke Nav-Zeile (Titel kollabiert hinein)
   const headHRef = React.useRef(0);
   const navHRef = React.useRef(STICKY_TOP);        // gemessene Höhe der globalen Sticky-Nav
   const centersRef = React.useRef<number[]>([]);   // Punkt-Mitten, absolute Dokument-Y (Balken)
@@ -331,17 +333,32 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     update();
   }
 
+  // Anker (Viewport-Y) = Mitte des sichtbaren Timeline-Bandes UNTER dem Sticky-Stapel.
+  // Desktop: Stapel = Reise-Kopf. Mobile (<768px): Stapel = Nav + schlanke Nav-Zeile + sticky Mini-Karte.
+  function anchorViewportY(): number {
+    const vh = window.innerHeight;
+    const mobile = window.matchMedia('(max-width: 767px)').matches;
+    let stickyBottom = navHRef.current + headHRef.current;
+    if (mobile && mapColRef.current) stickyBottom = Math.min(mapColRef.current.getBoundingClientRect().bottom, vh * 0.62);
+    else if (headRef.current) stickyBottom = Math.min(Math.max(headRef.current.getBoundingClientRect().bottom, 0), vh);
+    return (stickyBottom + vh) / 2;
+  }
+
   // --- Pro Frame: Anker bestimmen -> aktive Station + Balken-Ende + Fahrzeug (gleicher Bezug) ---
   function update() {
     const centers = centersRef.current;
     const list = listRef.current;
     if (!centers.length || !list) return;
-    const vh = window.innerHeight;
     const sy = window.scrollY;
-    let headBottom = navHRef.current + headHRef.current;
-    if (headRef.current) headBottom = Math.min(Math.max(headRef.current.getBoundingClientRect().bottom, 0), vh);
-    const anchorY = (headBottom + vh) / 2; // Anker = Mitte des sichtbaren Timeline-Bandes
+    const anchorY = anchorViewportY();        // Mitte des sichtbaren Timeline-Bandes
     const anchorDoc = sy + anchorY;
+    // Mobile: großer Kopf kollabiert in die schlanke Nav-Zeile (Titel blendet ein), sobald
+    // der Kopf nach oben weggescrollt ist. Reine Klassen-Umschaltung -> kein Re-Render.
+    if (miniNavRef.current) {
+      const mobile = window.matchMedia('(max-width: 767px)').matches;
+      const hb = headRef.current ? headRef.current.getBoundingClientRect().bottom : 0;
+      miniNavRef.current.classList.toggle('is-collapsed', mobile && hb <= navHRef.current + 48);
+    }
 
     // aktive Station = die, in deren BLOCK der Lese-Anker liegt (sonst der nächstgelegene Block).
     // -> große Hauptstationen bleiben aktiv, solange der Großteil sichtbar ist; kurze
@@ -390,10 +407,8 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     if (prefersReduced()) return;
     const centers = centersRef.current;
     if (centers.length < 2) return;
-    const vh = window.innerHeight, sy = window.scrollY;
-    let headBottom = navHRef.current + headHRef.current;
-    if (headRef.current) headBottom = Math.min(Math.max(headRef.current.getBoundingClientRect().bottom, 0), vh);
-    const anchorY = (headBottom + vh) / 2;
+    const sy = window.scrollY;
+    const anchorY = anchorViewportY();
     let best = 0, bestD = Infinity;
     for (let i = 0; i < centers.length; i++) { const d = Math.abs(centers[i] - sy - anchorY); if (d < bestD) { bestD = d; best = i; } }
     const target = Math.round(centers[best] - anchorY);
@@ -560,11 +575,17 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
   return (
     <div className="tl-proto">
       <div className="tl-note">
-        <strong>Prototyp · Variante B (Desktop).</strong> Ein Scroll-Kontext: Seite scrollt normal,
-        Kopf &amp; Karte bleiben sticky. {stops.length} Demo-Stopps, 2 Flugetappen. Inhalte erfunden.
+        <strong>Prototyp · Variante B.</strong> Ein Scroll-Kontext; Desktop/iPad: Kopf &amp; Karte sticky
+        nebeneinander, Handy: gestapelt mit Mini-Karte. {stops.length} Demo-Stopps, 2 Flugetappen. Inhalte erfunden.
       </div>
 
       <div className="tl-stage">
+        {/* Mobile: schlanke Nav-Zeile. Der Reise-Titel blendet hier ein, sobald der große
+            Kopf wegscrollt (Klasse is-collapsed per Scroll). Auf Desktop/iPad display:none. */}
+        <div className="tl-mininav" ref={miniNavRef} aria-hidden="true">
+          <span className="tl-mininav-title">{trip.title}</span>
+        </div>
+
         <div className="tl-head" ref={headRef}>
           <div className="tl-meta">{trip.meta}</div>
           <h2>{trip.title}</h2>
@@ -579,7 +600,7 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
           <div className="tl-fade tl-fade-bottom" aria-hidden="true" />
         </ol>
 
-        <div className="tl-map-col">
+        <div className="tl-map-col" ref={mapColRef}>
           <div className="tl-map map-box">
             <div ref={mapElRef} style={{ width: '100%', height: '100%' }} />
             <div className="tl-legend" aria-hidden="true">
