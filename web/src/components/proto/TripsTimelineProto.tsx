@@ -122,7 +122,8 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
   const listRef = React.useRef<HTMLOListElement | null>(null);
   const headHRef = React.useRef(0);
   const navHRef = React.useRef(STICKY_TOP);        // gemessene Höhe der globalen Sticky-Nav
-  const centersRef = React.useRef<number[]>([]);   // Punkt-Mitten, absolute Dokument-Y
+  const centersRef = React.useRef<number[]>([]);   // Punkt-Mitten, absolute Dokument-Y (Balken)
+  const blocksRef = React.useRef<{ top: number; bottom: number }[]>([]); // Stations-Blöcke (Dokument-Y, layout-basiert)
   const firstAbsRef = React.useRef(0);             // Mitte des 1. Punkts (für Balken-Bezug)
   const rafRef = React.useRef<number | null>(null);
   const snapAnimRef = React.useRef<number | null>(null); // laufender Snap-Tween
@@ -300,6 +301,10 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     const centers = dots.map((d) => { const r = d.getBoundingClientRect(); return r.top + sy + r.height / 2; });
     centersRef.current = centers;
     firstAbsRef.current = centers[0];
+    // Stations-Blöcke (Ober-/Unterkante) layout-basiert (offsetTop/Height) -> unbeeinflusst von
+    // den Dimm-/Reveal-Transforms, damit die aktive Station nicht flackert.
+    const stopEls = Array.from(list.querySelectorAll<HTMLElement>('.tl-stop'));
+    blocksRef.current = stopEls.map((el) => { const top = listAbsTop + el.offsetTop; return { top, bottom: top + el.offsetHeight }; });
     const firstRel = centers[0] - listAbsTop;
     const lastRel = centers[centers.length - 1] - listAbsTop;
     list.style.setProperty('--line-top', firstRel + 'px');
@@ -325,11 +330,16 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     let headBottom = navHRef.current + headHRef.current;
     if (headRef.current) headBottom = Math.min(Math.max(headRef.current.getBoundingClientRect().bottom, 0), vh);
     const anchorY = (headBottom + vh) / 2; // Anker = Mitte des sichtbaren Timeline-Bandes
+    const anchorDoc = sy + anchorY;
 
-    // aktive Station = Punkt am nächsten zum Anker
+    // aktive Station = die, in deren BLOCK der Lese-Anker liegt (sonst der nächstgelegene Block).
+    // -> große Hauptstationen bleiben aktiv, solange der Großteil sichtbar ist; kurze
+    //    Zwischenstopps werden erst aktiv, wenn sie wirklich am Anker sind (kein zu frühes Ein/Aus).
+    const blocks = blocksRef.current;
     let best = 0, bestD = Infinity;
-    for (let i = 0; i < centers.length; i++) {
-      const d = Math.abs(centers[i] - sy - anchorY);
+    for (let i = 0; i < blocks.length; i++) {
+      const b = blocks[i];
+      const d = anchorDoc < b.top ? b.top - anchorDoc : anchorDoc > b.bottom ? anchorDoc - b.bottom : 0;
       if (d < bestD) { bestD = d; best = i; }
     }
     if (best !== activeRef.current) {
@@ -338,7 +348,6 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     }
     // Fortschrittsbalken zieht KONTINUIERLICH mit dem Scroll mit (gleitet, schnippt nicht),
     // geklemmt zwischen erstem und letztem Punkt. Bezug = derselbe Anker.
-    const anchorDoc = sy + anchorY;
     const lineH = centers[centers.length - 1] - firstAbsRef.current;
     list.style.setProperty('--fill', Math.max(0, Math.min(lineH, anchorDoc - firstAbsRef.current)) + 'px');
   }
