@@ -461,6 +461,19 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Dezente Reveals: jede Station blendet beim ersten Erscheinen EINMAL leicht auf (IO).
+  // Ruhezustand bleibt sichtbar; bei reduced-motion oder ohne IO passiert nichts (einfach da).
+  React.useEffect(() => {
+    if (prefersReduced() || typeof IntersectionObserver === 'undefined') return;
+    const els = Array.from(document.querySelectorAll<HTMLElement>('.tl-stop'));
+    if (!els.length) return;
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) { (e.target as HTMLElement).classList.add('is-revealing'); io.unobserve(e.target); }
+    }, { threshold: 0.05, rootMargin: '0px 0px -6% 0px' });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
   // Justier-Konstanten -> CSS-Variablen (einmal). So steuern die Konstanten oben das Aussehen.
   React.useEffect(() => {
     const r = document.documentElement.style;

@@ -74,6 +74,11 @@
 .tl-line-fill { top: var(--line-top, 0); height: var(--fill, 0); background: var(--c-accent); }
 
 .tl-stop { display: grid; grid-template-columns: 34px 1fr; gap: 16px; }
+/* Reveal (erstes Erscheinen): nur ein Hauch — leichtes Aufsteigen + Einblenden, EINMAL.
+   Ruhezustand (ohne Klasse) ist sichtbar -> kein Blank-Risiko; die Insel löst die Animation
+   per IntersectionObserver aus. Versatz/Dauer aus den Konstanten. */
+@keyframes tlReveal { from { opacity: 0; transform: translateY(var(--ww-reveal-shift, 10px)); } to { opacity: 1; transform: none; } }
+.tl-stop.is-revealing { animation: tlReveal var(--ww-reveal-dur, 420ms) var(--ease) both; }
 .tl-rail { position: relative; display: flex; justify-content: center; }
 .tl-dot {
   position: relative; z-index: 2; margin-top: 6px;
