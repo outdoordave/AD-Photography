@@ -18,13 +18,14 @@
   grid-template-columns: minmax(0, 1fr) 420px;
   grid-template-rows: auto 1fr;
   column-gap: 36px;
+  max-width: 100%;   /* Sicherheit: Bühne nie breiter als der Wrap -> Karte bleibt sichtbar */
 }
 
 /* Reise-Kopf: sticky, klebt während die Timeline läuft, löst sich am Ende.
    box-shadow nach OBEN = solide Abdeckung bis zur Nav, damit zwischen Nav und Kopf
    keine Station durchscheint. (Die Nav liegt mit z1100 darüber.) */
 .tl-head {
-  grid-column: 1; grid-row: 1;
+  grid-column: 1; grid-row: 1; min-width: 0;
   position: sticky; top: var(--ww-sticky-top); z-index: 4;
   background: var(--c-bg); padding: 4px 0 6px;
   box-shadow: 0 -60px 0 0 var(--c-bg);
@@ -57,7 +58,7 @@
 .tl-legend .tl-leg-flight { border-top-style: dashed; opacity: .8; }
 
 /* ── Timeline (normaler Fluss) ── */
-.tl-list { grid-column: 1; grid-row: 2; list-style: none; margin: 0; padding: 4vh 0 42vh; position: relative; }
+.tl-list { grid-column: 1; grid-row: 2; min-width: 0; list-style: none; margin: 0; padding: 4vh 0 42vh; position: relative; }
 
 /* Overlay-Fade als Verlauf (Hintergrund -> transparent), sticky an Ober-/Unterkante des
    sichtbaren Timeline-Bandes. Negative Margins -> kein zusätzlicher Platzverbrauch. */
