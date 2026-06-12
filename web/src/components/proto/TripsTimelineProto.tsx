@@ -115,6 +115,13 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
   const [active, setActive] = React.useState(0);
   const [lb, setLb] = React.useState<{ photos: LbPhoto[]; start: number } | null>(null);
 
+  // Live-Regler (Proto): Defaults = Konstanten oben. So kann David ohne Rebuild vergleichen.
+  const [snapOn, setSnapOn] = React.useState(SNAP_ENABLED);
+  const [spotlight, setSpotlight] = React.useState(SPOTLIGHT_STRENGTH);
+  const [dimMs, setDimMs] = React.useState(DIM_FADE_MS);
+  const snapOnRef = React.useRef(snapOn);
+  React.useEffect(() => { snapOnRef.current = snapOn; }, [snapOn]);
+
   const mapElRef = React.useRef<HTMLDivElement | null>(null);
   const mapRef = React.useRef<maplibregl.Map | null>(null);
   const markersRef = React.useRef<maplibregl.Marker[]>([]);
@@ -431,7 +438,7 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     let snapTimer: number | undefined;
     // Auto-Snapping nur, wenn aktiviert (Default AUS) -> sonst scrollt die Timeline frei,
     // die Position wird beim Ruhen nie gekapert.
-    const armSnap = () => { if (!SNAP_ENABLED) return; if (snapTimer) window.clearTimeout(snapTimer); snapTimer = window.setTimeout(snapToNearest, 150); };
+    const armSnap = () => { if (!snapOnRef.current) return; if (snapTimer) window.clearTimeout(snapTimer); snapTimer = window.setTimeout(snapToNearest, 150); };
     const onScroll = () => {
       armSnap();
       if (rafRef.current != null) return;
@@ -486,17 +493,22 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
     return () => io.disconnect();
   }, []);
 
-  // Justier-Konstanten -> CSS-Variablen (einmal). So steuern die Konstanten oben das Aussehen.
+  // Statische Justier-Konstanten -> CSS-Variablen (einmal).
   React.useEffect(() => {
     const r = document.documentElement.style;
-    const dimOp = Math.max(0, Math.min(1, 1 - SPOTLIGHT_STRENGTH / 100)); // 70 -> 0.30
-    r.setProperty('--ww-dim-op', String(dimOp));
     r.setProperty('--ww-dim-scale', String(DIM_SCALE));
-    r.setProperty('--ww-dim-fade', DIM_FADE_MS + 'ms');
     r.setProperty('--ww-vehicle-size', VEHICLE_SIZE + 'px');
     r.setProperty('--ww-reveal-shift', REVEAL_SHIFT + 'px');
     r.setProperty('--ww-reveal-dur', REVEAL_DUR + 'ms');
   }, []);
+
+  // Live-Regler -> CSS-Variablen (Spotlight-Stärke + Übergangsdauer).
+  React.useEffect(() => {
+    const r = document.documentElement.style;
+    const dimOp = Math.max(0, Math.min(1, 1 - spotlight / 100)); // 70 -> 0.30
+    r.setProperty('--ww-dim-op', String(dimOp));
+    r.setProperty('--ww-dim-fade', dimMs + 'ms');
+  }, [spotlight, dimMs]);
 
   function openLightbox(s: TLStop, photoIndex: number) {
     const all = (s.hero ? [s.hero] : []).concat(s.photos || []).filter(Boolean);
@@ -575,6 +587,24 @@ export default function TripsTimelineProto({ lang = 'de' as Lang }: { lang?: Lan
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Proto-Regler: nur Vorschau, damit David live vergleichen kann (werden beim echten
+          /trips-Umbau zu globalen CMS-Feldern; siehe Konstanten oben). */}
+      <div className="tl-devpanel" role="group" aria-label="Proto-Regler">
+        <div className="tl-dev-title">Proto-Regler</div>
+        <label className="tl-dev-row tl-dev-toggle">
+          <input type="checkbox" checked={snapOn} onChange={(e) => setSnapOn(e.target.checked)} />
+          <span>Stationen einrasten</span>
+        </label>
+        <label className="tl-dev-row">
+          <span>Spotlight-Stärke <b>{spotlight}%</b></span>
+          <input type="range" min={0} max={90} step={10} value={spotlight} onChange={(e) => setSpotlight(+e.target.value)} />
+        </label>
+        <label className="tl-dev-row">
+          <span>Übergang (fluffig) <b>{dimMs} ms</b></span>
+          <input type="range" min={200} max={1200} step={50} value={dimMs} onChange={(e) => setDimMs(+e.target.value)} />
+        </label>
       </div>
 
       {lb && <Lightbox photos={lb.photos} startIndex={lb.start} loop onClose={() => setLb(null)} />}

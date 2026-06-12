@@ -133,6 +133,23 @@
 .tl-vehicle-ic svg { display: block; width: calc(var(--ww-vehicle-size, 42px) * 0.74); height: auto; }
 .tl-vehicle-ic.is-plane svg { width: calc(var(--ww-vehicle-size, 42px) * 0.6); }
 
+/* Proto-Regler (nur Vorschau): diskretes Panel unten links, klart beim Hovern auf. */
+.tl-devpanel {
+  position: fixed; left: 16px; bottom: 16px; z-index: 1080; width: 208px;
+  background: rgba(244,237,225,.95); border: 1px solid var(--c-line); border-radius: var(--radius-sm);
+  box-shadow: 0 6px 18px -6px rgba(46,36,24,.35); padding: 10px 12px;
+  font-size: var(--fs-label); color: var(--c-ink);
+  opacity: .55; transition: opacity var(--dur-base) var(--ease);
+}
+.tl-devpanel:hover, .tl-devpanel:focus-within { opacity: 1; }
+.tl-dev-title { font-weight: var(--fw-bold); text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--c-accent); margin-bottom: 9px; }
+.tl-dev-row { display: flex; flex-direction: column; gap: 5px; margin-bottom: 11px; cursor: pointer; }
+.tl-dev-row:last-child { margin-bottom: 0; }
+.tl-dev-row b { color: var(--c-accent); font-weight: var(--fw-bold); }
+.tl-dev-row.tl-dev-toggle { flex-direction: row; align-items: center; gap: 8px; }
+.tl-dev-row input[type="range"] { width: 100%; accent-color: var(--c-accent); }
+.tl-dev-row input[type="checkbox"] { accent-color: var(--c-accent); width: 16px; height: 16px; }
+
 @media (prefers-reduced-motion: reduce) {
   .tl-dot, .tl-line-fill, .tl-vehicle-ic, .tl-body { transition: none; }
 }
