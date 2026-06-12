@@ -40,9 +40,9 @@ const DIM_FADE_MS = 800;
 // Fahrzeug-Marker: Münzen-Durchmesser in px (Bewegungs-Anker, „wir sind unterwegs").
 const VEHICLE_SIZE = 42;
 
-// Reveal (erstes Erscheinen): nur ein Hauch — kleiner Versatz + kurze Dauer.
-const REVEAL_SHIFT = 10; // px
-const REVEAL_DUR = 420;  // ms
+// Reveal (erstes Erscheinen): nur ein Hauch — kleiner Versatz + Dauer. Eingefrorener Default.
+const REVEAL_SHIFT = 10;  // px
+const REVEAL_DUR = 800;   // ms
 
 function setMapLanguage(map: maplibregl.Map, lang: Lang) {
   if (!map.isStyleLoaded()) return;
