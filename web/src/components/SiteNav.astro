@@ -62,6 +62,12 @@ const logoSrc = logo && logo.charAt(0) !== '/' && !/^https?:/.test(logo) ? '/' +
   // Admin-only Links (z. B. 📊 Statistik) nur einblenden, wenn im Tina-CMS angemeldet
   // (gleiche Token-Erkennung wie die Admin-Leiste). Besucher sehen sie nie.
   (function () {
+    // Im Tina-CMS-Vorschau-Iframe die Nav waagerecht halten (das schmale Vorschau-Fenster
+    // <860px zeigt sonst die mobile Burger-Nav -> Seitenwechsel nur übers Burger). Nur im
+    // Iframe -> Live-Seite (oberstes Fenster) und Besucher bleiben 1:1 unberührt.
+    try { if (window.self !== window.top) document.documentElement.classList.add('ww-cms-preview'); }
+    catch (e) { document.documentElement.classList.add('ww-cms-preview'); }
+
     function loggedIn() {
       try {
         for (let i = 0; i < localStorage.length; i++) {

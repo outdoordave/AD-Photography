@@ -586,6 +586,23 @@ footer .fnote .ww-admin-link:hover { color: #f0c9a8; opacity: 1; }
   .burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 }
 
+/* CMS-ONLY: Im Tina-Vorschau-Iframe (schmaler als 860px) die Nav waagerecht halten statt
+   Burger — sonst muss man im CMS jede Seitennavigation übers Burger-Menü machen. Greift NUR,
+   wenn die Seite in einem Iframe läuft (html.ww-cms-preview, gesetzt in SiteNav.astro). Die
+   Live-Seite läuft immer als oberstes Fenster -> Besucher sehen davon nichts. Notfalls scrollt
+   die Leiste horizontal statt überzulaufen oder Links zu verstecken. */
+html.ww-cms-preview .burger { display: none; }
+html.ww-cms-preview .nav-links {
+  position: static; transform: none; flex-direction: row; align-items: center;
+  width: auto; max-width: none; height: auto; background: none; border-left: none;
+  padding: 0; gap: 18px; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch;
+}
+html.ww-cms-preview .nav-links > a {
+  font-size: var(--fs-label); padding: 4px 0; width: auto; border-bottom: none; white-space: nowrap;
+}
+html.ww-cms-preview .nav-links > a.active::after { display: block; }
+html.ww-cms-preview .nav-links .lang-toggle { margin-top: 0; }
+
 /* ============ HERO (Startseite, 1:1 aus index.html) ============ */
 .btn.ghost { background: transparent; border: 1.5px solid rgba(240,217,191,0.5); color: #f0d9bf; }
 .btn.ghost:hover { background: rgba(240,217,191,0.12); border-color: #f0d9bf; }
