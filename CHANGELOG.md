@@ -17,6 +17,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 20:30 — CMS: flacher Stationen-Manager im Reise-Formular
+- Neue Reise bauen war umständlich (Stationen hinzufügen nur tief verschachtelt in Tinas nativer Liste).
+  Neuer **flacher Manager** ganz oben im Reise-Formular (immer sichtbar): pro Zeile **Name** (editierbar)
+  + **Art** (Haupt/Zwischenstopp) + **Anreise** (Fahrt/Flug), **Ziehen zum Sortieren**, **🗑 löschen**,
+  **„+ Station hinzufügen"**. Detailfelder (Ort, Texte, Fotos) bleiben in Tinas nativer Liste darunter.
+- **Stabil** über die offizielle Tina-Form-API (final-form): `form.mutators.push/move/remove` auf `stops`,
+  `form.change('stops[i].feld')`. **Kein** Fernsteuern der Vorschau (wäre instabil/Update-bruchgefährdet).
+- Dateien: `web/tina/fields/StopsManager.tsx` (neu), `web/tina/config.ts` (UI-only-Feld `stops_manager`).
+  `tina-lock` deterministisch neu (`85b1115a`, 2× verifiziert). Build grün (42 Seiten).
+- **⚠️ David:** Schema-Änderung → nach Push **Tina-Cloud-Re-Index** nötig.
+- Commit: `af5da8c`
+
 ## 2026-06-13 20:15 — Reisen-Karte: kein Auto/Flugzeug-Geflacker an den Stops
 - `placeVehicleAtStop` setzte das Symbol beim Halten/Landen **hart auf Auto** → bei aufeinanderfolgenden
   Flügen (z. B. Dresden→FRA→SF) flackerte es Flieger→Auto→Flieger. Jetzt richtet sich das Symbol am Stop

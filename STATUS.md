@@ -1,12 +1,12 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-13** · letzter Commit `df5097e` (Branch `astro-umbau`) ·
-> **Karte (`df5097e`):** Kein **Auto/Flugzeug-Geflacker** mehr an den Stops — Symbol richtet sich nach der
-> Ankunftsart (`legFlight[idx]`); nach einem Flug bleibt es Flugzeug, erst eine Fahretappe macht wieder Auto.
-> **Karte (`1368443`):** Kurven-Haken behoben — **zentripetale** Catmull-Rom (kein Überschwingen bei eng/spitzen
-> Stops, z. B. Yosemite↔Tahoe). `arriveBy` = **manuelles Pro-Station-Feld** (CMS „Anreise: Flug") — leer = Fahrt.
-> **CMS-UX offen (Diskussion):** Stations-Verwaltung (add/sort) ist nativ in der „🧭 Reisen"-Formularliste —
-> Erreichbarkeit/Discoverability soll verbessert werden (siehe offene Punkte).
+> **Stand: 2026-06-13** · letzter Commit `af5da8c` (Branch `astro-umbau`) ·
+> **CMS (`af5da8c`):** Neuer **flacher Stationen-Manager** oben im Reise-Formular (`StopsManager.tsx`):
+> Name/Art/Anreise je Zeile, Ziehen-sortieren, +/🗑 — stabil über die Tina-Form-API (final-form-Mutatoren),
+> kein Vorschau-Fernsteuern. Detailfelder bleiben in der nativen Liste. **⚠️ Schema-Änderung → Re-Index nötig**
+> (`tina-lock` neu `85b1115a`, deterministisch). Jump zwischen Stationen funktioniert weiterhin per Marker/Klick.
+> **Karte (`df5097e`):** Kein **Auto/Flugzeug-Geflacker** mehr an den Stops (Symbol nach Ankunftsart `legFlight[idx]`).
+> **Karte (`1368443`):** Kurven-Haken behoben — **zentripetale** Catmull-Rom. `arriveBy` = manuelles Pro-Station-Feld.
 > **Karte (`5407d74`):** **Sanfte Kurven** (Catmull-Rom durch die Stops, `curveLeg`; Auto folgt der Kurve)
 > statt Geraden; **Apple-like** Optik (Schein + heller Rand + schlanke, leicht durchsichtige Linie);
 > **Fluganimation** zoomt erst voll heraus, dann fliegt das Flugzeug langsam & sanft (Verzögerung, easeSine).
