@@ -1,9 +1,11 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-13** · letzter Commit `0807cb5` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-13** · letzter Commit `5407d74` (Branch `astro-umbau`) ·
+> **Karte (`5407d74`):** **Sanfte Kurven** (Catmull-Rom-Spline durch die Stops, `curveLeg`; Auto folgt der
+> Kurve) statt Geraden; **Apple-like** Optik (Schein + heller Rand + schlanke, leicht durchsichtige Linie);
+> **Fluganimation** zoomt erst voll heraus, dann fliegt das Flugzeug langsam & sanft (Verzögerung, easeSine).
 > **Karte (`0807cb5`):** Routenlinie **wächst progressiv mit der Reise** (Station↔Station synchron zum
-> Fahrzeug, schrumpft beim Zurückscrollen) statt vorab als dicker Balken; **feineres Aussehen** (dünne
-> Linie + weicher Halo via `line-blur`, runde Enden; Flug = gestrichelter Bogen). `buildPath`/`drawDoneUpTo`.
+> Fahrzeug, schrumpft beim Zurückscrollen) statt vorab als Balken. `buildPath`/`drawDoneUpTo`.
 > **Fix (`64951a2`):** Im CMS klappte die **Site-Nav** im schmalen Vorschau-Iframe (<860px) zum Burger
 > → jetzt waagerecht gehalten via `html.ww-cms-preview` (nur im Iframe gesetzt). **Live/Besucher 1:1.**
 > **Fix (`28356fe`):** Routenlinie verschwand im CMS-Vorschau-Iframe / nach Live-Kartenstil-Wechsel

@@ -17,6 +17,19 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 19:27 — Reisen-Karte: sanfte Kurven + Apple-like Linie + langsamere Fluganimation
+- **Sanfte Kurven (Radien):** Fahr-Linie als uniforme **Catmull-Rom-Spline** durch die Stops (`curveLeg`);
+  Nachbar-Stops = Tangenten, über Flug-/Lückengrenzen nicht gekrümmt. **Eine** Punktquelle je Etappe
+  (`buildRoute.legPts`) für Linie **und** Fahrzeug → Auto folgt exakt der Kurve, beide synchron.
+- **Apple-like Optik statt Balken:** dezenter Schein (glow) + heller Rand (casing) + schlanke, **leicht
+  durchsichtige** Linie (opacity .82), runde Enden; Flug = gestrichelter Bogen auf hellem Track.
+- **Fluganimation:** Karte zoomt zuerst **voll heraus** (`fitBounds` padding 100, maxZoom 6, 1100ms),
+  dann fliegt das Flugzeug mit ~700ms Verzögerung **deutlich langsamer & sanfter** (easeInOutSine, Dauer
+  bis 3400ms) den Bogen entlang — statt so schnell wie das Auto. (Auswahl Nutzer: „sanfte Kurven", kein
+  externes Routing.)
+- Datei: `web/src/components/TripTimeline.tsx`. Build grün (42 Seiten). Kein Schema-Change.
+- Commit: `5407d74`
+
 ## 2026-06-13 18:25 — Reisen-Karte: progressive Routenlinie + feineres Aussehen
 - Statt die komplette Route vorab als dicken Balken zu zeigen, **wächst die Linie jetzt mit der Reise**
   (von Station zu Station synchron mit dem Fahrzeug; beim Zurückscrollen schrumpft sie). Gekoppelt an die
