@@ -1,12 +1,14 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-13** · letzter Commit `64951a2` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-13** · letzter Commit `0807cb5` (Branch `astro-umbau`) ·
+> **Karte (`0807cb5`):** Routenlinie **wächst progressiv mit der Reise** (Station↔Station synchron zum
+> Fahrzeug, schrumpft beim Zurückscrollen) statt vorab als dicker Balken; **feineres Aussehen** (dünne
+> Linie + weicher Halo via `line-blur`, runde Enden; Flug = gestrichelter Bogen). `buildPath`/`drawDoneUpTo`.
 > **Fix (`64951a2`):** Im CMS klappte die **Site-Nav** im schmalen Vorschau-Iframe (<860px) zum Burger
 > → jetzt waagerecht gehalten via `html.ww-cms-preview` (nur im Iframe gesetzt). **Live/Besucher 1:1.**
-> Kein Schema-Change. (War keine Folge früherer Commits, sondern die responsive Nav.)
 > **Fix (`28356fe`):** Routenlinie verschwand im CMS-Vorschau-Iframe / nach Live-Kartenstil-Wechsel
 > (`setStyle` löscht Layer; Marker überleben als DOM, Linie nicht) → „Auto fuhr ohne Linie". `drawRoute`
-> jetzt selbst-heilend beim nächsten `idle`; Stilwechsel-Effekt nutzt `idle`. Kein Schema-Change.
+> jetzt selbst-heilend beim nächsten `idle`; Stilwechsel-Effekt nutzt `idle`. Alle drei: kein Schema-Change.
 > **CMS-Nachschärfung:** „Aus Mediathek wählen" in allen Foto-Feldern (vorhandene `/uploads`-WebPs wählen statt
 > doppelt hochladen; gemeinsamer MediaPicker). Neues Stop-Feld **`arriveBy`** (Fahrt/Flug) → Auto vs. Flugzeug
 > pro Station steuerbar (aktiviert den Flug-Bogen/-Zoom). `tina-lock` neu → **Re-Index nötig**. ·

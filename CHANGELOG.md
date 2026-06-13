@@ -17,6 +17,17 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 18:25 — Reisen-Karte: progressive Routenlinie + feineres Aussehen
+- Statt die komplette Route vorab als dicken Balken zu zeigen, **wächst die Linie jetzt mit der Reise**
+  (von Station zu Station synchron mit dem Fahrzeug; beim Zurückscrollen schrumpft sie). Gekoppelt an die
+  Fahr-Animation (`baseDist + Richtung·want`) und an `placeVehicleAtStop`.
+- **Schöner statt Balken:** durchgehende Gesamtlinie als Modell (`buildPath`: Punkte + kumulierte Distanz
+  + Stop-Distanzen + Flug-Flag) → nur die gefahrene Strecke wird gezeichnet (`drawDoneUpTo`, im Segment
+  interpoliert). Dünne Linie (2.4px) + weicher Halo (`line-blur`) + runde Enden; Flug = gestrichelter Bogen
+  (eigene Quelle). Selbst-heilendes Neuzeichnen (`idle`) bleibt.
+- Datei: `web/src/components/TripTimeline.tsx`. Build grün (42 Seiten). Kein Schema-Change.
+- Commit: `0807cb5`
+
 ## 2026-06-13 17:50 — CMS-Komfort: Site-Nav im Vorschau-Iframe waagerecht (kein Burger)
 - Im schmalen Tina-Vorschau-Fenster (<860px Breakpoint, 1:1 aus alter `index.html`) zeigte die Seite
   ihre **mobile Burger-Nav** → Seitenwechsel im CMS nur übers Burger-Menü. Keine Folge früherer Commits,
