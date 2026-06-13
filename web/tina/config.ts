@@ -351,10 +351,28 @@ export default defineConfig({
           { type: 'string', name: 'summary_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
           { type: 'boolean', name: 'upcoming', label: 'Kommende Reise? (zeigt „bald ✦")' },
           {
+            type: 'string', name: 'vehicle', label: 'Fahrzeug auf der Karte',
+            description: 'Silhouette, die diese Reise auf der Karte fährt. Leer = Ford Expedition.',
+            options: [
+              { value: 'expedition', label: 'Ford Expedition (Standard)' },
+              { value: 'pickup', label: 'Pickup' },
+              { value: 'jeep', label: 'Jeep / SUV' },
+            ],
+          },
+          { type: 'string', name: 'vehicle_custom_svg', label: '↳ Eigenes Fahrzeug-SVG (optional)', description: 'Fortgeschritten: kompletter <svg>…</svg>-Code. Überschreibt die Auswahl oben.', ui: { component: 'textarea' } },
+          {
             type: 'object', name: 'stops', label: 'Stationen', list: true,
             ui: { itemProps: (i: any) => ({ label: i?.name || 'Neue Station' }) },
             fields: [
               { type: 'string', name: 'name', label: 'Name (kurz – für Marker & Liste)', required: true, description: 'z. B. San Francisco' },
+              {
+                type: 'string', name: 'kind', label: 'Art der Station',
+                description: 'Hauptstation = voller Block (Titelbild, Text, weitere Fotos). Zwischenstopp = schlank (Titel, Datum, 1–3 Sätze). Leer = Hauptstation.',
+                options: [
+                  { value: 'main', label: 'Hauptstation' },
+                  { value: 'intermediate', label: 'Zwischenstopp' },
+                ],
+              },
               { type: 'string', name: 'location', label: '📍 Ort auf der Karte', description: 'Suchen & auf der Karte feinjustieren.', ui: { component: LocationSearchField } },
               { type: 'string', name: 'title_de', label: 'Stations-Titel' },
               { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
@@ -416,6 +434,11 @@ export default defineConfig({
             type: 'boolean', name: 'map_scroll_zoom', label: 'Karte: Mit Mausrad zoomen',
             description: 'AN (Standard): Mausrad über der Karte zoomt die Karte (am Handy: ein Finger bewegt die Karte). AUS: Mausrad scrollt die Seite (am Handy zwei Finger für die Karte) — wie auf der alten Live-Seite.',
           },
+          // --- Globale Timeline-Regler (gelten für ALLE Reisen, auch mobil). Leer = Standard. ---
+          { type: 'number', name: 'spotlight_strength', label: 'Spotlight-Stärke (%)', description: 'Wie stark Stationen abseits des Lesefokus zurücktreten. Empfohlen: 70. Höher = klarer Spotlight, niedriger = ruhiger/gleichmäßiger. Bereich 0–90. Leer = 70.' },
+          { type: 'number', name: 'dim_fade_ms', label: 'Übergang (ms)', description: 'Weiche Ein-/Ausblend-Dauer des Fokus. Leer = 800.' },
+          { type: 'number', name: 'reveal_ms', label: 'Reveal-Dauer (ms)', description: 'Sanftes Einblenden, wenn eine Station erstmals erscheint. Leer = 800.' },
+          { type: 'boolean', name: 'snap_enabled', label: 'Stationen einrasten', description: 'AUS (empfohlen): frei scrollen, nichts rastet ein. AN: beim Ruhen rückt die nächste Station sanft an die Lese-Position.' },
         ],
       },
       // --- Equipment / Gear: EIN Eintrag (Seitentexte + Liste) mit Live-Vorschau ---

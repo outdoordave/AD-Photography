@@ -29,7 +29,8 @@ const snap = s.snap_enabled === true;
 const node = (res.data.reisenConnection?.edges || []).map((e: any) => e?.node).find((n: any) => n?._sys?.filename === slug);
 const trip = (node || {}) as RawTrip;
 const ttl = tripTitle(trip, 'en') || (s.title_en || s.title_de || 'Trip');
-const vehicleId = (trip as any).vehicle || 'expedition';
+const customSvg = (trip as any).vehicle_custom_svg;
+const vehicleId = (typeof customSvg === 'string' && customSvg.trim().slice(0, 4) === '<svg') ? customSvg : ((trip as any).vehicle || 'expedition');
 ---
 <BaseLayout title={`${ttl} — Wide & Wild`} lang="en">
   <section style="padding-top:20px;">
