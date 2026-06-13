@@ -16,7 +16,13 @@
       "location": "{\"type\":\"Point\",\"coordinates\":[13.769481,51.134299]}",
       "title_de": "DRS Flughafen "
     },
-    {},
+    {
+      "name": "FRA- Airport",
+      "kind": "intermediate",
+      "arriveBy": "flight",
+      "location": "{\"type\":\"Point\",\"coordinates\":[8.5552,50.024413]}",
+      "title_de": "FRA - Airport"
+    },
     {
       "name": "San Francisco",
       "location": "{\"type\":\"Point\",\"coordinates\":[-122.42,37.77]}",
