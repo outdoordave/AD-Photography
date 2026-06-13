@@ -1,39 +1,23 @@
 ---
-// Trips page EN ('/en/trips'). Same data as DE via Tina-Client (reisenConnection),
-// English labels. Live-preview-fähig in der TripsContent-Insel.
+// Trips OVERVIEW EN ('/en/trips'). Card list of all trips -> detail page /en/trips/<slug>.
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import TripsContent from '../../components/TripsContent.tsx';
 import SettingsHeader from '../../components/SettingsHeader.tsx';
-import { tl } from '../../lib/trips';
-import { linkedAlbumsByTrip } from '../../lib/albums';
+import TripsOverview from '../../components/TripsOverview.astro';
 import settings from '../../data/trips-settings.json';
 import { client } from '../../../tina/__generated__/client';
+import { sortTrips, type RawTrip } from '../../lib/trips';
 
 const res = await client.queries.reisenConnection({ first: 100 });
-const albRes = await client.queries.albenConnection({ first: 1000 });
 const setRes = await client.queries.reisen_settings({ relativePath: 'trips-settings.json' });
-const linkedAlbums = linkedAlbumsByTrip(albRes.data);
+const edges = (res.data.reisenConnection?.edges || []).filter(Boolean);
+const trips = sortTrips(edges.map((e: any) => ({ slug: e.node._sys.filename, data: e.node as RawTrip })));
 const s = settings as any;
-const mapStyle = s.map_style || 'liberty';
-const mapScrollZoom = s.map_scroll_zoom !== false; // Standard AN
 ---
 <BaseLayout title={`${s.title_en || s.title_de || 'Trips'} — Wide & Wild`} lang="en">
   <section>
     <div class="wrap">
       <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="reisen_settings" lang="en" />
-      <TripsContent
-        client:load
-        query={res.query}
-        variables={res.variables}
-        data={res.data}
-        lang="en"
-        mapStyle={mapStyle}
-        scrollZoom={mapScrollZoom}
-        linkedAlbums={linkedAlbums}
-        settingsQuery={setRes.query}
-        settingsVariables={setRes.variables}
-        settingsData={setRes.data}
-      />
+      <TripsOverview trips={trips} lang="en" />
     </div>
   </section>
 </BaseLayout>

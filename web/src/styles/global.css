@@ -277,6 +277,19 @@ section { padding: 84px 0; }
 .trip-summary .meta { font-size: var(--fs-label); letter-spacing: var(--tracking-slight); color: var(--c-accent); font-weight: var(--fw-bold); text-transform: uppercase; margin-bottom: 10px; }
 .trip-summary p { color: var(--c-ink-soft); font-size: var(--fs-lead); }
 
+/* Reisen-Übersicht: ruhige Karten-Liste (ersetzt die Reise-Tabs). */
+.trips-overview { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 26px; margin-top: 8px; }
+.trip-card { display: flex; flex-direction: column; text-decoration: none; color: var(--c-ink); border-radius: var(--radius-sm); overflow: hidden; background: var(--c-bg-alt, #efe6d6); box-shadow: var(--ww-ring), var(--ww-shadow); transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease); }
+.trip-card:hover { transform: translateY(-3px); box-shadow: var(--ww-ring), 0 16px 34px -12px rgba(46,36,24,0.42); }
+.trip-card-cover { position: relative; aspect-ratio: var(--ar-card); background: var(--c-line); }
+.trip-card-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.trip-card-badge { position: absolute; top: 10px; left: 10px; background: var(--c-accent); color: #fff; font-size: var(--fs-label); font-weight: var(--fw-bold); letter-spacing: var(--tracking-slight); padding: 3px 9px; border-radius: var(--radius-pill); }
+.trip-card-body { padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 4px; }
+.trip-card-eyebrow { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); }
+.trip-card-title { font-family: var(--font-display); font-size: var(--fs-title); font-weight: var(--fw-medium); line-height: 1.15; }
+.trip-card-count { font-size: var(--fs-label); color: var(--c-ink-soft); }
+.trip-card-sum { font-size: var(--fs-ui); color: var(--c-ink-soft); line-height: 1.6; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
 .map-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; align-items: start; }
 .map-box { border-radius: var(--radius-sm); overflow: hidden; position: relative; height: 420px; }
 .map-box .maplibregl-map { height: 100%; border-radius: var(--radius-sm); z-index: 1; }

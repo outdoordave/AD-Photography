@@ -1,0 +1,43 @@
+---
+// Trip DETAIL EN ('/en/trips/<slug>'). Phase 1: rendert noch die bestehende TripsContent-Insel
+// (gewählte Reise via initialSlug). In Phase 2 wird das auf die Variante-B-Timeline umgestellt.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TripsContent from '../../../components/TripsContent.tsx';
+import { linkedAlbumsByTrip } from '../../../lib/albums';
+import settings from '../../../data/trips-settings.json';
+import { client } from '../../../../tina/__generated__/client';
+
+export async function getStaticPaths() {
+  const conn = await client.queries.reisenConnection({ first: 100 });
+  const edges = (conn.data.reisenConnection?.edges || []).filter(Boolean);
+  return edges.map((e: any) => ({ params: { slug: e.node._sys.filename } }));
+}
+
+const { slug } = Astro.params;
+const res = await client.queries.reisenConnection({ first: 100 });
+const albRes = await client.queries.albenConnection({ first: 1000 });
+const linkedAlbums = linkedAlbumsByTrip(albRes.data);
+const s = settings as any;
+const mapStyle = s.map_style || 'liberty';
+---
+<BaseLayout title={`${s.title_en || s.title_de || 'Trips'} — Wide & Wild`} lang="en">
+  <section>
+    <div class="wrap">
+      <div class="page-title">
+        <div class="kicker">{s.kicker_en || s.kicker_de || ''}</div>
+        <h1>{s.title_en || s.title_de || ''}</h1>
+        <p>{s.intro_en || s.intro_de || ''}</p>
+      </div>
+      <TripsContent
+        client:load
+        query={res.query}
+        variables={res.variables}
+        data={res.data}
+        lang="en"
+        mapStyle={mapStyle}
+        initialSlug={slug}
+        linkedAlbums={linkedAlbums}
+      />
+    </div>
+  </section>
+</BaseLayout>

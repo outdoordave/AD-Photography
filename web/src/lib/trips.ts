@@ -134,6 +134,19 @@ export function viewStops(trip: RawTrip, lang: Lang): ViewStop[] {
   }));
 }
 
+// Cover für die Übersichts-Karte: erstes Stop-Titelbild (Original), Fallback erstes
+// Galerie-Bild. Leer, wenn nichts da. (Optionales eigenes cover-Feld kommt evtl. später.)
+export function tripCover(trip: RawTrip): string {
+  const stops = Array.isArray(trip.stops) ? trip.stops : [];
+  for (const s of stops) {
+    const full = photoFull(s.photo);
+    if (full) return normalizePath(full);
+  }
+  const gal = Array.isArray(trip.gallery) ? trip.gallery : [];
+  if (gal[0] && gal[0].image) return normalizePath(gal[0].image);
+  return '';
+}
+
 // Sortierte Reise-Liste (nach order, dann Datum absteigend).
 export function sortTrips<T extends { slug: string; data: RawTrip }>(list: T[]): T[] {
   return [...list].sort((a, b) => {

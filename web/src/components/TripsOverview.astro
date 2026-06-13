@@ -1,0 +1,37 @@
+---
+// Reisen-Übersicht: ruhige Karten-Liste (eine Karte pro Reise) -> Klick auf die
+// Reise-Detailseite /trips/<slug> (bzw. /en/trips/<slug>). Ersetzt die alten Reise-Tabs.
+import { tripTitle, bi, tripCover, type RawTrip } from '../lib/trips';
+interface Props {
+  trips: { slug: string; data: RawTrip }[];
+  lang: 'de' | 'en';
+}
+const { trips, lang } = Astro.props;
+const isEn = lang === 'en';
+const base = isEn ? '/en/trips/' : '/trips/';
+---
+<div class="trips-overview">
+  {trips.map((t) => {
+    const d = t.data;
+    const cover = tripCover(d);
+    const title = tripTitle(d, lang);
+    const meta = bi(d, 'meta', lang);
+    const summary = bi(d, 'summary', lang);
+    const n = Array.isArray(d.stops) ? d.stops.length : 0;
+    const stopWord = isEn ? (n === 1 ? 'stop' : 'stops') : (n === 1 ? 'Station' : 'Stationen');
+    return (
+      <a class="trip-card" href={base + t.slug}>
+        <div class="trip-card-cover ph ww-photo">
+          {cover ? <img src={cover} alt="" loading="lazy" /> : null}
+          {d.upcoming ? <span class="trip-card-badge">{isEn ? 'soon ✦' : 'bald ✦'}</span> : null}
+        </div>
+        <div class="trip-card-body">
+          {meta ? <div class="trip-card-eyebrow">{meta}</div> : null}
+          <h3 class="trip-card-title">{title}</h3>
+          <div class="trip-card-count">{n} {stopWord}</div>
+          {summary ? <p class="trip-card-sum">{summary}</p> : null}
+        </div>
+      </a>
+    );
+  })}
+</div>
