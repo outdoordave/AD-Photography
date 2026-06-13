@@ -1,9 +1,12 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-13** · letzter Commit `217223c` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-13** · letzter Commit `df5097e` (Branch `astro-umbau`) ·
+> **Karte (`df5097e`):** Kein **Auto/Flugzeug-Geflacker** mehr an den Stops — Symbol richtet sich nach der
+> Ankunftsart (`legFlight[idx]`); nach einem Flug bleibt es Flugzeug, erst eine Fahretappe macht wieder Auto.
 > **Karte (`1368443`):** Kurven-Haken behoben — **zentripetale** Catmull-Rom (kein Überschwingen bei eng/spitzen
-> Stops, z. B. Yosemite↔Tahoe). **Content (`217223c`):** Alaska-Etappe **Tahoe→Anchorage = Flug** (`arriveBy`).
-> Hinweis: `arriveBy` ist ein **manuelles Pro-Station-Feld** (CMS „Anreise: Flug") — ohne Wert = Fahrt.
+> Stops, z. B. Yosemite↔Tahoe). `arriveBy` = **manuelles Pro-Station-Feld** (CMS „Anreise: Flug") — leer = Fahrt.
+> **CMS-UX offen (Diskussion):** Stations-Verwaltung (add/sort) ist nativ in der „🧭 Reisen"-Formularliste —
+> Erreichbarkeit/Discoverability soll verbessert werden (siehe offene Punkte).
 > **Karte (`5407d74`):** **Sanfte Kurven** (Catmull-Rom durch die Stops, `curveLeg`; Auto folgt der Kurve)
 > statt Geraden; **Apple-like** Optik (Schein + heller Rand + schlanke, leicht durchsichtige Linie);
 > **Fluganimation** zoomt erst voll heraus, dann fliegt das Flugzeug langsam & sanft (Verzögerung, easeSine).

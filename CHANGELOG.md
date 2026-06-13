@@ -17,6 +17,14 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 20:15 — Reisen-Karte: kein Auto/Flugzeug-Geflacker an den Stops
+- `placeVehicleAtStop` setzte das Symbol beim Halten/Landen **hart auf Auto** → bei aufeinanderfolgenden
+  Flügen (z. B. Dresden→FRA→SF) flackerte es Flieger→Auto→Flieger. Jetzt richtet sich das Symbol am Stop
+  nach der **Ankunftsart** (`legFlight[idx]`): nach einem Flug bleibt es Flugzeug, erst eine Fahretappe
+  macht wieder ein Auto.
+- Datei: `web/src/components/TripTimeline.tsx`. Build grün (42 Seiten). Kein Schema-Change.
+- Commit: `df5097e`
+
 ## 2026-06-13 19:49 — Reisen-Karte: Kurven-Haken weg + Alaska-Flug gesetzt
 - **Kurven-Haken behoben (`1368443`):** uniforme Catmull-Rom machte bei eng/spitzwinklig liegenden Stops
   einen „Haken"/Schlaufe (z. B. Yosemite↔Lake Tahoe) → ersetzt durch **zentripetale** Catmull-Rom
