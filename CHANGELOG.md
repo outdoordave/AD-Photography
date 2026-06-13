@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 17:43 — Reisen-Fix: Routenlinie verschwand (Auto fuhr ohne Linie)
+- Route (Linien-Layer) wurde nur einmal beim `load` gezeichnet und bei `isStyleLoaded()===false`
+  still verworfen. Im **CMS-Vorschau-Iframe** und direkt nach einem **Live-Kartenstil-Wechsel**
+  (`setStyle` aus `reisen_settings`) löscht `setStyle` alle Quellen/Layer → Marker (DOM) überleben,
+  die **Linie nicht** → „Auto fährt, aber keine Linie".
+- Fix: `drawRoute` zeichnet sich **selbst-heilend** beim nächsten `idle` erneut, falls der Stil noch
+  nicht geladen ist; Stilwechsel-Effekt nutzt `idle` statt `styledata`+Guard.
+- Datei: `web/src/components/TripTimeline.tsx`. Offline-Build grün (42 Seiten).
+- Commit: `28356fe`
+
 ## 2026-06-13 — CMS: Mediathek-Auswahl in Foto-Feldern + Auto/Flugzeug pro Station
 - **Mediathek-Picker** (`c6758ab`): „🖼️ Aus Mediathek wählen" jetzt in **allen** Foto-Feldern
   (Titelbild/Crop, weitere Fotos/Bulk, Einzelfoto) — Raster aller vorhandenen `/uploads`-Bilder
