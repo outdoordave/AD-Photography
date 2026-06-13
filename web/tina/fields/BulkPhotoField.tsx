@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCMS, wrapFieldsWithMeta } from 'tinacms';
+import { MediaPickerButton } from './MediaPicker';
 import {
   DndContext,
   closestCenter,
@@ -190,6 +191,7 @@ const BulkPhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
             + Ganzer Ordner
             <input ref={folderRef} type="file" multiple disabled={busy} onChange={(e) => handleFiles(e.target.files)} style={{ display: 'none' }} />
           </label>
+          <MediaPickerButton multi disabled={busy} already={value} onPick={(p) => { if (value.indexOf(p) === -1) input.onChange([...value, p]); }} />
         </div>
       </div>
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { useCMS, wrapFieldsWithMeta } from 'tinacms';
 import { detectEncoder, toOptimized, loadImage, type EncoderMode } from './webpEncode';
 import { toLocalMedia } from './mediaPath';
+import { MediaPickerButton } from './MediaPicker';
 
 // Zuschnitt-Foto-Feld: EIN gerahmtes Bild mit Zoom + Verschieben. Wert = String-JSON
 // { original, crop }:
@@ -240,6 +241,7 @@ const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
             <button type="button" onClick={applyCrop} disabled={busy} style={btnStyle(busy, true)}>Zuschnitt übernehmen</button>
             {hasCrop ? <button type="button" onClick={resetCrop} disabled={busy} style={btnStyle(busy)}>Zuschnitt zurücksetzen</button> : null}
             <label style={btnStyle(busy)}>Bild ersetzen<input type="file" accept="image/*" disabled={busy} onChange={(e) => uploadOriginal(e.target.files)} style={{ display: 'none' }} /></label>
+            <MediaPickerButton disabled={busy} onPick={(p) => input.onChange(serialize({ original: p, display: p, crop: null }))} />
             <button type="button" onClick={remove} disabled={busy} style={btnStyle(busy)}>Entfernen</button>
           </div>
           <div style={{ fontSize: 12, color: '#6e5e49', marginTop: 6 }}>
@@ -247,10 +249,15 @@ const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
           </div>
         </>
       ) : (
-        <label style={{ ...dropStyle(busy) }}>
-          {busy ? (progress || 'Arbeite …') : '+ Foto wählen'}
-          <input type="file" accept="image/*" disabled={busy} onChange={(e) => uploadOriginal(e.target.files)} style={{ display: 'none' }} />
-        </label>
+        <div>
+          <label style={{ ...dropStyle(busy) }}>
+            {busy ? (progress || 'Arbeite …') : '+ Foto wählen'}
+            <input type="file" accept="image/*" disabled={busy} onChange={(e) => uploadOriginal(e.target.files)} style={{ display: 'none' }} />
+          </label>
+          <div style={{ marginTop: 8 }}>
+            <MediaPickerButton disabled={busy} onPick={(p) => input.onChange(serialize({ original: p, display: p, crop: null }))} />
+          </div>
+        </div>
       )}
 
       {progress && val.original ? <div style={{ fontSize: 12, color: '#6e5e49', marginTop: 6 }}>{progress}</div> : null}

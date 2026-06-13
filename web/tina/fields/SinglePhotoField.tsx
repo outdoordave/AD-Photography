@@ -2,6 +2,7 @@ import React from 'react';
 import { useCMS, wrapFieldsWithMeta } from 'tinacms';
 import { fmt, detectEncoder, toOptimized, type EncoderMode } from './webpEncode';
 import { toLocalMedia } from './mediaPath';
+import { MediaPickerButton } from './MediaPicker';
 
 // Einzelfoto-Feld mit Auto-WebP (gleiche Logik wie BulkPhotoField, aber EIN Bild):
 //  - Datei waehlen oder hierher ziehen,
@@ -93,10 +94,13 @@ const SinglePhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
         <div style={{ color: '#6e5e49', fontSize: 13, marginBottom: 10 }}>
           {busy ? (progress || 'Arbeite …') : value ? 'Anderes Foto ziehen — oder:' : 'Foto hierher ziehen — oder:'}
         </div>
-        <label style={btnStyle(busy)}>
-          {value ? 'Foto ersetzen' : '+ Foto wählen'}
-          <input type="file" accept="image/*" disabled={busy} onChange={(e) => handleFile(e.target.files)} style={{ display: 'none' }} />
-        </label>
+        <div style={{ display: 'inline-flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
+          <label style={btnStyle(busy)}>
+            {value ? 'Foto ersetzen' : '+ Foto wählen'}
+            <input type="file" accept="image/*" disabled={busy} onChange={(e) => handleFile(e.target.files)} style={{ display: 'none' }} />
+          </label>
+          <MediaPickerButton disabled={busy} onPick={(p) => input.onChange(p)} />
+        </div>
       </div>
 
       {savings ? <div style={{ color: '#2d6a4f', fontSize: 12, marginTop: 8 }}>✓ {savings}</div> : null}
