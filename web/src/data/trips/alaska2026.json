@@ -25,6 +25,8 @@
     },
     {
       "name": "San Francisco",
+      "kind": "main",
+      "arriveBy": "flight",
       "location": "{\"type\":\"Point\",\"coordinates\":[-122.42,37.77]}",
       "title_de": "San Francisco",
       "title_en": "San Francisco",
