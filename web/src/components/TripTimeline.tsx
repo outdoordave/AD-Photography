@@ -323,7 +323,14 @@ export default function TripTimeline(props: Props) {
     if (vehicleModeRef.current !== mode) { icon.innerHTML = flight ? PLANE_SVG : carSvg; icon.classList.toggle('is-plane', flight); vehicleModeRef.current = mode; }
     icon.style.transform = flight ? `rotate(${bearing}deg)` : `scaleX(${dx < 0 ? -1 : 1})`;
   }
-  function placeVehicleAtStop(idx: number) { const c = routeRef.current.coords[idx]; if (c) placeVehicle(c[0], c[1], false, 0, 1); drawDoneUpTo(pathRef.current.stopDist[idx] ?? 0); }
+  function placeVehicleAtStop(idx: number) {
+    const c = routeRef.current.coords[idx];
+    // Symbol am Stop nach der ANKUNFTSART richten (legFlight[idx]) statt hart auf Auto -> kein
+    // Flieger->Auto->Flieger-Geflacker bei aufeinanderfolgenden Flügen (z. B. Dresden->FRA->SF).
+    const flight = !!routeRef.current.legFlight[idx];
+    if (c) placeVehicle(c[0], c[1], flight, 0, 1);
+    drawDoneUpTo(pathRef.current.stopDist[idx] ?? 0);
+  }
 
   function legPoints(toIdx: number): { pts: [number, number][]; flight: boolean } {
     const { coords, legFlight, legPts } = routeRef.current;
