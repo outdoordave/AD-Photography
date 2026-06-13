@@ -1,13 +1,14 @@
 ---
-// Reisen-Vorschau-Route '/trips/<slug>' — gleiche Seite wie '/trips', startet aber
-// auf der gewählten Reise. Ziel von Tinas Router (Live-Vorschau/Visual-Editing):
-// so zeigt die Vorschau zuverlässig die im CMS gewählte Reise (Pfad statt Query).
+// Reise-DETAILSEITE DE ('/trips/<slug>') — Variante-B-Timeline (TripTimeline-Insel).
+// Daten via reisenConnection (useTina) + reisen_settings (Live-Kartenstil/Tuning). Tina-Router
+// der reisen-Collection zeigt hierher -> Visual-Editing (Klick=Feld + Live-Update) bleibt.
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import TripsContent from '../../components/TripsContent.tsx';
-import { tl } from '../../lib/trips';
+import TripTimeline from '../../components/TripTimeline.tsx';
 import { linkedAlbumsByTrip } from '../../lib/albums';
+import { tripTitle, type RawTrip } from '../../lib/trips';
 import settings from '../../data/trips-settings.json';
 import { client } from '../../../tina/__generated__/client';
+import '../../styles/trips-timeline.css';
 
 export async function getStaticPaths() {
   const conn = await client.queries.reisenConnection({ first: 100 });
@@ -18,27 +19,43 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const res = await client.queries.reisenConnection({ first: 100 });
 const albRes = await client.queries.albenConnection({ first: 1000 });
+const setRes = await client.queries.reisen_settings({ relativePath: 'trips-settings.json' });
 const linkedAlbums = linkedAlbumsByTrip(albRes.data);
 const s = settings as any;
 const mapStyle = s.map_style || 'liberty';
+const mapScrollZoom = s.map_scroll_zoom !== false;
+// globale Tuning-Werte (Phase 3): Defaults eingefroren, falls (noch) nicht im Schema.
+const spotlight = typeof s.spotlight_strength === 'number' ? s.spotlight_strength : 70;
+const dimMs = typeof s.dim_fade_ms === 'number' ? s.dim_fade_ms : 800;
+const revealMs = typeof s.reveal_ms === 'number' ? s.reveal_ms : 800;
+const snap = s.snap_enabled === true;
+const node = (res.data.reisenConnection?.edges || []).map((e: any) => e?.node).find((n: any) => n?._sys?.filename === slug);
+const trip = (node || {}) as RawTrip;
+const ttl = tripTitle(trip, 'de') || (s.title_de || 'Reise');
+const vehicleId = (trip as any).vehicle || 'expedition';
 ---
-<BaseLayout title={`${(s.title_de || '') || 'Reisen'} — Wide & Wild`} lang="de">
-  <section>
+<BaseLayout title={`${ttl} — Wide & Wild`} lang="de">
+  <section style="padding-top:20px;">
     <div class="wrap">
-      <div class="page-title">
-        <div class="kicker">{(s.kicker_de || '')}</div>
-        <h1>{(s.title_de || '')}</h1>
-        <p>{(s.intro_de || '')}</p>
-      </div>
-      <TripsContent
+      <a class="trip-back" href="/trips">← {s.kicker_de || 'Reisen'}</a>
+      <TripTimeline
         client:load
         query={res.query}
         variables={res.variables}
         data={res.data}
         lang="de"
         mapStyle={mapStyle}
+        scrollZoom={mapScrollZoom}
         initialSlug={slug}
         linkedAlbums={linkedAlbums}
+        settingsQuery={setRes.query}
+        settingsVariables={setRes.variables}
+        settingsData={setRes.data}
+        spotlight={spotlight}
+        dimMs={dimMs}
+        revealMs={revealMs}
+        snap={snap}
+        vehicleId={vehicleId}
       />
     </div>
   </section>

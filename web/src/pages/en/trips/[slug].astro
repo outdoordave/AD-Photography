@@ -1,11 +1,12 @@
 ---
-// Trip DETAIL EN ('/en/trips/<slug>'). Phase 1: rendert noch die bestehende TripsContent-Insel
-// (gewählte Reise via initialSlug). In Phase 2 wird das auf die Variante-B-Timeline umgestellt.
+// Trip DETAIL EN ('/en/trips/<slug>') — Variante-B-Timeline (TripTimeline-Insel).
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import TripsContent from '../../../components/TripsContent.tsx';
+import TripTimeline from '../../../components/TripTimeline.tsx';
 import { linkedAlbumsByTrip } from '../../../lib/albums';
+import { tripTitle, type RawTrip } from '../../../lib/trips';
 import settings from '../../../data/trips-settings.json';
 import { client } from '../../../../tina/__generated__/client';
+import '../../../styles/trips-timeline.css';
 
 export async function getStaticPaths() {
   const conn = await client.queries.reisenConnection({ first: 100 });
@@ -16,27 +17,42 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const res = await client.queries.reisenConnection({ first: 100 });
 const albRes = await client.queries.albenConnection({ first: 1000 });
+const setRes = await client.queries.reisen_settings({ relativePath: 'trips-settings.json' });
 const linkedAlbums = linkedAlbumsByTrip(albRes.data);
 const s = settings as any;
 const mapStyle = s.map_style || 'liberty';
+const mapScrollZoom = s.map_scroll_zoom !== false;
+const spotlight = typeof s.spotlight_strength === 'number' ? s.spotlight_strength : 70;
+const dimMs = typeof s.dim_fade_ms === 'number' ? s.dim_fade_ms : 800;
+const revealMs = typeof s.reveal_ms === 'number' ? s.reveal_ms : 800;
+const snap = s.snap_enabled === true;
+const node = (res.data.reisenConnection?.edges || []).map((e: any) => e?.node).find((n: any) => n?._sys?.filename === slug);
+const trip = (node || {}) as RawTrip;
+const ttl = tripTitle(trip, 'en') || (s.title_en || s.title_de || 'Trip');
+const vehicleId = (trip as any).vehicle || 'expedition';
 ---
-<BaseLayout title={`${s.title_en || s.title_de || 'Trips'} — Wide & Wild`} lang="en">
-  <section>
+<BaseLayout title={`${ttl} — Wide & Wild`} lang="en">
+  <section style="padding-top:20px;">
     <div class="wrap">
-      <div class="page-title">
-        <div class="kicker">{s.kicker_en || s.kicker_de || ''}</div>
-        <h1>{s.title_en || s.title_de || ''}</h1>
-        <p>{s.intro_en || s.intro_de || ''}</p>
-      </div>
-      <TripsContent
+      <a class="trip-back" href="/en/trips">← {s.kicker_en || s.kicker_de || 'Trips'}</a>
+      <TripTimeline
         client:load
         query={res.query}
         variables={res.variables}
         data={res.data}
         lang="en"
         mapStyle={mapStyle}
+        scrollZoom={mapScrollZoom}
         initialSlug={slug}
         linkedAlbums={linkedAlbums}
+        settingsQuery={setRes.query}
+        settingsVariables={setRes.variables}
+        settingsData={setRes.data}
+        spotlight={spotlight}
+        dimMs={dimMs}
+        revealMs={revealMs}
+        snap={snap}
+        vehicleId={vehicleId}
       />
     </div>
   </section>
