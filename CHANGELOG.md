@@ -17,6 +17,32 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 — Reisen-Umbau: Variante B live in /trips (Übersicht + Detail), capability-locked
+Der große finale Umbau — der abgestimmte Timeline-Prototyp ist in die echte Reisen-Seite portiert.
+`main`/Live unberührt; alles auf `astro-umbau`. **NICHT gepusht** (David pusht + re-indexiert).
+- **Phase 1 (`db7423f`):** `/trips` (+ `/en/trips`) ist jetzt eine **Übersicht** (eine Karte pro Reise:
+  Cover aus erstem Stop-Titelbild, Eyebrow=Meta, Stopp-Anzahl, 1 Satz, „bald"-Badge) → `/trips/<slug>`.
+  Reise-Tabs entfallen. `tripCover()` in `lib/trips.ts`, `TripsOverview.astro`, EN-Detailroute ergänzt.
+- **Phase 2 (`1a459b6`):** **`TripTimeline.tsx`** = Variante-B-Mechanik 1:1 (Single-Scroll, sticky Kopf+
+  Karte, Fokus-Dimming mit aktiver = gerahmter Karte, Fortschrittslinie, mitlaufende Karte + station-
+  treues Fahrzeug, Reveals, Mobile) **+ alle echten Fähigkeiten** (useTina + `data-tina-field` +
+  Editor-Scroll-Sync, DE/EN, 5 Karten-Stile live, scrollZoom, Marker/flyTo/fitBounds/Sprach-Labels,
+  CSS-Crop-Hero, Filmstreifen→Lightbox, Video+YouTube, verknüpftes Album, Reisefazit-Galerie).
+  `lib/vehicles.ts` (Expedition/Pickup/Jeep), `trips-timeline.css`. Flug/Etappen = ruhender Code
+  (nicht im Schema → reale Reisen = reine Fahrt).
+- **Phase 3 (`63018b3`):** Tina-Schema backward-kompatibel: Station-`kind` (ohne = Hauptstation),
+  Reise-`vehicle` (+ `vehicle_custom_svg`, ohne = Expedition), 4 globale Regler in `reisen_settings`
+  (`spotlight_strength` 70, `dim_fade_ms` 800, `reveal_ms` 800, `snap_enabled` aus). Detailseiten lesen
+  sie (Fallback = Defaults) → Props an TripTimeline.
+- **Phase 4 (Media):** Befund — **keine Änderung nötig.** `media.tina.mediaRoot='uploads'`,
+  `publicFolder='public'` (= ganze Repo-Mediathek), **keine einschränkenden `uploadDir`-Unterordner**;
+  Foto-Felder speichern nach `directory:''` (Wurzel). (Offen/Folge: „Aus Mediathek wählen" in den
+  Crop/Single/Bulk-Foto-Feldern — bisher nur StoryBody hat den Mediathek-Picker.)
+- **Phase 5 (`626dcdc`):** `tina-lock.json` deterministisch neu (`tinacms dev --no-server`, 2× md5
+  `6b52077…`). Offline-Build grün (42 Seiten). Alte `TripsContent.tsx` verwaist (bleibt bis Abnahme).
+- **⚠️ David:** Push (GitHub Desktop) → **Tina-Cloud-Re-Index** (sonst Cloudflare „local schema doesn't
+  match remote"). Danach live testen (Handy/iPad/Mac-Safari).
+
 ## 2026-06-12 — Prototyp Variante B: aktive Station als Karte + Defaults 800/800
 - Reiner Prototyp (`/proto/reisen-timeline`); echte `/trips`-Seite, Tina-Schema, Content unberührt.
 - **Reveal-Default 420→800** (`a853594`): beide eingefrorenen Defaults (Übergang + Reveal) jetzt 800 ms.

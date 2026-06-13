@@ -1,8 +1,16 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-12** · letzter Commit `52b3890` (Branch `astro-umbau`) ·
-> **Aktive Station = gerahmte, angehobene Karte** (Ring + Schatten aus dem globalen Frame-Design,
-> `--ww-ring`/`--ww-shadow`; layout-stabil, fluffig); eingefrorene Defaults Übergang **800** + Reveal **800**. ·
+> **Stand: 2026-06-13** · letzter Commit `626dcdc` (Branch `astro-umbau`) ·
+> **🧭 REISEN-UMBAU LIVE (Variante B, capability-locked):** Der Timeline-Prototyp ist in die ECHTE Reisen-Seite
+> portiert. **`/trips` = Übersicht** (Karte pro Reise) → **`/trips/<slug>` = vertikale Timeline** (`TripTimeline.tsx`):
+> Fokus-Dimming (aktive = gerahmte Karte), mitlaufende Karte + station-treues Fahrzeug (Silhouette wählbar:
+> Expedition/Pickup/Jeep), Fortschrittslinie, Reveals, Mobile — **plus** alle Alt-Fähigkeiten (useTina + data-tina-field
+> + Editor-Sync, DE/EN, 5 Karten-Stile live, scrollZoom, CSS-Crop-Hero, Filmstreifen→Lightbox, Video/YouTube,
+> verknüpftes Album, Reisefazit-Galerie). Reise-Tabs entfallen. Tina-Schema backward-kompatibel erweitert
+> (`kind`/`vehicle`/`vehicle_custom_svg` + 4 globale Regler in `reisen_settings`, Defaults eingefroren).
+> `tina-lock` neu (deterministisch). Offline-Build grün (42 Seiten). Flug/Etappen = ruhender Code (kein Schema-Feld).
+> **⚠️ Offen David:** Push → **Tina-Cloud-Re-Index** → live testen; danach Cleanup der verwaisten `TripsContent.tsx`. ·
+> **Proto** (`/proto/reisen-timeline`) bleibt als Spielwiese bestehen. ·
 > **Mobile-Variante gebaut (< 768px; iPad/Desktop ≥768px unverändert):** Breakpoint über **Breite** (nicht Touch);
 > gestapelt mit schlanker sticky Nav-Zeile (großer Kopf **kollabiert** hinein) + sticky **Mini-Karte** (progressive
 > Route/Fahrzeug/flyTo), ein Scroll-Kontext; Dimming schwächer (≥0.40); Filmstreifen → Swipe-Galerie. **Reveal-Dauer

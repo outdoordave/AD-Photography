@@ -832,3 +832,30 @@ portiert sind:
 - Filmstreifen-Klasse für Zwischenstopp: wirklich „kein Filmstreifen, max. 1 Thumbnail"?
 
 (Schritt B/C/D des echten Umbaus folgen nach Freigabe — der Prototyp dient nur der Anschauung.)
+
+---
+
+# Reisen — Variante-B-Umbau in /trips — Schritt C/D (gebaut 2026-06-13)
+
+**C — Neu gebaut** (Übersicht+Detail; Phasen 1–5, Commits `db7423f`,`1a459b6`,`63018b3`,`626dcdc`).
+Struktur: `/trips` = Übersichts-Karten (ersetzt Reise-Tabs), `/trips/<slug>` = `TripTimeline.tsx`.
+
+**D — Abhak-Vergleich gegen die eingefrorene 18-Punkte-Soll-Liste:**
+- A1 Seitenkopf DE/EN (SettingsHeader): ✅ (auf der Übersicht).
+- A2 Reise-Tabs: ⚠️ **bewusst ersetzt** durch Übersichts-Karten (David-Entscheid; löst Pillen-Überfüllung).
+- A3 Reise-Kopf (Titel/Datum/Meta/Summary, „bald ✦"): ✅ (sticky Kopf der Detailseite; „bald" in der Meta-Zeile + Übersichts-Badge).
+- B4 MapLibre-Insel: ✅ · B5 Marker (aktiv/Popup/Klick→Station): ✅ · B6 fitBounds+flyTo: ✅ ·
+  B7 5 Stile + Live-Wechsel: ✅ (MapStyleWatcher) · B8 Sprach-Labels: ✅ · B9 scrollZoom-Schalter: ✅.
+- C10 Stationen durchblättern: ⚠️ **ersetzt** (horizontale Snap-Bahn + Prev/Next-Pfeile → vertikale Timeline + Scroll; Navigation zusätzlich via Marker-Klick).
+- C11 Stop-Pillen: ⚠️ **ersetzt** (Timeline-Blöcke + Marker-Klick; bewusst kein Schnell-Sprung, David-Entscheid).
+- D12 Stations-Karte (Titel/Datum/Titelbild/Text): ✅ (Hauptstation = voller Block; CSS-Crop-Hero erhalten).
+- D13 weitere Fotos → Lightbox: ✅ (Filmstreifen, Gruppe inkl. Cover) · D14 Video-Loop + YouTube: ✅.
+- E15 verknüpftes Album: ✅ (Link im Kopf) · E16 „Reisefazit"-Galerie: ✅ (unter der Timeline → Lightbox).
+- F17 Daten/DE-EN/GeoJSON: ✅ (viewStops/bi/pickCoord unverändert) · F18 Ortssuche Nominatim: ✅ (Schema unverändert).
+- **Tina-Editing:** useTina-Live + data-tina-field (Kopf/Station/Felder/Galerie) + Editor-Scroll-Sync: ✅.
+- **Neu (über Soll hinaus):** Fokus-Dimming, mitlaufende Karte + Fahrzeug, Fortschrittslinie, Reveals, Mobile-Stack,
+  Stop-Typ `kind`, Fahrzeug-Auswahl, 4 globale Regler.
+- **Bewusst NICHT enthalten** (kein Schema-Feld; Code ruht): Flugetappen-Bögen + Etappen-Trenner (waren Proto-Demo).
+
+**Abnahme offen:** David vergleicht live (Übersicht + je eine Detailseite, Handy/iPad/Mac-Safari) und gibt frei;
+erst dann gilt „fertig portiert" + Cleanup der verwaisten `TripsContent.tsx`. ⚠️/Ersetzungen sind benannt, nicht verschwiegen.
