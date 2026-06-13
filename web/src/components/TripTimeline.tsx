@@ -306,7 +306,10 @@ export default function TripTimeline(props: Props) {
     let stickyBottom = navHRef.current + headHRef.current;
     if (mobile && mapColRef.current) stickyBottom = Math.min(mapColRef.current.getBoundingClientRect().bottom, vh * 0.62);
     else if (headRef.current) stickyBottom = Math.min(Math.max(headRef.current.getBoundingClientRect().bottom, 0), vh);
-    return (stickyBottom + vh) / 2;
+    // Lese-Anker im OBEREN Drittel des sichtbaren Bands (nicht Mitte). Sonst stapeln sich bei
+    // kurzen Stationen (ohne Titelbild / 2-Zeiler) mehrere über der Mitte und der Fokus „startet"
+    // bei einer zu späten Station. Mind. 70px unter dem Sticky-Stapel.
+    return stickyBottom + Math.max(70, (vh - stickyBottom) * 0.18);
   }
 
   function update() {
@@ -319,12 +322,13 @@ export default function TripTimeline(props: Props) {
       const hb = headRef.current ? headRef.current.getBoundingClientRect().bottom : 0;
       miniNavRef.current.classList.toggle('is-collapsed', mobile && hb <= navHRef.current + 48);
     }
+    // Aktive Station = LETZTER Block, dessen Oberkante den Anker bereits passiert hat (klassisches
+    // Scroll-Spy). Robust gegen Blockhöhe: kurze Stationen (kein Bild / 2-Zeiler) verschieben den
+    // Fokus nicht mehr nach vorn. Vor der 1. Station bleibt Station 0 aktiv.
     const blocks = blocksRef.current;
-    let best = 0, bestD = Infinity;
+    let best = 0;
     for (let i = 0; i < blocks.length; i++) {
-      const b = blocks[i];
-      const d = anchorDoc < b.top ? b.top - anchorDoc : anchorDoc > b.bottom ? anchorDoc - b.bottom : 0;
-      if (d < bestD) { bestD = d; best = i; }
+      if (blocks[i].top <= anchorDoc + 1) best = i; else break;
     }
     if (best !== activeRef.current) {
       activeRef.current = best; setActive(best); drawMarkers(); mapFollow(best); animateVehicleTo(best); syncEditorToStop(best);
