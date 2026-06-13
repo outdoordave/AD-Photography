@@ -64,6 +64,34 @@ function buildRoute(geo: GeoStop[]) {
   return { coords, driveSegs, flightArcs, legFlight };
 }
 
+// Durchgehende Routen-Polylinie (Stop 0 -> N) für das PROGRESSIVE Zeichnen: jeder Punkt mit
+// kumulierter Distanz (cum) und Flug-Flag des hinführenden Segments (segFlight); je Stop die
+// Distanz, an der er auf der Linie sitzt (stopDist). Damit kann die „gefahrene" Linie exakt bis
+// zur Fahrzeugposition gezeichnet werden, statt die ganze Route vorab als Balken zu zeigen.
+type RoutePath = { pts: [number, number][]; segFlight: boolean[]; cum: number[]; stopDist: number[]; total: number };
+function buildPath(route: ReturnType<typeof buildRoute>): RoutePath {
+  const { coords, legFlight, flightArcs } = route;
+  const pts: [number, number][] = [];
+  const segFlight: boolean[] = [];
+  const cum: number[] = [];
+  const stopDist: number[] = new Array(coords.length).fill(0);
+  for (let i = 0; i < coords.length; i++) {
+    const c = coords[i];
+    if (!c) { stopDist[i] = cum.length ? cum[cum.length - 1] : 0; continue; }
+    if (!pts.length) { pts.push(c); cum.push(0); stopDist[i] = 0; continue; }
+    const flight = !!legFlight[i];
+    let legPts: [number, number][] | null = null;
+    if (flight) { const arc = flightArcs.find((x) => x.i === i); if (arc) legPts = arc.pts; }
+    if (!legPts) legPts = [pts[pts.length - 1], c];
+    for (let j = 1; j < legPts.length; j++) {
+      const prev = pts[pts.length - 1], p = legPts[j];
+      pts.push(p); cum.push(cum[cum.length - 1] + Math.hypot(p[0] - prev[0], p[1] - prev[1])); segFlight.push(flight);
+    }
+    stopDist[i] = cum[cum.length - 1];
+  }
+  return { pts, segFlight, cum, stopDist, total: cum.length ? cum[cum.length - 1] : 0 };
+}
+
 type LinkedAlbum = { slug: string; name: { de?: string; en?: string } };
 type Props = {
   query: string; variables: object; data: any; lang: Lang;
@@ -133,6 +161,7 @@ export default function TripTimeline(props: Props) {
 
   const carSvg = vehicleSvg(props.vehicleId);
   const routeRef = React.useRef(buildRoute(stops.map((s, i) => ({ lon: s.lon, lat: s.lat, flight: rawStops[i]?.arriveBy === 'flight' }))));
+  const pathRef = React.useRef<RoutePath>(buildPath(routeRef.current));
   const vehicleRef = React.useRef<maplibregl.Marker | null>(null);
   const vehicleIconRef = React.useRef<HTMLSpanElement | null>(null);
   const vehicleModeRef = React.useRef<'car' | 'plane'>('car');
@@ -182,16 +211,48 @@ export default function TripTimeline(props: Props) {
     // Sonst verschwand die Route dauerhaft (Marker sind DOM-Elemente und überleben setStyle,
     // die Linien-Layer NICHT) -> „Auto fährt, aber keine Linie".
     if (!map.isStyleLoaded()) { map.once('idle', drawRoute); return; }
-    const { driveSegs, flightArcs } = routeRef.current;
-    const addLine = (id: string, segs: [number, number][][], dashed: boolean) => {
-      const data2 = { type: 'Feature', properties: {}, geometry: { type: 'MultiLineString', coordinates: segs } } as any;
-      if (map.getSource(id)) { (map.getSource(id) as any).setData(data2); return; }
-      if (!segs.length) return;
-      map.addSource(id, { type: 'geojson', data: data2 });
-      map.addLayer({ id: id + '-layer', type: 'line', source: id, layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#a7672f', 'line-width': dashed ? 2 : 2.5, 'line-opacity': dashed ? 0.6 : 0.8, ...(dashed ? { 'line-dasharray': [1.6, 1.6] } : {}) } });
+    // Progressive Route: leere Quellen + feine Linien anlegen; gezeichnet wird nur die bereits
+    // „gefahrene" Strecke (drawDoneUpTo). Schöner als ein dicker Balken: dünne Linie + weicher
+    // Halo (line-blur) darunter, runde Enden. Flug = gestrichelter Bogen.
+    const empty = { type: 'Feature', properties: {}, geometry: { type: 'MultiLineString', coordinates: [] } } as any;
+    if (!map.getSource('route-done')) map.addSource('route-done', { type: 'geojson', data: empty });
+    if (!map.getSource('route-done-air')) map.addSource('route-done-air', { type: 'geojson', data: empty });
+    if (!map.getLayer('route-done-casing')) map.addLayer({ id: 'route-done-casing', type: 'line', source: 'route-done', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#a7672f', 'line-width': 7, 'line-opacity': 0.16, 'line-blur': 3 } });
+    if (!map.getLayer('route-done-line')) map.addLayer({ id: 'route-done-line', type: 'line', source: 'route-done', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#a7672f', 'line-width': 2.4, 'line-opacity': 0.92 } });
+    if (!map.getLayer('route-done-air-line')) map.addLayer({ id: 'route-done-air-line', type: 'line', source: 'route-done-air', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#a7672f', 'line-width': 2, 'line-opacity': 0.78, 'line-dasharray': [1.5, 1.6] } });
+    drawDoneUpTo(pathRef.current.stopDist[activeRef.current] ?? 0);
+  }
+
+  // „Gefahrene" Strecke bis Distanz d als Linienzüge, getrennt nach Fahrt (drive) und Flug (air),
+  // damit der Flug gestrichelt bleibt. Bricht im Segment, in dem d liegt, exakt ab (interpoliert).
+  function donePolylineRuns(d: number): { drive: [number, number][][]; air: [number, number][][] } {
+    const { pts, segFlight, cum } = pathRef.current;
+    if (pts.length < 2 || d <= 0) return { drive: [], air: [] };
+    const runs: { flight: boolean; line: [number, number][] }[] = [];
+    let cur = { flight: segFlight[0], line: [pts[0]] as [number, number][] };
+    for (let k = 1; k < pts.length; k++) {
+      const fl = segFlight[k - 1];
+      if (fl !== cur.flight) { runs.push(cur); cur = { flight: fl, line: [pts[k - 1]] }; }
+      if (cum[k] <= d) { cur.line.push(pts[k]); }
+      else {
+        const segStart = cum[k - 1], segLen = (cum[k] - segStart) || 1, f = (d - segStart) / segLen;
+        const a = pts[k - 1], b = pts[k];
+        cur.line.push([a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f]);
+        break;
+      }
+    }
+    runs.push(cur);
+    return {
+      drive: runs.filter((r) => !r.flight && r.line.length >= 2).map((r) => r.line),
+      air: runs.filter((r) => r.flight && r.line.length >= 2).map((r) => r.line),
     };
-    addLine('route-drive', driveSegs, false);
-    addLine('route-flight', flightArcs.map((a) => a.pts), true);
+  }
+  function drawDoneUpTo(d: number) {
+    const map = mapRef.current;
+    if (!map || !map.getSource('route-done')) return;
+    const { drive, air } = donePolylineRuns(d);
+    (map.getSource('route-done') as any).setData({ type: 'Feature', properties: {}, geometry: { type: 'MultiLineString', coordinates: drive } });
+    (map.getSource('route-done-air') as any).setData({ type: 'Feature', properties: {}, geometry: { type: 'MultiLineString', coordinates: air } });
   }
 
   function mapFollow(idx: number) {
@@ -232,7 +293,7 @@ export default function TripTimeline(props: Props) {
     if (vehicleModeRef.current !== mode) { icon.innerHTML = flight ? PLANE_SVG : carSvg; icon.classList.toggle('is-plane', flight); vehicleModeRef.current = mode; }
     icon.style.transform = flight ? `rotate(${bearing}deg)` : `scaleX(${dx < 0 ? -1 : 1})`;
   }
-  function placeVehicleAtStop(idx: number) { const c = routeRef.current.coords[idx]; if (c) placeVehicle(c[0], c[1], false, 0, 1); }
+  function placeVehicleAtStop(idx: number) { const c = routeRef.current.coords[idx]; if (c) placeVehicle(c[0], c[1], false, 0, 1); drawDoneUpTo(pathRef.current.stopDist[idx] ?? 0); }
 
   function legPoints(toIdx: number): { pts: [number, number][]; flight: boolean } {
     const { coords, legFlight, flightArcs } = routeRef.current;
@@ -250,7 +311,7 @@ export default function TripTimeline(props: Props) {
       for (let i = 0; i < cs.length; i++) { const c = cs[i]; if (!c) continue; const d = Math.hypot(c[0] - cur.lng, c[1] - cur.lat); if (d < nd) { nd = d; nb = i; } }
       from = nb;
     }
-    if (target === from) { vehicleAtRef.current = target; return; }
+    if (target === from) { vehicleAtRef.current = target; drawDoneUpTo(pathRef.current.stopDist[target] ?? 0); return; }
     if (animRef.current != null) { cancelAnimationFrame(animRef.current); animRef.current = null; }
     if (prefersReduced()) { vehicleAtRef.current = target; placeVehicleAtStop(target); return; }
     const dir = target > from ? 1 : -1;
@@ -266,6 +327,7 @@ export default function TripTimeline(props: Props) {
     for (let j = 1; j < flat.length; j++) { const a = flat[j - 1].p, b = flat[j].p; const d = Math.hypot(b[0] - a[0], b[1] - a[1]); segLen.push(d); total += d; }
     const dur = Math.min(2000, 600 + 500 * Math.abs(target - from));
     const t0 = performance.now();
+    const baseDist = pathRef.current.stopDist[from] ?? 0; // Distanz des Start-Stops auf der Gesamtlinie
     const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
     const stepFn = (now: number) => {
       const u = Math.min(1, (now - t0) / dur); const want = ease(u) * total;
@@ -274,6 +336,7 @@ export default function TripTimeline(props: Props) {
       j = Math.min(j, flat.length - 1);
       const a = flat[j - 1].p, b = flat[j].p; const sl = segLen[j - 1] || 1; const f = (want - acc) / sl;
       placeVehicle(a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, flat[j].flight, bearingDeg(a, b), b[0] - a[0]);
+      drawDoneUpTo(baseDist + dir * want); // Linie wächst/schrumpft synchron mit dem Fahrzeug
       if (u < 1) animRef.current = requestAnimationFrame(stepFn);
       else { animRef.current = null; vehicleAtRef.current = target; placeVehicleAtStop(target); }
     };
@@ -427,6 +490,7 @@ export default function TripTimeline(props: Props) {
   // Reise-/Sprachwechsel: Route neu, Karte neu zeichnen, neu vermessen, Fahrzeug zurücksetzen.
   React.useEffect(() => {
     routeRef.current = buildRoute(stops.map((s, i) => ({ lon: s.lon, lat: s.lat, flight: rawStops[i]?.arriveBy === 'flight' })));
+    pathRef.current = buildPath(routeRef.current);
     activeRef.current = 0; setActive(0); vehicleAtRef.current = 0;
     if (mapRef.current && readyRef.current) { drawRoute(); drawMarkers(); fitAll(); setMapLanguage(mapRef.current, lang); placeVehicleAtStop(0); }
     measure();
