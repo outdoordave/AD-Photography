@@ -160,7 +160,12 @@
       "video": "",
       "youtube": ""
     },
-    {},
+    {
+      "name": "ANC - Airport",
+      "kind": "main",
+      "arriveBy": "drive",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-149.980156,61.174513]}"
+    },
     {}
   ],
   "gallery": []
