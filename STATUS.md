@@ -1,6 +1,8 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-13** · letzter Commit `626dcdc` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-13** · letzter Commit `80a84d9` (Branch `astro-umbau`) ·
+> **Fix:** aktive Station bei kurzen Stationen (kein Titelbild / 2-Zeiler) korrigiert — Scroll-Spy „letzter Block
+> über dem Anker" + Lese-Anker im oberen Drittel (vorher startete der Fokus zu spät). ·
 > **🧭 REISEN-UMBAU LIVE (Variante B, capability-locked):** Der Timeline-Prototyp ist in die ECHTE Reisen-Seite
 > portiert. **`/trips` = Übersicht** (Karte pro Reise) → **`/trips/<slug>` = vertikale Timeline** (`TripTimeline.tsx`):
 > Fokus-Dimming (aktive = gerahmte Karte), mitlaufende Karte + station-treues Fahrzeug (Silhouette wählbar:

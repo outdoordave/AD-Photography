@@ -40,6 +40,9 @@ Der große finale Umbau — der abgestimmte Timeline-Prototyp ist in die echte R
   Crop/Single/Bulk-Foto-Feldern — bisher nur StoryBody hat den Mediathek-Picker.)
 - **Phase 5 (`626dcdc`):** `tina-lock.json` deterministisch neu (`tinacms dev --no-server`, 2× md5
   `6b52077…`). Offline-Build grün (42 Seiten). Alte `TripsContent.tsx` verwaist (bleibt bis Abnahme).
+- **Fix (`80a84d9`):** aktive Station robust bei **kurzen** Stationen (ohne Titelbild / 2-Zeiler) — Lese-Anker
+  ins obere Drittel + aktive Station = letzter Block, dessen Oberkante den Anker passiert hat (vorher war bei
+  kurzen Blöcken oben schon eine spätere Station aktiv).
 - **⚠️ David:** Push (GitHub Desktop) → **Tina-Cloud-Re-Index** (sonst Cloudflare „local schema doesn't
   match remote"). Danach live testen (Handy/iPad/Mac-Safari).
 
