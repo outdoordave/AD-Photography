@@ -373,6 +373,14 @@ export default defineConfig({
                   { value: 'intermediate', label: 'Zwischenstopp' },
                 ],
               },
+              {
+                type: 'string', name: 'arriveBy', label: 'Anreise zu dieser Station',
+                description: 'Wie diese Station vom vorherigen Stopp erreicht wird. Fahrt = durchgezogene Linie + Auto. Flug = gekrümmter, gestrichelter Bogen + Flugzeug (zoomt heraus). Leer = Fahrt.',
+                options: [
+                  { value: 'drive', label: 'Fahrt (Auto)' },
+                  { value: 'flight', label: 'Flug (Flugzeug)' },
+                ],
+              },
               { type: 'string', name: 'location', label: '📍 Ort auf der Karte', description: 'Suchen & auf der Karte feinjustieren.', ui: { component: LocationSearchField } },
               { type: 'string', name: 'title_de', label: 'Stations-Titel' },
               { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
