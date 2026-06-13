@@ -1,8 +1,11 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-13** · letzter Commit `5407d74` (Branch `astro-umbau`) ·
-> **Karte (`5407d74`):** **Sanfte Kurven** (Catmull-Rom-Spline durch die Stops, `curveLeg`; Auto folgt der
-> Kurve) statt Geraden; **Apple-like** Optik (Schein + heller Rand + schlanke, leicht durchsichtige Linie);
+> **Stand: 2026-06-13** · letzter Commit `217223c` (Branch `astro-umbau`) ·
+> **Karte (`1368443`):** Kurven-Haken behoben — **zentripetale** Catmull-Rom (kein Überschwingen bei eng/spitzen
+> Stops, z. B. Yosemite↔Tahoe). **Content (`217223c`):** Alaska-Etappe **Tahoe→Anchorage = Flug** (`arriveBy`).
+> Hinweis: `arriveBy` ist ein **manuelles Pro-Station-Feld** (CMS „Anreise: Flug") — ohne Wert = Fahrt.
+> **Karte (`5407d74`):** **Sanfte Kurven** (Catmull-Rom durch die Stops, `curveLeg`; Auto folgt der Kurve)
+> statt Geraden; **Apple-like** Optik (Schein + heller Rand + schlanke, leicht durchsichtige Linie);
 > **Fluganimation** zoomt erst voll heraus, dann fliegt das Flugzeug langsam & sanft (Verzögerung, easeSine).
 > **Karte (`0807cb5`):** Routenlinie **wächst progressiv mit der Reise** (Station↔Station synchron zum
 > Fahrzeug, schrumpft beim Zurückscrollen) statt vorab als Balken. `buildPath`/`drawDoneUpTo`.

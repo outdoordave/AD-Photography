@@ -17,6 +17,17 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 19:49 — Reisen-Karte: Kurven-Haken weg + Alaska-Flug gesetzt
+- **Kurven-Haken behoben (`1368443`):** uniforme Catmull-Rom machte bei eng/spitzwinklig liegenden Stops
+  einen „Haken"/Schlaufe (z. B. Yosemite↔Lake Tahoe) → ersetzt durch **zentripetale** Catmull-Rom
+  (alpha=0.5, Knoten nach √Distanz, eps-geschützt) → keine Cusps/Selbstschnitte, kurze Etappen krümmen sanft.
+- **Alaska-Flug (`217223c`):** Etappe **Lake Tahoe → Anchorage** auf `arriveBy: flight` gesetzt
+  (`web/src/data/trips/alaska2026.json`). Ohne Wert wurde sie als Fahrt behandelt (schnippte ohne Flugzeug
+  nach ANC). Jetzt: Flugzeug-Symbol + Bogen + Voll-Rauszoomen + langsame Flug-Animation. **`arriveBy` ist ein
+  manuelles Pro-Station-Feld** (CMS „Anreise: Flug"); Verkabelung war ok, nur der Wert fehlte im Content.
+- Build grün (42 Seiten). Kein Schema-Change.
+- Commits: `1368443`, `217223c`
+
 ## 2026-06-13 19:27 — Reisen-Karte: sanfte Kurven + Apple-like Linie + langsamere Fluganimation
 - **Sanfte Kurven (Radien):** Fahr-Linie als uniforme **Catmull-Rom-Spline** durch die Stops (`curveLeg`);
   Nachbar-Stops = Tangenten, über Flug-/Lückengrenzen nicht gekrümmt. **Eine** Punktquelle je Etappe
