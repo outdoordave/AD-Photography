@@ -1,15 +1,15 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-13** · letzter Commit `28356fe` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-13** · letzter Commit `64951a2` (Branch `astro-umbau`) ·
+> **Fix (`64951a2`):** Im CMS klappte die **Site-Nav** im schmalen Vorschau-Iframe (<860px) zum Burger
+> → jetzt waagerecht gehalten via `html.ww-cms-preview` (nur im Iframe gesetzt). **Live/Besucher 1:1.**
+> Kein Schema-Change. (War keine Folge früherer Commits, sondern die responsive Nav.)
 > **Fix (`28356fe`):** Routenlinie verschwand im CMS-Vorschau-Iframe / nach Live-Kartenstil-Wechsel
 > (`setStyle` löscht Layer; Marker überleben als DOM, Linie nicht) → „Auto fuhr ohne Linie". `drawRoute`
 > jetzt selbst-heilend beim nächsten `idle`; Stilwechsel-Effekt nutzt `idle`. Kein Schema-Change.
 > **CMS-Nachschärfung:** „Aus Mediathek wählen" in allen Foto-Feldern (vorhandene `/uploads`-WebPs wählen statt
 > doppelt hochladen; gemeinsamer MediaPicker). Neues Stop-Feld **`arriveBy`** (Fahrt/Flug) → Auto vs. Flugzeug
 > pro Station steuerbar (aktiviert den Flug-Bogen/-Zoom). `tina-lock` neu → **Re-Index nötig**. ·
-> **🔎 Offen/Beobachtung:** David meldet, im CMS sei die **obere Hauptleiste nicht mehr sichtbar** (Navigation nur
-> noch über Burger-Menü) — Ursache statisch nicht belegbar (kein Code-Fund); Rückfrage an David offen, welche Leiste
-> genau (Tina-Collection-Nav / Editier-Toolbar / Site-Nav in der Vorschau) + Screenshot. ·
 > **Fix:** aktive Station bei kurzen Stationen (kein Titelbild / 2-Zeiler) korrigiert — Scroll-Spy „letzter Block
 > über dem Anker" + Lese-Anker im oberen Drittel (vorher startete der Fokus zu spät). ·
 > **🧭 REISEN-UMBAU LIVE (Variante B, capability-locked):** Der Timeline-Prototyp ist in die ECHTE Reisen-Seite

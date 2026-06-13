@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 17:50 — CMS-Komfort: Site-Nav im Vorschau-Iframe waagerecht (kein Burger)
+- Im schmalen Tina-Vorschau-Fenster (<860px Breakpoint, 1:1 aus alter `index.html`) zeigte die Seite
+  ihre **mobile Burger-Nav** → Seitenwechsel im CMS nur übers Burger-Menü. Keine Folge früherer Commits,
+  sondern die responsive Nav, die auf die schmale Iframe-Breite reagiert (live unberührt).
+- Fix: `SiteNav` setzt `html.ww-cms-preview` **nur**, wenn die Seite in einem Iframe läuft
+  (`window.self !== window.top`); CSS hält die Nav dort waagerecht (scrollt notfalls horizontal).
+  **Live-Seite = oberstes Fenster → Besucher/Live exakt wie bisher.** Kein Schema-Change.
+- Dateien: `web/src/components/SiteNav.astro`, `web/src/styles/global.css`. Build grün (42 Seiten).
+- Commit: `64951a2`
+
 ## 2026-06-13 17:43 — Reisen-Fix: Routenlinie verschwand (Auto fuhr ohne Linie)
 - Route (Linien-Layer) wurde nur einmal beim `load` gezeichnet und bei `isStyleLoaded()===false`
   still verworfen. Im **CMS-Vorschau-Iframe** und direkt nach einem **Live-Kartenstil-Wechsel**
