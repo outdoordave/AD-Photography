@@ -176,7 +176,12 @@ export default function TripTimeline(props: Props) {
 
   function drawRoute() {
     const map = mapRef.current;
-    if (!map || !map.isStyleLoaded()) return;
+    if (!map) return;
+    // Robust gegen Race: Ist der Stil noch nicht fertig (passiert im CMS-Vorschau-Iframe und
+    // direkt nach einem Live-Stilwechsel via setStyle), beim nächsten 'idle' erneut zeichnen.
+    // Sonst verschwand die Route dauerhaft (Marker sind DOM-Elemente und überleben setStyle,
+    // die Linien-Layer NICHT) -> „Auto fährt, aber keine Linie".
+    if (!map.isStyleLoaded()) { map.once('idle', drawRoute); return; }
     const { driveSegs, flightArcs } = routeRef.current;
     const addLine = (id: string, segs: [number, number][][], dashed: boolean) => {
       const data2 = { type: 'Feature', properties: {}, geometry: { type: 'MultiLineString', coordinates: segs } } as any;
@@ -393,7 +398,9 @@ export default function TripTimeline(props: Props) {
     if (!map || !readyRef.current || styleUrlRef.current === styleUrl) return;
     styleUrlRef.current = styleUrl;
     map.setStyle(styleUrl);
-    map.once('styledata', () => { if (map.isStyleLoaded()) { setMapLanguage(map, lang); drawRoute(); } });
+    // 'idle' (statt 'styledata') feuert erst, wenn der neue Stil + erstes Rendering fertig sind ->
+    // isStyleLoaded() ist dann zuverlässig true, Labels + Route werden sicher neu gezeichnet.
+    map.once('idle', () => { setMapLanguage(map, lang); drawRoute(); });
   }, [styleUrl, lang]);
 
   // Scroll/Resize (rAF), Snap beim Ruhen (nur wenn aktiviert), Nutzer-Input bricht Snap ab.
