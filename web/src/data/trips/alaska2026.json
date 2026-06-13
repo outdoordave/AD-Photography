@@ -12,7 +12,7 @@
     {
       "name": "Dresden",
       "kind": "main",
-      "arriveBy": "drive",
+      "arriveBy": "flight",
       "location": "{\"type\":\"Point\",\"coordinates\":[13.769481,51.134299]}",
       "title_de": "DRS Flughafen ",
       "date_de": "23.10.",
