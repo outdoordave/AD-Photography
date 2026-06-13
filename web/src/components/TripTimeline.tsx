@@ -48,16 +48,23 @@ function bearingDeg(a: [number, number], b: [number, number]) {
   const dEast = (b[0] - a[0]) * Math.cos(((a[1] + b[1]) / 2) * Math.PI / 180);
   return Math.atan2(dEast, b[1] - a[1]) * 180 / Math.PI;
 }
-// Sanfte Kurve (uniforme Catmull-Rom) für EINE Fahr-Etappe p1->p2; p0/p3 = Nachbar-Stops liefern
-// die Tangenten -> geschwungene Bögen statt geknickter Geraden. n+1 Punkte inkl. p1 und p2.
+// Sanfte Kurve für EINE Fahr-Etappe p1->p2; p0/p3 = Nachbar-Stops liefern die Tangenten.
+// ZENTRIPETALE Catmull-Rom (alpha=0.5): verhindert die „Haken"/Schlaufen, die die uniforme
+// Variante bei eng oder spitzwinklig liegenden Stops macht (z. B. Yosemite↔Lake Tahoe).
 const CURVE_SAMPLES = 18;
 function curveLeg(p0: [number, number], p1: [number, number], p2: [number, number], p3: [number, number], n: number): [number, number][] {
+  const lerp = (a: [number, number], b: [number, number], u: number): [number, number] => [a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u];
+  const knot = (ti: number, a: [number, number], b: [number, number]) => ti + Math.max(1e-9, Math.sqrt(Math.hypot(b[0] - a[0], b[1] - a[1]))); // dt^0.5
+  const t0 = 0, t1 = knot(t0, p0, p1), t2 = knot(t1, p1, p2), t3 = knot(t2, p2, p3);
   const out: [number, number][] = [];
   for (let s = 0; s <= n; s++) {
-    const t = s / n, t2 = t * t, t3 = t2 * t;
-    const cx = 0.5 * (2 * p1[0] + (-p0[0] + p2[0]) * t + (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 + (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3);
-    const cy = 0.5 * (2 * p1[1] + (-p0[1] + p2[1]) * t + (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 + (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3);
-    out.push([cx, cy]);
+    const t = t1 + (t2 - t1) * (s / n);
+    const a1 = lerp(p0, p1, (t - t0) / (t1 - t0));
+    const a2 = lerp(p1, p2, (t - t1) / (t2 - t1));
+    const a3 = lerp(p2, p3, (t - t2) / (t3 - t2));
+    const b1 = lerp(a1, a2, (t - t0) / (t2 - t0));
+    const b2 = lerp(a2, a3, (t - t1) / (t3 - t1));
+    out.push(lerp(b1, b2, (t - t1) / (t2 - t1)));
   }
   return out;
 }
