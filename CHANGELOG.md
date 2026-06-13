@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 — CMS: Mediathek-Auswahl in Foto-Feldern + Auto/Flugzeug pro Station
+- **Mediathek-Picker** (`c6758ab`): „🖼️ Aus Mediathek wählen" jetzt in **allen** Foto-Feldern
+  (Titelbild/Crop, weitere Fotos/Bulk, Einzelfoto) — Raster aller vorhandenen `/uploads`-Bilder
+  (`uploads-manifest.json`, wie im Story-Textfeld). Vorhandene WebPs **auswählen statt doppelt
+  hochladen**; gemeinsamer `tina/fields/MediaPicker.tsx`. Kein Schema-Change.
+- **Auto vs. Flugzeug** (`f2d44e5`): neues Stop-Feld **`arriveBy`** (Fahrt/Flug). „Flug" → gekrümmter
+  gestrichelter Bogen + Flugzeug-Symbol + Raus-Zoom (aktiviert den bereits vorhandenen Flug-Code);
+  leer = Fahrt (backward-kompatibel). `tina-lock` deterministisch neu (`7fbea65…`).
+- **⚠️ David:** Push → **Tina-Cloud-Re-Index** (Schema-Änderung `arriveBy`).
+
 ## 2026-06-13 — Reisen-Umbau: Variante B live in /trips (Übersicht + Detail), capability-locked
 Der große finale Umbau — der abgestimmte Timeline-Prototyp ist in die echte Reisen-Seite portiert.
 `main`/Live unberührt; alles auf `astro-umbau`. **NICHT gepusht** (David pusht + re-indexiert).
