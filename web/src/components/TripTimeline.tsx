@@ -48,20 +48,42 @@ function bearingDeg(a: [number, number], b: [number, number]) {
   const dEast = (b[0] - a[0]) * Math.cos(((a[1] + b[1]) / 2) * Math.PI / 180);
   return Math.atan2(dEast, b[1] - a[1]) * 180 / Math.PI;
 }
+// Sanfte Kurve (uniforme Catmull-Rom) für EINE Fahr-Etappe p1->p2; p0/p3 = Nachbar-Stops liefern
+// die Tangenten -> geschwungene Bögen statt geknickter Geraden. n+1 Punkte inkl. p1 und p2.
+const CURVE_SAMPLES = 18;
+function curveLeg(p0: [number, number], p1: [number, number], p2: [number, number], p3: [number, number], n: number): [number, number][] {
+  const out: [number, number][] = [];
+  for (let s = 0; s <= n; s++) {
+    const t = s / n, t2 = t * t, t3 = t2 * t;
+    const cx = 0.5 * (2 * p1[0] + (-p0[0] + p2[0]) * t + (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 + (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3);
+    const cy = 0.5 * (2 * p1[1] + (-p0[1] + p2[1]) * t + (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 + (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3);
+    out.push([cx, cy]);
+  }
+  return out;
+}
+
 type GeoStop = { lon: number | null; lat: number | null; flight: boolean };
 function buildRoute(geo: GeoStop[]) {
   const coords: ([number, number] | null)[] = geo.map((g) => (g.lon != null && g.lat != null ? [g.lon, g.lat] : null));
-  const driveSegs: [number, number][][] = [];
   const flightArcs: { i: number; pts: [number, number][] }[] = [];
   const legFlight: boolean[] = [false];
   for (let i = 1; i < coords.length; i++) {
-    const a = coords[i - 1], b = coords[i];
     legFlight[i] = geo[i].flight;
-    if (!a || !b) continue;
-    if (geo[i].flight) flightArcs.push({ i, pts: arcPoints(a, b, 0.15, 48) });
-    else driveSegs.push([a, b]);
+    const a = coords[i - 1], b = coords[i];
+    if (a && b && geo[i].flight) flightArcs.push({ i, pts: arcPoints(a, b, 0.15, 48) });
   }
-  return { coords, driveSegs, flightArcs, legFlight };
+  // Punktliste je Etappe (EINE Quelle für Linie + Fahrzeug): Fahrt = sanfte Kurve, Flug = Bogen.
+  // Über Flug-/Lückengrenzen wird nicht gekrümmt (Tangente am Rand = Sehne).
+  const legPts: ([number, number][] | null)[] = new Array(coords.length).fill(null);
+  for (let i = 1; i < coords.length; i++) {
+    const a = coords[i - 1], b = coords[i];
+    if (!a || !b) continue;
+    if (legFlight[i]) { const arc = flightArcs.find((x) => x.i === i); legPts[i] = arc ? arc.pts : [a, b]; continue; }
+    const prev = (coords[i - 2] && !legFlight[i - 1]) ? (coords[i - 2] as [number, number]) : a;
+    const next = (coords[i + 1] && !legFlight[i + 1]) ? (coords[i + 1] as [number, number]) : b;
+    legPts[i] = curveLeg(prev, a, b, next, CURVE_SAMPLES);
+  }
+  return { coords, flightArcs, legFlight, legPts };
 }
 
 // Durchgehende Routen-Polylinie (Stop 0 -> N) für das PROGRESSIVE Zeichnen: jeder Punkt mit
@@ -70,7 +92,7 @@ function buildRoute(geo: GeoStop[]) {
 // zur Fahrzeugposition gezeichnet werden, statt die ganze Route vorab als Balken zu zeigen.
 type RoutePath = { pts: [number, number][]; segFlight: boolean[]; cum: number[]; stopDist: number[]; total: number };
 function buildPath(route: ReturnType<typeof buildRoute>): RoutePath {
-  const { coords, legFlight, flightArcs } = route;
+  const { coords, legFlight, legPts: routeLegPts } = route;
   const pts: [number, number][] = [];
   const segFlight: boolean[] = [];
   const cum: number[] = [];
@@ -80,9 +102,7 @@ function buildPath(route: ReturnType<typeof buildRoute>): RoutePath {
     if (!c) { stopDist[i] = cum.length ? cum[cum.length - 1] : 0; continue; }
     if (!pts.length) { pts.push(c); cum.push(0); stopDist[i] = 0; continue; }
     const flight = !!legFlight[i];
-    let legPts: [number, number][] | null = null;
-    if (flight) { const arc = flightArcs.find((x) => x.i === i); if (arc) legPts = arc.pts; }
-    if (!legPts) legPts = [pts[pts.length - 1], c];
+    const legPts = (routeLegPts[i] && routeLegPts[i]!.length) ? routeLegPts[i]! : [pts[pts.length - 1], c];
     for (let j = 1; j < legPts.length; j++) {
       const prev = pts[pts.length - 1], p = legPts[j];
       pts.push(p); cum.push(cum[cum.length - 1] + Math.hypot(p[0] - prev[0], p[1] - prev[1])); segFlight.push(flight);
@@ -211,15 +231,18 @@ export default function TripTimeline(props: Props) {
     // Sonst verschwand die Route dauerhaft (Marker sind DOM-Elemente und überleben setStyle,
     // die Linien-Layer NICHT) -> „Auto fährt, aber keine Linie".
     if (!map.isStyleLoaded()) { map.once('idle', drawRoute); return; }
-    // Progressive Route: leere Quellen + feine Linien anlegen; gezeichnet wird nur die bereits
-    // „gefahrene" Strecke (drawDoneUpTo). Schöner als ein dicker Balken: dünne Linie + weicher
-    // Halo (line-blur) darunter, runde Enden. Flug = gestrichelter Bogen.
+    // Progressive Route, Apple-like: gezeichnet wird nur die bereits „gefahrene" Strecke
+    // (drawDoneUpTo). Statt dickem Balken -> dezenter Schein (glow) + heller Rand (casing) +
+    // schlanke, leicht durchsichtige Linie, runde Enden. Flug = gestrichelter Bogen auf hellem Track.
     const empty = { type: 'Feature', properties: {}, geometry: { type: 'MultiLineString', coordinates: [] } } as any;
+    const round = { 'line-cap': 'round' as const, 'line-join': 'round' as const };
     if (!map.getSource('route-done')) map.addSource('route-done', { type: 'geojson', data: empty });
     if (!map.getSource('route-done-air')) map.addSource('route-done-air', { type: 'geojson', data: empty });
-    if (!map.getLayer('route-done-casing')) map.addLayer({ id: 'route-done-casing', type: 'line', source: 'route-done', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#a7672f', 'line-width': 7, 'line-opacity': 0.16, 'line-blur': 3 } });
-    if (!map.getLayer('route-done-line')) map.addLayer({ id: 'route-done-line', type: 'line', source: 'route-done', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#a7672f', 'line-width': 2.4, 'line-opacity': 0.92 } });
-    if (!map.getLayer('route-done-air-line')) map.addLayer({ id: 'route-done-air-line', type: 'line', source: 'route-done-air', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#a7672f', 'line-width': 2, 'line-opacity': 0.78, 'line-dasharray': [1.5, 1.6] } });
+    if (!map.getLayer('route-done-glow')) map.addLayer({ id: 'route-done-glow', type: 'line', source: 'route-done', layout: round, paint: { 'line-color': '#a7672f', 'line-width': 9, 'line-opacity': 0.10, 'line-blur': 4 } });
+    if (!map.getLayer('route-done-casing')) map.addLayer({ id: 'route-done-casing', type: 'line', source: 'route-done', layout: round, paint: { 'line-color': '#fbf7f0', 'line-width': 6, 'line-opacity': 0.5, 'line-blur': 0.5 } });
+    if (!map.getLayer('route-done-line')) map.addLayer({ id: 'route-done-line', type: 'line', source: 'route-done', layout: round, paint: { 'line-color': '#a7672f', 'line-width': 3, 'line-opacity': 0.82 } });
+    if (!map.getLayer('route-done-air-casing')) map.addLayer({ id: 'route-done-air-casing', type: 'line', source: 'route-done-air', layout: round, paint: { 'line-color': '#fbf7f0', 'line-width': 5, 'line-opacity': 0.32 } });
+    if (!map.getLayer('route-done-air-line')) map.addLayer({ id: 'route-done-air-line', type: 'line', source: 'route-done-air', layout: round, paint: { 'line-color': '#a7672f', 'line-width': 2.6, 'line-opacity': 0.72, 'line-dasharray': [1.4, 1.7] } });
     drawDoneUpTo(pathRef.current.stopDist[activeRef.current] ?? 0);
   }
 
@@ -264,7 +287,7 @@ export default function TripTimeline(props: Props) {
       const j = arrFlight ? idx : idx + 1;
       const arc = routeRef.current.flightArcs.find((x) => x.i === j);
       const pts = arc ? arc.pts : ([routeRef.current.coords[j - 1], routeRef.current.coords[j]].filter(Boolean) as [number, number][]);
-      if (pts.length) { const b = new maplibregl.LngLatBounds(); pts.forEach((p) => b.extend(p)); map.fitBounds(b, { padding: 70, duration: prefersReduced() ? 0 : 900 }); if (prefersReduced()) placeVehicleAtStop(idx); return; }
+      if (pts.length) { const b = new maplibregl.LngLatBounds(); pts.forEach((p) => b.extend(p)); map.fitBounds(b, { padding: 100, maxZoom: 6, duration: prefersReduced() ? 0 : 1100 }); if (prefersReduced()) placeVehicleAtStop(idx); return; }
     }
     if (prefersReduced()) { map.jumpTo({ center: [s.lon, s.lat] }); placeVehicleAtStop(idx); return; }
     map.flyTo({ center: [s.lon, s.lat], zoom: Math.max(map.getZoom(), 4.2), duration: 800, essential: true });
@@ -296,8 +319,9 @@ export default function TripTimeline(props: Props) {
   function placeVehicleAtStop(idx: number) { const c = routeRef.current.coords[idx]; if (c) placeVehicle(c[0], c[1], false, 0, 1); drawDoneUpTo(pathRef.current.stopDist[idx] ?? 0); }
 
   function legPoints(toIdx: number): { pts: [number, number][]; flight: boolean } {
-    const { coords, legFlight, flightArcs } = routeRef.current;
-    if (legFlight[toIdx]) { const arc = flightArcs.find((x) => x.i === toIdx); if (arc) return { pts: arc.pts, flight: true }; }
+    const { coords, legFlight, legPts } = routeRef.current;
+    const lp = legPts[toIdx];
+    if (lp && lp.length) return { pts: lp, flight: !!legFlight[toIdx] };
     const a = coords[toIdx - 1], b = coords[toIdx];
     return { pts: (a && b ? [a, b] : []) as [number, number][], flight: !!legFlight[toIdx] };
   }
@@ -325,12 +349,18 @@ export default function TripTimeline(props: Props) {
     if (flat.length < 2) { vehicleAtRef.current = target; placeVehicleAtStop(target); return; }
     const segLen: number[] = []; let total = 0;
     for (let j = 1; j < flat.length; j++) { const a = flat[j - 1].p, b = flat[j].p; const d = Math.hypot(b[0] - a[0], b[1] - a[1]); segLen.push(d); total += d; }
-    const dur = Math.min(2000, 600 + 500 * Math.abs(target - from));
-    const t0 = performance.now();
+    // Flug-Etappe? Dann deutlich LANGSAMER + sanfter (easeInOutSine) und mit kurzer Verzögerung,
+    // damit die Karte zuerst herauszoomt (Start + Ziel sichtbar), bevor das Flugzeug losfliegt.
+    const isFlightAnim = flat.some((f) => f.flight);
+    const dur = isFlightAnim ? Math.min(3400, 1900 + 750 * Math.abs(target - from)) : Math.min(2000, 600 + 500 * Math.abs(target - from));
+    const delay = isFlightAnim ? 700 : 0; // Zoom-out zuerst (siehe mapFollow-Dauer)
+    const t0 = performance.now() + delay;
     const baseDist = pathRef.current.stopDist[from] ?? 0; // Distanz des Start-Stops auf der Gesamtlinie
-    const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+    const easeCubic = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+    const easeSine = (x: number) => -(Math.cos(Math.PI * x) - 1) / 2; // gemächlich rein/raus
+    const ease = isFlightAnim ? easeSine : easeCubic;
     const stepFn = (now: number) => {
-      const u = Math.min(1, (now - t0) / dur); const want = ease(u) * total;
+      const u = Math.max(0, Math.min(1, (now - t0) / dur)); const want = ease(u) * total;
       let acc = 0, j = 1;
       while (j < flat.length && acc + segLen[j - 1] < want) { acc += segLen[j - 1]; j++; }
       j = Math.min(j, flat.length - 1);
