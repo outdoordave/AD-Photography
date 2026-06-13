@@ -77,6 +77,7 @@
     {
       "name": "Anchorage",
       "location": "{\"type\":\"Point\",\"coordinates\":[-149.9,61.22]}",
+      "arriveBy": "flight",
       "photos": [],
       "video": "",
       "youtube": "",
