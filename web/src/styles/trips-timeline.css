@@ -104,10 +104,7 @@
               box-shadow var(--ww-dim-fade, 800ms) cubic-bezier(0.22, 1, 0.36, 1),
               background-color var(--ww-dim-fade, 800ms) cubic-bezier(0.22, 1, 0.36, 1);
 }
-/* Aktive Karte: WEICHER Rahmen statt harter Ring-Linie (var(--ww-ring) war eine harte 1–2px-Kante,
-   die beim Hochscrollen unter den Kopf hart „durchflog"). Gefederte, halbtransparente Kante + dezenter
-   Schein + Schatten -> Rahmen bleibt erkennbar, gleitet aber ohne harte Kante unter die weiche Kopfkante. */
-.tl-stop.is-active .tl-body { opacity: 1; transform: none; position: relative; z-index: 3; background: var(--c-bg-alt, #efe6d6); box-shadow: 0 0 0 1px rgba(216,202,178,0.38), 0 0 6px 1px rgba(216,202,178,0.22), var(--ww-shadow); }
+.tl-stop.is-active .tl-body { opacity: 1; transform: none; position: relative; z-index: 3; background: var(--c-bg-alt, #efe6d6); box-shadow: var(--ww-ring), var(--ww-shadow); }
 .tl-step { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 6px; }
 .tl-title { font-family: var(--font-display); font-weight: var(--fw-medium); line-height: 1.2; margin-bottom: 4px; }
 .tl-date { font-size: var(--fs-label); color: var(--c-ink-soft); margin-bottom: 12px; }
