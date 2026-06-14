@@ -678,8 +678,8 @@ export default function TripTimeline(props: Props) {
             <div className="tl-editbar" aria-hidden="true">
               <div className="tl-editbar-head">
                 <span className="tl-editbar-title">Stationen</span>
-                <button type="button" className="tl-editbar-manage" data-tina-field={tinaField(trip, 'stops_manager')}
-                  title="Station hinzufügen / sortieren — springt zum Stationen-Manager im Formular">+ Station / sortieren</button>
+                <button type="button" className="tl-editbar-manage" data-tina-field={tinaField(trip, 'stops')}
+                  title="Station hinzufügen / sortieren — springt zur Stationen-Liste dieser Reise im Formular">+ Station / sortieren</button>
               </div>
               <div className="tl-editbar-chips">
                 {stops.map((s, i) => {
