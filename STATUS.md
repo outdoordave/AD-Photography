@@ -1,6 +1,10 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-13** · letzter Commit `9696f44` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-13** · letzter Commit `96e595f` (Branch `astro-umbau`) ·
+> **CMS-Vorschau (`d556387`/`96e595f`):** „+ Station/sortieren" springt jetzt korrekt zur Stationen-Liste der
+> ausgewählten Reise (vorher generisch zur Collection, weil `stops_manager` entfernt war → jetzt `stops`).
+> Karte hat kleinen Abstand zur Nav (`--ww-map-gap` 16px). Offen: Top-Fade soll Stationen rechts neben dem
+> Kopf-Text sauber abschließen (vom Nutzer gemeldet, in Klärung).
 > **Karte (`9696f44`):** Flug-Rauszoom erst an der Flug-**Ankunft** (nicht schon am Abflug-Stop) → die
 > Abflugstation (z. B. Lake Tahoe) bleibt herangezoomt; rausgezoomt wird erst beim Flug dorthin. Kein Re-Index.
 > **CMS-Vorschau (`b3f7dec`/`9a1d9ef`):** **Stationsleiste fix (sticky) unter der Karte** (nur im Tina-Iframe):

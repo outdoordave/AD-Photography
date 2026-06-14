@@ -17,6 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 — CMS-Vorschau: Button-Link-Fix + Karten-Abstand
+- **„+ Station/sortieren"-Link gefixt (`d556387`):** Button trug `data-tina-field` für `stops_manager` —
+  das in der 2-in-1-Umstellung entfernte Feld → Tina sprang generisch zur Collection („Reisen.Reise") statt
+  zur Reise. Jetzt auf `stops` → öffnet die native Stationen-Liste **genau dieser Reise** (add/sortieren).
+- **Karten-Abstand (`96e595f`):** Karte klebte ~8px unter der Nav → neue Variable `--ww-map-gap` (16px) gibt
+  Luft; sticky Chips-Leiste zieht mit.
+- Build grün (42 Seiten). Kein Schema-Change.
+- Commits: `d556387`, `96e595f`
+
 ## 2026-06-13 — Reisen-Karte: Flug-Rauszoom erst an der Ankunft
 - `mapFollow` zoomte raus, sobald die aktive **oder die nächste** Etappe ein Flug war (`depFlight`) → es
   zoomte schon beim Hinfahren zur **Abflugstation** (z. B. Lake Tahoe) heraus, die Station war nicht mehr
