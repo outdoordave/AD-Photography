@@ -45,6 +45,14 @@
   background: var(--c-bg); padding: 4px 0 6px;
   box-shadow: 0 -60px 0 0 var(--c-bg);
 }
+/* Deckt die SPALTEN-LÜCKE rechts neben dem Kopf ab (auf Kopfhöhe): so verschwindet der überstehende
+   Rahmen/Schatten der hochscrollenden Station auch rechts hinter der Überschrift, statt rauszulugen.
+   Liegt im z4-Kontext des Kopfes (über der Karte z3); die Map liegt mit höherem z-Index drüber, damit
+   IHR Schatten erhalten bleibt. Breite 34px = knapp bis vor die Map (Spalten-Lücke ist 36px). */
+.tl-head::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 100%; width: 34px;
+  background: var(--c-bg); pointer-events: none;
+}
 /* Kurze WEICHE Unterkante NUR des Kopfes (z4, über der aktiven Karte z3, volle Spaltenbreite inkl. rechts):
    Inhalt taucht weich unter die Überschrift statt mit harter Kante. Höhe = min(28px, 3.4vh) -> immer kürzer
    als der Abstand der ruhenden ersten Station (4vh), daher wird deren Rahmen NICHT ausgewaschen. */
@@ -60,7 +68,7 @@
 
 /* Karte: rechte Spalte, sticky, gedeckelte Höhe */
 .tl-map-col { grid-column: 2; grid-row: 1 / -1; min-width: 0; }
-.tl-map-col .tl-map { position: sticky; top: calc(var(--ww-sticky-top) + var(--ww-map-gap)); height: var(--ww-map-h); width: 100%; }
+.tl-map-col .tl-map { position: sticky; top: calc(var(--ww-sticky-top) + var(--ww-map-gap)); height: var(--ww-map-h); width: 100%; z-index: 5; }
 .tl-map .maplibregl-map { height: 100%; }
 
 /* ── Timeline (normaler Fluss) ── */
@@ -138,7 +146,8 @@
   .tl-stage { display: flex; flex-direction: column; column-gap: 0; }
   .tl-mininav { display: flex; }
   .tl-head { order: 1; position: static; top: auto; box-shadow: none; padding: 6px 0 12px; }
-  .tl-head::after { display: none; } /* Kopf ist mobil nicht sticky -> kein weicher Untertauch nötig */
+  .tl-head::after, .tl-head::before { display: none; } /* Kopf mobil nicht sticky -> kein Untertauch/Lücken-Deck nötig */
+  .tl-map-col .tl-map { z-index: auto; } /* mobil kein z-Index-Heben der Karte */
   .tl-map-col { order: 2; position: sticky; top: calc(var(--ww-sticky-top) + var(--ww-mininav-h)); z-index: 3; }
   .tl-map-col .tl-map { position: static; top: auto; height: var(--ww-map-h-mobile); width: 100%; }
   .tl-list { order: 3; padding: 2vh 0 46vh; }
