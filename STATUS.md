@@ -1,14 +1,15 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-13** · letzter Commit `b3f7dec` (Branch `astro-umbau`) ·
-> **CMS-Vorschau (`b3f7dec`):** **Stationsleiste unter der Karte** (nur im Tina-Iframe): Chip = Station direkt
-> bearbeiten (`data-tina-field`/`open` + Vorschau-Scroll), „+ Station / sortieren" springt in 1 Klick zum
-> Manager. Besucher/Live unberührt, **kein Re-Index**. Belegt: Vorschau→Editor kann nur `open` (fokussieren),
-> keine Add/Move/Delete — daher laufen Mutationen stabil über den Manager (1 Klick entfernt).
-> **CMS (`af5da8c`):** Neuer **flacher Stationen-Manager** oben im Reise-Formular (`StopsManager.tsx`):
-> Name/Art/Anreise je Zeile, Ziehen-sortieren, +/🗑 — stabil über die Tina-Form-API (final-form-Mutatoren),
-> kein Vorschau-Fernsteuern. Detailfelder bleiben in der nativen Liste. **⚠️ Schema-Änderung → Re-Index nötig**
-> (`tina-lock` neu `85b1115a`, deterministisch). Jump zwischen Stationen funktioniert weiterhin per Marker/Klick.
+> **Stand: 2026-06-13** · letzter Commit `24592bb` (Branch `astro-umbau`) ·
+> **CMS-Vorschau (`b3f7dec`/`9a1d9ef`):** **Stationsleiste fix (sticky) unter der Karte** (nur im Tina-Iframe):
+> Chip = Station direkt bearbeiten (`data-tina-field`/`open` + Vorschau-Scroll), „+ Station / sortieren" springt
+> in 1 Klick zum Editieren. Scrollt nicht mehr weg. Besucher/Live unberührt. Belegt: Vorschau→Editor kann nur
+> `open` (fokussieren), keine Add/Move/Delete.
+> **CMS 2-in-1 (`24592bb`):** Separates „Stationen schnell verwalten"-Feld entfernt → die **native** Stationen-
+> Liste zeigt die Anreise **diskret pro Zeile** (✈️/🚗 + Name) + **Emojis in der Anreise-Auswahl**. `tina-lock`
+> neu `7e1ce5c6` (deterministisch). **⚠️ Schema-Änderung → Re-Index nötig.**
+> *(Hinweis: der zwischenzeitliche separate „Stationen-Manager"-Feld-Ansatz `af5da8c`/`StopsManager.tsx` wurde
+> in `24592bb` wieder entfernt — ersetzt durch die 2-in-1-Liste oben. Historie siehe CHANGELOG.)*
 > **Karte (`df5097e`):** Kein **Auto/Flugzeug-Geflacker** mehr an den Stops (Symbol nach Ankunftsart `legFlight[idx]`).
 > **Karte (`1368443`):** Kurven-Haken behoben — **zentripetale** Catmull-Rom. `arriveBy` = manuelles Pro-Station-Feld.
 > **Karte (`5407d74`):** **Sanfte Kurven** (Catmull-Rom durch die Stops, `curveLeg`; Auto folgt der Kurve)

@@ -17,6 +17,17 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 — CMS: 2-in-1 Stationen-Liste + sticky Chips-Leiste + Anreise-Emojis
+- **Stationsleiste fix unter der Karte (`9a1d9ef`):** Chips waren im normalen Fluss → scrollten weg. Jetzt
+  eigene **sticky**-Position direkt unter der Karte (`top = sticky-top + --ww-map-h`), Höhen-Deckel + Scroll
+  bei vielen Stationen; mobil kompakte 1-Zeilen-Scrollleiste in der sticky Karten-Spalte.
+- **2-in-1 (`24592bb`):** Separates Feld „Stationen schnell verwalten" (StopsManager) **entfernt**. Stattdessen
+  zeigt die **native** „Stationen"-Liste die Anreise **diskret in jeder Zeile** (itemProps: ✈️/🚗 + Name
+  [+ „· Zwischenstopp"]). Zusätzlich **Emojis in der Anreise-Auswahl** („🚗 Fahrt" / „✈️ Flug").
+  `StopsManager.tsx` gelöscht. `tina-lock` deterministisch neu (`7e1ce5c6`, 2× verifiziert).
+- **⚠️ David:** Schema-Änderung → nach Push **Tina-Cloud-Re-Index**. Build grün (42 Seiten).
+- Commits: `9a1d9ef`, `24592bb`
+
 ## 2026-06-13 — CMS-Vorschau: Stationsleiste unter der Karte
 - Beendet den „Hin-und-her-Tanz" beim Reise-Bauen. **Nur im Tina-Vorschau-Iframe** sichtbar
   (`window.self !== window.top`) → Besucher/Live unverändert, **kein Schema-Change, kein Re-Index**.
