@@ -1,10 +1,10 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-13** · letzter Commit `cb94879` (Branch `astro-umbau`) ·
-> **Reisen-Detail (`cb94879`):** Kein **Reveal-Flackern** beim Laden mehr (IO beobachtet nur off-screen-Stationen;
-> beim Laden sichtbare bleiben direkt sichtbar). Erste Station sofort voll gerahmt — live verifiziert.
-> **Offen/Diskussion:** Residual „Durchfliegen rechts" beim Hochscrollen = harte vertikale **Ring-Kante** der
-> aktiven Karte (Kopf deckt voll ab, kein Coverage-Bug). Voll beheben nur via Ring weicher ODER JS-Ganz-Karte-Fade.
+> **Stand: 2026-06-13** · letzter Commit `b80d027` (Branch `astro-umbau`) ·
+> **Reisen-Detail (`b80d027`/`cb94879`):** Aktive Karte hat jetzt einen **weichen Rahmen** (gefederte halbtransp.
+> Kante + Schein + Schatten) statt harter Ring-Linie → kein „Durchfliegen" der harten Kante beim Hochscrollen,
+> gleitet bündig unter die weiche Kopfkante. **Kein Reveal-Flackern** beim Laden mehr (IO nur off-screen).
+> Ruhezustand live verifiziert; Scroll-Durchlauf bitte live prüfen (Vorschau-Tool kann scrollY>0 nicht ablichten).
 > **Reisen-Detail (`124151c`/`6ae8eaa`):** Rahmen + Untertauch-Übergang gefixt. Aktive Karte z-index 3 (über
 > Fades z2, unter Kopf z4) → **voller, sauberer Rahmen**. **Weiche Kopf-Unterkante** (`.tl-head::after`, volle
 > Spaltenbreite, 64px) → beim Hochscrollen verblasst die Kartenoberkante **auf allen Kanten** (auch rechts)

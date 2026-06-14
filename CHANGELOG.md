@@ -17,6 +17,17 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 — Reisen: weicher Rahmen der aktiven Karte (kein „Durchfliegen" der Ring-Kante)
+- Das „Durchfliegen rechts" beim Hochscrollen war die **harte 1–2px-Ring-Linie** (`var(--ww-ring)`) der aktiven
+  Karte — die weiche Kopf-Unterkante fadet nur die *waagerechte* Oberkante, nicht die *senkrechten* Ring-Kanten.
+  (Kopf deckt die Karte voll ab, x=750 = x=750 → kein Coverage-Bug.)
+- Lösung (Nutzer-Wunsch „bündig mit der weichen Kopfkante"): aktive Karte bekommt einen **weichen Rahmen** —
+  gefederte, halbtransparente Kante (1px @0.38) + dezenter Schein (6px @0.22) + Schatten — statt der harten Linie.
+  Rahmen bleibt erkennbar, gleitet aber ohne harte Kante unter die weiche Kopfkante. (Variante „ganze Karte
+  ausblenden" hätte hohe Bild-Karten zu früh ausgeblendet → nicht bündig.)
+- Datei: `web/src/styles/trips-timeline.css`. Build grün (42 Seiten). Kein Schema-Change.
+- Commit: `b80d027`
+
 ## 2026-06-13 — Reisen: kein Reveal-Flackern beim Laden
 - Beim Neuladen flackerte die erste (bereits sichtbare, serverseitig gerenderte) Station — die Reveal-Animation
   startete sie von opacity 0, der Rahmen wirkte kurz „buggy", bis ein Scroll/Repaint kam.
