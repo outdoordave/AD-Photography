@@ -7,6 +7,13 @@
       "runtimeArgs": ["-m", "http.server", "4399", "--directory", "dist"],
       "cwd": "web",
       "port": 4399
+    },
+    {
+      "name": "astro-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["astro", "preview", "--port", "4321", "--host"],
+      "cwd": "web",
+      "port": 4321
     }
   ]
 }
