@@ -1,7 +1,11 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-13** · letzter Commit `35c6948` (Branch `astro-umbau`) ·
-> **CMS-Vorschau (`35c6948`):** Button **„↩ Zum Reisemenü"** (statt „+ Station/sortieren") führt jetzt ins
+> **Stand: 2026-06-13** · letzter Commit `1ed2fa2` (Branch `astro-umbau`) ·
+> **Reisen-Detail (`9288e1a`/`1ed2fa2`):** Kopf-`::before` (23837a2) **zurückgenommen** (schnitt Karten-Schatten
+> ab / zu große Box) — per **Live-Vorschau** verifiziert, dass der Kopf hochscrollende Titelbilder voll überdeckt
+> (kein Durchschimmern). **Weicheres Timeline-Ende:** Trailing-Leerraum 42vh→30vh → letzte Station bleibt lesbar,
+> weicher Papierriss-Footer schließt direkt an (kein „schwebender" harter Cut mehr).
+> **CMS-Vorschau (`35c6948`):** Button **„↩ Zum Reisemenü"** (statt „+ Station/sortieren") führt ins
 > Reise-**Hauptformular** (`tinaField title`, oberste Ebene) — vorher öffnete `stops` die verschachtelte Liste.
 > **Reisen-Timeline (`eacf5b1`):** weicherer Auslauf am Ende — Bottom-Fade 56→120px + mehrstufiger Verlauf
 > (kein harter Cut bei der letzten Station).

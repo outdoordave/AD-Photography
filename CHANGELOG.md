@@ -17,6 +17,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 — Reisen: Revert Kopf-::before + weicheres Timeline-Ende (live verifiziert)
+- **Revert `23837a2` (`9288e1a`):** die `::before`-Abdeckfläche schnitt den Karten-Schatten ab und erzeugte
+  selbst eine harte Kante/„zu große Box". Kopf zurück auf box-shadow-nur-nach-oben (berührt die Karte nie).
+  Per **Live-Vorschau** (`astro preview`, 1280 + 980px) verifiziert: der Kopf (z4, deckend, volle Spaltenbreite)
+  überdeckt hochscrollende Titelbilder vollständig — kein Durchschimmern. Das gemeldete Durchschimmern kam
+  von der `::before`-Box selbst.
+- **Weicheres Ende (`1ed2fa2`):** „harter Cut" der letzten Station = die gerahmte aktive Karte schwebte über
+  dem großen 42vh-Trailing-Leerraum. Auf **30vh** reduziert → letzte Station bleibt lesbar, der weiche
+  Papierriss-Footer schließt direkt darunter an. Live verifiziert.
+- Dateien: `web/src/styles/trips-timeline.css`. Build grün (42 Seiten). Kein Schema-Change.
+- Commits: `9288e1a`, `1ed2fa2`
+
 ## 2026-06-13 — CMS-Vorschau: Button „Zum Reisemenü" (statt Stationen-Liste)
 - Der Vorschau-Button zeigte auf `stops` → öffnete die verschachtelte Stationen-Liste, nicht das
   Reise-**Hauptformular**. Jetzt auf `title` (oberste Reise-Ebene) → landet im Haupt-Formular der Reise
