@@ -17,6 +17,14 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 — Reisen: kein Reveal-Flackern beim Laden
+- Beim Neuladen flackerte die erste (bereits sichtbare, serverseitig gerenderte) Station — die Reveal-Animation
+  startete sie von opacity 0, der Rahmen wirkte kurz „buggy", bis ein Scroll/Repaint kam.
+- Fix: der IntersectionObserver beobachtet nur noch **off-screen**-Stationen; beim Laden sichtbare bleiben direkt
+  sichtbar (kein Reveal von 0). Live verifiziert: erste Station sofort voll gerahmt.
+- Datei: `web/src/components/TripTimeline.tsx`. Build grün (42 Seiten). Kein Schema-Change.
+- Commit: `cb94879`
+
 ## 2026-06-13 — Reisen: weicher Untertauch-Übergang auf allen Kanten (auch rechts)
 - Der harte Übergang beim Hochscrollen war nicht nur unten, sondern auch an der **rechten Kante** der Karte
   (Ring „fliegt" hart durch die Überschrift). Lösung: **weiche Kopf-Unterkante** (`.tl-head::after`, volle
