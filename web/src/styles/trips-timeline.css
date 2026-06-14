@@ -7,6 +7,7 @@
   --ww-mininav-h: 46px;        /* mobile schlanke Nav-Zeile */
   --ww-map-h-mobile: 170px;    /* mobile Mini-Karten-Höhe */
   --ww-map-h: min(62vh, 540px); /* Desktop-Karten-Höhe (auch für sticky Editor-Leiste) */
+  --ww-map-gap: 16px;          /* kleiner Abstand der Karte zur Hero-/Nav-Leiste (nicht rangequetscht) */
 }
 
 /* Zurück zur Übersicht */
@@ -51,7 +52,7 @@
 
 /* Karte: rechte Spalte, sticky, gedeckelte Höhe */
 .tl-map-col { grid-column: 2; grid-row: 1 / -1; min-width: 0; }
-.tl-map-col .tl-map { position: sticky; top: var(--ww-sticky-top); height: var(--ww-map-h); width: 100%; }
+.tl-map-col .tl-map { position: sticky; top: calc(var(--ww-sticky-top) + var(--ww-map-gap)); height: var(--ww-map-h); width: 100%; }
 .tl-map .maplibregl-map { height: 100%; }
 
 /* ── Timeline (normaler Fluss) ── */
@@ -140,7 +141,7 @@
    Beendet den „Hin-und-her-Tanz": Chip = Station direkt bearbeiten (fokussiert das Feld im
    Formular via data-tina-field), „+ Station / sortieren" springt zum flachen Stationen-Manager.
    Besucher sehen das nie (Komponente rendert es nur, wenn die Seite im iframe läuft). */
-.tl-editbar { position: sticky; top: calc(var(--ww-sticky-top) + var(--ww-map-h) + 12px); z-index: 4; margin-top: 12px; padding: 12px 12px 10px; background: var(--c-bg); border: 1px solid var(--c-line); border-radius: 10px; box-shadow: 0 1px 0 rgba(0,0,0,.02); max-height: 28vh; overflow-y: auto; }
+.tl-editbar { position: sticky; top: calc(var(--ww-sticky-top) + var(--ww-map-gap) + var(--ww-map-h) + 12px); z-index: 4; margin-top: 12px; padding: 12px 12px 10px; background: var(--c-bg); border: 1px solid var(--c-line); border-radius: 10px; box-shadow: 0 1px 0 rgba(0,0,0,.02); max-height: 28vh; overflow-y: auto; }
 .tl-editbar-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
 .tl-editbar-title { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--c-ink-soft); }
 .tl-editbar-manage { border: none; background: var(--c-accent); color: #fff; font-size: 12.5px; font-weight: 600; padding: 7px 12px; border-radius: 7px; cursor: pointer; white-space: nowrap; }
