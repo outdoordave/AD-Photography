@@ -17,6 +17,14 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 — Reisen: sticky Kopf deckt rechts neben dem Text ab
+- Rechts neben dem Kopf-Text (zur Karte hin) schimmerte beim Hochscrollen das Titelbild durch — der
+  Kopf-Hintergrund deckte dort nicht. Deckende `::before`-Fläche unter dem Kopf: volle Spaltenbreite +
+  nach oben (Lücke zur Nav) + 30px in die Spalten-Lücke zur Karte (bleibt in der 36px-Lücke, deckt die
+  Karte nicht). Ersetzt den bisherigen Upward-`box-shadow`.
+- Datei: `web/src/styles/trips-timeline.css`. Build grün (42 Seiten). Kein Schema-Change.
+- Commit: `23837a2`
+
 ## 2026-06-13 — CMS-Vorschau: Button-Link-Fix + Karten-Abstand
 - **„+ Station/sortieren"-Link gefixt (`d556387`):** Button trug `data-tina-field` für `stops_manager` —
   das in der 2-in-1-Umstellung entfernte Feld → Tina sprang generisch zur Collection („Reisen.Reise") statt
