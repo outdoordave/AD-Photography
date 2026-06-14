@@ -1,10 +1,12 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-13** · letzter Commit `6ae8eaa` (Branch `astro-umbau`) ·
-> **Reisen-Detail (`6ae8eaa`):** „buggy" Rahmen behoben — Fade-Overlays wuschen die aktive Karte aus. Jetzt
-> Fades z-index 2, **aktive Karte z-index 3** (über Fades, unter Kopf z4) → voller, sauberer Rahmen; gedimmte
-> Nachbarn faden weiter. Erste Station live verifiziert. *(Hinweis: Scroll-Position-Screenshots im Vorschau-Tool
-> kommen leer — Tool-Artefakt, nicht die Seite; scrollY=0 rendert korrekt.)*
+> **Stand: 2026-06-13** · letzter Commit `124151c` (Branch `astro-umbau`) ·
+> **Reisen-Detail (`124151c`/`6ae8eaa`):** Rahmen + Untertauch-Übergang gefixt. Aktive Karte z-index 3 (über
+> Fades z2, unter Kopf z4) → **voller, sauberer Rahmen**. **Weiche Kopf-Unterkante** (`.tl-head::after`, volle
+> Spaltenbreite, 64px) → beim Hochscrollen verblasst die Kartenoberkante **auf allen Kanten** (auch rechts)
+> gleichmäßig statt hart. `padding-top: 84px` hält die ruhende erste Station unter dieser weichen Kante (sauber).
+> Erste Station live verifiziert. *(Scroll-Position-Screenshots im Vorschau-Tool = leer = Tool-Artefakt; Übergang
+> bitte live prüfen.)*
 > **Reisen-Detail (`9288e1a`/`1ed2fa2`):** Kopf-`::before` (23837a2) **zurückgenommen** (schnitt Karten-Schatten
 > ab / zu große Box) — per **Live-Vorschau** verifiziert, dass der Kopf hochscrollende Titelbilder voll überdeckt
 > (kein Durchschimmern). **Weicheres Timeline-Ende:** Trailing-Leerraum 42vh→30vh → letzte Station bleibt lesbar,

@@ -17,6 +17,17 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 — Reisen: weicher Untertauch-Übergang auf allen Kanten (auch rechts)
+- Der harte Übergang beim Hochscrollen war nicht nur unten, sondern auch an der **rechten Kante** der Karte
+  (Ring „fliegt" hart durch die Überschrift). Lösung: **weiche Kopf-Unterkante** (`.tl-head::after`, volle
+  Spaltenbreite, 64px, z4 über der aktiven Karte z3) → die ganze Kartenoberkante (Ring/Bild/rechte Ecke)
+  verblasst beim Untertauchen gleichmäßig statt mit hartem Schnitt. Endet an der Spalte (berührt die Karte nicht).
+- Damit die **ruhende** erste Station nicht von dieser weichen Kante ausgewaschen wird: `padding-top: 84px`
+  (erste Station sitzt knapp darunter, ~an der Fokus-Position). Live verifiziert (voller Rahmen bei scrollY=0).
+  Aktive Karte bleibt z3 über den Fades (z2); zwischenzeitlicher 30px-`::after` (Commit `653e78d`) ersetzt.
+- Datei: `web/src/styles/trips-timeline.css`. Build grün (42 Seiten). Kein Schema-Change.
+- Commit: `124151c`
+
 ## 2026-06-13 — Reisen: aktive Karte über die Fades (Rahmen nicht mehr ausgewaschen)
 - Ursache der „buggy" Rahmen (erste Station oben nicht gefüllt; letzte Station: Ring hört auf + Schatten
   darunter; Inhalt schimmert beim Scrollen rechts neben dem Text): die **Fade-Overlays** (`.tl-fade-top/bottom`,
