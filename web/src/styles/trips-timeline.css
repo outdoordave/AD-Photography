@@ -134,3 +134,23 @@
   .tl-strip { scroll-snap-type: x proximity; gap: 10px; -webkit-overflow-scrolling: touch; }
   .tl-strip img { width: 78%; max-width: 320px; height: auto; aspect-ratio: 3 / 2; scroll-snap-align: start; }
 }
+
+/* ===== Editor-Stationsleiste (NUR im Tina-Vorschau-Iframe sichtbar) ============================
+   Beendet den „Hin-und-her-Tanz": Chip = Station direkt bearbeiten (fokussiert das Feld im
+   Formular via data-tina-field), „+ Station / sortieren" springt zum flachen Stationen-Manager.
+   Besucher sehen das nie (Komponente rendert es nur, wenn die Seite im iframe läuft). */
+.tl-editbar { margin-top: 12px; padding: 12px 12px 10px; background: var(--c-bg); border: 1px solid var(--c-line); border-radius: 10px; box-shadow: 0 1px 0 rgba(0,0,0,.02); }
+.tl-editbar-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.tl-editbar-title { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--c-ink-soft); }
+.tl-editbar-manage { border: none; background: var(--c-accent); color: #fff; font-size: 12.5px; font-weight: 600; padding: 7px 12px; border-radius: 7px; cursor: pointer; white-space: nowrap; }
+.tl-editbar-manage:hover { filter: brightness(1.06); }
+.tl-editbar-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.tl-chip { display: inline-flex; align-items: center; gap: 7px; max-width: 100%; padding: 6px 10px; border: 1px solid var(--c-line); background: #fff; border-radius: 999px; cursor: pointer; font-size: 12.5px; color: var(--c-ink); transition: border-color .15s, background .15s, box-shadow .15s; }
+.tl-chip:hover { border-color: var(--c-accent); }
+.tl-chip.is-active { border-color: var(--c-accent); background: #f6ede0; box-shadow: 0 0 0 1px var(--c-accent) inset; }
+.tl-chip.is-inter { border-style: dashed; color: var(--c-ink-soft); }
+.tl-chip-no { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 999px; background: var(--c-accent); color: #fff; font-size: 11px; font-weight: 700; }
+.tl-chip.is-inter .tl-chip-no { background: var(--c-ink-soft); }
+.tl-chip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 160px; }
+.tl-chip-ic { font-size: 12px; opacity: .8; }
+.tl-editbar-hint { margin-top: 9px; font-size: 11.5px; color: var(--c-ink-soft); line-height: 1.4; }

@@ -163,6 +163,7 @@ export default function TripTimeline(props: Props) {
   const kindOf = (i: number) => ((rawStops[i]?.kind === 'intermediate') ? 'intermediate' : 'main');
 
   const [active, setActive] = React.useState(0);
+  const [inEditor, setInEditor] = React.useState(false); // im Tina-Vorschau-Iframe? -> Editor-Stationsleiste zeigen
   const [lb, setLb] = React.useState<{ photos: LbPhoto[]; start: number } | null>(null);
   const [liveMapStyle, setLiveMapStyle] = React.useState<string>(props.mapStyle || 'liberty');
 
@@ -197,7 +198,15 @@ export default function TripTimeline(props: Props) {
 
   const styleUrl = 'https://tiles.openfreemap.org/styles/' + liveMapStyle;
 
-  React.useEffect(() => { try { inEditorRef.current = window.self !== window.top; } catch { inEditorRef.current = true; } }, []);
+  React.useEffect(() => { let v = false; try { v = window.self !== window.top; } catch { v = true; } inEditorRef.current = v; setInEditor(v); }, []);
+
+  // Im Tina-Editor: eine Station per Chip direkt bearbeiten (fokussiert das Feld im Formular via
+  // data-tina-field/„open") UND scrollt die Vorschau dorthin. Kein Klick auf „fremden Text" mehr.
+  function editStop(i: number) {
+    scrollToStop(i);
+    const el = document.querySelector<HTMLElement>('.tl-stop[data-sidx="' + i + '"]');
+    if (el) el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+  }
 
   function drawMarkers() {
     const map = mapRef.current;
@@ -663,6 +672,34 @@ export default function TripTimeline(props: Props) {
           <div className="tl-map map-box">
             <div ref={mapElRef} style={{ width: '100%', height: '100%' }} />
           </div>
+
+          {inEditor ? (
+            <div className="tl-editbar" aria-hidden="true">
+              <div className="tl-editbar-head">
+                <span className="tl-editbar-title">Stationen</span>
+                <button type="button" className="tl-editbar-manage" data-tina-field={tinaField(trip, 'stops_manager')}
+                  title="Station hinzufügen / sortieren — springt zum Stationen-Manager im Formular">+ Station / sortieren</button>
+              </div>
+              <div className="tl-editbar-chips">
+                {stops.map((s, i) => {
+                  const rs = rawStops[i];
+                  const isFlight = rs?.arriveBy === 'flight';
+                  return (
+                    <button key={i} type="button"
+                      className={'tl-chip' + (i === active ? ' is-active' : '') + (kindOf(i) === 'intermediate' ? ' is-inter' : '')}
+                      data-tina-field={rs ? tinaField(rs) : undefined}
+                      onClick={() => editStop(i)}
+                      title={'Station ' + (i + 1) + ' bearbeiten'}>
+                      <span className="tl-chip-no">{i + 1}</span>
+                      <span className="tl-chip-name">{s.name || s.title || ('Station ' + (i + 1))}</span>
+                      <span className="tl-chip-ic">{isFlight ? '✈' : '🚗'}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="tl-editbar-hint">Chip = Station bearbeiten · „+ Station / sortieren" öffnet den Manager (hinzufügen, ziehen, löschen).</div>
+            </div>
+          ) : null}
         </div>
       </div>
 
