@@ -1,6 +1,10 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-13** · letzter Commit `af5da8c` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-13** · letzter Commit `b3f7dec` (Branch `astro-umbau`) ·
+> **CMS-Vorschau (`b3f7dec`):** **Stationsleiste unter der Karte** (nur im Tina-Iframe): Chip = Station direkt
+> bearbeiten (`data-tina-field`/`open` + Vorschau-Scroll), „+ Station / sortieren" springt in 1 Klick zum
+> Manager. Besucher/Live unberührt, **kein Re-Index**. Belegt: Vorschau→Editor kann nur `open` (fokussieren),
+> keine Add/Move/Delete — daher laufen Mutationen stabil über den Manager (1 Klick entfernt).
 > **CMS (`af5da8c`):** Neuer **flacher Stationen-Manager** oben im Reise-Formular (`StopsManager.tsx`):
 > Name/Art/Anreise je Zeile, Ziehen-sortieren, +/🗑 — stabil über die Tina-Form-API (final-form-Mutatoren),
 > kein Vorschau-Fernsteuern. Detailfelder bleiben in der nativen Liste. **⚠️ Schema-Änderung → Re-Index nötig**

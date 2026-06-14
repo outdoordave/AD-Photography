@@ -17,6 +17,20 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 — CMS-Vorschau: Stationsleiste unter der Karte
+- Beendet den „Hin-und-her-Tanz" beim Reise-Bauen. **Nur im Tina-Vorschau-Iframe** sichtbar
+  (`window.self !== window.top`) → Besucher/Live unverändert, **kein Schema-Change, kein Re-Index**.
+- **Chips** in Reisereihenfolge unter der Karte: Klick = genau diese Station bearbeiten (fokussiert das
+  Feld im Formular über `data-tina-field`/`open` + scrollt die Vorschau dorthin). Aktiver Chip hervorgehoben,
+  ✈/🚗-Symbol, Zwischenstopp gestrichelt.
+- **„+ Station / sortieren"** trägt `data-tina-field` des `stops_manager` → springt in **einem Klick** zum
+  flachen Manager (hinzufügen/ziehen/löschen), ohne Scrollen.
+- **Belegte Grenze:** Add/Move/Delete **direkt** in der Vorschau ist mit Tina unmöglich — das
+  Vorschau→Editor-Protokoll kennt nur `open`/`close`/`isEditMode` (kein Mutations-Kanal). Daher laufen die
+  Änderungen stabil über den Manager, 1 Klick entfernt.
+- Dateien: `web/src/components/TripTimeline.tsx`, `web/src/styles/trips-timeline.css`. Build grün (42 Seiten).
+- Commit: `b3f7dec`
+
 ## 2026-06-13 20:30 — CMS: flacher Stationen-Manager im Reise-Formular
 - Neue Reise bauen war umständlich (Stationen hinzufügen nur tief verschachtelt in Tinas nativer Liste).
   Neuer **flacher Manager** ganz oben im Reise-Formular (immer sichtbar): pro Zeile **Name** (editierbar)
