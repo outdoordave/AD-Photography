@@ -67,7 +67,7 @@
 
 .tl-fade { position: sticky; left: 0; right: 0; z-index: 3; pointer-events: none; }
 .tl-fade-top { top: calc(var(--ww-snap-pad, 200px) - 4px); height: 52px; margin-bottom: -52px; background: linear-gradient(var(--c-bg), rgba(244,237,225,0)); }
-.tl-fade-bottom { bottom: 0; height: 56px; margin-top: -56px; background: linear-gradient(rgba(244,237,225,0), var(--c-bg)); }
+.tl-fade-bottom { bottom: 0; height: 120px; margin-top: -120px; background: linear-gradient(rgba(244,237,225,0) 0%, rgba(244,237,225,0.45) 48%, rgba(244,237,225,0.82) 74%, var(--c-bg) 100%); }
 
 .tl-line, .tl-line-fill { position: absolute; left: 17px; width: 2px; transform: translateX(-50%); border-radius: 2px; }
 .tl-line      { top: var(--line-top, 0); height: var(--line-h, 0); background: var(--c-line); }
