@@ -1,6 +1,8 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-13** · letzter Commit `24592bb` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-13** · letzter Commit `9696f44` (Branch `astro-umbau`) ·
+> **Karte (`9696f44`):** Flug-Rauszoom erst an der Flug-**Ankunft** (nicht schon am Abflug-Stop) → die
+> Abflugstation (z. B. Lake Tahoe) bleibt herangezoomt; rausgezoomt wird erst beim Flug dorthin. Kein Re-Index.
 > **CMS-Vorschau (`b3f7dec`/`9a1d9ef`):** **Stationsleiste fix (sticky) unter der Karte** (nur im Tina-Iframe):
 > Chip = Station direkt bearbeiten (`data-tina-field`/`open` + Vorschau-Scroll), „+ Station / sortieren" springt
 > in 1 Klick zum Editieren. Scrollt nicht mehr weg. Besucher/Live unberührt. Belegt: Vorschau→Editor kann nur

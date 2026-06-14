@@ -17,6 +17,14 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 — Reisen-Karte: Flug-Rauszoom erst an der Ankunft
+- `mapFollow` zoomte raus, sobald die aktive **oder die nächste** Etappe ein Flug war (`depFlight`) → es
+  zoomte schon beim Hinfahren zur **Abflugstation** (z. B. Lake Tahoe) heraus, die Station war nicht mehr
+  gut sichtbar. Jetzt nur noch an der Flug-**Ankunft** (`arrFlight`): Rauszoom erst beim Flug Tahoe→Anchorage,
+  der Abflug-Stop bleibt normal herangezoomt. Smooth (Flug-Animation wartet ohnehin ~700 ms auf den Zoom).
+- Datei: `web/src/components/TripTimeline.tsx`. Build grün (42 Seiten). Kein Schema-Change.
+- Commit: `9696f44`
+
 ## 2026-06-13 — CMS: 2-in-1 Stationen-Liste + sticky Chips-Leiste + Anreise-Emojis
 - **Stationsleiste fix unter der Karte (`9a1d9ef`):** Chips waren im normalen Fluss → scrollten weg. Jetzt
   eigene **sticky**-Position direkt unter der Karte (`top = sticky-top + --ww-map-h`), Höhen-Deckel + Scroll
