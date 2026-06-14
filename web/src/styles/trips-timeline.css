@@ -43,14 +43,7 @@
   grid-column: 1; grid-row: 1; min-width: 0;
   position: sticky; top: var(--ww-sticky-top); z-index: 4;
   background: var(--c-bg); padding: 4px 0 6px;
-}
-/* Deckende Hintergrund-Fläche hinter dem sticky Kopf: volle Spaltenbreite + nach oben (Lücke zur
-   Nav) + ein Stück in die Spalten-Lücke zur Karte (rechts). Sonst schimmerte rechts neben dem
-   Kopf-Text das hochscrollende Titelbild durch. Bleibt innerhalb der 36px-Lücke (deckt die Karte nicht). */
-.tl-head::before {
-  content: ''; position: absolute; z-index: -1;
-  top: calc(-1 * var(--ww-map-gap) - 60px); bottom: -2px; left: 0; right: -30px;
-  background: var(--c-bg);
+  box-shadow: 0 -60px 0 0 var(--c-bg);
 }
 .tl-head .tl-meta { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 4px; }
 .tl-head h2 { font-family: var(--font-display); font-size: var(--fs-title-lg); font-weight: var(--fw-medium); line-height: 1.1; }
