@@ -17,6 +17,19 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 — Reisen: Rahmen zurück (CMS-Design) + kurze weiche Kopf-Unterkante
+- **Rückbau:** der weiche Rahmen (`b80d027`) sah aus wie „kein Rahmen" → zurück auf exaktes CMS-Design
+  (`var(--ww-ring), var(--ww-shadow)`, `ba54e70`). Meine Untertauch-Experimente (großes `head::after` + 84px
+  padding-top) entfernt → Stationen wieder wie zuvor (`3099bfb`). Lade-Flacker-Fix + z-Index-Rahmenfix bleiben.
+- **Erkenntnis (verifiziert):** der Kopf deckt auf seiner Höhe die ganze Spalte ab — **auch rechts** (`elementFromPoint`
+  x730 = `tl-head`). Es „fliegt" also nichts durch den Kopf; sichtbar ist nur Inhalt **unter** der Kopf-Unterkante.
+  Der harte Übergang dort (rechts, ohne Text) war das eigentliche Thema.
+- **Fix (Nutzer-Wahl):** kurze **weiche Kopf-Unterkante** (`.tl-head::after`, volle Spaltenbreite, `min(28px,3.4vh)`,
+  `32afdfc`) → Inhalt taucht weich unter die Überschrift. Höhe immer < 4vh (Abstand der ruhenden ersten Station)
+  → CMS-Rahmen wird **nicht** ausgewaschen (live verifiziert: voller 2px-Ring + Schatten). Mobil ausgeblendet.
+- Dateien: `web/src/styles/trips-timeline.css`. Build grün (42 Seiten). Kein Schema-Change.
+- Commits: `ba54e70`, `3099bfb`, `32afdfc`
+
 ## 2026-06-13 — Reisen: weicher Rahmen der aktiven Karte (kein „Durchfliegen" der Ring-Kante)
 - Das „Durchfliegen rechts" beim Hochscrollen war die **harte 1–2px-Ring-Linie** (`var(--ww-ring)`) der aktiven
   Karte — die weiche Kopf-Unterkante fadet nur die *waagerechte* Oberkante, nicht die *senkrechten* Ring-Kanten.

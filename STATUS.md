@@ -1,10 +1,11 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-13** · letzter Commit `b80d027` (Branch `astro-umbau`) ·
-> **Reisen-Detail (`b80d027`/`cb94879`):** Aktive Karte hat jetzt einen **weichen Rahmen** (gefederte halbtransp.
-> Kante + Schein + Schatten) statt harter Ring-Linie → kein „Durchfliegen" der harten Kante beim Hochscrollen,
-> gleitet bündig unter die weiche Kopfkante. **Kein Reveal-Flackern** beim Laden mehr (IO nur off-screen).
-> Ruhezustand live verifiziert; Scroll-Durchlauf bitte live prüfen (Vorschau-Tool kann scrollY>0 nicht ablichten).
+> **Stand: 2026-06-13** · letzter Commit `32afdfc` (Branch `astro-umbau`) ·
+> **Reisen-Detail (`32afdfc`/`ba54e70`/`3099bfb`):** Aktive Karten-Rahmen = **exaktes CMS-Design** (`--ww-ring`/
+> `--ww-shadow`, weicher Rahmen + großes head::after/Abstand zurückgebaut). Der „rechts durchfliegen"-Effekt liegt
+> am **Kopf** (verifiziert: Kopf deckt auf seiner Höhe voll ab, auch rechts; Inhalt nur darunter sichtbar) → kurze
+> **weiche Kopf-Unterkante** `.tl-head::after` (`min(28px,3.4vh)`, < 4vh → wäscht ruhende erste Station NICHT aus,
+> live verifiziert). Mobil aus. **Kein Reveal-Flackern** beim Laden. Scroll-Durchlauf bitte live prüfen.
 > **Reisen-Detail (`124151c`/`6ae8eaa`):** Rahmen + Untertauch-Übergang gefixt. Aktive Karte z-index 3 (über
 > Fades z2, unter Kopf z4) → **voller, sauberer Rahmen**. **Weiche Kopf-Unterkante** (`.tl-head::after`, volle
 > Spaltenbreite, 64px) → beim Hochscrollen verblasst die Kartenoberkante **auf allen Kanten** (auch rechts)
