@@ -45,19 +45,22 @@
   background: var(--c-bg); padding: 4px 0 6px;
   box-shadow: 0 -60px 0 0 var(--c-bg);
 }
-/* Deckt die SPALTEN-LÜCKE rechts neben dem Kopf ab (auf Kopfhöhe): so verschwindet der überstehende
-   Rahmen/Schatten der hochscrollenden Station auch rechts hinter der Überschrift, statt rauszulugen.
-   Liegt im z4-Kontext des Kopfes (über der Karte z3); die Map liegt mit höherem z-Index drüber, damit
-   IHR Schatten erhalten bleibt. Breite 34px = knapp bis vor die Map (Spalten-Lücke ist 36px). */
+/* Deckfläche des Kopfes: läuft ab der Kopf-Rechtskante als durchgehende Schicht bis UNTER die Karte
+   (Spalten-Lücke 36px + Karten-Spalte 420px). So verschwindet der überstehende Rahmen/Schatten der
+   hochscrollenden Station rechts hinter der Überschrift, und es entsteht eine einzige Deck-Ebene.
+   Liegt im z4-Kontext des Kopfes; die Map liegt mit z5 DRÜBER -> ihr eigener Schatten bleibt erhalten,
+   die Karte selbst überdeckt die Deckfläche optisch (Tiles sind opak). */
 .tl-head::before {
-  content: ''; position: absolute; top: 0; bottom: 0; left: 100%; width: 34px;
+  content: ''; position: absolute; top: 0; bottom: 0; left: 100%; width: calc(36px + 420px);
   background: var(--c-bg); pointer-events: none;
 }
-/* Kurze WEICHE Unterkante NUR des Kopfes (z4, über der aktiven Karte z3, volle Spaltenbreite inkl. rechts):
-   Inhalt taucht weich unter die Überschrift statt mit harter Kante. Höhe = min(28px, 3.4vh) -> immer kürzer
-   als der Abstand der ruhenden ersten Station (4vh), daher wird deren Rahmen NICHT ausgewaschen. */
+/* Weiche Unterkante des Kopfes (z4, über der aktiven Karte z3): Inhalt taucht weich unter die Überschrift
+   statt mit harter Kante. Reicht über die Textspalte UND die Spalten-Lücke bis zur Karten-Kante (right:-36px),
+   damit der Deckrand an der Ecke Station|Kopf|Karte durchgehend weich ausläuft statt auf die harte Unterkante
+   der Lücken-Deckfläche (::before) zu treffen. Höhe = min(28px, 3.4vh) -> immer kürzer als der Abstand der
+   ruhenden ersten Station (4vh), daher wird deren Rahmen NICHT ausgewaschen. */
 .tl-head::after {
-  content: ''; position: absolute; left: 0; right: 0; top: 100%; height: min(28px, 3.4vh);
+  content: ''; position: absolute; left: 0; right: -36px; top: 100%; height: min(28px, 3.4vh);
   background: linear-gradient(var(--c-bg) 20%, rgba(244,237,225,0));
   pointer-events: none;
 }
