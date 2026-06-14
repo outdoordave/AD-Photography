@@ -1,6 +1,8 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-13** · letzter Commit `23837a2` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-13** · letzter Commit `eacf5b1` (Branch `astro-umbau`) ·
+> **Reisen-Timeline (`eacf5b1`):** weicherer Auslauf am Ende — Bottom-Fade 56→120px + mehrstufiger Verlauf
+> (kein harter Cut bei der letzten Station).
 > **Reisen-Detail (`23837a2`/`d556387`/`96e595f`):** sticky Kopf deckt jetzt rechts neben dem Text ab (kein
 > durchscheinendes Titelbild beim Hochscrollen, `::before`-Fläche). „+ Station/sortieren" springt korrekt zur
 > Stationen-Liste der ausgewählten Reise (`stops`). Karte hat Abstand zur Nav (`--ww-map-gap` 16px).

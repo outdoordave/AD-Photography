@@ -17,6 +17,12 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 — Reisen-Timeline: weicherer Auslauf am Ende
+- Beim Ganz-nach-unten-Scrollen endete die letzte Station mit hartem Cut. Bottom-Fade von 56px → 120px
+  erhöht + mehrstufiger weicher Verlauf (statt hartem 2-Stop) → sanfter Auslauf.
+- Datei: `web/src/styles/trips-timeline.css`. Build grün (42 Seiten). Kein Schema-Change.
+- Commit: `eacf5b1`
+
 ## 2026-06-13 — Reisen: sticky Kopf deckt rechts neben dem Text ab
 - Rechts neben dem Kopf-Text (zur Karte hin) schimmerte beim Hochscrollen das Titelbild durch — der
   Kopf-Hintergrund deckte dort nicht. Deckende `::before`-Fläche unter dem Kopf: volle Spaltenbreite +
