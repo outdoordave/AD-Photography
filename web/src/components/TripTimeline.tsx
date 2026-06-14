@@ -297,12 +297,13 @@ export default function TripTimeline(props: Props) {
   function mapFollow(idx: number) {
     const map = mapRef.current; const s = stops[idx];
     if (!map || !readyRef.current || !s || s.lat == null || s.lon == null) return;
+    // Flug-Rauszoom NUR an der Flug-ANKUNFT (diese Station wurde geflogen) — NICHT schon am
+    // Abflug-Stop davor. Sonst zoomt es bereits raus, sobald man zur Abflugstation (z. B. Lake
+    // Tahoe) FÄHRT, und sieht sie nicht mehr. So zoomt es erst beim Flug Tahoe->Anchorage heraus.
     const arrFlight = !!routeRef.current.legFlight[idx];
-    const depFlight = !!routeRef.current.legFlight[idx + 1];
-    if (arrFlight || depFlight) {
-      const j = arrFlight ? idx : idx + 1;
-      const arc = routeRef.current.flightArcs.find((x) => x.i === j);
-      const pts = arc ? arc.pts : ([routeRef.current.coords[j - 1], routeRef.current.coords[j]].filter(Boolean) as [number, number][]);
+    if (arrFlight) {
+      const arc = routeRef.current.flightArcs.find((x) => x.i === idx);
+      const pts = arc ? arc.pts : ([routeRef.current.coords[idx - 1], routeRef.current.coords[idx]].filter(Boolean) as [number, number][]);
       if (pts.length) { const b = new maplibregl.LngLatBounds(); pts.forEach((p) => b.extend(p)); map.fitBounds(b, { padding: 100, maxZoom: 6, duration: prefersReduced() ? 0 : 1100 }); if (prefersReduced()) placeVehicleAtStop(idx); return; }
     }
     if (prefersReduced()) { map.jumpTo({ center: [s.lon, s.lat] }); placeVehicleAtStop(idx); return; }
