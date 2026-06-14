@@ -58,7 +58,9 @@
 /* ── Timeline (normaler Fluss) ── */
 .tl-list { grid-column: 1; grid-row: 2; min-width: 0; list-style: none; margin: 0; padding: 4vh 0 30vh; position: relative; }
 
-.tl-fade { position: sticky; left: 0; right: 0; z-index: 3; pointer-events: none; }
+/* Fades liegen UNTER der aktiven Karte (z2), aber ÜBER gedimmten Nachbarn (z auto) -> die aktive
+   Karte (z3, s.u.) wird nie ausgewaschen (sauberer, voller Rahmen), nur Nachbarn faden weich. */
+.tl-fade { position: sticky; left: 0; right: 0; z-index: 2; pointer-events: none; }
 .tl-fade-top { top: calc(var(--ww-snap-pad, 200px) - 4px); height: 52px; margin-bottom: -52px; background: linear-gradient(var(--c-bg), rgba(244,237,225,0)); }
 .tl-fade-bottom { bottom: 0; height: 120px; margin-top: -120px; background: linear-gradient(rgba(244,237,225,0) 0%, rgba(244,237,225,0.45) 48%, rgba(244,237,225,0.82) 74%, var(--c-bg) 100%); }
 
@@ -91,7 +93,7 @@
               box-shadow var(--ww-dim-fade, 800ms) cubic-bezier(0.22, 1, 0.36, 1),
               background-color var(--ww-dim-fade, 800ms) cubic-bezier(0.22, 1, 0.36, 1);
 }
-.tl-stop.is-active .tl-body { opacity: 1; transform: none; background: var(--c-bg-alt, #efe6d6); box-shadow: var(--ww-ring), var(--ww-shadow); }
+.tl-stop.is-active .tl-body { opacity: 1; transform: none; position: relative; z-index: 3; background: var(--c-bg-alt, #efe6d6); box-shadow: var(--ww-ring), var(--ww-shadow); }
 .tl-step { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 6px; }
 .tl-title { font-family: var(--font-display); font-weight: var(--fw-medium); line-height: 1.2; margin-bottom: 4px; }
 .tl-date { font-size: var(--fs-label); color: var(--c-ink-soft); margin-bottom: 12px; }
