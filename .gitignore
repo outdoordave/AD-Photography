@@ -5,3 +5,8 @@
 # Editor-/OS-Müll
 Thumbs.db
 *~
+
+# Build-/Tool-Cache (entsteht nur, falls versehentlich ein Astro/Tina-Build im Repo-Root
+# statt in web/ läuft — Root ist KEIN Node-Projekt, hat kein package.json).
+.astro/
+node_modules/
