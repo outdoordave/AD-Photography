@@ -17,6 +17,14 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 — CMS-Vorschau: Button „Zum Reisemenü" (statt Stationen-Liste)
+- Der Vorschau-Button zeigte auf `stops` → öffnete die verschachtelte Stationen-Liste, nicht das
+  Reise-**Hauptformular**. Jetzt auf `title` (oberste Reise-Ebene) → landet im Haupt-Formular der Reise
+  („Du bist hier: Reisen – Reise"), von dort zu den Stationen scrollen. Umbenannt **„↩ Zum Reisemenü"**
+  (+ Hinweistext): zurück ins Hauptmenü der Reise, nicht „Station hinzufügen".
+- Datei: `web/src/components/TripTimeline.tsx`. Build grün (42 Seiten). Kein Schema-Change.
+- Commit: `35c6948`
+
 ## 2026-06-13 — Reisen-Timeline: weicherer Auslauf am Ende
 - Beim Ganz-nach-unten-Scrollen endete die letzte Station mit hartem Cut. Bottom-Fade von 56px → 120px
   erhöht + mehrstufiger weicher Verlauf (statt hartem 2-Stop) → sanfter Auslauf.
