@@ -45,12 +45,13 @@
   background: var(--c-bg); padding: 4px 0 6px;
   box-shadow: 0 -60px 0 0 var(--c-bg);
 }
-/* Weiche Unterkante des Kopfes (Teil des Kopfes -> z4, ÜBER der aktiven Karte z3, NUR Spaltenbreite,
-   berührt die Karte rechts nicht): Inhalt taucht sanft unter den Kopf statt mit hartem, bündigem
-   Schnitt. Kurz (30px), damit die ruhende erste Station knapp darunter NICHT ausgewaschen wird. */
+/* Weiche Unterkante des Kopfes über die VOLLE Spaltenbreite (z4, über der aktiven Karte z3): beim
+   Hochscrollen taucht der Inhalt — Ring, Bild, alle Kanten inkl. RECHTS — über ~64px sanft unter den
+   Kopf statt mit hartem Schnitt. Endet links/rechts an der Spalte, berührt die Karte nicht.
+   Die ruhende erste Station sitzt via padding-top unter dieser Zone (kein Auswaschen). */
 .tl-head::after {
-  content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 30px;
-  background: linear-gradient(var(--c-bg), rgba(244,237,225,0));
+  content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 64px;
+  background: linear-gradient(var(--c-bg) 18%, rgba(244,237,225,0));
   pointer-events: none;
 }
 .tl-head .tl-meta { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 4px; }
@@ -64,10 +65,12 @@
 .tl-map .maplibregl-map { height: 100%; }
 
 /* ── Timeline (normaler Fluss) ── */
-.tl-list { grid-column: 1; grid-row: 2; min-width: 0; list-style: none; margin: 0; padding: 4vh 0 30vh; position: relative; }
+/* padding-top so groß, dass die RUHENDE erste Station UNTER der weichen Kopf-Unterkante (::after, 64px)
+   sitzt — sonst würde ihr Rahmen ausgewaschen. ~an der Fokus-Position. */
+.tl-list { grid-column: 1; grid-row: 2; min-width: 0; list-style: none; margin: 0; padding: 84px 0 30vh; position: relative; }
 
-/* Fades liegen UNTER der aktiven Karte (z2), aber ÜBER gedimmten Nachbarn (z auto) -> die aktive
-   Karte (z3, s.u.) wird nie ausgewaschen (sauberer, voller Rahmen), nur Nachbarn faden weich. */
+/* Fades (z2) liegen UNTER der aktiven Karte (z3) -> deren Rahmen bleibt sauber; gedimmte Nachbarn
+   (z auto) faden weich. Der weiche Übergang der aktiven Karte unter den Kopf macht .tl-head::after. */
 .tl-fade { position: sticky; left: 0; right: 0; z-index: 2; pointer-events: none; }
 .tl-fade-top { top: calc(var(--ww-snap-pad, 200px) - 4px); height: 52px; margin-bottom: -52px; background: linear-gradient(var(--c-bg), rgba(244,237,225,0)); }
 .tl-fade-bottom { bottom: 0; height: 120px; margin-top: -120px; background: linear-gradient(rgba(244,237,225,0) 0%, rgba(244,237,225,0.45) 48%, rgba(244,237,225,0.82) 74%, var(--c-bg) 100%); }
