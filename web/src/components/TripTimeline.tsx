@@ -568,7 +568,10 @@ export default function TripTimeline(props: Props) {
     const els = Array.from(document.querySelectorAll<HTMLElement>('.tl-stop'));
     if (!els.length) return;
     const io = new IntersectionObserver((entries) => { for (const e of entries) if (e.isIntersecting) { (e.target as HTMLElement).classList.add('is-revealing'); io.unobserve(e.target); } }, { threshold: 0.05, rootMargin: '0px 0px -6% 0px' });
-    els.forEach((el) => io.observe(el));
+    // Schon beim Laden sichtbare Stationen NICHT animieren (sonst Flackern: Reveal startet bei opacity 0,
+    // obwohl die Station — auch serverseitig — bereits sichtbar ist). Nur off-screen-Stationen faden beim Scrollen ein.
+    const vh = window.innerHeight;
+    els.forEach((el) => { const r = el.getBoundingClientRect(); if (r.top < vh && r.bottom > 0) return; io.observe(el); });
     return () => io.disconnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tripIdx]);
