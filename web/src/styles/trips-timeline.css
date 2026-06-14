@@ -45,6 +45,14 @@
   background: var(--c-bg); padding: 4px 0 6px;
   box-shadow: 0 -60px 0 0 var(--c-bg);
 }
+/* Weiche Unterkante des Kopfes (Teil des Kopfes -> z4, ÜBER der aktiven Karte z3, NUR Spaltenbreite,
+   berührt die Karte rechts nicht): Inhalt taucht sanft unter den Kopf statt mit hartem, bündigem
+   Schnitt. Kurz (30px), damit die ruhende erste Station knapp darunter NICHT ausgewaschen wird. */
+.tl-head::after {
+  content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 30px;
+  background: linear-gradient(var(--c-bg), rgba(244,237,225,0));
+  pointer-events: none;
+}
 .tl-head .tl-meta { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 4px; }
 .tl-head h2 { font-family: var(--font-display); font-size: var(--fs-title-lg); font-weight: var(--fw-medium); line-height: 1.1; }
 .tl-summary { font-size: var(--fs-ui); color: var(--c-ink-soft); line-height: 1.55; margin-top: 4px; max-width: 56ch; }
