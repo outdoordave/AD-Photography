@@ -1,10 +1,17 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-13** · letzter Commit `00db05b` (Branch `astro-umbau`) ·
-> **Reisen-Detail (`00db05b`):** „rechts lugt der Rahmen neben der Überschrift raus" gelöst — der Kopf deckt jetzt
-> die 36px-Spalten-Lücke rechts mit ab (`.tl-head::before`, 34px, z4) → Stations-Ring/Schatten-Überstand (~28px)
-> verschwindet auf Kopfhöhe auch rechts. Damit der **Map-Schatten** nicht mitverdeckt wird: `.tl-map z-index:5`
-> (liegt drüber). Mobil aus. Stationen/CMS-Rahmen unverändert. Erste Station + Map-Schatten live verifiziert.
+> **Stand: 2026-06-14** · letzter Commit `31070ea` (Branch `astro-umbau`) ·
+> **Reisen-Detail (`31070ea`):** Ecke **Station|Kopf|Karte** smooth gemacht (war „hakelig"). Schicht-Layout wie
+> vom Nutzer beschrieben: Kopf-Deckfläche `.tl-head::before` läuft als durchgehende Ebene **bis unter die Karte**
+> (`width: calc(36px + 420px)`); Map mit `z-index:5` darüber → Map-Schatten bleibt **über** der Deckfläche. Die
+> weiche Kopf-Unterkante `.tl-head::after` reicht jetzt über Textspalte **und** Lücke bis zur Karten-Kante
+> (`right:-36px`) → Deckrand läuft an der Ecke durchgehend weich aus statt auf eine harte Kante zu treffen.
+> Höhe unverändert (`min(28px,3.4vh)`<4vh → erste Station nicht ausgewaschen). Live verifiziert (lokaler Tina-Build
+> + astro preview): scrollY=0 voller CMS-Rahmen; Mid-Transition (Denali aktiv, Anchorage taucht weich unter) ohne
+> harten Übergang; Map-Schatten über der Deckfläche. **Finaler Seite-an-Seite-Check durch Nutzer steht noch aus.**
+> **Reisen-Detail (`00db05b`):** „rechts lugt der Rahmen neben der Überschrift raus" gelöst — der Kopf deckt die
+> 36px-Spalten-Lücke rechts mit ab (`.tl-head::before`, z4) → Stations-Ring/Schatten-Überstand (~28px) verschwindet
+> auf Kopfhöhe auch rechts; `.tl-map z-index:5` schützt den Map-Schatten. Mobil aus. Stationen/CMS-Rahmen unverändert.
 > **Reisen-Detail (`32afdfc`/`ba54e70`/`3099bfb`):** Aktive Karten-Rahmen = **exaktes CMS-Design** (`--ww-ring`/
 > `--ww-shadow`, weicher Rahmen + großes head::after/Abstand zurückgebaut). Der „rechts durchfliegen"-Effekt liegt
 > am **Kopf** (verifiziert: Kopf deckt auf seiner Höhe voll ab, auch rechts; Inhalt nur darunter sichtbar) → kurze

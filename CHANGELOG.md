@@ -17,6 +17,22 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-14 20:23 — Reisen: Ecke Station|Kopf|Karte smooth (Schicht-Layout + weiche Lücken-Unterkante)
+- Anschluss an `00db05b`: die Ecke, wo **Station (links)**, **Reise-Kopf (oben)** und **Karte (rechts)**
+  zusammentreffen, sah „hakelig" aus — die weiche Kopf-Unterkante (`::after`) reichte nur über die Textspalte,
+  in der **36px-Lücke** daneben endete die Deckfläche (`::before`) mit **harter Unterkante** → sichtbarer Knick.
+- **Fix 1 (Schicht-Layout wie vom Nutzer beschrieben):** `.tl-head::before` läuft jetzt als durchgehende
+  Deck-Ebene **bis unter die Karte** (`width: calc(36px + 420px)`). Map liegt mit `z-index:5` darüber, ihr
+  Schatten bleibt **über** der Deckfläche (Tiles opak → Deckfläche unter der Karte unsichtbar, aber robust).
+- **Fix 2 (Ecke smooth):** `.tl-head::after` (weiche Unterkante) reicht jetzt über Textspalte **und** Lücke
+  bis zur Karten-Kante (`right:-36px`) → der Deckrand läuft an der Ecke durchgehend weich aus statt auf die
+  harte `::before`-Unterkante zu treffen.
+- Höhe der Unterkante unverändert (`min(28px,3.4vh)` < 4vh) → CMS-Rahmen der ruhenden ersten Station wird
+  **nicht** ausgewaschen. Live verifiziert (lokaler Tina-Build + astro preview): scrollY=0 erste Station mit
+  vollem CMS-Rahmen; Mid-Transition (Denali aktiv, Anchorage taucht weich unter den Kopf) ohne harten Übergang;
+  Map-Schatten über der Deckfläche. Build grün (42 Seiten). Kein Schema-Change.
+- Dateien: `web/src/styles/trips-timeline.css`. Commit: `31070ea`
+
 ## 2026-06-13 — Reisen: Kopf deckt Spalten-Lücke rechts (Stations-Überstand verschwindet)
 - Kern des „rechts lugt der Rahmen raus": der **2px-Ring + Schatten** der aktiven Station ragen ~28px über die
   Spaltenkante (750) in die **36px-Lücke** zur Karte (bis ~778) — dort, wo der Kopf endet, also unverdeckt.
