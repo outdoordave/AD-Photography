@@ -9,7 +9,6 @@ import GearStyleField from './fields/GearStyleField';
 import SectionBanner from './fields/SectionBanner';
 import EnglishToggle from './fields/EnglishToggle';
 import LocationSearchField from './fields/LocationSearchField';
-import StopsManager from './fields/StopsManager';
 import { backToSiteScreen } from './screens/BackToSiteScreen';
 import { logoutScreen } from './screens/LogoutScreen';
 
@@ -362,13 +361,9 @@ export default defineConfig({
           },
           { type: 'string', name: 'vehicle_custom_svg', label: '↳ Eigenes Fahrzeug-SVG (optional)', description: 'Fortgeschritten: kompletter <svg>…</svg>-Code. Überschreibt die Auswahl oben.', ui: { component: 'textarea' } },
           {
-            type: 'string', name: 'stops_manager', label: '🗺️ Stationen schnell verwalten',
-            description: 'Flach & ohne Verschachtelung: + hinzufügen · ziehen zum Sortieren · 🗑 löschen · Name/Art/Anreise. Detailfelder je Station unten in der Liste.',
-            ui: { component: StopsManager },
-          },
-          {
             type: 'object', name: 'stops', label: 'Stationen', list: true,
-            ui: { itemProps: (i: any) => ({ label: i?.name || 'Neue Station' }) },
+            // 2-in-1: Anreise (✈/🚗) + Zwischenstopp diskret direkt in der Listen-Beschriftung jeder Station.
+            ui: { itemProps: (i: any) => ({ label: (i?.arriveBy === 'flight' ? '✈️ ' : '🚗 ') + (i?.name || 'Neue Station') + (i?.kind === 'intermediate' ? ' · Zwischenstopp' : '') }) },
             fields: [
               { type: 'string', name: 'name', label: 'Name (kurz – für Marker & Liste)', required: true, description: 'z. B. San Francisco' },
               {
@@ -383,8 +378,8 @@ export default defineConfig({
                 type: 'string', name: 'arriveBy', label: 'Anreise zu dieser Station',
                 description: 'Wie diese Station vom vorherigen Stopp erreicht wird. Fahrt = durchgezogene Linie + Auto. Flug = gekrümmter, gestrichelter Bogen + Flugzeug (zoomt heraus). Leer = Fahrt.',
                 options: [
-                  { value: 'drive', label: 'Fahrt (Auto)' },
-                  { value: 'flight', label: 'Flug (Flugzeug)' },
+                  { value: 'drive', label: '🚗 Fahrt' },
+                  { value: 'flight', label: '✈️ Flug' },
                 ],
               },
               { type: 'string', name: 'location', label: '📍 Ort auf der Karte', description: 'Suchen & auf der Karte feinjustieren.', ui: { component: LocationSearchField } },
