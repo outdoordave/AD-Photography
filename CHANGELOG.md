@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 — Reisen: Kopf deckt Spalten-Lücke rechts (Stations-Überstand verschwindet)
+- Kern des „rechts lugt der Rahmen raus": der **2px-Ring + Schatten** der aktiven Station ragen ~28px über die
+  Spaltenkante (750) in die **36px-Lücke** zur Karte (bis ~778) — dort, wo der Kopf endet, also unverdeckt.
+- Lösung (Idee „Textfeld breiter"): Kopf deckt die Lücke rechts mit ab (`.tl-head::before`, 34px ab Kopf-
+  Rechtskante, z4-Kontext) → der Überstand verschwindet auf Kopfhöhe **auch rechts** hinter der Überschrift.
+  Damit der **Schatten der Karte (Map)** nicht mitverdeckt wird (das frühere Problem beim Kopf-Verbreitern):
+  `.tl-map z-index: 5` → Map + ihr Schatten liegen **über** der Kopf-Deckfläche. Mobil aus (Kopf nicht sticky).
+- Stationen + CMS-Rahmen unverändert. Erste Station + Map-Schatten live verifiziert. Build grün (42 Seiten).
+- Commit: `00db05b`
+
 ## 2026-06-13 — Reisen: Rahmen zurück (CMS-Design) + kurze weiche Kopf-Unterkante
 - **Rückbau:** der weiche Rahmen (`b80d027`) sah aus wie „kein Rahmen" → zurück auf exaktes CMS-Design
   (`var(--ww-ring), var(--ww-shadow)`, `ba54e70`). Meine Untertauch-Experimente (großes `head::after` + 84px

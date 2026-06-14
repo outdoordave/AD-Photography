@@ -1,6 +1,10 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-13** · letzter Commit `32afdfc` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-13** · letzter Commit `00db05b` (Branch `astro-umbau`) ·
+> **Reisen-Detail (`00db05b`):** „rechts lugt der Rahmen neben der Überschrift raus" gelöst — der Kopf deckt jetzt
+> die 36px-Spalten-Lücke rechts mit ab (`.tl-head::before`, 34px, z4) → Stations-Ring/Schatten-Überstand (~28px)
+> verschwindet auf Kopfhöhe auch rechts. Damit der **Map-Schatten** nicht mitverdeckt wird: `.tl-map z-index:5`
+> (liegt drüber). Mobil aus. Stationen/CMS-Rahmen unverändert. Erste Station + Map-Schatten live verifiziert.
 > **Reisen-Detail (`32afdfc`/`ba54e70`/`3099bfb`):** Aktive Karten-Rahmen = **exaktes CMS-Design** (`--ww-ring`/
 > `--ww-shadow`, weicher Rahmen + großes head::after/Abstand zurückgebaut). Der „rechts durchfliegen"-Effekt liegt
 > am **Kopf** (verifiziert: Kopf deckt auf seiner Höhe voll ab, auch rechts; Inhalt nur darunter sichtbar) → kurze
