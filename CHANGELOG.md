@@ -17,6 +17,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-13 — Reisen: aktive Karte über die Fades (Rahmen nicht mehr ausgewaschen)
+- Ursache der „buggy" Rahmen (erste Station oben nicht gefüllt; letzte Station: Ring hört auf + Schatten
+  darunter; Inhalt schimmert beim Scrollen rechts neben dem Text): die **Fade-Overlays** (`.tl-fade-top/bottom`,
+  z-index 3) lagen **über** der aktiven Karte und wuschen Ring + Füllung aus, während der Box-Schatten außerhalb
+  blieb → wirkte abgehackt.
+- Fix: Fades → z-index **2**, aktive Karte (`.is-active .tl-body`) → `position:relative; z-index:3`. Aktive Karte
+  liegt damit **über** den Fades (immer sauberer, voller Rahmen), aber weiter **unter** dem Kopf (z4 → sauberer
+  Schnitt beim Hochscrollen). Gedimmte Nachbarn faden weiter weich. Erste Station **live verifiziert** (`astro
+  preview`): voller Rahmen bei scrollY=0.
+- Datei: `web/src/styles/trips-timeline.css`. Build grün (42 Seiten). Kein Schema-Change.
+- Commit: `6ae8eaa`
+
 ## 2026-06-13 — Reisen: Revert Kopf-::before + weicheres Timeline-Ende (live verifiziert)
 - **Revert `23837a2` (`9288e1a`):** die `::before`-Abdeckfläche schnitt den Karten-Schatten ab und erzeugte
   selbst eine harte Kante/„zu große Box". Kopf zurück auf box-shadow-nur-nach-oben (berührt die Karte nie).

@@ -1,6 +1,10 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-13** · letzter Commit `1ed2fa2` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-13** · letzter Commit `6ae8eaa` (Branch `astro-umbau`) ·
+> **Reisen-Detail (`6ae8eaa`):** „buggy" Rahmen behoben — Fade-Overlays wuschen die aktive Karte aus. Jetzt
+> Fades z-index 2, **aktive Karte z-index 3** (über Fades, unter Kopf z4) → voller, sauberer Rahmen; gedimmte
+> Nachbarn faden weiter. Erste Station live verifiziert. *(Hinweis: Scroll-Position-Screenshots im Vorschau-Tool
+> kommen leer — Tool-Artefakt, nicht die Seite; scrollY=0 rendert korrekt.)*
 > **Reisen-Detail (`9288e1a`/`1ed2fa2`):** Kopf-`::before` (23837a2) **zurückgenommen** (schnitt Karten-Schatten
 > ab / zu große Box) — per **Live-Vorschau** verifiziert, dass der Kopf hochscrollende Titelbilder voll überdeckt
 > (kein Durchschimmern). **Weicheres Timeline-Ende:** Trailing-Leerraum 42vh→30vh → letzte Station bleibt lesbar,
