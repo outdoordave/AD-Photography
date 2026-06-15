@@ -17,6 +17,22 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-15 22:09 — Reisen-Design-Schritt 3: Merge in Einstellungen + Regler-Editor + Cleanup [SCHEMA → Re-Index]
+- **3a — Merge (`1eaf588`) [Schema]:** Design-Werte als Objekt `designs` (none/soft/strong/luftig) in die
+  `reisen_settings`-Collection (`trips-settings.json`) verschoben → **eine** CMS-Seite statt zwei (Nutzer-Wunsch).
+  `reisen_designs`-Collection + `src/data/trip-designs.json` **entfernt**. `[slug].astro` (DE+EN):
+  `tripDesignsCss(mergeTuning(s.designs))`. Werte 1:1 übernommen; strong byte-gleich. tina-lock `e8c9449`.
+- **3b — Regler-Editor (`2ce04bd`) [nur UI]:** `web/tina/fields/TripDesignsEditor.tsx` als `ui.component` auf dem
+  `designs`-Objekt: Design-Umschalter + Slider (Dimmung/Luft/Titelgröße/Inaktiv-Größe/Foto-Schatten) + **Live-
+  Vorschau im Feld** (zwei Beispiel-Stationskarten via `designToVars`, kein iframe → Safari-sicher). tina-lock
+  `5af5c89` (nur `"ui":{}`-Marker, keine Feld-/Typ-Änderung).
+- **Cleanup (`f76c5fb`):** verwaiste `TripsContent.tsx` entfernt (wird nirgends importiert; `/trips/<slug>` =
+  TripTimeline). Build grün.
+- **⚠️ EIN Re-Index** nötig (für 3a, strukturell — Felder von `reisen_designs` → `reisen_settings`, Collection
+  weg). Deckt 3b/Cleanup mit ab. Verifiziert: Build grün (42 Seiten), strong byte-gleich, `global.css`/andere
+  Seiten unberührt. Editor-Verhalten im CMS bitte nach Re-Index gegenprüfen.
+- Commits: `1eaf588`, `2ce04bd`, `f76c5fb`
+
 ## 2026-06-15 21:53 — Reisen-Detail: höhenadaptive Aktivierung (kurze Stationen früher) — Punkt 2
 - **Symptom (Nutzer):** bei kurzen Stationen schaltet der Fokus „ein Ticken zu spät" zur nächsten — die
   Aktivierung hing an der Block-Oberkante + festem Anker, kurze Blöcke waren schon fast unter dem Kopf.

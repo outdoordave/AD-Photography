@@ -1,6 +1,12 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-15** · letzter Commit `53c3f71` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-15** · letzter Commit `f76c5fb` (Branch `astro-umbau`) ·
+> **Reisen-Design-System FERTIG gebaut [Re-Index nötig]:** Schritt 3 = Design-Werte in `reisen_settings`
+> zusammengeführt (`designs`-Objekt, eine CMS-Seite; `reisen_designs`/`trip-designs.json` raus — `1eaf588`,
+> Schema) + **Regler-Editor** `TripDesignsEditor` (Slider + Live-Vorschau im Feld, `ui.component` — `2ce04bd`)
+> + verwaiste `TripsContent.tsx` gelöscht (`f76c5fb`). tina-lock final `5af5c89`. **EIN Tina-Cloud-Re-Index**
+> (für 3a strukturell) nötig — deckt alles ab. Build grün, strong byte-gleich. **Nach Re-Index: Editor im CMS
+> gegenprüfen** (Slider laden/speichern, Vorschau). Offen danach: nur noch Live-Abnahme + ggf. Faktor-Tuning.
 > **Reisen-Detail höhenadaptive Aktivierung (`53c3f71`):** kurze Stationen schalten früher um (Lead je Block:
 > `lead = max(0, READ − h)·LEAD_FACTOR`, lange Stationen unverändert). Faktoren `READ_FRACTION 0.5`/`LEAD_FACTOR
 > 0.55` (intern, zum Nachjustieren). Kein Schema, kein Re-Index. **Offen zum Bau-Abschluss:** Schritt 3
