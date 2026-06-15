@@ -1,6 +1,13 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-15** · letzter Commit `d807bc8` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-15** · letzter Commit `78c46b7` (Branch `astro-umbau`) ·
+> **Reisen-Design-Schritt 2 (`db0e2fd`+`78c46b7`) [SCHEMA → RE-INDEX nötig]:** zentrale Design-Werte
+> `src/data/trip-designs.json` + Collection `reisen_designs` (Tuning je Design); `lib/tripDesigns.ts` trennt
+> Character/Tuning + `mergeTuning`/`photoShadowCss`; `[slug].astro` baut `<style>` daraus. Pro-Reise-Dropdown
+> `design` (none/soft/strong/luftig, Default strong = byte-gleich). tina-lock: 2a `c36aac6`, 2b `0a923a3`
+> (je 2× deterministisch). **NACH Push: Tina-Cloud-Re-Index** (sonst „schema doesn't match"). Build grün,
+> strong byte-gleich, andere Seiten unberührt, spotlight_strength-Regler für Reisen vom per-Design-Wert abgelöst.
+> **STOPP vor Schritt 3** (Regler-Editor, `ui.component`, KEIN weiterer Re-Index) bis Nutzer gepusht + re-indexiert hat.
 > **Reisen-Detail Fortschritts-Füllung gefixt (`d807bc8`):** `--fill` jetzt an den **aktiven Punkt** gekoppelt
 > (statt feste Anker-Linie) → beim Laden **garantiert 0** auf jeder Fensterhöhe (keine ⅓-Vorfüllung mehr),
 > wächst stationsweise weich (transition height 450ms). Verifiziert vh 797 + 1200. **Offen (je einzeln):**

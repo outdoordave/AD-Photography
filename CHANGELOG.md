@@ -17,6 +17,29 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-15 20:41 — Reisen-Design-Schritt 2: zentrale Werte + pro-Reise-Dropdown [SCHEMA → Re-Index]
+- **Modell:** 4 zentrale Vorlagen (none/soft/strong/luftig); pro Reise nur **Auswahl** (Default strong =
+  byte-gleich). Werte zentral pflegbar → Änderung wirkt global auf alle Reisen mit diesem Design.
+- **2a (`db0e2fd`):** `lib/tripDesigns.ts` trennt **CHARACTER** (fest, Code: ring/shadow/cardBg) von **TUNING**
+  (zentral editierbar: dimOp/gap/titlePx/scale/photoShadow). `photoShadowCss(stärke)` geeicht (40 = luftig-Wert
+  `0 16px 42px -13px rgba(46,36,24,0.42)`). `mergeTuning(cms)` legt die CMS-Datei über die Defaults (fehlend →
+  byte-gleich). Neue zentrale Datei `src/data/trip-designs.json` (4 Designs, Defaults befüllt) + neue Tina-
+  Collection **`reisen_designs`** (Zahlenfelder). `[slug].astro` (DE+EN): `<style>` aus `tripDesignsCss(mergeTuning(…))`.
+- **2b (`78c46b7`):** pro-Reise-Feld **`design`** (Dropdown none/soft/strong/luftig) in der `reisen`-Collection.
+  Leer → strong. Wirkt nur auf die Stationen dieser Reise (Entkopplung aus Schritt 1).
+- **tina-lock** deterministisch neu, je 2× unabhängig verifiziert: 2a `c36aac6`, 2b `0a923a3`.
+- **⚠️ SCHEMA-Änderung (2 neue Schema-Teile) → nach Push Tina-Cloud-Re-Index nötig** (sonst Cloudflare-Build
+  „local schema doesn't match remote").
+- **Verifiziert (lokaler Build, 42 Seiten):** strong-Block byte-gleich; luftig-Block exakt aus der Datei;
+  `design` per GraphQL abfragbar (alle Reisen null → strong); alaska2026 `data-trip-design="strong"`.
+  `global.css` unberührt, keine anderen Seiten. **Hinweis:** strong setzt dim/scale jetzt explizit (= heutige
+  Werte) → der globale `spotlight_strength`-Regler wird für Reisen vom per-Design-Wert abgelöst.
+- **Offen (nach Re-Index, eigener Commit, KEIN Re-Index):** Schritt 3 = Regler-Editor (`ui.component`) auf
+  `reisen_designs` mit Live-Vorschau.
+- Dateien: `web/src/lib/tripDesigns.ts`, `web/src/data/trip-designs.json`, `web/tina/config.ts`,
+  `web/src/pages/trips/[slug].astro`, `web/src/pages/en/trips/[slug].astro`, `web/tina/tina-lock.json`.
+- Commits: `db0e2fd`, `78c46b7`
+
 ## 2026-06-15 20:11 — Reisen-Detail: Fortschritts-Füllung an aktiven Punkt koppeln (keine Vorfüllung beim Laden)
 - **Problem (Nutzer):** Beim Laden war der erste Punkt schon ~⅓ „abgegrast". Ursache: `--fill` hing an der
   festen Anker-Linie (oberes Drittel) → `anker − ersterPunkt` beim Laden > 0; wuchs zudem mit der Fensterhöhe.
