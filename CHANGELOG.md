@@ -17,6 +17,21 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-15 19:21 — Reisen-Detail: Vorspann straffen (erster Punkt ~44% → ~39% Höhe)
+- **Diagnose Punkt 1 (gemeinsam mit Nutzer, Live-Wahrheit):** Die Fortschrittslinie ist **kein Bug** — sie
+  beginnt rechnerisch korrekt am ersten Punkt (`--line-top` = erste Punkt-Mitte, `--fill` beim Laden nur ~34px).
+  Der erste Stations-Punkt sitzt aber auf ~**44 %** der Bildschirmhöhe (Nutzer-Messung vh 797: firstDot 348px),
+  weil der **Kopf** (Nav + Titel + 3-zeilige Zusammenfassung + Abstände) den oberen Bereich füllt → wirkt „mittig".
+- **Fix (Layout, nur tote Luft, KEIN Inhalt entfernt):** `.tl-list` padding-top `4vh→2vh`; Section padding-top
+  `20→8px` (DE+EN); `.trip-back` margin-bottom `14→6px`; `.tl-head` padding `4px 0 6px → 0 0 4px`; `.tl-summary`
+  margin-top `4→2px`.
+- **Gemessen (vh 797):** erster Punkt 348px (44 %) → **308px (39 %)**. Reine Tot-Luft bringt ~5 Prozentpunkte;
+  die restliche Höhe steckt im Kopf-Inhalt → kommt über **Schritt 2** (Summary scrollt weg, Lesen bei ~18 %).
+- **Luftig-Kompatibilität live geprüft:** stimmig — Trim wirkt über Station 1, luftig zwischen den Stationen,
+  kein Konflikt. Build grün (42 Seiten). Kein Schema, kein Re-Index.
+- Dateien: `web/src/styles/trips-timeline.css`, `web/src/pages/trips/[slug].astro`, `web/src/pages/en/trips/[slug].astro`.
+- Commit: `48495dd`
+
 ## 2026-06-15 18:27 — Fix (Schritt 1): luftig-Karten-Schatten gültig (kein „none" in box-shadow-Liste)
 - Beim End-to-End-Test (data-trip-design testweise auf „luftig") fiel auf: `--ww-trip-shadow: none` landet
   in der **Komma-Liste** `box-shadow: var(--ww-trip-ring,…), var(--ww-trip-shadow,…)` → `… , none` ist als

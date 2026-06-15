@@ -1,6 +1,12 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-15** · letzter Commit `eef7e19` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-15** · letzter Commit `48495dd` (Branch `astro-umbau`) ·
+> **Reisen-Detail Vorspann gestrafft (`48495dd`):** Punkt 1 war **kein** Linien-Bug — die Füllung startet korrekt
+> am ersten Punkt; der erste Stations-Punkt saß nur auf ~44 % Bildschirmhöhe (Kopf drückt). Tot-Luft gekürzt
+> (`.tl-list` 4vh→2vh, Section 20→8px, `.trip-back` 14→6px, `.tl-head` Padding, `.tl-summary` mt 4→2) → erster
+> Punkt **44 %→39 %** (vh 797). Kein Inhalt entfernt. Luftig + Trim live als stimmig geprüft. **Offen Schritt 2:**
+> nur Titel sticky, Summary scrollt weg (Lesen ~18 %) — eigener Commit. Danach: B (Füll-Vorderkante an aktiven
+> Punkt) + Punkt 2 (höhenadaptive Aktivierung), je einzeln.
 > **Reisen-Design Schritt 1 / Entkopplung (`eef7e19`):** Vorbereitung pro-Reise-Designs, **rein additiv, kein
 > Schema, kein Re-Index, byte-gleich.** Neue geteilte Quelle `web/src/lib/tripDesigns.ts` (4 Vorlagen
 > none/soft/strong/luftig + `designToVars`/`tripDesignsCss`/`resolveTripDesign`). Stationskarte liest reise-eigene
