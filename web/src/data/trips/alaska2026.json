@@ -169,7 +169,7 @@
       "location": "{\"type\":\"Point\",\"coordinates\":[-149.980156,61.174513]}"
     },
     {
-      "name": "FRa - Airport",
+      "name": "FRA - Airport",
       "kind": "intermediate",
       "arriveBy": "flight",
       "location": "{\"type\":\"Point\",\"coordinates\":[8.5552,50.024413]}"
