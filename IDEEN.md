@@ -312,6 +312,28 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
 
 ---
 
+## Z. Design-/Regler-System global ausweiten (nach den Reisen) — (B, später)
+
+### Z1 · Zentrales Design-/Regler-System auch für Portfolio/Alben/Stories — (B)
+- **Status:** offen · **Zugeordnet:** NACH dem Reisen-Design-System (Schritt 1–3), eigener Brocken
+- **Was:** Das für die Reisen gebaute Modell (zentrale Design-Vorlagen + Regler mit Live-Vorschau,
+  gespeist aus einer geteilten Quelle `lib/tripDesigns.ts` → `designToVars`/`<style>`) später analog
+  auf die **globalen Seiten-Designs** (Portfolio, Alben, Stories, Buttons/Formulare, Stats) übertragen —
+  damit auch dort Rahmen/Schatten/Abstände zentral mit Reglern + Vorschau pflegbar sind, statt nur über
+  die 3 festen `appearance.image_frame`-Stufen.
+- **Warum bewusst getrennt / Vorsicht:** Die globalen Tokens `--ww-ring`/`--ww-shadow` (+ `-d`) werden
+  von **sehr vielen** Consumern gelesen (`.story-card`, `.gallery .item`, `.album-slideshow`, `.trip-card`,
+  `.map-box`, `.teaser`, `.insta-link`, Buttons/Formulare, Stats, `.person` …). Der **Blast-Radius** ist
+  also groß — eine zentrale Änderung wirkt seitenweit. Das braucht **eigenes, breites Testing** (jede
+  betroffene Sektion seite-an-seite prüfen), bevor irgendetwas umgestellt wird. **Kein Cutover-Blocker.**
+- **Technik-Hinweis:** Das Reise-Reglersystem (Schritt 3) **technisch wiederverwendbar** bauen
+  (generisches „Design-Set → CSS-Variablen"-Feld + geteilte Quelle), sodass die globale Ausweitung
+  später nur eine zweite Instanz/Datenquelle ist — nicht eine Neuentwicklung.
+- **Aufwand:** mittel–hoch (wegen Blast-Radius + Testing) · **Capability-Lock:** betrifft ALLE Seiten →
+  nur mit ausdrücklicher Freigabe + dokumentiertem Seite-an-Seite-Vergleich.
+
+---
+
 _Quelle der Ideen: tiefe Live-Code-Analyse (siehe `ANALYSE-Reisen.md`) + Bau von
 Stufe 1 (Stories) und dem Foto-Upload-Feld. Pflege: Status pro Punkt aktualisieren,
 sobald David ihn im jeweiligen Schritt freigibt/umsetzt._

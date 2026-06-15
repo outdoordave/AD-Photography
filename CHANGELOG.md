@@ -17,6 +17,33 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-15 18:23 — Reisen-Design Schritt 1: Entkopplung (--ww-trip-* + data-trip-design)
+- **Ziel-Modell** (in 3 Schritten): 4 zentrale Design-Vorlagen (none/soft/strong/luftig); pro Reise wird
+  per Dropdown nur ausgewählt; Werte zentral pflegbar (Regler kommt in Schritt 3). **Dies ist Schritt 1:
+  Entkopplung — rein additiv, kein Schema, kein Re-Index, allein deploybar.**
+- **Neue geteilte Quelle** `web/src/lib/tripDesigns.ts`: `TRIP_DESIGN_DEFAULTS` (4 Vorlagen) + `designToVars`
+  + `tripDesignsCss` + `resolveTripDesign`. EINE Quelle für den pro-Seite emittierten `<style>` UND später
+  das Regler-Feld → **kein Drift**.
+- **Stationskarte** liest jetzt reise-eigene Tokens mit Fallback auf die globalen:
+  `box-shadow: var(--ww-trip-ring, var(--ww-ring)), var(--ww-trip-shadow, var(--ww-shadow))` — ebenso
+  `--ww-trip-card-bg`, `--ww-trip-photo-shadow` (Hero **und** Thumb), `--ww-trip-gap`, `--ww-trip-title`,
+  `--ww-trip-dim-op`, `--ww-trip-scale`. **none/soft/strong = exakt die heutigen Werte**; dim/scale dort
+  NICHT überschrieben → globaler Spotlight-Regler bleibt wirksam. **luftig** = neue Vorlage (Startwerte:
+  kein Ring/Schatten, schwebendes Foto `0 16px 42px -13px rgba(46,36,24,.42)`, Luft 50px, Titel 26px,
+  dim 0.15, scale 0.80) — vorerst ungenutzt.
+- **`[slug].astro` (DE+EN):** emittiert die 4 Design-Blöcke als gescopter `<style>` aus der Quelle und setzt
+  `data-trip-design` auf `.tl-proto`. **Schritt 1: noch KEIN CMS-Feld → resolveTripDesign(undefined)='strong'.**
+- **Karte (`.map-box`) bewusst auf den globalen Tokens** belassen (site-konsistent); nur Stations-Karten + Foto neu skinnbar.
+- **Capability-Lock bewiesen:** `global.css` **unberührt**; keine andere Seite geändert → Portfolio/Alben/
+  Stories/Statistik/Buttons lesen byte-identisch weiter die `<body>`-Tokens. Live-Computed (astro preview):
+  aktive Karte `rgb(216,202,178) 0 0 0 2px, rgba(46,36,24,0.5) 0 18px 40px -12px` (= heutige Strong-Werte),
+  Füllung `#ebe1d1`, `data-trip-design=strong`. Build grün (42 Seiten). **Kein Re-Index.**
+- **IDEEN.md:** neuer offener Punkt Z1 — Design-/Regler-System später auch global (Portfolio/Alben/Stories)
+  ausweiten; Reglersystem technisch wiederverwendbar bauen; großer Blast-Radius → eigenes Testing. Kein Cutover-Blocker.
+- Dateien: `web/src/lib/tripDesigns.ts` (neu), `web/src/styles/trips-timeline.css`,
+  `web/src/components/TripTimeline.tsx`, `web/src/pages/trips/[slug].astro`, `web/src/pages/en/trips/[slug].astro`, `IDEEN.md`.
+- Commit: `eef7e19` (Doku separat)
+
 ## 2026-06-14 20:23 — Reisen: Ecke Station|Kopf|Karte smooth (Schicht-Layout + weiche Lücken-Unterkante)
 - Anschluss an `00db05b`: die Ecke, wo **Station (links)**, **Reise-Kopf (oben)** und **Karte (rechts)**
   zusammentreffen, sah „hakelig" aus — die weiche Kopf-Unterkante (`::after`) reichte nur über die Textspalte,

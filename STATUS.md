@@ -1,6 +1,15 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-14** · letzter Commit `31070ea` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-15** · letzter Commit `eef7e19` (Branch `astro-umbau`) ·
+> **Reisen-Design Schritt 1 / Entkopplung (`eef7e19`):** Vorbereitung pro-Reise-Designs, **rein additiv, kein
+> Schema, kein Re-Index, byte-gleich.** Neue geteilte Quelle `web/src/lib/tripDesigns.ts` (4 Vorlagen
+> none/soft/strong/luftig + `designToVars`/`tripDesignsCss`/`resolveTripDesign`). Stationskarte liest reise-eigene
+> Tokens `--ww-trip-*` (ring/shadow/card-bg/photo-shadow/gap/title/dim/scale) mit **Fallback** auf die globalen.
+> `[slug].astro` (DE+EN) emittiert die 4 Design-Blöcke als gescopten `<style>` aus der Quelle + setzt
+> `data-trip-design` auf `.tl-proto` (Schritt 1: immer `strong`, kein CMS-Feld). Karte (`.map-box`) bleibt auf den
+> globalen Tokens. **Capability-Lock bewiesen:** `global.css` unberührt, keine andere Seite geändert; aktive Karte
+> live computed = heutige Strong-Werte. **Nächste Schritte (einzeln):** 2 = Schema/Dropdown (Re-Index!), 3 = zentrale
+> Regler mit Live-Vorschau. **STOPP nach Schritt 1 — Nutzer prüft & gibt Schritt 2 frei.**
 > **Reisen-Detail (`31070ea`):** Ecke **Station|Kopf|Karte** smooth gemacht (war „hakelig"). Schicht-Layout wie
 > vom Nutzer beschrieben: Kopf-Deckfläche `.tl-head::before` läuft als durchgehende Ebene **bis unter die Karte**
 > (`width: calc(36px + 420px)`); Map mit `z-index:5` darüber → Map-Schatten bleibt **über** der Deckfläche. Die
