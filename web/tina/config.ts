@@ -375,6 +375,16 @@ export default defineConfig({
           },
           { type: 'string', name: 'vehicle_custom_svg', label: '↳ Eigenes Fahrzeug-SVG (optional)', description: 'Fortgeschritten: kompletter <svg>…</svg>-Code. Überschreibt die Auswahl oben.', ui: { component: 'textarea' } },
           {
+            type: 'string', name: 'design', label: 'Design dieser Reise',
+            description: 'Aussehen der Stationskarten dieser Reise. Leer/„Kräftig" = wie bisher. Die WERTE der vier Designs werden zentral unter „🎨 Reisen – Designs" gepflegt (wirkt global auf alle Reisen mit diesem Design).',
+            options: [
+              { value: 'none', label: 'Ohne Rahmen' },
+              { value: 'soft', label: 'Ausgewogen' },
+              { value: 'strong', label: 'Kräftig (Standard)' },
+              { value: 'luftig', label: 'Luftig (Apple-leicht)' },
+            ],
+          },
+          {
             type: 'object', name: 'stops', label: 'Stationen', list: true,
             // 2-in-1: Anreise (✈/🚗) + Zwischenstopp diskret direkt in der Listen-Beschriftung jeder Station.
             ui: { itemProps: (i: any) => ({ label: (i?.arriveBy === 'flight' ? '✈️ ' : '🚗 ') + (i?.name || 'Neue Station') + (i?.kind === 'intermediate' ? ' · Zwischenstopp' : '') }) },
