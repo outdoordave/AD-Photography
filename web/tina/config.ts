@@ -6,6 +6,7 @@ import CropPhotoField from './fields/CropPhotoField';
 import StoryBodyField from './fields/StoryBodyField';
 import ImageFrameField from './fields/ImageFrameField';
 import GearStyleField from './fields/GearStyleField';
+import TripDesignsEditor from './fields/TripDesignsEditor';
 import SectionBanner from './fields/SectionBanner';
 import EnglishToggle from './fields/EnglishToggle';
 import LocationSearchField from './fields/LocationSearchField';
@@ -478,6 +479,8 @@ export default defineConfig({
           {
             type: 'object', name: 'designs', label: '🎨 Design-Werte (4 Vorlagen)',
             description: 'Zentrale Werte der 4 Design-Vorlagen. Wirkt global auf alle Reisen mit dieser Vorlage; eine Reise wählt im eigenen Formular nur aus (Feld „Design dieser Reise").',
+            // Schritt 3: Regler-Editor mit Live-Vorschau (ersetzt die Zahlenfelder-Anzeige). Nur UI -> kein Re-Index.
+            ui: { component: TripDesignsEditor },
             fields: [
               designTuningField('none', 'Ohne Rahmen'),
               designTuningField('soft', 'Ausgewogen'),
