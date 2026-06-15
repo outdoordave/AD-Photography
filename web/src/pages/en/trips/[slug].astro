@@ -4,7 +4,8 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import TripTimeline from '../../../components/TripTimeline.tsx';
 import { linkedAlbumsByTrip } from '../../../lib/albums';
 import { tripTitle, type RawTrip } from '../../../lib/trips';
-import { tripDesignsCss, resolveTripDesign } from '../../../lib/tripDesigns';
+import { tripDesignsCss, resolveTripDesign, mergeTuning } from '../../../lib/tripDesigns';
+import tripDesigns from '../../../data/trip-designs.json';
 import settings from '../../../data/trips-settings.json';
 import { client } from '../../../../tina/__generated__/client';
 import '../../../styles/trips-timeline.css';
@@ -34,7 +35,7 @@ const customSvg = (trip as any).vehicle_custom_svg;
 const vehicleId = (typeof customSvg === 'string' && customSvg.trim().slice(0, 4) === '<svg') ? customSvg : ((trip as any).vehicle || 'expedition');
 // Reise-Design (Schritt 1): noch KEIN CMS-Feld -> 'strong' (byte-gleich). Eine Quelle (lib/tripDesigns.ts).
 const tripDesign = resolveTripDesign((trip as any).design);
-const tripDesignCss = tripDesignsCss();
+const tripDesignCss = tripDesignsCss(mergeTuning(tripDesigns));
 ---
 <BaseLayout title={`${ttl} — Wide & Wild`} lang="en">
   <Fragment set:html={`<style>${tripDesignCss}</style>`} />

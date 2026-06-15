@@ -25,6 +25,20 @@ const clientId = process.env.TINA_CLIENT_ID || 'defa5b44-687f-478c-a647-bad7355a
 const token = process.env.TINA_TOKEN || '';
 const branch = process.env.TINA_BRANCH || 'astro-umbau';
 
+// Zentrale Reise-Design-Werte (Tuning) je Design. EINE Quelle mit lib/tripDesigns.ts (dort die
+// Defaults + CSS-Erzeugung). Schritt 1: schlichte Zahlenfelder. Schritt 3 ersetzt die Anzeige durch
+// den Regler-Editor (ui.component) — gleiche Datenfelder, daher KEIN weiterer Re-Index.
+const designTuningField = (name: string, label: string) => ({
+  type: 'object' as const, name, label,
+  fields: [
+    { type: 'number' as const, name: 'dimOp', label: 'Dimmung inaktiver Stationen (0–0.9)', description: '0 = unsichtbar, 1 = voll. Standard 0.30, luftig 0.15.' },
+    { type: 'number' as const, name: 'gap', label: 'Luft zwischen Stationen (px)', description: 'Standard 14, luftig 50.' },
+    { type: 'number' as const, name: 'titlePx', label: 'Titelgröße aktive Station (px)', description: 'Standard 30, luftig 26.' },
+    { type: 'number' as const, name: 'scale', label: 'Inaktiv-Größe (0.70–1.00)', description: '1 = keine Verkleinerung. Standard 0.975, luftig 0.80.' },
+    { type: 'number' as const, name: 'photoShadow', label: 'Foto-Schatten-Stärke (0–100)', description: '0 = keiner. luftig 40 (Foto schwebt).' },
+  ],
+});
+
 export default defineConfig({
   branch,
   clientId,
@@ -448,6 +462,27 @@ export default defineConfig({
           { type: 'number', name: 'dim_fade_ms', label: 'Übergang (ms)', description: 'Weiche Ein-/Ausblend-Dauer des Fokus. Leer = 800.' },
           { type: 'number', name: 'reveal_ms', label: 'Reveal-Dauer (ms)', description: 'Sanftes Einblenden, wenn eine Station erstmals erscheint. Leer = 800.' },
           { type: 'boolean', name: 'snap_enabled', label: 'Stationen einrasten', description: 'AUS (empfohlen): frei scrollen, nichts rastet ein. AN: beim Ruhen rückt die nächste Station sanft an die Lese-Position.' },
+        ],
+      },
+      // --- Reisen: ZENTRALE Design-Werte (eine Datei, 4 Vorlagen). Pro Reise wird nur AUSGEWÄHLT
+      //     (Feld `design` in der reisen-Collection); hier werden die WERTE der 4 Designs zentral
+      //     gepflegt -> Änderung wirkt global auf alle Reisen mit diesem Design. ---
+      {
+        name: 'reisen_designs',
+        label: '🎨 Reisen – Designs',
+        path: 'src/data',
+        format: 'json',
+        match: { include: 'trip-designs' }, // nur src/data/trip-designs.json
+        ui: {
+          allowedActions: { create: false, delete: false },
+          router: () => '/trips', // Vorschau-Kontext: Reisen-Seite
+        },
+        fields: [
+          { type: 'string', name: 'ww_here', label: '🎨 Reisen – Designs', ui: { component: SectionBanner } },
+          designTuningField('none', 'Design „Ohne Rahmen"'),
+          designTuningField('soft', 'Design „Ausgewogen"'),
+          designTuningField('strong', 'Design „Kräftig" (Standard)'),
+          designTuningField('luftig', 'Design „Luftig" (Apple-leicht)'),
         ],
       },
       // --- Equipment / Gear: EIN Eintrag (Seitentexte + Liste) mit Live-Vorschau ---
