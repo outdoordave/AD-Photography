@@ -17,6 +17,17 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-15 20:11 — Reisen-Detail: Fortschritts-Füllung an aktiven Punkt koppeln (keine Vorfüllung beim Laden)
+- **Problem (Nutzer):** Beim Laden war der erste Punkt schon ~⅓ „abgegrast". Ursache: `--fill` hing an der
+  festen Anker-Linie (oberes Drittel) → `anker − ersterPunkt` beim Laden > 0; wuchs zudem mit der Fensterhöhe.
+- **Fix (= „B"):** `--fill = centers[aktiv] − centers[0]` (an den **aktiven** Stations-Punkt gekoppelt). Beim
+  Laden ist aktiv = Station 0 → Füllung **garantiert 0 auf jeder Fensterhöhe**; wächst beim Scrollen mit der
+  aktiven Station; weiches stationsweises Wachsen via `transition: height 450ms` (reduced-motion schaltet ab).
+- **Verifiziert (astro preview):** `--fill` = 0 bei vh 797 **und** vh 1200; Linie unter Punkt 1 komplett grau.
+  Build grün (42 Seiten). Kein Schema, kein Re-Index. (Timeline-Schritt 2 hatte den Effekt auf 797 schon
+  beseitigt; dieser Fix macht es **monitor-unabhängig** bulletproof.)
+- Dateien: `web/src/components/TripTimeline.tsx`, `web/src/styles/trips-timeline.css`. Commit: `d807bc8`
+
 ## 2026-06-15 19:50 — Reisen-Detail: Kopf schrumpft beim Scrollen (nur Titel sticky, Summary scrollt weg)
 - **Weg A (Safari-sicher):** reines `position: sticky` + Layout, **kein** Scroll-API, **kein Sprung**.
 - Kopf in JSX aufgeteilt: schlanke **Titelleiste** (`.tl-head` = Meta + Titel) bleibt sticky; **Zusammenfassung**

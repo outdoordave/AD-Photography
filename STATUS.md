@@ -1,6 +1,12 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-15** · letzter Commit `e3ab787` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-15** · letzter Commit `d807bc8` (Branch `astro-umbau`) ·
+> **Reisen-Detail Fortschritts-Füllung gefixt (`d807bc8`):** `--fill` jetzt an den **aktiven Punkt** gekoppelt
+> (statt feste Anker-Linie) → beim Laden **garantiert 0** auf jeder Fensterhöhe (keine ⅓-Vorfüllung mehr),
+> wächst stationsweise weich (transition height 450ms). Verifiziert vh 797 + 1200. **Offen (je einzeln):**
+> Punkt 2 (höhenadaptive Aktivierung, Diff liegt bereit) + **Reise-Design-Schritt 2** (CMS-Dropdown zum
+> Umschalten none/soft/strong/luftig pro Reise — Schema-Änderung → Re-Index; aktuell sind ALLE Reisen
+> fest auf `strong`).
 > **Reisen-Detail Kopf schrumpft beim Scrollen (`e3ab787`):** Weg A — nur die schlanke Titelleiste
 > (`.tl-head` = Meta+Titel) sticky; Zusammenfassung in nicht-klebendem `.tl-intro` (Grid-Zeile 2), scrollt
 > natürlich unter die deckende Titelleiste weg. Titelleiste ~61px → Lesen ~19 % (statt ~32 %). Weiche
