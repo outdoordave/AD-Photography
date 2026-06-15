@@ -43,6 +43,24 @@ const TripDesignsEditor = wrapFieldsWithMeta(({ input }: any) => {
   // CSS-Variablen dieses Designs (CHARACTER + aktuelles TUNING) für die Live-Vorschau.
   const vars = designToVars(sel, t) as React.CSSProperties;
 
+  // WICHTIG: Das Tina-/admin lädt die Site-global.css NICHT -> --c-line/--c-bg-alt usw. wären undefiniert
+  // und der Ring `0 0 0 2px var(--c-line)` (soft/strong) bliebe unsichtbar. Hier die Farben mitgeben.
+  const wwColors = {
+    '--c-line': '#d8cab2', '--c-bg': '#f4ede1', '--c-bg-alt': '#ebe1d1', '--c-ink': '#2e2418', '--c-accent': '#a7672f',
+  } as React.CSSProperties;
+
+  // Spotlight wie live: die aktive Station folgt dem Scrollen der Vorschau (Lese-Anker im oberen Bereich).
+  const [activeIdx, setActiveIdx] = React.useState(0);
+  const scrollRef = React.useRef<HTMLDivElement | null>(null);
+  const stationRefs = React.useRef<(HTMLDivElement | null)[]>([]);
+  const onPreviewScroll = () => {
+    const box = scrollRef.current; if (!box) return;
+    const anchor = box.scrollTop + 48;
+    let best = 0;
+    stationRefs.current.forEach((el, i) => { if (el && el.offsetTop <= anchor) best = i; });
+    setActiveIdx(best);
+  };
+
   const card = (active: boolean): React.CSSProperties => ({
     borderRadius: 8, padding: '12px 14px',
     background: active ? 'var(--ww-trip-card-bg, #ebe1d1)' : 'transparent',
@@ -93,21 +111,22 @@ const TripDesignsEditor = wrapFieldsWithMeta(({ input }: any) => {
           </p>
         </div>
 
-        {/* Live-Vorschau (im Feld, SCROLLBAR, 5 Beispiel-Stationen, volle Breite, gedeckelt) */}
-        <div style={{ ...vars, background: C.bg, borderRadius: 10, padding: 12, border: `1px solid ${C.line}`, width: '100%', maxWidth: 380, boxSizing: 'border-box' }}>
+        {/* Live-Vorschau (im Feld, SCROLLBAR mit Spotlight wie live, volle Breite, gedeckelt). wwColors
+            geben --c-line/--c-bg-alt mit, da das CMS die Site-global.css nicht lädt -> Ringe rendern. */}
+        <div style={{ ...wwColors, ...vars, background: C.bg, borderRadius: 10, padding: 12, border: `1px solid ${C.line}`, width: '100%', maxWidth: 380, boxSizing: 'border-box' }}>
           <div style={{ fontSize: 10, letterSpacing: '.08em', textTransform: 'uppercase', color: C.accent, fontWeight: 700, marginBottom: 8 }}>
-            Vorschau — {TRIP_DESIGN_LABELS[sel]} · scrollbar ↓
+            Vorschau — {TRIP_DESIGN_LABELS[sel]} · scrollen ↓ (aktive Station folgt mit)
           </div>
-          <div style={{ maxHeight: 320, overflowY: 'auto', paddingRight: 4 }}>
+          <div ref={scrollRef} onScroll={onPreviewScroll} style={{ maxHeight: 320, overflowY: 'auto', paddingRight: 4 }}>
             {[
-              { t: 'San Francisco', active: true,  photo: true },
-              { t: 'Morro Bay',     active: false, photo: false },
-              { t: 'Yosemite',      active: false, photo: true },
-              { t: 'Lake Tahoe',    active: false, photo: false },
-              { t: 'Anchorage',     active: false, photo: false },
+              { t: 'San Francisco', photo: true },
+              { t: 'Morro Bay',     photo: false },
+              { t: 'Yosemite',      photo: true },
+              { t: 'Lake Tahoe',    photo: false },
+              { t: 'Anchorage',     photo: true },
             ].map((st, i, arr) => (
-              <div key={i} style={{ marginBottom: i < arr.length - 1 ? 'var(--ww-trip-gap, 14px)' : 0 }}>
-                <div style={card(st.active)}>
+              <div key={i} ref={(el) => { stationRefs.current[i] = el; }} style={{ marginBottom: i < arr.length - 1 ? 'var(--ww-trip-gap, 14px)' : 0 }}>
+                <div style={card(i === activeIdx)}>
                   <div style={{ fontSize: 9, letterSpacing: '.08em', textTransform: 'uppercase', color: C.accent, fontWeight: 700 }}>Station {i + 1}/5</div>
                   <div style={{ fontFamily: 'Georgia, serif', fontSize: 'var(--ww-trip-title, 30px)', lineHeight: 1.1, color: C.ink, margin: '2px 0 6px' }}>{st.t}</div>
                   {st.photo && (
