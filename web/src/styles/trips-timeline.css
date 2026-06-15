@@ -11,7 +11,7 @@
 }
 
 /* Zurück zur Übersicht */
-.trip-back { display: inline-block; font-size: var(--fs-label); letter-spacing: var(--tracking-slight); text-transform: uppercase; font-weight: var(--fw-bold); color: var(--c-ink-soft); text-decoration: none; margin-bottom: 14px; }
+.trip-back { display: inline-block; font-size: var(--fs-label); letter-spacing: var(--tracking-slight); text-transform: uppercase; font-weight: var(--fw-bold); color: var(--c-ink-soft); text-decoration: none; margin-bottom: 6px; }
 .trip-back:hover { color: var(--c-accent); }
 
 /* Mobile schlanke Nav-Zeile: auf Desktop/iPad ausgeblendet. */
@@ -42,7 +42,7 @@
 .tl-head {
   grid-column: 1; grid-row: 1; min-width: 0;
   position: sticky; top: var(--ww-sticky-top); z-index: 4;
-  background: var(--c-bg); padding: 4px 0 6px;
+  background: var(--c-bg); padding: 0 0 4px;
   box-shadow: 0 -60px 0 0 var(--c-bg);
 }
 /* Deckfläche des Kopfes: läuft ab der Kopf-Rechtskante als durchgehende Schicht bis UNTER die Karte
@@ -66,7 +66,7 @@
 }
 .tl-head .tl-meta { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 4px; }
 .tl-head h2 { font-family: var(--font-display); font-size: var(--fs-title-lg); font-weight: var(--fw-medium); line-height: 1.1; }
-.tl-summary { font-size: var(--fs-ui); color: var(--c-ink-soft); line-height: 1.55; margin-top: 4px; max-width: 56ch; }
+.tl-summary { font-size: var(--fs-ui); color: var(--c-ink-soft); line-height: 1.55; margin-top: 2px; max-width: 56ch; }
 .tl-head .trip-album-link { margin-top: 10px; }
 
 /* Karte: rechte Spalte, sticky, gedeckelte Höhe */
@@ -75,7 +75,7 @@
 .tl-map .maplibregl-map { height: 100%; }
 
 /* ── Timeline (normaler Fluss) ── */
-.tl-list { grid-column: 1; grid-row: 2; min-width: 0; list-style: none; margin: 0; padding: 4vh 0 30vh; position: relative; }
+.tl-list { grid-column: 1; grid-row: 2; min-width: 0; list-style: none; margin: 0; padding: 2vh 0 30vh; position: relative; }
 
 /* Fades (z2) liegen UNTER der aktiven Karte (z3) -> deren Rahmen bleibt sauber; gedimmte Nachbarn
    (z auto) faden weich. Der weiche Übergang der aktiven Karte unter den Kopf macht .tl-head::after. */
