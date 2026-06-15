@@ -38,7 +38,8 @@ const vehicleId = (typeof customSvg === 'string' && customSvg.trim().slice(0, 4)
 // Reise-Design (Schritt 1): noch KEIN CMS-Feld -> resolveTripDesign(undefined) = 'strong' (byte-gleich).
 // Ab Schritt 2 liest der Guard das echte Feld trip.design. Die 4 Design-Blöcke kommen aus EINER Quelle
 // (lib/tripDesigns.ts) als gescopter <style> -> kein Drift zwischen Build und (späterem) Regler-Feld.
-const tripDesign = resolveTripDesign((trip as any).design);
+// Design ist ZENTRAL (gilt für alle Reisen) -> aus den Reisen-Einstellungen, nicht pro Reise.
+const tripDesign = resolveTripDesign((s as any).design);
 const tripDesignCss = tripDesignsCss(mergeTuning(s.designs));
 ---
 <BaseLayout title={`${ttl} — Wide & Wild`} lang="de">

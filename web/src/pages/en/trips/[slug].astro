@@ -33,7 +33,8 @@ const ttl = tripTitle(trip, 'en') || (s.title_en || s.title_de || 'Trip');
 const customSvg = (trip as any).vehicle_custom_svg;
 const vehicleId = (typeof customSvg === 'string' && customSvg.trim().slice(0, 4) === '<svg') ? customSvg : ((trip as any).vehicle || 'expedition');
 // Reise-Design (Schritt 1): noch KEIN CMS-Feld -> 'strong' (byte-gleich). Eine Quelle (lib/tripDesigns.ts).
-const tripDesign = resolveTripDesign((trip as any).design);
+// Design ist ZENTRAL (gilt für alle Reisen) -> aus den Reisen-Einstellungen, nicht pro Reise.
+const tripDesign = resolveTripDesign((s as any).design);
 const tripDesignCss = tripDesignsCss(mergeTuning(s.designs));
 ---
 <BaseLayout title={`${ttl} — Wide & Wild`} lang="en">

@@ -7,6 +7,7 @@
   "intro_en": "Thousands of miles, countless stops. Tap a station to see what we got up to there.",
   "map_style": "bright",
   "map_scroll_zoom": true,
+  "design": "strong",
   "designs": {
     "none":   { "dimOp": 0.3,  "gap": 14, "titlePx": 30, "scale": 0.975, "photoShadow": 0 },
     "soft":   { "dimOp": 0.3,  "gap": 14, "titlePx": 30, "scale": 0.975, "photoShadow": 0 },

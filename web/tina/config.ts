@@ -376,16 +376,6 @@ export default defineConfig({
           },
           { type: 'string', name: 'vehicle_custom_svg', label: '↳ Eigenes Fahrzeug-SVG (optional)', description: 'Fortgeschritten: kompletter <svg>…</svg>-Code. Überschreibt die Auswahl oben.', ui: { component: 'textarea' } },
           {
-            type: 'string', name: 'design', label: 'Design dieser Reise',
-            description: 'Aussehen der Stationskarten dieser Reise. Leer/„Kräftig" = wie bisher. Die WERTE der vier Designs werden zentral unter „🎨 Reisen – Designs" gepflegt (wirkt global auf alle Reisen mit diesem Design).',
-            options: [
-              { value: 'none', label: 'Ohne Rahmen' },
-              { value: 'soft', label: 'Ausgewogen' },
-              { value: 'strong', label: 'Kräftig (Standard)' },
-              { value: 'luftig', label: 'Luftig (Apple-leicht)' },
-            ],
-          },
-          {
             type: 'object', name: 'stops', label: 'Stationen', list: true,
             // 2-in-1: Anreise (✈/🚗) + Zwischenstopp diskret direkt in der Listen-Beschriftung jeder Station.
             ui: { itemProps: (i: any) => ({ label: (i?.arriveBy === 'flight' ? '✈️ ' : '🚗 ') + (i?.name || 'Neue Station') + (i?.kind === 'intermediate' ? ' · Zwischenstopp' : '') }) },
@@ -473,12 +463,22 @@ export default defineConfig({
           { type: 'number', name: 'dim_fade_ms', label: 'Übergang (ms)', description: 'Weiche Ein-/Ausblend-Dauer des Fokus. Leer = 800.' },
           { type: 'number', name: 'reveal_ms', label: 'Reveal-Dauer (ms)', description: 'Sanftes Einblenden, wenn eine Station erstmals erscheint. Leer = 800.' },
           { type: 'boolean', name: 'snap_enabled', label: 'Stationen einrasten', description: 'AUS (empfohlen): frei scrollen, nichts rastet ein. AN: beim Ruhen rückt die nächste Station sanft an die Lese-Position.' },
-          // --- Reisen-DESIGNS: zentrale Werte der 4 Vorlagen (none/soft/strong/luftig). Eine Reise wählt
-          //     im eigenen Formular nur AUS (Feld „Design dieser Reise"); hier gelten die Werte GLOBAL für
-          //     alle Reisen mit dieser Vorlage. (Schritt 3 ersetzt die Zahlenfelder durch den Regler-Editor.) ---
+          // --- ZENTRALE Design-WAHL: gilt einheitlich für ALLE Reisen (kein pro-Reise-Unterschied). ---
+          {
+            type: 'string', name: 'design', label: 'Design für alle Reisen',
+            description: 'Einheitliches Aussehen ALLER Reisen-Stationen. Leer/„Kräftig" = wie bisher. Die WERTE der Vorlagen stellst du unten unter „🎨 Design-Werte" ein.',
+            options: [
+              { value: 'none', label: 'Ohne Rahmen' },
+              { value: 'soft', label: 'Ausgewogen' },
+              { value: 'strong', label: 'Kräftig (Standard)' },
+              { value: 'luftig', label: 'Luftig (Apple-leicht)' },
+            ],
+          },
+          // --- Reisen-DESIGNS: zentrale WERTE der 4 Vorlagen (none/soft/strong/luftig). Wirken global;
+          //     welche Vorlage AKTIV ist, steuert das Feld „Design für alle Reisen" oben. ---
           {
             type: 'object', name: 'designs', label: '🎨 Design-Werte (4 Vorlagen)',
-            description: 'Zentrale Werte der 4 Design-Vorlagen. Wirkt global auf alle Reisen mit dieser Vorlage; eine Reise wählt im eigenen Formular nur aus (Feld „Design dieser Reise").',
+            description: 'Werte der 4 Vorlagen. Welche Vorlage für alle Reisen aktiv ist, steuert oben „Design für alle Reisen".',
             // Schritt 3: Regler-Editor mit Live-Vorschau (ersetzt die Zahlenfelder-Anzeige). Nur UI -> kein Re-Index.
             ui: { component: TripDesignsEditor },
             fields: [
