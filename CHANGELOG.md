@@ -17,6 +17,19 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-15 22:35 — Reisen-Design: Editor-Overflow-Fix + Design ZENTRAL (statt pro Reise) [SCHEMA → Re-Index]
+- **Editor-Fix (`a469eb5`, kein Schema):** Regler-Editor war zweispaltig (Regler | 220px-Vorschau) und lief im
+  schmalen CMS-Panel rechts raus (Slider abgeschnitten, Live-Vorschau außerhalb der Anzeige). Jetzt **einspaltig**:
+  Regler oben (volle Breite), Live-Vorschau darunter (max 380px) → nichts läuft mehr raus, Vorschau sichtbar.
+- **Design zentral (`74ebfff`, Schema):** Nutzer wünscht einheitlichen Stil ohne pro-Reise-Unterschied. Pro-Reise-
+  Feld `design` **entfernt**; neues **zentrales** Feld `design` in `reisen_settings` („Design für alle Reisen") →
+  gilt einheitlich für ALLE Reisen. `[slug].astro` (DE+EN): `resolveTripDesign(s.design)`. `trips-settings.json`:
+  `"design": "strong"` (Default = byte-gleich). tina-lock `98e456f` (2× deterministisch).
+- **⚠️ Noch EIN Re-Index** (für die zentrale Design-Umstellung, strukturell). Verifiziert: `reisen_settings.design`
+  abfragbar; alaska/west/florida alle `data-trip-design="strong"` (einheitlich); Build grün (42 Seiten);
+  `global.css`/andere Seiten unberührt.
+- Commits: `a469eb5`, `74ebfff`
+
 ## 2026-06-15 22:09 — Reisen-Design-Schritt 3: Merge in Einstellungen + Regler-Editor + Cleanup [SCHEMA → Re-Index]
 - **3a — Merge (`1eaf588`) [Schema]:** Design-Werte als Objekt `designs` (none/soft/strong/luftig) in die
   `reisen_settings`-Collection (`trips-settings.json`) verschoben → **eine** CMS-Seite statt zwei (Nutzer-Wunsch).

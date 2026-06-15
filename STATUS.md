@@ -1,6 +1,11 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-15** · letzter Commit `f76c5fb` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-15** · letzter Commit `74ebfff` (Branch `astro-umbau`) ·
+> **Reisen-Design ZENTRAL + Editor-Fix (`a469eb5`+`74ebfff`) [Re-Index]:** Regler-Editor einspaltig
+> (lief vorher aus dem CMS-Panel), Live-Vorschau jetzt sichtbar. Design ist nun **zentral** (`reisen_settings.design`
+> „Design für alle Reisen") statt pro Reise — einheitlicher Stil; per-Reise-Feld entfernt. tina-lock `98e456f`.
+> **EIN Re-Index** (zentrale Umstellung, strukturell). Verifiziert: alle Reisen einheitlich `strong`. **Offen:**
+> separate 5-Stationen-Scroll-Vorschau im CMS (Nutzer-Wunsch „gern auch") — Vorgehen noch abzustimmen.
 > **Reisen-Design-System FERTIG gebaut [Re-Index nötig]:** Schritt 3 = Design-Werte in `reisen_settings`
 > zusammengeführt (`designs`-Objekt, eine CMS-Seite; `reisen_designs`/`trip-designs.json` raus — `1eaf588`,
 > Schema) + **Regler-Editor** `TripDesignsEditor` (Slider + Live-Vorschau im Feld, `ui.component` — `2ce04bd`)
