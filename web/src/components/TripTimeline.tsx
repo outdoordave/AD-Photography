@@ -442,6 +442,9 @@ export default function TripTimeline(props: Props) {
     if (!centers.length || !list) return;
     const sy = window.scrollY;
     const anchorDoc = sy + anchorViewportY();
+    // Weiche Kopf-Unterkante (::after) NUR zeigen, sobald gescrollt wird -> beim Laden keine
+    // ausgewaschene erste Summary-Zeile. Reiner Klassen-Toggle (kein Scroll-API -> Safari-sicher).
+    if (headRef.current) headRef.current.classList.toggle('is-scrolled', sy > 8);
     if (miniNavRef.current) {
       const mobile = window.matchMedia('(max-width: 767px)').matches;
       const hb = headRef.current ? headRef.current.getBoundingClientRect().bottom : 0;
@@ -612,9 +615,15 @@ export default function TripTimeline(props: Props) {
           <span className="tl-mininav-title">{tripTitle(trip, lang)}</span>
         </div>
 
+        {/* Schritt 2: NUR die schlanke Titelleiste (Meta + Titel) klebt sticky. Die Zusammenfassung
+            steht im nicht-klebenden .tl-intro-Block (eigene Grid-Zeile) und scrollt beim Lesen
+            natürlich nach oben unter die deckende Titelleiste (background + z4) — kein Sprung. */}
         <div className="tl-head" ref={headRef}>
           <div className="tl-meta" data-tina-field={tf(trip, 'meta')}>{bi(trip, 'meta', lang)}{trip.upcoming ? (lang === 'de' ? ' · bald ✦' : ' · soon ✦') : ''}</div>
           <h2 data-tina-field={tinaField(trip, 'title')}>{tripTitle(trip, lang)}</h2>
+        </div>
+
+        <div className="tl-intro">
           <p className="tl-summary" data-tina-field={tf(trip, 'summary')}>{bi(trip, 'summary', lang)}</p>
           {la ? (
             <a className="trip-album-link" href={`${lang === 'en' ? '/en' : ''}/portfolio/${la.slug}`}>

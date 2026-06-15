@@ -34,7 +34,9 @@
 .tl-stage {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 420px;
-  grid-template-rows: auto 1fr;
+  /* Zeile 1 = sticky Titelleiste · Zeile 2 = nicht-klebende Zusammenfassung (.tl-intro) · Zeile 3 = Liste.
+     Die Karte (Spalte 2) spannt 1/-1 über alle drei. */
+  grid-template-rows: auto auto 1fr;
   column-gap: 36px;
   max-width: 100%;
 }
@@ -54,20 +56,23 @@
   content: ''; position: absolute; top: 0; bottom: 0; left: 100%; width: calc(36px + 420px);
   background: var(--c-bg); pointer-events: none;
 }
-/* Weiche Unterkante des Kopfes (z4, über der aktiven Karte z3): Inhalt taucht weich unter die Überschrift
-   statt mit harter Kante. Reicht über die Textspalte UND die Spalten-Lücke bis zur Karten-Kante (right:-36px),
-   damit der Deckrand an der Ecke Station|Kopf|Karte durchgehend weich ausläuft statt auf die harte Unterkante
-   der Lücken-Deckfläche (::before) zu treffen. Höhe = min(28px, 3.4vh) -> immer kürzer als der Abstand der
-   ruhenden ersten Station (4vh), daher wird deren Rahmen NICHT ausgewaschen. */
+/* Weiche Unterkante des Kopfes (z4): Inhalt (Zusammenfassung, dann Stationen) taucht beim Scrollen weich
+   unter die sticky Titelleiste statt mit harter Kante. Reicht über Textspalte UND Spalten-Lücke bis zur
+   Karten-Kante (right:-36px). NUR beim Scrollen sichtbar (`.is-scrolled`) -> beim Laden (scrollY 0) wäscht
+   der Verlauf die erste Zeile der Zusammenfassung NICHT aus; weiches Ein-/Ausblenden via opacity. */
 .tl-head::after {
   content: ''; position: absolute; left: 0; right: -36px; top: 100%; height: min(28px, 3.4vh);
   background: linear-gradient(var(--c-bg) 20%, rgba(244,237,225,0));
-  pointer-events: none;
+  pointer-events: none; opacity: 0; transition: opacity .25s ease;
 }
+.tl-head.is-scrolled::after { opacity: 1; }
 .tl-head .tl-meta { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 4px; }
 .tl-head h2 { font-family: var(--font-display); font-size: var(--fs-title-lg); font-weight: var(--fw-medium); line-height: 1.1; }
+/* Nicht-klebender Block (Grid-Zeile 2) UNTER der sticky Titelleiste: Zusammenfassung (+ Album-Link).
+   Scrollt beim Lesen natürlich nach oben unter die deckende Titelleiste und verschwindet. */
+.tl-intro { grid-column: 1; grid-row: 2; min-width: 0; }
 .tl-summary { font-size: var(--fs-ui); color: var(--c-ink-soft); line-height: 1.55; margin-top: 2px; max-width: 56ch; }
-.tl-head .trip-album-link { margin-top: 10px; }
+.tl-intro .trip-album-link { margin-top: 10px; }
 
 /* Karte: rechte Spalte, sticky, gedeckelte Höhe */
 .tl-map-col { grid-column: 2; grid-row: 1 / -1; min-width: 0; }
@@ -75,7 +80,7 @@
 .tl-map .maplibregl-map { height: 100%; }
 
 /* ── Timeline (normaler Fluss) ── */
-.tl-list { grid-column: 1; grid-row: 2; min-width: 0; list-style: none; margin: 0; padding: 2vh 0 30vh; position: relative; }
+.tl-list { grid-column: 1; grid-row: 3; min-width: 0; list-style: none; margin: 0; padding: 2vh 0 30vh; position: relative; }
 
 /* Fades (z2) liegen UNTER der aktiven Karte (z3) -> deren Rahmen bleibt sauber; gedimmte Nachbarn
    (z auto) faden weich. Der weiche Übergang der aktiven Karte unter den Kopf macht .tl-head::after. */
@@ -160,6 +165,7 @@
   .tl-stage { display: flex; flex-direction: column; column-gap: 0; }
   .tl-mininav { display: flex; }
   .tl-head { order: 1; position: static; top: auto; box-shadow: none; padding: 6px 0 12px; }
+  .tl-intro { order: 1; } /* direkt nach dem Kopf (mobil ist nichts sticky -> alles scrollt ohnehin) */
   .tl-head::after, .tl-head::before { display: none; } /* Kopf mobil nicht sticky -> kein Untertauch/Lücken-Deck nötig */
   .tl-map-col .tl-map { z-index: auto; } /* mobil kein z-Index-Heben der Karte */
   .tl-map-col { order: 2; position: sticky; top: calc(var(--ww-sticky-top) + var(--ww-mininav-h)); z-index: 3; }
