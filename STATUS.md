@@ -1,6 +1,11 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-15** · letzter Commit `a813355` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-15** · letzter Commit `53c3f71` (Branch `astro-umbau`) ·
+> **Reisen-Detail höhenadaptive Aktivierung (`53c3f71`):** kurze Stationen schalten früher um (Lead je Block:
+> `lead = max(0, READ − h)·LEAD_FACTOR`, lange Stationen unverändert). Faktoren `READ_FRACTION 0.5`/`LEAD_FACTOR
+> 0.55` (intern, zum Nachjustieren). Kein Schema, kein Re-Index. **Offen zum Bau-Abschluss:** Schritt 3
+> (Regler-Editor `ui.component`) — optional zusammen mit „Designs in Reisen-Einstellungen zusammenführen"
+> (Schema → Re-Index); danach Cleanup (verwaiste `TripsContent.tsx`).
 > **CMS-Klarheit (`a813355`, KEIN Re-Index):** `reisen_designs` ohne `/trips`-Router (war Kollision mit
 > `reisen_settings` → „Seite bearbeiten" zeigte Einstellungen). Designs-Collection nun über die **CMS-Seitenleiste**
 > öffnen („🎨 Reisen – Designs"). Globale `image_frame`-Beschreibung korrigiert (Reisen abgekapselt). tina-lock

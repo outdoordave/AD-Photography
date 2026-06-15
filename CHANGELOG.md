@@ -17,6 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-15 21:53 — Reisen-Detail: höhenadaptive Aktivierung (kurze Stationen früher) — Punkt 2
+- **Symptom (Nutzer):** bei kurzen Stationen schaltet der Fokus „ein Ticken zu spät" zur nächsten — die
+  Aktivierung hing an der Block-Oberkante + festem Anker, kurze Blöcke waren schon fast unter dem Kopf.
+- **Fix (smart, kein Regler):** Aktivierungspunkt je Block um einen höhenabhängigen **Lead** vorziehen.
+  `READ = (vh − Sticky-Stapel)·READ_FRACTION`; `lead = max(0, READ − h)·LEAD_FACTOR`. Kurze Station (h<READ)
+  → früher aktiv; lange (h≥READ) → **lead 0 = exakt wie bisher** (kein Regressionsrisiko). Höhen aus dem
+  `measure()`-Cache. Faktoren intern (`READ_FRACTION 0.5`, `LEAD_FACTOR 0.55`) zum Nachjustieren. Safari-sicher.
+- Build grün (42 Seiten). Kein Schema, kein Re-Index. Datei: `web/src/components/TripTimeline.tsx`. Commit: `53c3f71`
+
 ## 2026-06-15 21:12 — CMS-Klarheit: Darstellung-Beschreibung + Designs-Collection ohne /trips-Router (KEIN Re-Index)
 - Nutzer-Feedback nach Re-Index: (1) „Reisen – Designs" wirkte wie die Einstellungsseite, (2) die globale
   „Bild-Rahmen & Schatten"-Beschreibung nannte noch „Stationen", obwohl Reisen abgekapselt sind.
