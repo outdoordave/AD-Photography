@@ -128,6 +128,9 @@ type Props = {
   // Globale Tuning-Werte (Phase 3: aus reisen_settings). Defaults = eingefroren.
   spotlight?: number; dimMs?: number; revealMs?: number; snap?: boolean;
   vehicleId?: string;
+  // Reise-Design (none/soft/strong/luftig) — Schritt 1: Entkopplung. Steuert nur die
+  // gescopten --ww-trip-* auf .tl-proto. Default 'strong' (byte-gleich wie bisher).
+  design?: string;
 };
 
 // Live-Kartenstil aus reisen_settings (eigene useTina nur mit echtem Query, bedingt gerendert).
@@ -599,7 +602,7 @@ export default function TripTimeline(props: Props) {
   const albName = la ? (lang === 'en' ? (la.name?.en || la.name?.de || '') : (la.name?.de || '')) : '';
 
   return (
-    <div className="tl-proto">
+    <div className="tl-proto" data-trip-design={props.design || 'strong'}>
       {props.settingsQuery ? (
         <MapStyleWatcher query={props.settingsQuery} variables={props.settingsVariables || {}} data={props.settingsData} onStyle={setLiveMapStyle} />
       ) : null}
