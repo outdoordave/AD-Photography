@@ -17,6 +17,17 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-15 18:27 — Fix (Schritt 1): luftig-Karten-Schatten gültig (kein „none" in box-shadow-Liste)
+- Beim End-to-End-Test (data-trip-design testweise auf „luftig") fiel auf: `--ww-trip-shadow: none` landet
+  in der **Komma-Liste** `box-shadow: var(--ww-trip-ring,…), var(--ww-trip-shadow,…)` → `… , none` ist als
+  Listeneintrag **ungültig** → der ganze box-shadow wird verworfen (luftig blieb optisch beim Strong-Schatten).
+- Fix: `luftig.shadow` = `0 0 0 0 transparent` (gültige transparente Null-Ebene) statt `none`. Verifiziert
+  (astro preview): luftig-Karte computed `rgba(0,0,0,0) 0 0 0 0, rgba(0,0,0,0) 0 0 0 0` + Füllung transparent
+  (kein Kasten), Hero-Foto-Schatten `0 16px 42px -13px rgba(46,36,24,0.42)`, Map-Schatten unverändert. `strong`
+  weiterhin byte-gleich. (photoShadow steht in einem Einzel-box-shadow → dort wäre `none` ok.)
+- Datei: `web/src/lib/tripDesigns.ts`. Build grün (42 Seiten). Kein Schema, kein Re-Index.
+- Commit: `4ff02d3`
+
 ## 2026-06-15 18:23 — Reisen-Design Schritt 1: Entkopplung (--ww-trip-* + data-trip-design)
 - **Ziel-Modell** (in 3 Schritten): 4 zentrale Design-Vorlagen (none/soft/strong/luftig); pro Reise wird
   per Dropdown nur ausgewählt; Werte zentral pflegbar (Regler kommt in Schritt 3). **Dies ist Schritt 1:
