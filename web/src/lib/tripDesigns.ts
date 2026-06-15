@@ -48,7 +48,11 @@ export const TRIP_DESIGN_DEFAULTS: Record<TripDesignId, TripDesignValues> = {
   // mehr Luft, kleinerer aktiver Titel, stärker zurücktretende inaktive Stationen.
   // Startwerte vom Nutzer (Schritt 1).
   luftig: {
-    ring: '0 0 0 0 transparent', shadow: 'none',
+    // WICHTIG: ring + shadow als transparente Null-Ebenen (NICHT 'none') — beide landen in der
+    // Komma-Liste `box-shadow: var(--ww-trip-ring,…), var(--ww-trip-shadow,…)`; 'none' wäre als
+    // Listeneintrag ungültig und würde den ganzen box-shadow verwerfen. photoShadow steht in einem
+    // EINZEL-box-shadow (.tl-hero/.tl-thumb), dort wäre 'none' ok — hier ist es ein echter Schatten.
+    ring: '0 0 0 0 transparent', shadow: '0 0 0 0 transparent',
     cardBg: 'transparent', photoShadow: '0 16px 42px -13px rgba(46,36,24,0.42)',
     gap: '50px', titlePx: '26px', dimOp: 0.15, scale: 0.80,
   },
