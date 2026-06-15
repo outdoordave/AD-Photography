@@ -461,8 +461,12 @@ export default function TripTimeline(props: Props) {
     if (best !== activeRef.current) {
       activeRef.current = best; setActive(best); drawMarkers(); mapFollow(best); animateVehicleTo(best); syncEditorToStop(best);
     }
+    // Fortschritts-Füllung an den AKTIVEN Punkt koppeln (nicht an die feste Anker-Linie). Damit ist
+    // sie beim Laden GARANTIERT 0 (aktiv = Station 0) auf jedem Monitor — keine ~1/3-Vorfüllung mehr —
+    // und folgt der Reise statt einer Bildschirmposition. Weiches Wachsen via CSS-transition (height).
     const lineH = centers[centers.length - 1] - firstAbsRef.current;
-    list.style.setProperty('--fill', Math.max(0, Math.min(lineH, anchorDoc - firstAbsRef.current)) + 'px');
+    const fillToActive = centers[best] - firstAbsRef.current;
+    list.style.setProperty('--fill', Math.max(0, Math.min(lineH, fillToActive)) + 'px');
   }
 
   function cancelSnap() { if (snapAnimRef.current != null) { cancelAnimationFrame(snapAnimRef.current); snapAnimRef.current = null; } }

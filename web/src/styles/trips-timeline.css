@@ -90,7 +90,9 @@
 
 .tl-line, .tl-line-fill { position: absolute; left: 17px; width: 2px; transform: translateX(-50%); border-radius: 2px; }
 .tl-line      { top: var(--line-top, 0); height: var(--line-h, 0); background: var(--c-line); }
-.tl-line-fill { top: var(--line-top, 0); height: var(--fill, 0); background: var(--c-accent); }
+/* Füllung wächst zum aktiven Punkt (siehe update()): weiches stationsweises Wachsen statt Sprung.
+   prefers-reduced-motion schaltet die transition unten (Sammelregel) ab. */
+.tl-line-fill { top: var(--line-top, 0); height: var(--fill, 0); background: var(--c-accent); transition: height 450ms cubic-bezier(0.22, 1, 0.36, 1); }
 
 /* margin-bottom = „Luft zwischen Stationen": reise-eigener Token mit Fallback auf den
    heutigen Wert (14px). Nur das Design 'luftig' überschreibt ihn (50px). */
