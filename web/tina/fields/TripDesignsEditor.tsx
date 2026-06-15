@@ -93,21 +93,32 @@ const TripDesignsEditor = wrapFieldsWithMeta(({ input }: any) => {
           </p>
         </div>
 
-        {/* Live-Vorschau (im Feld, volle Breite, gedeckelt) */}
+        {/* Live-Vorschau (im Feld, SCROLLBAR, 5 Beispiel-Stationen, volle Breite, gedeckelt) */}
         <div style={{ ...vars, background: C.bg, borderRadius: 10, padding: 12, border: `1px solid ${C.line}`, width: '100%', maxWidth: 380, boxSizing: 'border-box' }}>
-          <div style={{ fontSize: 10, letterSpacing: '.08em', textTransform: 'uppercase', color: C.accent, fontWeight: 700, marginBottom: 8 }}>Vorschau</div>
-          <div style={card(true)}>
-            <div style={{ fontSize: 9, letterSpacing: '.08em', textTransform: 'uppercase', color: C.accent, fontWeight: 700 }}>Station 1/3</div>
-            <div style={{ fontFamily: 'Georgia, serif', fontSize: 'var(--ww-trip-title, 30px)', lineHeight: 1.1, color: C.ink, margin: '2px 0 6px' }}>Beispiel</div>
-            <div style={{ aspectRatio: '16 / 10', borderRadius: 8, overflow: 'hidden', background: C.bgAlt, boxShadow: 'var(--ww-trip-photo-shadow, none)', marginBottom: 6 }}>
-              <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg,#c9b79a,#a7672f)' }} />
-            </div>
-            <div style={{ fontSize: 11, color: C.inkSoft, lineHeight: 1.5 }}>Ein, zwei Sätze zur Station.</div>
+          <div style={{ fontSize: 10, letterSpacing: '.08em', textTransform: 'uppercase', color: C.accent, fontWeight: 700, marginBottom: 8 }}>
+            Vorschau — {TRIP_DESIGN_LABELS[sel]} · scrollbar ↓
           </div>
-          <div style={{ height: 'var(--ww-trip-gap, 14px)' }} />
-          <div style={card(false)}>
-            <div style={{ fontSize: 9, letterSpacing: '.08em', textTransform: 'uppercase', color: C.accent, fontWeight: 700 }}>Station 2/3</div>
-            <div style={{ fontFamily: 'Georgia, serif', fontSize: 'var(--ww-trip-title, 30px)', lineHeight: 1.1, color: C.ink }}>Nächste</div>
+          <div style={{ maxHeight: 320, overflowY: 'auto', paddingRight: 4 }}>
+            {[
+              { t: 'San Francisco', active: true,  photo: true },
+              { t: 'Morro Bay',     active: false, photo: false },
+              { t: 'Yosemite',      active: false, photo: true },
+              { t: 'Lake Tahoe',    active: false, photo: false },
+              { t: 'Anchorage',     active: false, photo: false },
+            ].map((st, i, arr) => (
+              <div key={i} style={{ marginBottom: i < arr.length - 1 ? 'var(--ww-trip-gap, 14px)' : 0 }}>
+                <div style={card(st.active)}>
+                  <div style={{ fontSize: 9, letterSpacing: '.08em', textTransform: 'uppercase', color: C.accent, fontWeight: 700 }}>Station {i + 1}/5</div>
+                  <div style={{ fontFamily: 'Georgia, serif', fontSize: 'var(--ww-trip-title, 30px)', lineHeight: 1.1, color: C.ink, margin: '2px 0 6px' }}>{st.t}</div>
+                  {st.photo && (
+                    <div style={{ aspectRatio: '16 / 10', borderRadius: 8, overflow: 'hidden', background: C.bgAlt, boxShadow: 'var(--ww-trip-photo-shadow, none)', marginBottom: 6 }}>
+                      <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg,#c9b79a,#a7672f)' }} />
+                    </div>
+                  )}
+                  <div style={{ fontSize: 11, color: C.inkSoft, lineHeight: 1.5 }}>Ein, zwei Sätze zur Station.</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
