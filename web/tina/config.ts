@@ -484,8 +484,10 @@ export default defineConfig({
         format: 'json',
         match: { include: 'trip-designs' }, // nur src/data/trip-designs.json
         ui: {
+          // KEIN router: sonst Kollision mit reisen_settings (beide /trips) -> „Seite bearbeiten"
+          // landet bei den Einstellungen. Diese Collection wird über die CMS-Seitenleiste geöffnet;
+          // die Live-Vorschau bringt Schritt 3 (Regler-Editor) im Feld selbst.
           allowedActions: { create: false, delete: false },
-          router: () => '/trips', // Vorschau-Kontext: Reisen-Seite
         },
         fields: [
           { type: 'string', name: 'ww_here', label: '🎨 Reisen – Designs', ui: { component: SectionBanner } },
@@ -742,7 +744,7 @@ export default defineConfig({
           { type: 'image', name: 'logo', label: 'Logo (Nav / Hero / Footer)', ui: { component: SinglePhotoField } },
           {
             type: 'string', name: 'image_frame', label: 'Bild-Rahmen & Schatten',
-            description: 'Gilt global für ALLE Kästchen (Karten, Kacheln, Fotos, Reise-Tabs, Stationen, Karte, optional Buttons/Felder). Gleiche Rahmendicke pro Stufe. Hero-Bild & Lightbox bleiben vollflächig. Vorschau unten — eine Stufe anklicken.',
+            description: 'Gilt global für Kästchen der Seite (Karten, Kacheln, Fotos, Reise-Übersicht, Reise-Karte, optional Buttons/Felder). NICHT für Reise-STATIONEN — die haben jetzt ihr eigenes Design (siehe „🎨 Reisen – Designs"). Gleiche Rahmendicke pro Stufe. Hero-Bild & Lightbox bleiben vollflächig. Vorschau unten — eine Stufe anklicken.',
             ui: { component: ImageFrameField },
             options: [
               { value: 'none', label: 'Keine' },
