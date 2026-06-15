@@ -17,6 +17,11 @@ import { vehicleSvg, PLANE_SVG } from '../lib/vehicles';
 
 const STICKY_TOP = 96; // Fallback unter der globalen Nav (gemessen in measure())
 
+// Punkt 2 (höhenadaptive Aktivierung): KURZE Stationen werden früher aktiv (solange sie noch tiefer/
+// sichtbar sind), LANGE exakt wie bisher (lead=0 -> kein Regressionsrisiko). Zum Nachjustieren:
+const READ_FRACTION = 0.5;  // ab welcher Höhe eine Station als „kurz" gilt (Anteil des Lesebands)
+const LEAD_FACTOR   = 0.55; // wie stark kurze Stationen früher umschalten (0 = aus, höher = früher)
+
 function setMapLanguage(map: maplibregl.Map, lang: Lang) {
   if (!map.isStyleLoaded()) return;
   const expr: any = ['coalesce', ['get', 'name:' + lang], ['get', 'name:latin'], ['get', 'name']];
@@ -454,9 +459,16 @@ export default function TripTimeline(props: Props) {
     // Scroll-Spy). Robust gegen Blockhöhe: kurze Stationen (kein Bild / 2-Zeiler) verschieben den
     // Fokus nicht mehr nach vorn. Vor der 1. Station bleibt Station 0 aktiv.
     const blocks = blocksRef.current;
+    // Punkt 2: Aktivierungspunkt je Block um einen höhenabhängigen „Lead" vorziehen. READ = erwartete
+    // Lesehöhe im Fokusband (vh minus Sticky-Stapel). Kurze Station (h < READ) -> lead > 0 -> wird
+    // früher aktiv; lange Station (h >= READ) -> lead = 0 -> exakt wie bisher. Höhen aus measure()-Cache.
+    const band = window.innerHeight - (navHRef.current + headHRef.current);
+    const READ = band * READ_FRACTION;
     let best = 0;
     for (let i = 0; i < blocks.length; i++) {
-      if (blocks[i].top <= anchorDoc + 1) best = i; else break;
+      const h = blocks[i].bottom - blocks[i].top;
+      const lead = Math.max(0, READ - h) * LEAD_FACTOR;
+      if (blocks[i].top - lead <= anchorDoc + 1) best = i; else break;
     }
     if (best !== activeRef.current) {
       activeRef.current = best; setActive(best); drawMarkers(); mapFollow(best); animateVehicleTo(best); syncEditorToStop(best);
