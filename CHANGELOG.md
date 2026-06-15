@@ -17,6 +17,24 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-15 19:50 — Reisen-Detail: Kopf schrumpft beim Scrollen (nur Titel sticky, Summary scrollt weg)
+- **Weg A (Safari-sicher):** reines `position: sticky` + Layout, **kein** Scroll-API, **kein Sprung**.
+- Kopf in JSX aufgeteilt: schlanke **Titelleiste** (`.tl-head` = Meta + Titel) bleibt sticky; **Zusammenfassung**
+  (+ Album-Link) in neuem nicht-klebendem **`.tl-intro`**-Block (Grid-Zeile 2). `.tl-stage` Grid →
+  `grid-template-rows: auto auto 1fr` (Titel/Intro/Liste); Karte spannt 1/-1; `.tl-list` → Zeile 3; mobil
+  `.tl-intro order:1`.
+- Beim Lesen scrollt die Summary natürlich unter die **deckende** Titelleiste (bg + z4) und verschwindet →
+  Titelleiste schrumpft auf **~61px** → Stationen sitzen beim Lesen **~19 %** statt ~32 %.
+- **Weiche Kopf-Unterkante (`.tl-head::after`) nur beim Scrollen** (Klasse `.is-scrolled` via `update()`, `sy>8`,
+  weiches `opacity`-Fade) → beim Laden wird die **erste Summary-Zeile nicht mehr ausgewaschen**. Reiner
+  Klassen-Toggle (kein Scroll-API → Safari-sicher).
+- **Load-Zustand unverändert** (Summary sichtbar, erster Punkt ~40 %) — so gewollt; Schritt 2 verbessert nur das
+  **Lesen beim Scrollen**.
+- Verifiziert (lokaler Tina-Build + astro preview): Titelleiste 61px sticky, saubere Summary, `--ww-snap-pad` =
+  Nav+61px, Fade-Gating `::after` 0→1 bei `.is-scrolled`, Mobil-Ordering korrekt, luftig verträgt sich. Build grün
+  (42 Seiten). Kein Schema, kein Re-Index. **Echter Scroll** (Tool blockiert programmatischen Scroll) → Nutzer live.
+- Dateien: `web/src/components/TripTimeline.tsx`, `web/src/styles/trips-timeline.css`. Commit: `e3ab787`
+
 ## 2026-06-15 19:21 — Reisen-Detail: Vorspann straffen (erster Punkt ~44% → ~39% Höhe)
 - **Diagnose Punkt 1 (gemeinsam mit Nutzer, Live-Wahrheit):** Die Fortschrittslinie ist **kein Bug** — sie
   beginnt rechnerisch korrekt am ersten Punkt (`--line-top` = erste Punkt-Mitte, `--fill` beim Laden nur ~34px).

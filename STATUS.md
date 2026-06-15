@@ -1,12 +1,17 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-15** · letzter Commit `48495dd` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-15** · letzter Commit `e3ab787` (Branch `astro-umbau`) ·
+> **Reisen-Detail Kopf schrumpft beim Scrollen (`e3ab787`):** Weg A — nur die schlanke Titelleiste
+> (`.tl-head` = Meta+Titel) sticky; Zusammenfassung in nicht-klebendem `.tl-intro` (Grid-Zeile 2), scrollt
+> natürlich unter die deckende Titelleiste weg. Titelleiste ~61px → Lesen ~19 % (statt ~32 %). Weiche
+> Kopf-Unterkante nur beim Scrollen (`.is-scrolled`, sy>8) → Summary-Anfang am Load nicht ausgewaschen.
+> **Safari-sicher** (reines sticky, kein Scroll-API, kein Sprung). Load-Zustand unverändert (~40 %). Build grün.
+> **Echter Scroll bitte live prüfen** (Tool blockiert programmatischen Scroll).
 > **Reisen-Detail Vorspann gestrafft (`48495dd`):** Punkt 1 war **kein** Linien-Bug — die Füllung startet korrekt
 > am ersten Punkt; der erste Stations-Punkt saß nur auf ~44 % Bildschirmhöhe (Kopf drückt). Tot-Luft gekürzt
-> (`.tl-list` 4vh→2vh, Section 20→8px, `.trip-back` 14→6px, `.tl-head` Padding, `.tl-summary` mt 4→2) → erster
-> Punkt **44 %→39 %** (vh 797). Kein Inhalt entfernt. Luftig + Trim live als stimmig geprüft. **Offen Schritt 2:**
-> nur Titel sticky, Summary scrollt weg (Lesen ~18 %) — eigener Commit. Danach: B (Füll-Vorderkante an aktiven
-> Punkt) + Punkt 2 (höhenadaptive Aktivierung), je einzeln.
+> → erster Punkt **44 %→39 %** (vh 797). Kein Inhalt entfernt. Luftig + Trim stimmig. **Offen (je einzeln):**
+> B (Füll-Vorderkante an aktiven Punkt koppeln) + Punkt 2 (höhenadaptive Aktivierung, smart, kein Regler) —
+> Punkt-2-Diff liegt zum Drübersehen bereit (nicht committet).
 > **Reisen-Design Schritt 1 / Entkopplung (`eef7e19`):** Vorbereitung pro-Reise-Designs, **rein additiv, kein
 > Schema, kein Re-Index, byte-gleich.** Neue geteilte Quelle `web/src/lib/tripDesigns.ts` (4 Vorlagen
 > none/soft/strong/luftig + `designToVars`/`tripDesignsCss`/`resolveTripDesign`). Stationskarte liest reise-eigene
