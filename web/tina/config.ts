@@ -472,29 +472,19 @@ export default defineConfig({
           { type: 'number', name: 'dim_fade_ms', label: 'Übergang (ms)', description: 'Weiche Ein-/Ausblend-Dauer des Fokus. Leer = 800.' },
           { type: 'number', name: 'reveal_ms', label: 'Reveal-Dauer (ms)', description: 'Sanftes Einblenden, wenn eine Station erstmals erscheint. Leer = 800.' },
           { type: 'boolean', name: 'snap_enabled', label: 'Stationen einrasten', description: 'AUS (empfohlen): frei scrollen, nichts rastet ein. AN: beim Ruhen rückt die nächste Station sanft an die Lese-Position.' },
-        ],
-      },
-      // --- Reisen: ZENTRALE Design-Werte (eine Datei, 4 Vorlagen). Pro Reise wird nur AUSGEWÄHLT
-      //     (Feld `design` in der reisen-Collection); hier werden die WERTE der 4 Designs zentral
-      //     gepflegt -> Änderung wirkt global auf alle Reisen mit diesem Design. ---
-      {
-        name: 'reisen_designs',
-        label: '🎨 Reisen – Designs',
-        path: 'src/data',
-        format: 'json',
-        match: { include: 'trip-designs' }, // nur src/data/trip-designs.json
-        ui: {
-          // KEIN router: sonst Kollision mit reisen_settings (beide /trips) -> „Seite bearbeiten"
-          // landet bei den Einstellungen. Diese Collection wird über die CMS-Seitenleiste geöffnet;
-          // die Live-Vorschau bringt Schritt 3 (Regler-Editor) im Feld selbst.
-          allowedActions: { create: false, delete: false },
-        },
-        fields: [
-          { type: 'string', name: 'ww_here', label: '🎨 Reisen – Designs', ui: { component: SectionBanner } },
-          designTuningField('none', 'Design „Ohne Rahmen"'),
-          designTuningField('soft', 'Design „Ausgewogen"'),
-          designTuningField('strong', 'Design „Kräftig" (Standard)'),
-          designTuningField('luftig', 'Design „Luftig" (Apple-leicht)'),
+          // --- Reisen-DESIGNS: zentrale Werte der 4 Vorlagen (none/soft/strong/luftig). Eine Reise wählt
+          //     im eigenen Formular nur AUS (Feld „Design dieser Reise"); hier gelten die Werte GLOBAL für
+          //     alle Reisen mit dieser Vorlage. (Schritt 3 ersetzt die Zahlenfelder durch den Regler-Editor.) ---
+          {
+            type: 'object', name: 'designs', label: '🎨 Design-Werte (4 Vorlagen)',
+            description: 'Zentrale Werte der 4 Design-Vorlagen. Wirkt global auf alle Reisen mit dieser Vorlage; eine Reise wählt im eigenen Formular nur aus (Feld „Design dieser Reise").',
+            fields: [
+              designTuningField('none', 'Ohne Rahmen'),
+              designTuningField('soft', 'Ausgewogen'),
+              designTuningField('strong', 'Kräftig (Standard)'),
+              designTuningField('luftig', 'Luftig (Apple-leicht)'),
+            ],
+          },
         ],
       },
       // --- Equipment / Gear: EIN Eintrag (Seitentexte + Liste) mit Live-Vorschau ---

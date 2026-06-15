@@ -1,6 +1,0 @@
-{
-  "none":   { "dimOp": 0.3,  "gap": 14, "titlePx": 30, "scale": 0.975, "photoShadow": 0 },
-  "soft":   { "dimOp": 0.3,  "gap": 14, "titlePx": 30, "scale": 0.975, "photoShadow": 0 },
-  "strong": { "dimOp": 0.3,  "gap": 14, "titlePx": 30, "scale": 0.975, "photoShadow": 0 },
-  "luftig": { "dimOp": 0.15, "gap": 50, "titlePx": 26, "scale": 0.8,   "photoShadow": 40 }
-}
