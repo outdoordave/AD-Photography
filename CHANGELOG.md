@@ -17,6 +17,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-15 21:12 — CMS-Klarheit: Darstellung-Beschreibung + Designs-Collection ohne /trips-Router (KEIN Re-Index)
+- Nutzer-Feedback nach Re-Index: (1) „Reisen – Designs" wirkte wie die Einstellungsseite, (2) die globale
+  „Bild-Rahmen & Schatten"-Beschreibung nannte noch „Stationen", obwohl Reisen abgekapselt sind.
+- **Fix 1:** `reisen_designs` ohne `router` (vorher `() => '/trips'`, kollidierte mit `reisen_settings` → „Seite
+  bearbeiten" auf /trips öffnete die **Einstellungen**, nicht die Designs). Die Designs-Collection wird jetzt
+  klar über die **CMS-Seitenleiste** geöffnet (Live-Vorschau kommt in Schritt 3 im Feld selbst).
+- **Fix 2:** globale `appearance.image_frame`-Beschreibung korrigiert — gilt **nicht** mehr für Reise-Stationen
+  (eigenes Design seit Schritt 1); nur noch Karten/Kacheln/Fotos/Reise-Übersicht/Reise-Karte/Buttons.
+- **Kein Re-Index:** tina-lock neu (`1c67497`, 2× deterministisch), Diff ist **nur** der Beschreibungstext —
+  KEINE Feld-/Typ-Änderung. Build grün (42 Seiten). Push reicht (Cloudflare baut `/admin` neu).
+- Datei: `web/tina/config.ts`, `web/tina/tina-lock.json`. Commit: `a813355`
+
 ## 2026-06-15 20:41 — Reisen-Design-Schritt 2: zentrale Werte + pro-Reise-Dropdown [SCHEMA → Re-Index]
 - **Modell:** 4 zentrale Vorlagen (none/soft/strong/luftig); pro Reise nur **Auswahl** (Default strong =
   byte-gleich). Werte zentral pflegbar → Änderung wirkt global auf alle Reisen mit diesem Design.

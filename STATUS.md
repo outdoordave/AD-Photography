@@ -1,6 +1,10 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-15** · letzter Commit `78c46b7` (Branch `astro-umbau`) ·
+> **Stand: 2026-06-15** · letzter Commit `a813355` (Branch `astro-umbau`) ·
+> **CMS-Klarheit (`a813355`, KEIN Re-Index):** `reisen_designs` ohne `/trips`-Router (war Kollision mit
+> `reisen_settings` → „Seite bearbeiten" zeigte Einstellungen). Designs-Collection nun über die **CMS-Seitenleiste**
+> öffnen („🎨 Reisen – Designs"). Globale `image_frame`-Beschreibung korrigiert (Reisen abgekapselt). tina-lock
+> `1c67497` (nur Text, keine Struktur → kein Re-Index, nur Push). **Schritt 3 (Regler-Editor) weiter offen.**
 > **Reisen-Design-Schritt 2 (`db0e2fd`+`78c46b7`) [SCHEMA → RE-INDEX nötig]:** zentrale Design-Werte
 > `src/data/trip-designs.json` + Collection `reisen_designs` (Tuning je Design); `lib/tripDesigns.ts` trennt
 > Character/Tuning + `mergeTuning`/`photoShadowCss`; `[slug].astro` baut `<style>` daraus. Pro-Reise-Dropdown
