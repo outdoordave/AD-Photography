@@ -17,6 +17,14 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-15 23:02 — Regler-Editor: Rahmen rendern im CMS + Spotlight-Scroll wie live [kein Re-Index]
+- **Bug 1 (Rahmen unsichtbar außer luftig):** Tina-`/admin` lädt die Site-`global.css` nicht → `--c-line`
+  undefiniert → Ring `0 0 0 2px var(--c-line)` (soft/strong) ungültig. Fix: WW-Farben (`--c-line`/`--c-bg-alt`/
+  `--c-bg`/`--c-ink`/`--c-accent`) als Literale am Vorschau-Wrapper → none/soft/strong/luftig-Rahmen rendern korrekt.
+- **Bug 2 (Vorschau statisch):** jetzt **Spotlight-Scroll wie live** — aktive Station folgt dem Scrollen
+  (Lese-Anker oben, `onScroll` + Station-Refs), gedimmte Nachbarn wie auf der echten Seite.
+- Reines UI (`TripDesignsEditor`), kein Schema/Re-Index. Commit: `60edb3a`
+
 ## 2026-06-15 22:48 — Regler-Editor: Live-Vorschau scrollbar (5 Beispiel-Stationen) [kein Re-Index]
 - Vorschau im Editor jetzt scrollbarer Kasten mit 5 Beispiel-Stationen (1 aktiv mit Foto, 4 gedimmt) →
   Frame/Dimmung/Luft/Titel/Foto-Schatten über mehrere Stationen sichtbar + scrollbar. Reines UI (`b8ab1f0`).
