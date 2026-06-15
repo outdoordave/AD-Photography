@@ -17,6 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-15 22:48 — Regler-Editor: Live-Vorschau scrollbar (5 Beispiel-Stationen) [kein Re-Index]
+- Vorschau im Editor jetzt scrollbarer Kasten mit 5 Beispiel-Stationen (1 aktiv mit Foto, 4 gedimmt) →
+  Frame/Dimmung/Luft/Titel/Foto-Schatten über mehrere Stationen sichtbar + scrollbar. Reines UI (`b8ab1f0`).
+- **Hinweis zur Nutzer-Frage „warum sind none/soft/strong identisch?":** Die 5 Regler (Dimmung/Luft/Titel/
+  Inaktiv-Größe/Foto-Schatten) waren in den Originalen nie zwischen none/soft/strong verschieden — der EINZIGE
+  Unterschied dieser drei ist der **Rahmen** (Ring+Schatten: none=keiner, soft=1px, strong=2px), der als fester
+  „Character" (Code) je Vorlage faithfully übernommen ist und in der Vorschau beim Tab-Wechsel sichtbar wird.
+  luftig ändert zusätzlich die Regler-Werte. (Optionale Erweiterung: Rahmen als 2 weitere Regler editierbar → Schema/Re-Index.)
+
 ## 2026-06-15 22:35 — Reisen-Design: Editor-Overflow-Fix + Design ZENTRAL (statt pro Reise) [SCHEMA → Re-Index]
 - **Editor-Fix (`a469eb5`, kein Schema):** Regler-Editor war zweispaltig (Regler | 220px-Vorschau) und lief im
   schmalen CMS-Panel rechts raus (Slider abgeschnitten, Live-Vorschau außerhalb der Anzeige). Jetzt **einspaltig**:
