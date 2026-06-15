@@ -69,9 +69,10 @@ const TripDesignsEditor = wrapFieldsWithMeta(({ input }: any) => {
         })}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 220px', gap: 16, alignItems: 'start' }}>
+      {/* EINSPALTIG (CMS-Panel ist schmal): Regler oben, Live-Vorschau darunter — nichts läuft raus. */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: '100%', minWidth: 0, boxSizing: 'border-box' }}>
         {/* Regler */}
-        <div>
+        <div style={{ minWidth: 0 }}>
           {SLIDERS.map((s) => {
             const v = t[s.key] as number;
             return (
@@ -92,8 +93,8 @@ const TripDesignsEditor = wrapFieldsWithMeta(({ input }: any) => {
           </p>
         </div>
 
-        {/* Live-Vorschau (im Feld) */}
-        <div style={{ ...vars, background: C.bg, borderRadius: 10, padding: 12, border: `1px solid ${C.line}` }}>
+        {/* Live-Vorschau (im Feld, volle Breite, gedeckelt) */}
+        <div style={{ ...vars, background: C.bg, borderRadius: 10, padding: 12, border: `1px solid ${C.line}`, width: '100%', maxWidth: 380, boxSizing: 'border-box' }}>
           <div style={{ fontSize: 10, letterSpacing: '.08em', textTransform: 'uppercase', color: C.accent, fontWeight: 700, marginBottom: 8 }}>Vorschau</div>
           <div style={card(true)}>
             <div style={{ fontSize: 9, letterSpacing: '.08em', textTransform: 'uppercase', color: C.accent, fontWeight: 700 }}>Station 1/3</div>
