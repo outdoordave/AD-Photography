@@ -56,9 +56,9 @@ const TripDesignsEditor = wrapFieldsWithMeta(({ input }: any) => {
   const onPreviewScroll = () => {
     const box = scrollRef.current; if (!box) return;
     // Lese-Anker als VIEWPORT-Linie (robust, unabhängig vom offsetParent): letzte Station, deren
-    // Oberkante den Anker passiert hat = aktiv. Anker ~42% in den Kasten (nicht oben!) -> die nächste
-    // Station schaltet früher frei, solange die aktuelle noch gut sichtbar ist (kein „zu spät").
-    const anchor = box.getBoundingClientRect().top + box.clientHeight * 0.42;
+    // Oberkante den Anker passiert hat = aktiv. Anker in der UNTEREN Hälfte (~58%) -> die nächste Station
+    // schaltet deutlich früher frei, solange die aktuelle noch gut sichtbar ist. (Höher = später, tiefer = früher.)
+    const anchor = box.getBoundingClientRect().top + box.clientHeight * 0.58;
     let best = 0;
     stationRefs.current.forEach((el, i) => { if (el && el.getBoundingClientRect().top <= anchor) best = i; });
     setActiveIdx(best);
