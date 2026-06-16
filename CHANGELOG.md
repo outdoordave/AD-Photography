@@ -17,6 +17,13 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-15 23:14 — Regler-Editor: Vorschau-Frame nicht mehr abgeschnitten + Scroll-Spy wirkt [kein Re-Index]
+- **Frame abgeschnitten:** der Scroll-Container clippte (Overflow clippt auch x/oben) den Karten-Ring/-Schatten
+  links/rechts/oben. Fix: Innenabstand `10px 26px 16px` → Rahmen + Schatten haben Platz.
+- **Spotlight blieb auf Station 1:** `onPreviewScroll` nutzte `offsetTop` (falscher Bezug). Jetzt
+  `getBoundingClientRect`-Anker (Viewport-Linie `boxTop+64`) → aktive Station folgt dem Scrollen wie live.
+- Reines UI (`TripDesignsEditor`), kein Schema/Re-Index. Commit: `cd2630d`
+
 ## 2026-06-15 23:02 — Regler-Editor: Rahmen rendern im CMS + Spotlight-Scroll wie live [kein Re-Index]
 - **Bug 1 (Rahmen unsichtbar außer luftig):** Tina-`/admin` lädt die Site-`global.css` nicht → `--c-line`
   undefiniert → Ring `0 0 0 2px var(--c-line)` (soft/strong) ungültig. Fix: WW-Farben (`--c-line`/`--c-bg-alt`/
