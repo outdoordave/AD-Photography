@@ -17,6 +17,30 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-16 20:56 — Doku auf Post-Cutover-Stand gebracht
+- Gesamte Projekt-Doku vom pre-Cutover-Zustand auf den aktuellen Stand aktualisiert.
+- **CLAUDE.md** (`8bff270`): Faktenkorrektur (CMS=TinaCMS statt Sveltia, Stack=Astro in `web/`,
+  Build=`npm run build`, Fonts lokal); „main=Sicherheitsnetz/astro-umbau=Umbau"-Rahmen → Post-Cutover-Realität.
+  Beibehalten: Live-Wahrheit zuerst, isolierte Edits, Diff-vor-Commit, dt. Commits, manueller Push, Capability-Lock.
+- **STATUS.md** (`01b2122`): als Post-Cutover-Momentaufnahme neu gefasst (Architektur live, Inventur portiert,
+  Abschnitt „Offene Nacharbeiten/kein Blocker").
+- **FAHRPLAN.md** (`80e9e50`): Cutover als vollzogen (Phase 1–3), Tina-Token-pro-Branch-Lehre (403 → main-Token).
+- **MAENGEL.md** (`64558cf`): R2 erledigt (🔴-Blocker alle weg), K8 (EN-`<title>` DE-Home), Geräte-Politur G1–G3.
+- betroffene Dateien: CLAUDE.md, STATUS.md, FAHRPLAN.md, MAENGEL.md, CHANGELOG.md (+ ggf. IDEEN/CAPABILITIES/ABNAHME)
+- Commit: dieser Eintrag + `8bff270`, `01b2122`, `80e9e50`, `64558cf`
+
+## 2026-06-16 19:34 — 🚀 CUTOVER LIVE: Astro+Tina auf main
+- **`astro-umbau` → `main` gemergt + gepusht** (`64a8263`). Die alte Single-File-`index.html` ist abgelöst;
+  live ist jetzt die Astro+TinaCMS-Version.
+- Cloudflare-Live-Projekt `aandd-photography` baut von `main` (Root `web`, `npm run build`, Output `dist`),
+  mit neuem `TINA_TOKEN` nur für `main`. Tina Cloud hat `main` indexiert.
+- Live-Smoke-Test bestanden: robots.txt erlaubt Crawling, kein noindex-Meta, `/admin`-Login geht,
+  Kontaktformular sendet → Mail kommt an. Live = exakt der astro-umbau-Stand.
+- Vorschau-Projekt `aandd-photography-astro` läuft weiter von `astro-umbau` (`PUBLIC_PREVIEW_NOINDEX=true`).
+- ⚠️ Lehre: `TINA_TOKEN` ist branch-gebunden — alter astro-umbau-Token gab 403 beim ersten main-Build;
+  Lösung war ein neuer Token mit main-Berechtigung.
+- Commit: `64a8263` (Merge)
+
 ## 2026-06-15 23:40 — Regler-Editor: Lese-Anker tiefer (0.42 → 0.58) [kein Re-Index]
 - Wechsel weiterhin zu spät → Anker von 42% auf **58%** der Kastenhöhe → nächste Station wird aktiv, während
   die aktuelle noch klar sichtbar ist. Eine Zahl (`*0.58`): höher = später, tiefer = früher. Commit: `8af332d`
