@@ -4,14 +4,18 @@
 `https://aandd-photography-astro.pages.dev` (Stand `fd48c39`) + Quellcode-Analyse.
 **Read-only-Audit — nichts geändert.** Fixes erst nach Davids Freigabe (jeder Fix = eigener Commit).
 
-> **Legende:** 🔴 kritisch (Cutover-Blocker) · 🟡 sollte · ⚪ kosmetisch.
-> **Methodik-Grenze:** Headless geprüft (HTTP/Assets/Quellcode). **Nicht** prüfbar war
-> alles Interaktive (JS-Konsole, Lightbox, Karte, Hero-Umschalter, CMS-Schalter-Wirkung,
-> Touch/Scroll) — muss David auf echtem Gerät (Safari/iPad) gegentesten (Liste unten).
+> **Update 2026-06-16 — Cutover ist durch.** Die 🔴-Blocker sind erledigt (R1 Rechtstexte ✅,
+> R2 Geräte-Smoke-Test ✅). „Cutover-Blocker" ist damit überholt — offene Punkte sind jetzt
+> **ruhige Nacharbeit an der Live-Seite**, kein Launch-Gate mehr.
+
+> **Legende:** 🔴 kritisch · 🟡 sollte · ⚪ kosmetisch.
+> **Methodik-Grenze (erledigt):** Der ursprüngliche Audit war headless (HTTP/Assets/Quellcode);
+> alles Interaktive (JS-Konsole, Lightbox, Karte, CMS-Schalter, Touch/Scroll) hat David
+> inzwischen auf echtem Gerät (Safari/iPad/iPhone) gegengetestet → **R2 ✅**.
 
 ---
 
-## 🔴 Kritisch — zwingend vor Cutover
+## 🔴 Kritisch — war „zwingend vor Cutover" — ✅ ALLE ERLEDIGT
 
 - [x] **R1 · Rechtstexte** — ✅ **DE gefüllt** (Datenschutz + Impressum, echte Angaben, live). Offen nur: `body_en` leer → EN fällt auf DE zurück (s. K4).
   - *Ursache:* `web/src/data/datenschutz.json` + `impressum.json` enthalten PLATZHALTER-Text
@@ -21,11 +25,10 @@
     korrekt benannt (Cloudflare, OpenFreeMap, Web3Forms, Umami; Google Fonts entfällt jetzt).
   - *Cutover-Blocker:* **JA** (harter rechtlicher Blocker für Publikum).
 
-- [ ] **R2 · Echter Geräte-Smoke-Test der Inseln fehlt** (Safari + iPad).
-  - *Ursache:* Headless nicht testbar; „Build grün" fängt **keine** Laufzeitfehler
-    (siehe Lightbox-Crash: build-grün, lief aber nicht).
-  - *Fix:* Test-Checkliste unten durchgehen, v. a. JS-Konsole auf jeder Seite.
-  - *Cutover-Blocker:* **JA** (Prozess-Pflicht vor Launch).
+- [x] **R2 · Geräte-Smoke-Test der Inseln** — ✅ **erledigt** (David, Safari/iPad/iPhone, vor Cutover).
+  - *Ergebnis:* keine JS-Fehler in der Konsole; nur Best-Practice-Hinweise am Kontaktformular
+    (→ K7) und ein englischer `<title>` auf der DE-Startseite (→ K8). Lightbox/Karte/CMS-Schalter ok.
+  - *War Cutover-Blocker — jetzt erledigt.*
 
 ---
 
@@ -130,7 +133,27 @@
     baut den JSON-Body in `fetch('https://api.web3forms.com/submit')` selbst aus dem
     React-State (`name`/`email`/`msg`, `:79–87`). Die `name`-Attribute der Inputs werden
     vom Versand gar nicht gelesen → reiner A11y-/Autofill-Gewinn, kein Verhaltensrisiko.
-  - *Cutover-Blocker:* **Nein** (kosmetisch/A11y).
+  - *Blocker:* **Nein** (kosmetisch/A11y).
+
+- [ ] **K8 · Englischer `<title>` auf der DE-Startseite** (🟡, SEO/Korrektheit).
+  - *Befund (2026-06-16, Davids Geräte-Smoke-Test):* die deutsche Startseite `/` trägt einen
+    **englischen `<title>`** (statt eines deutschen). Falsche Sprache im Browser-Tab/Suchergebnis.
+  - *Fix (vermutlich klein):* den `<title>` der DE-Home auf den deutschen Text setzen — im echten
+    Code prüfen (`web/src/pages/index.astro` bzw. `BaseLayout`-Aufruf), ob `title`/`lang` dort
+    sprachrichtig durchgereicht wird. **Noch nicht gebaut — erst Befund am echten Code.**
+  - *Blocker:* **Nein.**
+
+---
+
+## 🟡 Geräte-Politur (iOS/iPad) — Nacharbeit aus dem Smoke-Test (keine Blocker)
+
+- [ ] **G1 · iOS safe-area-insets** (Notch/Home-Indicator): Ränder/Sticky-Elemente auf iPhone
+  sauber gegen die safe areas absetzen (`env(safe-area-inset-*)` + `viewport-fit=cover`).
+- [ ] **G2 · Lightbox im Querformat am Phone** (Landscape): Verhalten/Größe polieren.
+- [ ] **G3 · iPad-Hochformat-Polish** (Portrait-Breakpoint) — Layout-Feinschliff.
+
+> Alle drei aus Davids echtem Gerätetest; **kein Cutover-Blocker** (Cutover ist durch).
+> Vor dem Bau jeweils erst am echten Code/Gerät befunden.
 
 ---
 
