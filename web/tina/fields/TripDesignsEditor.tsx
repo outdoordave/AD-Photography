@@ -55,9 +55,11 @@ const TripDesignsEditor = wrapFieldsWithMeta(({ input }: any) => {
   const stationRefs = React.useRef<(HTMLDivElement | null)[]>([]);
   const onPreviewScroll = () => {
     const box = scrollRef.current; if (!box) return;
-    const anchor = box.scrollTop + 48;
+    // Lese-Anker als VIEWPORT-Linie (robust, unabhängig vom offsetParent): letzte Station, deren
+    // Oberkante den Anker passiert hat = aktiv (klassisches Scroll-Spy wie live).
+    const anchor = box.getBoundingClientRect().top + 64;
     let best = 0;
-    stationRefs.current.forEach((el, i) => { if (el && el.offsetTop <= anchor) best = i; });
+    stationRefs.current.forEach((el, i) => { if (el && el.getBoundingClientRect().top <= anchor) best = i; });
     setActiveIdx(best);
   };
 
@@ -117,7 +119,9 @@ const TripDesignsEditor = wrapFieldsWithMeta(({ input }: any) => {
           <div style={{ fontSize: 10, letterSpacing: '.08em', textTransform: 'uppercase', color: C.accent, fontWeight: 700, marginBottom: 8 }}>
             Vorschau — {TRIP_DESIGN_LABELS[sel]} · scrollen ↓ (aktive Station folgt mit)
           </div>
-          <div ref={scrollRef} onScroll={onPreviewScroll} style={{ maxHeight: 320, overflowY: 'auto', paddingRight: 4 }}>
+          {/* Innenabstand, damit der Karten-Ring/-Schatten nicht vom Overflow abgeschnitten wird (Overflow
+              clippt auch x). 26px seitlich ~ deckt den Schatten-Radius; oben/unten Luft fürs Rahmen-Rendern. */}
+          <div ref={scrollRef} onScroll={onPreviewScroll} style={{ maxHeight: 320, overflowY: 'auto', padding: '10px 26px 16px' }}>
             {[
               { t: 'San Francisco', photo: true },
               { t: 'Morro Bay',     photo: false },
