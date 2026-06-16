@@ -17,6 +17,10 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-15 23:40 — Regler-Editor: Lese-Anker tiefer (0.42 → 0.58) [kein Re-Index]
+- Wechsel weiterhin zu spät → Anker von 42% auf **58%** der Kastenhöhe → nächste Station wird aktiv, während
+  die aktuelle noch klar sichtbar ist. Eine Zahl (`*0.58`): höher = später, tiefer = früher. Commit: `8af332d`
+
 ## 2026-06-15 23:34 — Regler-Editor: Lese-Anker in die Mitte (~42%) — aktive Station nicht mehr zu spät [kein Re-Index]
 - Anker lag bei 64px (zu weit oben) → die nächste Station wurde erst aktiv, wenn ihre Oberkante fast ganz oben
   war; die vorherige war da schon fast raus. Jetzt `anchor = boxTop + clientHeight*0.42` → die nächste schaltet
