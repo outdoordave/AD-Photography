@@ -1,0 +1,15 @@
+---
+// Impressum DE ('/impressum'). Daten via Tina-Client (Live-Vorschau),
+// Render in der LegalContent-Insel.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LegalContent from '../components/LegalContent.tsx';
+import { client } from '../../tina/__generated__/client';
+
+const res = await client.queries.impressum({ relativePath: 'impressum.json' });
+const title = (res.data.impressum as any)?.title_de || 'Impressum';
+---
+<BaseLayout title={`${title} — Wide & Wild`} lang="de">
+  <div id="page-legal">
+    <LegalContent client:load query={res.query} variables={res.variables} data={res.data} lang="de" docKey="impressum" />
+  </div>
+</BaseLayout>

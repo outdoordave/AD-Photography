@@ -1,0 +1,7 @@
+{
+  "enabled": true,
+  "analytics_snippet": "<script defer src=\"https://cloud.umami.is/script.js\" data-website-id=\"4cef717c-7625-4587-b06f-c681996250ab\"></script>",
+  "dashboard_url": "https://cloud.umami.is/share/zN02SMrlAweIl9zv",
+  "intro_de": "Hier siehst du die Besuchs-Statistik der Website (Seitenaufrufe, beliebteste Seiten). Datensparsam und cookielos.",
+  "intro_en": "Here you can see the site's visit statistics (page views, most popular pages). Privacy-friendly and cookieless."
+}

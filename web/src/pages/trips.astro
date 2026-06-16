@@ -1,0 +1,24 @@
+---
+// Reisen-ÜBERSICHT DE ('/trips'). Karten-Liste aller Reisen -> Detailseite /trips/<slug>.
+// (Ersetzt die frühere Tab-Variante.) Seitentexte live editierbar via SettingsHeader-Insel.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SettingsHeader from '../components/SettingsHeader.tsx';
+import TripsOverview from '../components/TripsOverview.astro';
+import settings from '../data/trips-settings.json';
+import { client } from '../../tina/__generated__/client';
+import { sortTrips, type RawTrip } from '../lib/trips';
+
+const res = await client.queries.reisenConnection({ first: 100 });
+const setRes = await client.queries.reisen_settings({ relativePath: 'trips-settings.json' });
+const edges = (res.data.reisenConnection?.edges || []).filter(Boolean);
+const trips = sortTrips(edges.map((e: any) => ({ slug: e.node._sys.filename, data: e.node as RawTrip })));
+const s = settings as any;
+---
+<BaseLayout title={`${s.title_de || 'Reisen'} — Wide & Wild`} lang="de">
+  <section>
+    <div class="wrap">
+      <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="reisen_settings" lang="de" />
+      <TripsOverview trips={trips} lang="de" />
+    </div>
+  </section>
+</BaseLayout>

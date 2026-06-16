@@ -1,0 +1,32 @@
+---
+// Stories-Liste DE ('/stories'). Verschoben von '/', seit '/' die echte Startseite ist.
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StoryCard from '../../components/StoryCard.astro';
+import SettingsHeader from '../../components/SettingsHeader.tsx';
+import { toSortedStories } from '../../lib/stories';
+import { tl } from '../../lib/albums';
+import settings from '../../data/stories-settings.json';
+import appearance from '../../data/appearance-settings.json';
+import { client } from '../../../tina/__generated__/client';
+
+// Stories für Besucher ausgeblendet? (Schalter 🎨 Darstellung → „Stories zeigen?", Standard aus).
+// Nav-/Footer-Link werden schon ausgeblendet; hier zusätzlich den Direktaufruf von /stories
+// sperren. Logik = wie Nav/Footer (sichtbar NUR bei show_stories === true).
+if ((appearance as any).show_stories !== true) return Astro.redirect('/');
+
+const entries = await getCollection('stories');
+const stories = toSortedStories(entries.map((e) => ({ slug: e.slug, data: e.data })));
+const setRes = await client.queries.stories_settings({ relativePath: 'stories-settings.json' });
+const s = settings as any;
+---
+<BaseLayout title={`${s.title_de || 'Geschichten von unterwegs'} — Wide & Wild`} lang="de">
+  <section>
+    <div class="wrap">
+      <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="stories_settings" lang="de" />
+      <div class="stories-grid">
+        {stories.map((s) => <StoryCard story={s} lang="de" base="" />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

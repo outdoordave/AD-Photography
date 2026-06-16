@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "web-dist",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "4399", "--directory", "dist"],
+      "cwd": "web",
+      "port": 4399
+    },
+    {
+      "name": "astro-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["astro", "preview", "--port", "4321", "--host"],
+      "cwd": "web",
+      "port": 4321
+    }
+  ]
+}

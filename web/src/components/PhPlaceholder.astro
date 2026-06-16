@@ -1,0 +1,19 @@
+---
+// Farb-Platzhalter mit optionaler Illustration — 1:1 zu phAttrs() in index.html.
+// Cover-lose Stories rendern hier 'mountains' (Verlaufs-Himmel + Sonne + Berge +
+// gepunktete Linie). Klasse 'has-illus' blendet den Farbverlauf-::before aus und
+// legt die SVG-Illustration als background-image darueber (siehe global.css).
+import { ILLUS } from '../lib/illus';
+
+interface Props {
+  c1: string;
+  c2: string;
+  imgKey?: string;
+  extraClass?: string;
+}
+const { c1, c2, imgKey = '', extraClass = '' } = Astro.props;
+const illus = imgKey && ILLUS[imgKey] ? ILLUS[imgKey] : '';
+const cls = 'ph' + (illus ? ' has-illus' : '') + (extraClass ? ' ' + extraClass : '');
+const style = `--ph-c1:${c1}; --ph-c2:${c2};` + (illus ? ` background-image:url('${illus}');` : '');
+---
+<div class={cls} data-ph="PLATZHALTER" style={style}></div>

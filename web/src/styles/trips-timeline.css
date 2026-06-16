@@ -1,0 +1,208 @@
+/* Reisen-DETAILSEITE — Variante B (vertikale Timeline). Nur von src/pages/trips/[slug].astro
+   (+ EN) importiert. 1:1 aus dem abgestimmten Prototyp. global.css bleibt unangetastet.
+   EIN Scroll-Kontext: Seite scrollt normal, Kopf + Karte sind sticky. */
+
+:root {
+  --ww-sticky-top: 96px;       /* unter der globalen Nav (88px) — von der Insel gemessen */
+  --ww-mininav-h: 46px;        /* mobile schlanke Nav-Zeile */
+  --ww-map-h-mobile: 170px;    /* mobile Mini-Karten-Höhe */
+  --ww-map-h: min(62vh, 540px); /* Desktop-Karten-Höhe (auch für sticky Editor-Leiste) */
+  --ww-map-gap: 16px;          /* kleiner Abstand der Karte zur Hero-/Nav-Leiste (nicht rangequetscht) */
+}
+
+/* Zurück zur Übersicht */
+.trip-back { display: inline-block; font-size: var(--fs-label); letter-spacing: var(--tracking-slight); text-transform: uppercase; font-weight: var(--fw-bold); color: var(--c-ink-soft); text-decoration: none; margin-bottom: 6px; }
+.trip-back:hover { color: var(--c-accent); }
+
+/* Mobile schlanke Nav-Zeile: auf Desktop/iPad ausgeblendet. */
+.tl-mininav {
+  display: none; order: 0;
+  position: sticky; top: var(--ww-sticky-top); z-index: 5;
+  height: var(--ww-mininav-h); align-items: center;
+  background: transparent; border-bottom: 1px solid transparent;
+  transition: background var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease);
+}
+.tl-mininav.is-collapsed { background: var(--c-bg); border-bottom-color: var(--c-line); }
+.tl-mininav-title {
+  font-family: var(--font-display); font-size: var(--fs-title-sm); font-weight: var(--fw-medium); color: var(--c-ink);
+  opacity: 0; transform: translateY(4px);
+  transition: opacity var(--dur-base) var(--ease), transform var(--dur-base) var(--ease);
+}
+.tl-mininav.is-collapsed .tl-mininav-title { opacity: 1; transform: none; }
+
+/* ── Bühne: linke Spalte (Kopf sticky + Timeline) · rechte Spalte (Karte sticky) ── */
+.tl-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  /* Zeile 1 = sticky Titelleiste · Zeile 2 = nicht-klebende Zusammenfassung (.tl-intro) · Zeile 3 = Liste.
+     Die Karte (Spalte 2) spannt 1/-1 über alle drei. */
+  grid-template-rows: auto auto 1fr;
+  column-gap: 36px;
+  max-width: 100%;
+}
+
+.tl-head {
+  grid-column: 1; grid-row: 1; min-width: 0;
+  position: sticky; top: var(--ww-sticky-top); z-index: 4;
+  background: var(--c-bg); padding: 0 0 4px;
+  box-shadow: 0 -60px 0 0 var(--c-bg);
+}
+/* Deckfläche des Kopfes: läuft ab der Kopf-Rechtskante als durchgehende Schicht bis UNTER die Karte
+   (Spalten-Lücke 36px + Karten-Spalte 420px). So verschwindet der überstehende Rahmen/Schatten der
+   hochscrollenden Station rechts hinter der Überschrift, und es entsteht eine einzige Deck-Ebene.
+   Liegt im z4-Kontext des Kopfes; die Map liegt mit z5 DRÜBER -> ihr eigener Schatten bleibt erhalten,
+   die Karte selbst überdeckt die Deckfläche optisch (Tiles sind opak). */
+.tl-head::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 100%; width: calc(36px + 420px);
+  background: var(--c-bg); pointer-events: none;
+}
+/* Weiche Unterkante des Kopfes (z4): Inhalt (Zusammenfassung, dann Stationen) taucht beim Scrollen weich
+   unter die sticky Titelleiste statt mit harter Kante. Reicht über Textspalte UND Spalten-Lücke bis zur
+   Karten-Kante (right:-36px). NUR beim Scrollen sichtbar (`.is-scrolled`) -> beim Laden (scrollY 0) wäscht
+   der Verlauf die erste Zeile der Zusammenfassung NICHT aus; weiches Ein-/Ausblenden via opacity. */
+.tl-head::after {
+  content: ''; position: absolute; left: 0; right: -36px; top: 100%; height: min(28px, 3.4vh);
+  background: linear-gradient(var(--c-bg) 20%, rgba(244,237,225,0));
+  pointer-events: none; opacity: 0; transition: opacity .25s ease;
+}
+.tl-head.is-scrolled::after { opacity: 1; }
+.tl-head .tl-meta { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 4px; }
+.tl-head h2 { font-family: var(--font-display); font-size: var(--fs-title-lg); font-weight: var(--fw-medium); line-height: 1.1; }
+/* Nicht-klebender Block (Grid-Zeile 2) UNTER der sticky Titelleiste: Zusammenfassung (+ Album-Link).
+   Scrollt beim Lesen natürlich nach oben unter die deckende Titelleiste und verschwindet. */
+.tl-intro { grid-column: 1; grid-row: 2; min-width: 0; }
+.tl-summary { font-size: var(--fs-ui); color: var(--c-ink-soft); line-height: 1.55; margin-top: 2px; max-width: 56ch; }
+.tl-intro .trip-album-link { margin-top: 10px; }
+
+/* Karte: rechte Spalte, sticky, gedeckelte Höhe */
+.tl-map-col { grid-column: 2; grid-row: 1 / -1; min-width: 0; }
+.tl-map-col .tl-map { position: sticky; top: calc(var(--ww-sticky-top) + var(--ww-map-gap)); height: var(--ww-map-h); width: 100%; z-index: 5; }
+.tl-map .maplibregl-map { height: 100%; }
+
+/* ── Timeline (normaler Fluss) ── */
+.tl-list { grid-column: 1; grid-row: 3; min-width: 0; list-style: none; margin: 0; padding: 2vh 0 30vh; position: relative; }
+
+/* Fades (z2) liegen UNTER der aktiven Karte (z3) -> deren Rahmen bleibt sauber; gedimmte Nachbarn
+   (z auto) faden weich. Der weiche Übergang der aktiven Karte unter den Kopf macht .tl-head::after. */
+.tl-fade { position: sticky; left: 0; right: 0; z-index: 2; pointer-events: none; }
+.tl-fade-top { top: calc(var(--ww-snap-pad, 200px) - 4px); height: 52px; margin-bottom: -52px; background: linear-gradient(var(--c-bg), rgba(244,237,225,0)); }
+.tl-fade-bottom { bottom: 0; height: 120px; margin-top: -120px; background: linear-gradient(rgba(244,237,225,0) 0%, rgba(244,237,225,0.45) 48%, rgba(244,237,225,0.82) 74%, var(--c-bg) 100%); }
+
+.tl-line, .tl-line-fill { position: absolute; left: 17px; width: 2px; transform: translateX(-50%); border-radius: 2px; }
+.tl-line      { top: var(--line-top, 0); height: var(--line-h, 0); background: var(--c-line); }
+/* Füllung wächst zum aktiven Punkt (siehe update()): weiches stationsweises Wachsen statt Sprung.
+   prefers-reduced-motion schaltet die transition unten (Sammelregel) ab. */
+.tl-line-fill { top: var(--line-top, 0); height: var(--fill, 0); background: var(--c-accent); transition: height 450ms cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* margin-bottom = „Luft zwischen Stationen": reise-eigener Token mit Fallback auf den
+   heutigen Wert (14px). Nur das Design 'luftig' überschreibt ihn (50px). */
+.tl-stop { display: grid; grid-template-columns: 34px 1fr; gap: 16px; margin-bottom: var(--ww-trip-gap, 14px); }
+@keyframes tlReveal { from { opacity: 0; transform: translateY(var(--ww-reveal-shift, 10px)); } to { opacity: 1; transform: none; } }
+.tl-stop.is-revealing { animation: tlReveal var(--ww-reveal-dur, 800ms) var(--ease) both; }
+.tl-rail { position: relative; display: flex; justify-content: center; }
+.tl-dot {
+  position: relative; z-index: 2; margin-top: 16px;
+  width: 13px; height: 13px; border-radius: 50%;
+  background: var(--c-bg); border: 2.5px solid var(--c-accent);
+  transition: transform var(--dur-base) var(--ease), background var(--dur-base) var(--ease);
+}
+.tl-main > .tl-rail .tl-dot { width: 15px; height: 15px; }
+.tl-stop.is-active .tl-dot { background: var(--c-accent); transform: scale(1.4); box-shadow: 0 0 0 5px rgba(167,103,47,.16); }
+
+/* Fokus-Dimming (Spotlight) + aktive Station als gerahmte, angehobene Karte. */
+.tl-body {
+  padding: 14px 16px; min-width: 0;
+  border-radius: var(--radius-sm); background: transparent;
+  /* Inaktiv-Deckkraft/-Skalierung: reise-eigener Token mit Fallback auf die globalen
+     (vom Spotlight-Regler/JS gesetzten) Werte. none/soft/strong setzen --ww-trip-* NICHT
+     -> Spotlight-Regler bleibt wirksam; nur 'luftig' überschreibt (0.15 / 0.80). */
+  opacity: var(--ww-trip-dim-op, var(--ww-dim-op, 0.3));
+  transform: scale(var(--ww-trip-scale, var(--ww-dim-scale, 0.975)));
+  transform-origin: left center;
+  transition: opacity var(--ww-dim-fade, 800ms) cubic-bezier(0.22, 1, 0.36, 1),
+              transform var(--ww-dim-fade, 800ms) cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow var(--ww-dim-fade, 800ms) cubic-bezier(0.22, 1, 0.36, 1),
+              background-color var(--ww-dim-fade, 800ms) cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* Aktive Karte: Füllung/Ring/Schatten als reise-eigene Tokens mit Fallback auf die globalen
+   (var(--ww-trip-*, var(--ww-*))). 'strong' (Default) setzt --ww-trip-ring/shadow exakt auf
+   die heutigen Strong-Werte -> byte-gleich UND vom globalen Seiten-Frame entkoppelt. */
+.tl-stop.is-active .tl-body { opacity: 1; transform: none; position: relative; z-index: 3; background: var(--ww-trip-card-bg, var(--c-bg-alt, #efe6d6)); box-shadow: var(--ww-trip-ring, var(--ww-ring)), var(--ww-trip-shadow, var(--ww-shadow)); }
+.tl-step { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 6px; }
+.tl-title { font-family: var(--font-display); font-weight: var(--fw-medium); line-height: 1.2; margin-bottom: 4px; }
+.tl-date { font-size: var(--fs-label); color: var(--c-ink-soft); margin-bottom: 12px; }
+.tl-text { font-size: var(--fs-ui); color: var(--c-ink-soft); line-height: 1.7; margin-bottom: 10px; }
+
+/* Aktive Hauptstation-Titelgröße: reise-eigener Token mit Fallback auf heute (--fs-title-lg). */
+.tl-main .tl-title { font-size: var(--ww-trip-title, var(--fs-title-lg)); }
+/* Hero-Foto: eigener Foto-Schatten (Token, Default 'none' = wie heute). 'luftig' lässt das Foto
+   damit „schweben". box-shadow wird durch overflow:hidden NICHT beschnitten (liegt außerhalb). */
+.tl-hero { aspect-ratio: var(--ar-media); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: 14px; cursor: zoom-in; background: var(--c-bg-alt, #efe6d6); position: relative; box-shadow: var(--ww-trip-photo-shadow, none); }
+.tl-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tl-strip { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; margin-top: 4px; }
+.tl-strip img { flex: 0 0 auto; width: 132px; height: 88px; object-fit: cover; border-radius: var(--radius-sm); cursor: zoom-in; display: block; }
+
+.tl-inter .tl-title { font-size: var(--fs-title-sm); }
+.tl-text-slim { margin-bottom: 0; }
+.tl-thumb { width: 150px; aspect-ratio: var(--ar-card); border-radius: var(--radius-sm); overflow: hidden; margin-top: 10px; cursor: zoom-in; position: relative; box-shadow: var(--ww-trip-photo-shadow, none); }
+.tl-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.ww-station-video { width: 100%; border-radius: var(--radius-sm); margin-top: 10px; display: block; }
+
+/* „Reisefazit"-Galerie unter der Timeline */
+.tl-gallery { margin-top: 30px; }
+
+/* Fahrzeug-Marker */
+.tl-vehicle { width: var(--ww-vehicle-size, 42px); height: var(--ww-vehicle-size, 42px); border-radius: 50%; background: rgba(244,237,225,.92); border: 1px solid var(--c-line); box-shadow: 0 3px 10px rgba(0,0,0,.35); display: flex; align-items: center; justify-content: center; }
+.tl-vehicle-ic { display: flex; color: var(--c-ink); transition: transform var(--dur-base) var(--ease); }
+.tl-vehicle-ic svg { display: block; width: calc(var(--ww-vehicle-size, 42px) * 0.74); height: auto; }
+.tl-vehicle-ic.is-plane svg { width: calc(var(--ww-vehicle-size, 42px) * 0.6); }
+
+@media (prefers-reduced-motion: reduce) {
+  .tl-dot, .tl-line-fill, .tl-vehicle-ic, .tl-body, .tl-mininav, .tl-mininav-title { transition: none; }
+}
+
+/* ════════ MOBILE (< 768px = Handy). iPad (≥768px, auch quer) bleibt Desktop! ════════ */
+@media (max-width: 767px) {
+  .tl-stage { display: flex; flex-direction: column; column-gap: 0; }
+  .tl-mininav { display: flex; }
+  .tl-head { order: 1; position: static; top: auto; box-shadow: none; padding: 6px 0 12px; }
+  .tl-intro { order: 1; } /* direkt nach dem Kopf (mobil ist nichts sticky -> alles scrollt ohnehin) */
+  .tl-head::after, .tl-head::before { display: none; } /* Kopf mobil nicht sticky -> kein Untertauch/Lücken-Deck nötig */
+  .tl-map-col .tl-map { z-index: auto; } /* mobil kein z-Index-Heben der Karte */
+  .tl-map-col { order: 2; position: sticky; top: calc(var(--ww-sticky-top) + var(--ww-mininav-h)); z-index: 3; }
+  .tl-map-col .tl-map { position: static; top: auto; height: var(--ww-map-h-mobile); width: 100%; }
+  .tl-list { order: 3; padding: 2vh 0 46vh; }
+  .tl-fade-top { top: calc(var(--ww-sticky-top) + var(--ww-mininav-h) + var(--ww-map-h-mobile)); height: 40px; margin-bottom: -40px; }
+  .tl-body { opacity: max(var(--ww-trip-dim-op, var(--ww-dim-op, 0.3)), 0.4); }
+  .tl-strip { scroll-snap-type: x proximity; gap: 10px; -webkit-overflow-scrolling: touch; }
+  .tl-strip img { width: 78%; max-width: 320px; height: auto; aspect-ratio: 3 / 2; scroll-snap-align: start; }
+}
+
+/* ===== Editor-Stationsleiste (NUR im Tina-Vorschau-Iframe sichtbar) ============================
+   Beendet den „Hin-und-her-Tanz": Chip = Station direkt bearbeiten (fokussiert das Feld im
+   Formular via data-tina-field), „+ Station / sortieren" springt zum flachen Stationen-Manager.
+   Besucher sehen das nie (Komponente rendert es nur, wenn die Seite im iframe läuft). */
+.tl-editbar { position: sticky; top: calc(var(--ww-sticky-top) + var(--ww-map-gap) + var(--ww-map-h) + 12px); z-index: 4; margin-top: 12px; padding: 12px 12px 10px; background: var(--c-bg); border: 1px solid var(--c-line); border-radius: 10px; box-shadow: 0 1px 0 rgba(0,0,0,.02); max-height: 28vh; overflow-y: auto; }
+.tl-editbar-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.tl-editbar-title { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--c-ink-soft); }
+.tl-editbar-manage { border: none; background: var(--c-accent); color: #fff; font-size: 12.5px; font-weight: 600; padding: 7px 12px; border-radius: 7px; cursor: pointer; white-space: nowrap; }
+.tl-editbar-manage:hover { filter: brightness(1.06); }
+.tl-editbar-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.tl-chip { display: inline-flex; align-items: center; gap: 7px; max-width: 100%; padding: 6px 10px; border: 1px solid var(--c-line); background: #fff; border-radius: 999px; cursor: pointer; font-size: 12.5px; color: var(--c-ink); transition: border-color .15s, background .15s, box-shadow .15s; }
+.tl-chip:hover { border-color: var(--c-accent); }
+.tl-chip.is-active { border-color: var(--c-accent); background: #f6ede0; box-shadow: 0 0 0 1px var(--c-accent) inset; }
+.tl-chip.is-inter { border-style: dashed; color: var(--c-ink-soft); }
+.tl-chip-no { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 999px; background: var(--c-accent); color: #fff; font-size: 11px; font-weight: 700; }
+.tl-chip.is-inter .tl-chip-no { background: var(--c-ink-soft); }
+.tl-chip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 160px; }
+.tl-chip-ic { font-size: 12px; opacity: .8; }
+.tl-editbar-hint { margin-top: 9px; font-size: 11.5px; color: var(--c-ink-soft); line-height: 1.4; }
+
+/* Editor-Stationsleiste mobil/schmal: in der sticky Karten-Spalte mitlaufend, kompakt (1 Zeile scrollbar) */
+@media (max-width: 767px) {
+  .tl-editbar { position: static; top: auto; max-height: none; margin-top: 8px; padding: 9px 9px 8px; }
+  .tl-editbar-chips { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
+  .tl-chip { flex: 0 0 auto; }
+  .tl-chip-name { max-width: 110px; }
+}

@@ -1,0 +1,67 @@
+{
+  "order": 4,
+  "title": "2025 · Tennessee",
+  "title_en": "Robin 2025 · Tennessee",
+  "date": "2025-02-01",
+  "meta_de": "Februar–März 2025 · Kurztrip · Tennessee & Georgia",
+  "meta_en": "February–March 2025 · short trip · Tennessee & Georgia",
+  "summary_de": "Ein Kurztrip nach Chattanooga, um Robin — einen Arbeitskollegen — zu besuchen. Mit Abstechern nach Piken Forge, in die Smoky Mountains und natürlich Buc-ee's!",
+  "summary_en": "A short trip to Chattanooga to visit Robin — a work colleague. With side trips to Atlanta, the Smoky Mountains and of course Buc-ee's.",
+  "upcoming": false,
+  "design": "luftig",
+  "stops": [
+    {
+      "name": "Atlanta",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-84.39,33.75]}",
+      "title_de": "Atlanta",
+      "title_en": "Atlanta",
+      "date_de": "22.–23. Feb",
+      "date_en": "Feb 22–23",
+      "text_de": "Ankunft in Atlanta mit dem obligatorischen Stopp bei Buc-ee's. The-Walking-Dead-Drehorte, durch die Stadt bummeln und der Columbia Store.",
+      "text_en": "Arrival in Atlanta with the obligatory stop at Buc-ee's. The Walking Dead filming locations, strolling through the city and the Columbia Store.",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    },
+    {
+      "name": "Chattanooga",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-85.31,35.05]}",
+      "title_de": "Chattanooga & Smokies",
+      "title_en": "Chattanooga & Smokies",
+      "date_de": "24. Feb – 01. März",
+      "date_en": "Feb 24 – Mar 1",
+      "text_de": "Chattanooga erkunden, Battle Mountain und Robin abholen. Dann in die Smoky Mountains, die Ole Smoky Destillery, Bass Pro Shops — und viel zu schnell wieder zurück nach Hause.",
+      "text_en": "Exploring Chattanooga, Battle Mountain and picking up Robin. Then into the Smoky Mountains, the Ole Smoky Distillery, Bass Pro Shops — and far too soon back home again.",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    },
+    {
+      "name": "Pigeon Forge",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-83.554333,35.788424]}",
+      "title_de": "Pigeon Forge",
+      "title_en": "Pigeon Forge",
+      "date_de": "",
+      "date_en": "",
+      "text_de": "",
+      "text_en": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    },
+    {
+      "name": "Nashville",
+      "location": "{\"type\":\"Point\",\"coordinates\":[-86.774298,36.162277]}",
+      "title_de": "Honky Tonk Blvd",
+      "title_en": "Honky Tonk Blvd",
+      "date_de": "",
+      "date_en": "",
+      "text_de": "",
+      "text_en": "",
+      "photos": [],
+      "video": "",
+      "youtube": ""
+    }
+  ],
+  "gallery": []
+}

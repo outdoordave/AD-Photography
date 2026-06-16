@@ -1,0 +1,20 @@
+---
+// About page EN ('/en/about'). Same Tina-Client data as the DE page, English labels.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AboutContent from '../../components/AboutContent.tsx';
+import { client } from '../../../tina/__generated__/client';
+
+const res = await client.queries.ueber_uns({ relativePath: 'about.json' });
+const title = (res.data.ueber_uns as any)?.title_en || 'About';
+---
+<BaseLayout title={`${title} — Wide & Wild`} lang="en">
+  <div id="page-about">
+    <AboutContent
+      client:load
+      query={res.query}
+      variables={res.variables}
+      data={res.data}
+      lang="en"
+    />
+  </div>
+</BaseLayout>

@@ -1,0 +1,53 @@
+---
+// (B) Admin-Leiste auf der Website (Vorbild: Sveltia-`.ww-admin-bar`). Erscheint NUR,
+// wenn (1) der Schalter „🎨 Darstellung → Admin-Leiste" an ist UND (2) man im Tina-CMS
+// angemeldet ist (Erkennung über ein Tina-localStorage-Token, gleiche Origin wie /admin).
+// Standard: aus. Diese Komponente wird nur gerendert, wenn der Schalter an ist.
+---
+<div class="ww-admin-bar" id="wwAdminBar" hidden>
+  <strong>Als Admin angemeldet</strong>
+  <span class="sep">·</span>
+  <a href="/admin">CMS öffnen</a>
+  <span class="sep">·</span>
+  <a href="/statistik">📊 Statistik</a>
+  <span class="sep">·</span>
+  <a href="#" id="wwAdminLogout">Abmelden</a>
+</div>
+<script>
+  (function () {
+    function tinaKeys() {
+      const ks = [];
+      try {
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && /tina/i.test(k)) ks.push(k);
+        }
+      } catch (e) {}
+      return ks;
+    }
+    // Angemeldet, wenn es einen Tina-Eintrag mit token-langem Wert gibt.
+    function loggedIn() {
+      return tinaKeys().some(function (k) {
+        try { return (localStorage.getItem(k) || '').length > 20; } catch (e) { return false; }
+      });
+    }
+    const bar = document.getElementById('wwAdminBar');
+    if (!bar || !loggedIn()) return;
+    bar.hidden = false;
+    document.documentElement.classList.add('ww-adminbar-on');
+    const out = document.getElementById('wwAdminLogout');
+    if (out) out.addEventListener('click', function (e) {
+      e.preventDefault();
+      // Tina-Tokens aus localStorage UND sessionStorage entfernen ...
+      try { tinaKeys().forEach(function (k) { localStorage.removeItem(k); }); } catch (e) {}
+      try {
+        for (var i = sessionStorage.length - 1; i >= 0; i--) {
+          var sk = sessionStorage.key(i);
+          if (sk && /tina/i.test(sk)) sessionStorage.removeItem(sk);
+        }
+      } catch (e) {}
+      // ... und sauber zur Startseite (Top-Fenster, falls im Editier-iframe) statt Reload.
+      try { (window.top || window).location.href = '/'; } catch (e) { window.location.href = '/'; }
+    });
+  })();
+</script>

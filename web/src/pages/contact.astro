@@ -1,0 +1,27 @@
+---
+// Kontakt DE ('/contact'). Daten via Tina-Client (Live-Vorschau); Render in der
+// ContactContent-Insel. Wrapper #page-contact für die Live-CSS-Scopes.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactContent from '../components/ContactContent.tsx';
+import appearance from '../data/appearance-settings.json';
+import { client } from '../../tina/__generated__/client';
+
+// Kontakt für Besucher komplett ausgeblendet? (Schalter 🎨 Darstellung → „Kontakt zeigen?").
+// Nav-/Footer-Link werden schon ausgeblendet; hier zusätzlich den Direktaufruf von /contact
+// sperren, sonst bliebe die Seite per URL erreichbar. Logik = wie Nav/Footer (aus = false).
+if ((appearance as any).show_contact === false) return Astro.redirect('/');
+
+const res = await client.queries.kontakt({ relativePath: 'contact.json' });
+const title = (res.data.kontakt as any)?.title_de || 'Kontakt';
+---
+<BaseLayout title={`${title} — Wide & Wild`} lang="de">
+  <div id="page-contact">
+    <ContactContent
+      client:load
+      query={res.query}
+      variables={res.variables}
+      data={res.data}
+      lang="de"
+    />
+  </div>
+</BaseLayout>

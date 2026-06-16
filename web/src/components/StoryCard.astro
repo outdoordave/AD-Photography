@@ -1,0 +1,32 @@
+---
+// Eine Story-Karte (Liste). Markup identisch zu renderStories() in index.html.
+// Statt JS-Klick ist die ganze Karte ein <a> auf die Story-Seite.
+import { normalizePath, type StoryViewWithSlug } from '../lib/stories';
+import PhPlaceholder from './PhPlaceholder.astro';
+
+interface Props {
+  story: StoryViewWithSlug;
+  lang: 'de' | 'en';
+  base: string; // '' fuer DE, '/en' fuer EN
+}
+const { story, lang, base } = Astro.props;
+const d = lang === 'en' ? story.en : story.de;
+const readLabel = lang === 'de' ? 'Weiterlesen' : 'Read more';
+const href = `${base}/stories/${story.slug}`;
+const cover = story.photo ? normalizePath(story.photo) : '';
+---
+<a class="story-card" href={href}>
+  {cover ? (
+    <div class="ph has-photo ww-photo" style="--ph-c1:#8a9a7e; --ph-c2:#3a4a38;">
+      <img src={cover} alt="" loading="lazy" />
+    </div>
+  ) : (
+    <PhPlaceholder c1="#8a9a7e" c2="#3a4a38" imgKey="mountains" />
+  )}
+  <div class="body">
+    <div class="meta">{d.cat}</div>
+    <h3>{d.title}</h3>
+    <div class="excerpt">{d.excerpt}</div>
+    <div class="read">{readLabel}</div>
+  </div>
+</a>

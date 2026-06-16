@@ -1,0 +1,43 @@
+{
+  "kicker_de": "Kontakt",
+  "kicker_en": "Contact",
+  "title_de": "Sag Hallo.",
+  "title_en": "Say hello.",
+  "intro_de": "Lust auf eine gemeinsame Tour, eine Frage zu einem Bild oder einfach nur Hallo sagen? Wir freuen uns über jede Nachricht.",
+  "intro_en": "Up for a trip together, a question about a photo, or just want to say hi? We'd love to hear from you.",
+  "direct_title_de": "Schreib uns direkt",
+  "direct_title_en": "Reach us directly",
+  "direct_text_de": "Am schnellsten erreichst du uns per E-Mail oder über Instagram. Wir antworten meist innerhalb weniger Tage.",
+  "direct_text_en": "The fastest way to reach us is by email or Instagram. We usually reply within a few days.",
+  "location_de": "Unterwegs in den USA & daheim in Deutschland",
+  "location_en": "On the road in the USA & home in Germany",
+  "channels": [
+    {
+      "type": "instagram",
+      "label": "@david.bastisch",
+      "url": "https://instagram.com/david.bastisch"
+    },
+    {
+      "type": "instagram",
+      "label": "@shot.by.alx_",
+      "url": "https://instagram.com/shot.by.alx_"
+    }
+  ],
+  "form_success_de": "Danke! Deine Nachricht ist angekommen — wir melden uns bald.",
+  "form_success_en": "Thanks! Your message came through — we'll be in touch soon.",
+  "form_name_de": "Dein Name",
+  "form_name_en": "Your name",
+  "form_email_de": "Deine E-Mail",
+  "form_email_en": "Your email",
+  "form_message_de": "Deine Nachricht",
+  "form_message_en": "Your message",
+  "form_send_de": "Nachricht senden",
+  "form_send_en": "Send message",
+  "form_note_de": "Hinweis: Dies ist eine Vorschau — das Formular versendet noch nichts. Sobald der Versand-Key im CMS hinterlegt ist, geht die Nachricht direkt an uns.",
+  "form_note_en": "Note: This is a preview — the form doesn't send anything yet. Once the send key is set in the CMS, your message goes straight to us.",
+  "form_access_key": "408e48a9-6d1c-44b3-abd0-9537b2d5fc81",
+  "form_consent_de": "Ich bin mit der Verarbeitung meiner Angaben zur Beantwortung meiner Anfrage einverstanden. Eine Weitergabe an Dritte erfolgt nicht.",
+  "form_consent_en": "I agree to my details being processed to answer my enquiry. They will not be shared with third parties.",
+  "form_error_de": "Hoppla — das Senden hat nicht geklappt. Bitte versuche es später noch einmal oder schreib uns direkt per E-Mail.",
+  "form_error_en": "Oops — sending didn't work. Please try again later or email us directly."
+}

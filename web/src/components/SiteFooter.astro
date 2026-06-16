@@ -1,0 +1,57 @@
+---
+// Globaler Footer (1:1 aus index.html <footer>): Logo + 7 Footer-Links + Copyright
+// (mit Admin-Link → /admin) + Untertitel. Stories-Link nur wenn showStories.
+import { socialIcon, socialUrl } from '../lib/socialIcons';
+import PaperRip from './PaperRip';
+interface Props {
+  lang: 'de' | 'en';
+  logo?: string;
+  showStories?: boolean;
+  showContact?: boolean;
+  social?: { platform?: string; username?: string }[];
+  showSocial?: boolean;
+}
+const { lang, logo = '', showStories = false, showContact = true, social = [], showSocial = false } = Astro.props;
+const isEn = lang === 'en';
+const prefix = isEn ? '/en' : '';
+const socialLinks = showSocial ? (social || []).filter((s) => s && s.username) : [];
+
+const NAV = [
+  { de: 'Start', en: 'Home', href: '/' },
+  { de: 'Portfolio', en: 'Portfolio', href: '/portfolio' },
+  { de: 'Stories', en: 'Stories', href: '/stories', storiesOnly: true },
+  { de: 'Reisen', en: 'Trips', href: '/trips' },
+  { de: 'Equipment', en: 'Gear', href: '/gear' },
+  { de: 'Über uns', en: 'About', href: '/about' },
+  { de: 'Kontakt', en: 'Contact', href: '/contact', contactOnly: true },
+];
+const linkHref = (href: string) => (href === '/' ? (isEn ? '/en/' : '/') : prefix + href);
+const logoSrc = logo && logo.charAt(0) !== '/' && !/^https?:/.test(logo) ? '/' + logo : logo;
+---
+<footer>
+  <PaperRip idp="footerRip" className="band-rip band-rip-top" />
+  {logoSrc ? <div class="footer-logo"><a href={linkHref('/')} aria-label={isEn ? 'Home' : 'Zur Startseite'}><img src={logoSrc} alt="Wide & Wild" loading="lazy" /></a></div> : null}
+  <div class="footer-nav">
+    {NAV.filter((i) => (!i.storiesOnly || showStories) && (!i.contactOnly || showContact)).map((i) => (
+      <a href={linkHref(i.href)}>{isEn ? i.en : i.de}</a>
+    ))}
+  </div>
+  {socialLinks.length > 0 && (
+    <div class="insta-row on-dark" style="margin-top:6px; margin-bottom:22px;">
+      {socialLinks.map((s) => (
+        <a class="insta-link" href={socialUrl(s.platform, s.username!)} target="_blank" rel="noopener">
+          <span class="ig-ic" set:html={socialIcon(s.platform || 'instagram')} />
+          @{s.username}
+        </a>
+      ))}
+    </div>
+  )}
+  <div class="footer-legal">
+    <a href={linkHref('/impressum')}>{isEn ? 'Imprint' : 'Impressum'}</a>
+    <a href={linkHref('/datenschutz')}>{isEn ? 'Privacy' : 'Datenschutz'}</a>
+  </div>
+  <div class="fnote">
+    <div>© 2026 Alexandra Apostel &amp; David Bastisch · <a class="ww-admin-link" href="/admin">Admin</a></div>
+    <div>Travel &amp; Outdoor Photography</div>
+  </div>
+</footer>

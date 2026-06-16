@@ -1,0 +1,30 @@
+---
+// „Aktuell / Frisch aus dem Westen" (1:1 aus renderLatest): bis 3 Karten (Story/Reise/
+// Album) nach Datum, Tag + Titel + Meta, Klick → Inhalt. Statisch (Datum-Sortierung,
+// kein Zufall).
+import { normalizePath } from '../lib/stories';
+import { ILLUS } from '../lib/illus';
+import type { LatestCard } from '../lib/home';
+interface Props { cards?: LatestCard[]; }
+const { cards = [] } = Astro.props;
+---
+{cards.length > 0 && (
+  <div class="latest-grid">
+    {cards.map((c) => {
+      const src = c.image ? normalizePath(c.image) : '';
+      const illusStyle = `--ph-c1:${c.c1}; --ph-c2:${c.c2}; background-image:url('${ILLUS[c.img] || ''}')`;
+      return (
+        <a class="latest-card" href={c.href}>
+          <div class={`ph ww-photo${src ? '' : ' has-illus'}`} style={src ? undefined : illusStyle}>
+            {src ? <img src={src} alt="" loading="lazy" /> : null}
+          </div>
+          <div class="body">
+            <div class="tag">{c.tag}</div>
+            <h3>{c.title}</h3>
+            <div class="meta">{c.meta}</div>
+          </div>
+        </a>
+      );
+    })}
+  </div>
+)}

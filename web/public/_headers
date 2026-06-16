@@ -1,0 +1,6 @@
+# Cloudflare Pages – HTTP-Header.
+# Bilder lange cachen: Cloudflares Default fuer /uploads war "max-age=0, must-revalidate"
+# -> bei JEDEM Seitenaufruf neu validiert/geladen. Die Dateien sind dateinamenstreu
+# (Optimierung beim Build aendert den Namen nicht); neue Uploads bekommen i.d.R. neue Namen.
+/uploads/*
+  Cache-Control: public, max-age=604800

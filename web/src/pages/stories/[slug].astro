@@ -1,0 +1,60 @@
+---
+// Story-Reader DE ('/stories/<slug>'). Editierbare Felder laufen als kleine
+// React-Insel (Tina Live-Vorschau); reader-nav bleibt Astro.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StoryReaderContent from '../../components/StoryReaderContent.tsx';
+import { client } from '../../../tina/__generated__/client';
+import { buildStory } from '../../lib/stories';
+import appearance from '../../data/appearance-settings.json';
+
+export async function getStaticPaths() {
+  const conn = await client.queries.storyConnection();
+  const nodes = (conn.data.storyConnection?.edges ?? []).map((e: any) => e?.node).filter(Boolean);
+  const sorted = [...nodes].sort((a: any, b: any) => (b.date || '').localeCompare(a.date || ''));
+  return sorted.map((node: any, i: number) => {
+    const prevNode = sorted[i - 1] ?? null;
+    const nextNode = sorted[i + 1] ?? null;
+    return {
+      params: { slug: node._sys.filename },
+      props: {
+        prev: prevNode ? { slug: prevNode._sys.filename, title: buildStory(prevNode).de.title } : null,
+        next: nextNode ? { slug: nextNode._sys.filename, title: buildStory(nextNode).de.title } : null,
+      },
+    };
+  });
+}
+
+const { slug } = Astro.params;
+const { prev, next } = Astro.props as {
+  prev: { slug: string; title: string } | null;
+  next: { slug: string; title: string } | null;
+};
+// Stories ausgeblendet? Dann auch Einzelbeitrag /stories/<slug> nicht direkt zeigen.
+if ((appearance as any).show_stories !== true) return Astro.redirect('/');
+const res = await client.queries.story({ relativePath: `${slug}.md` });
+const title = buildStory(res.data.story as any).de.title;
+---
+<BaseLayout title={`${title} — Wide & Wild`} lang="de">
+  <div id="page-story">
+    <StoryReaderContent
+      client:load
+      query={res.query}
+      variables={res.variables}
+      data={res.data}
+      lang="de"
+    />
+
+    <div class="reader-nav">
+      {prev ? (
+        <a href={`/stories/${prev.slug}`}><span class="dir">← Vorherige</span>{prev.title}</a>
+      ) : (
+        <button disabled><span class="dir">← Vorherige</span>—</button>
+      )}
+      {next ? (
+        <a class="next" href={`/stories/${next.slug}`}><span class="dir">Nächste →</span>{next.title}</a>
+      ) : (
+        <button class="next" disabled><span class="dir">Nächste →</span>—</button>
+      )}
+    </div>
+  </div>
+</BaseLayout>

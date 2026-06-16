@@ -1,0 +1,15 @@
+---
+// Datenschutzerklärung DE ('/datenschutz'). Daten via Tina-Client (Live-Vorschau),
+// Render in der LegalContent-Insel.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LegalContent from '../components/LegalContent.tsx';
+import { client } from '../../tina/__generated__/client';
+
+const res = await client.queries.datenschutz({ relativePath: 'datenschutz.json' });
+const title = (res.data.datenschutz as any)?.title_de || 'Datenschutz';
+---
+<BaseLayout title={`${title} — Wide & Wild`} lang="de">
+  <div id="page-legal">
+    <LegalContent client:load query={res.query} variables={res.variables} data={res.data} lang="de" docKey="datenschutz" />
+  </div>
+</BaseLayout>
