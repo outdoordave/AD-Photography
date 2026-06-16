@@ -1,17 +1,34 @@
 # FAHRPLAN — Astro-Umbau: benutzen → reifen → Cutover
 
-Stand: 2026-06-07. Beschluss mit David.
+Ursprung: 2026-06-07 (Beschluss mit David). **Cutover vollzogen am 2026-06-16.**
 
-## Aktueller Stand
-- **Astro + TinaCMS-Version** ist funktional komplett auf Branch `astro-umbau`,
-  Vorschau-Domain: `https://aandd-photography-astro.pages.dev`.
-- **Live/echt** ist weiterhin die alte Single-File-`index.html` auf `main`
-  (`https://aandd-photography.pages.dev`) — **unangetastet, Sicherheitsnetz**.
-- Beide sind getrennte Cloudflare-Pages-Projekte. Nichts an der Live-Seite ändert sich,
-  solange wir an der Astro-Version arbeiten.
+## ✅ CUTOVER VOLLZOGEN (2026-06-16)
+- **`astro-umbau` → `main` gemergt + gepusht.** Live ist jetzt die **Astro+Tina-Version** auf `main`
+  (`https://aandd-photography.pages.dev`). Die alte Single-File-`index.html` ist **abgelöst**.
+- **Cloudflare-Live-Projekt `aandd-photography`** baut jetzt von `main`: Root `web`,
+  `npm run build`, Output `dist`, mit **neuem `TINA_TOKEN` nur für `main`**.
+- **Tina Cloud** hat `main` indexiert.
+- **Live-Smoke-Test bestanden:** `robots.txt` erlaubt Crawling, kein `noindex`-Meta,
+  `/admin`-Login geht, Kontaktformular sendet → Mail kommt an. Live = exakt der astro-umbau-Stand.
+- **Vorschau-Projekt `aandd-photography-astro`** läuft weiter von `astro-umbau` mit
+  **`PUBLIC_PREVIEW_NOINDEX=true`** (noindex gewollt).
 
-## Beschluss: NICHT jetzt auf `main` schieben / nicht jetzt cutovern
-Begründung:
+> ### ⚠️ Cutover-Lehre: Tina-Token ist branch-gebunden
+> Der erste `main`-Build schlug mit **403** fehl, weil der bestehende `TINA_TOKEN` nur für
+> `astro-umbau` berechtigt war. **Lösung:** in Tina Cloud einen **neuen Token mit
+> `main`-Berechtigung** erzeugen und im Live-Projekt als Build-Env setzen. Merke: pro
+> indexiertem Branch ein passend berechtigter Token.
+
+---
+
+## Aktueller Stand (Rückblick — alles unten ist erledigt)
+- **Astro + TinaCMS-Version** war funktional komplett auf `astro-umbau` → ist jetzt nach `main` gemergt.
+- **Live** ist jetzt die Astro-Version auf `main`; die Single-File-`index.html` ist Geschichte.
+- Vorschau- und Live-Projekt bleiben getrennte Cloudflare-Pages-Projekte.
+
+## Beschluss (historisch, 2026-06-07): damals NICHT cutovern — inzwischen erledigt
+> Die folgende Begründung war der Stand vom 07.06.; alle Blocker sind ausgeräumt (s. o.).
+Begründung (damals):
 1. Erst **im echten Gebrauch** benutzen → dort fallen die meisten Bugs/Wünsche auf.
 2. `main`/alt bleibt als **erprobtes Netz** live — kein Risiko für Besucher.
 3. **Rechtstexte (Datenschutz/Impressum) sind noch Platzhalter** → harter Blocker vor Publikum.
@@ -32,37 +49,38 @@ Begründung:
 - [x] **Impressum** gefüllt (DE + EN `body_en`, `d7d52df`). ✅
 - [x] **Kontaktformular-Versand** (Web3Forms) von David **real getestet → Mail kommt an** (2026-06-10). ✅
       (Empfänger-Adresse ggf. später im CMS „✉️ Kontakt" auf die endgültige umstellen — optional.)
-- [ ] **iPad-Test** mit Alexandra (CMS-Bedienung + Besucher-Ansicht).
+- [x] **Geräte-Smoke-Test** (Safari/iPad/iPhone) erledigt (= MAENGEL R2 ✅).
 - [x] **Google Fonts lokal eingebunden** (Fontsource Variable, `62e4e93`) — keine IP mehr an Google. ✅
 - [x] **Vorschau-noindex aktiviert:** Build-Env-Variable **`PUBLIC_PREVIEW_NOINDEX` = `true`** ist im
       **Vorschau**-Cloudflare-Projekt (`aandd-photography-astro`) gesetzt (greift ab dem nächsten Build).
       Jede Vorschau-Seite trägt dann `<meta robots noindex,nofollow>` + `robots.txt` liefert `Disallow: /`. ✅
       ⚠️ **NUR im Vorschau-Projekt — NIEMALS im Live-Projekt** (sonst fliegt die echte Seite aus Google). → Cutover-Merkposten Phase 3, Schritt 5.
 
-## Phase 3 — CUTOVER (wenn David „los" sagt) — Checkliste
-Ziel: Die Astro-Version wird die echte Seite unter der kanonischen URL.
+## Phase 3 — CUTOVER — ✅ ERLEDIGT (2026-06-16)
+Ziel (erreicht): Die Astro-Version ist die echte Seite unter der kanonischen URL.
 
-1. [ ] **Branch:** `astro-umbau` → `main` mergen (oder `main` auf den Astro-Stand bringen).
+1. [x] **Branch:** `astro-umbau` → `main` mergen (oder `main` auf den Astro-Stand bringen).
        Alten Stand vorher als Backup-Branch sichern (z. B. `legacy-singlefile`).
-2. [ ] **Cloudflare-Pages-Projekt (live):** Build-Einstellungen auf Astro umstellen:
+2. [x] **Cloudflare-Pages-Projekt (live):** Build-Einstellungen auf Astro umstellen:
        - Root-Verzeichnis/Build-Ordner: `web`
        - Build-Command: `npm run build` (= copy-uploads + gen-uploads-manifest + `tinacms build -c "astro build"`)
        - Output: `web/dist`
        - **Env (Build, Plaintext):** `TINA_CLIENT_ID`, `TINA_TOKEN`, `TINA_BRANCH=main`, `NODE_VERSION=22`
        (Alternative: eigene Domain auf das bestehende Astro-Pages-Projekt zeigen lassen.)
-3. [ ] **Tina Cloud:** Branch `main` aktiv **indexieren** (Lock muss zum Branch passen);
+3. [x] **Tina Cloud:** Branch `main` aktiv **indexieren** (Lock muss zum Branch passen);
        „Path To Tina Folder = web"; Site-URL der Live-Domain in Tina ergänzen (OAuth/Preview).
-4. [ ] **Build grün** auf der Live-Domain prüfen (Hard-Reload, Strg/Cmd+F5).
-5. [ ] **SEO/Indexierung:** Im **Live**-Projekt die Env-Var **`PUBLIC_PREVIEW_NOINDEX` NICHT setzen**
+4. [x] **Build grün** auf der Live-Domain prüfen (Hard-Reload, Strg/Cmd+F5).
+5. [x] **SEO/Indexierung:** Im **Live**-Projekt die Env-Var **`PUBLIC_PREVIEW_NOINDEX` NICHT setzen**
        (bzw. entfernen, falls vom Vorschau-Projekt übernommen) → Live-Seite indexiert normal. Das noindex
        steckt NICHT im Code, nur an dieser Var (env-gesteuert) → **kein Code-Eingriff beim Cutover nötig**,
        und die Live-Seite kann nicht versehentlich deindexiert werden. Echte 404 via `404.astro` +
        `robots.txt`-Endpoint + Sitemap vorhanden (P3 in MAENGEL.md ✅). Alte Pfade/Redirects prüfen.
        ⚠️ **Erinnerung:** `PUBLIC_PREVIEW_NOINDEX` ist im **Vorschau**-Projekt gesetzt — diese Variable
        darf das **Live**-Projekt **niemals** bekommen.
-6. [ ] **Funktions-Smoke-Test** live: Lightbox, Karte, Kontaktformular-Versand (echte Mail kommt an?),
+6. [x] **Funktions-Smoke-Test** live: Lightbox, Karte, Kontaktformular-Versand (echte Mail kommt an?),
        Statistik (Umami zählt), Datenschutz/Impressum verlinkt.
-7. [ ] **Vorschau-Domain** danach optional abschalten oder auf die Live-Domain weiterleiten.
+7. [ ] **Vorschau-Domain** (offen, kein Eile): bleibt vorerst als Spielwiese (astro-umbau, noindex);
+       später optional abschalten oder weiterleiten.
 
 ## Offene Einzelthemen (kein Eile)
 - Snap-Stärke (`proximity`) bei Bedarf nachregeln.
