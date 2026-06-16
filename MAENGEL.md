@@ -113,6 +113,25 @@
 - [ ] **K6 · Video-Clips: kein Auto-Workflow (offener Wunsch).** → Details in **IDEEN.md, Punkt „Video-Clips"**.
   - *Cutover-Blocker:* **Nein** (ausdrücklich kein Blocker).
 
+- [ ] **K7 · Kontaktformular: Felder ohne `id`/`name` + `<label>` nicht verknüpft** (Accessibility).
+  - *Befund (2026-06-16, Davids Chrome-Konsolen-Check Win11):* keine JS-Fehler, nur zwei
+    Best-Practice-Hinweise am Kontaktformular. In `web/src/components/ContactContent.tsx`:
+    die drei sichtbaren Felder Name (`:156`), E-Mail (`:160`) und Nachricht (`:164`) haben
+    je ein `<label>` **ohne** `htmlFor` und ein `<input>`/`<textarea>` **ohne** `id`/`name` →
+    Label ist nicht mit dem Feld verknüpft (Klick aufs Label fokussiert das Feld nicht,
+    Screenreader/Autofill ohne Zuordnung). Das versteckte Honeypot-Feld (`:167`) ist
+    `aria-hidden` und ohne Label — wird vom Konsolen-Hinweis vermutlich mitgezählt.
+    Das **Consent-Häkchen** (`:174`) ist bereits korrekt verknüpft (`id="ww-consent"` +
+    `<label htmlFor="ww-consent">`) — dient als Vorlage.
+  - *Fix (minimal, risikoarm):* je Feld ein eindeutiges `id` + passendes `htmlFor` am Label,
+    plus `name` am Feld (z. B. `id="ww-name" name="name"`). Genau das Muster wie beim
+    Consent-Häkchen.
+  - *Berührt Web3Forms-Versand?* **Nein.** Das Formular sendet **nicht** nativ — `onSend`
+    baut den JSON-Body in `fetch('https://api.web3forms.com/submit')` selbst aus dem
+    React-State (`name`/`email`/`msg`, `:79–87`). Die `name`-Attribute der Inputs werden
+    vom Versand gar nicht gelesen → reiner A11y-/Autofill-Gewinn, kein Verhaltensrisiko.
+  - *Cutover-Blocker:* **Nein** (kosmetisch/A11y).
+
 ---
 
 ## ✅ Geprüft & in Ordnung (kein Mangel)
