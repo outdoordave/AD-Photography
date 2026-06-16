@@ -17,6 +17,13 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-15 23:26 — Regler-Editor: kompakte Vorschau-Karten (Spotlight reagiert, Schatten sichtbar) [kein Re-Index]
+- Wurzel beider Restprobleme: **Karten zu groß** → Schatten clippte trotz Abstand UND man musste fast eine
+  ganze Karte scrollen, bis die nächste aktiv wurde (wirkte wie „Station 1 fix").
+- Fix: **Foto klein (50px statt 16:10) + kleinere Texte** → kurze Karten → mehrere Stationen mit Schatten
+  gleichzeitig sichtbar, Spotlight wechselt beim Scrollen reagierend. **Innenabstand 16/34/44** (34px seitlich
+  > Schatten-Radius) → Ring + Schatten ringsum nicht mehr abgeschnitten. Reines UI. Commit: `3a77f70`
+
 ## 2026-06-15 23:14 — Regler-Editor: Vorschau-Frame nicht mehr abgeschnitten + Scroll-Spy wirkt [kein Re-Index]
 - **Frame abgeschnitten:** der Scroll-Container clippte (Overflow clippt auch x/oben) den Karten-Ring/-Schatten
   links/rechts/oben. Fix: Innenabstand `10px 26px 16px` → Rahmen + Schatten haben Platz.
