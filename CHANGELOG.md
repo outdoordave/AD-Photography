@@ -17,6 +17,11 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-15 23:34 — Regler-Editor: Lese-Anker in die Mitte (~42%) — aktive Station nicht mehr zu spät [kein Re-Index]
+- Anker lag bei 64px (zu weit oben) → die nächste Station wurde erst aktiv, wenn ihre Oberkante fast ganz oben
+  war; die vorherige war da schon fast raus. Jetzt `anchor = boxTop + clientHeight*0.42` → die nächste schaltet
+  früher frei, solange die aktuelle noch gut sichtbar ist. Reines UI. Commit: `91bf88f`
+
 ## 2026-06-15 23:26 — Regler-Editor: kompakte Vorschau-Karten (Spotlight reagiert, Schatten sichtbar) [kein Re-Index]
 - Wurzel beider Restprobleme: **Karten zu groß** → Schatten clippte trotz Abstand UND man musste fast eine
   ganze Karte scrollen, bis die nächste aktiv wurde (wirkte wie „Station 1 fix").
