@@ -121,7 +121,7 @@ const TripDesignsEditor = wrapFieldsWithMeta(({ input }: any) => {
           </div>
           {/* Innenabstand, damit der Karten-Ring/-Schatten nicht vom Overflow abgeschnitten wird (Overflow
               clippt auch x). 26px seitlich ~ deckt den Schatten-Radius; oben/unten Luft fürs Rahmen-Rendern. */}
-          <div ref={scrollRef} onScroll={onPreviewScroll} style={{ maxHeight: 320, overflowY: 'auto', padding: '10px 26px 16px' }}>
+          <div ref={scrollRef} onScroll={onPreviewScroll} style={{ maxHeight: 300, overflowY: 'auto', padding: '16px 34px 44px' }}>
             {[
               { t: 'San Francisco', photo: true },
               { t: 'Morro Bay',     photo: false },
@@ -134,11 +134,11 @@ const TripDesignsEditor = wrapFieldsWithMeta(({ input }: any) => {
                   <div style={{ fontSize: 9, letterSpacing: '.08em', textTransform: 'uppercase', color: C.accent, fontWeight: 700 }}>Station {i + 1}/5</div>
                   <div style={{ fontFamily: 'Georgia, serif', fontSize: 'var(--ww-trip-title, 30px)', lineHeight: 1.1, color: C.ink, margin: '2px 0 6px' }}>{st.t}</div>
                   {st.photo && (
-                    <div style={{ aspectRatio: '16 / 10', borderRadius: 8, overflow: 'hidden', background: C.bgAlt, boxShadow: 'var(--ww-trip-photo-shadow, none)', marginBottom: 6 }}>
+                    <div style={{ height: 50, borderRadius: 6, overflow: 'hidden', background: C.bgAlt, boxShadow: 'var(--ww-trip-photo-shadow, none)', marginBottom: 5 }}>
                       <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg,#c9b79a,#a7672f)' }} />
                     </div>
                   )}
-                  <div style={{ fontSize: 11, color: C.inkSoft, lineHeight: 1.5 }}>Ein, zwei Sätze zur Station.</div>
+                  <div style={{ fontSize: 10, color: C.inkSoft, lineHeight: 1.45 }}>Ein, zwei Sätze zur Station.</div>
                 </div>
               </div>
             ))}
