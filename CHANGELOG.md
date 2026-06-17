@@ -17,6 +17,19 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-17 20:20 — Cleanup: Pre-Cutover-Altlasten aus Repo-Wurzel entfernt
+- **Sicherung zuerst:** annotierter Tag **`legacy-singlefile`** auf `140eb59` gesetzt (letzter Stand
+  mit der alten Single-File `index.html`). ⚠️ Tag muss separat gepusht werden (`git push origin legacy-singlefile`).
+- **Cleanup** (`8ca1bee`, 55 Dateien / 27.831 Zeilen): `index.html`, `admin/` (altes Sveltia),
+  `build-indexes.js`, `content/`, Wurzel-`_headers`/`_redirects` (abgelöst durch `web/public/_headers`),
+  `prototype-astro/`, Wurzel-`package-lock.json` (verwaist) entfernt. Cloudflare baut nur aus `web/`,
+  diese Wurzeldateien wurden nicht mehr ausgeliefert. **`/uploads/` unangetastet (tragend).**
+- read-only-Analyse vorab: keine funktionalen Verweise aus `web/` auf die Alt-Dateien (nur Kommentare).
+- *Lokaler Rest:* ungetrackte Artefakte in `prototype-astro/` (generiert) bleiben auf der Platte;
+  optional per `git clean -fd prototype-astro/` entfernbar (nicht Teil des Commits).
+- betroffene Dateien: 8 Wurzel-Einträge gelöscht + STATUS.md + CHANGELOG.md
+- Commit: `8ca1bee` (+ Tag `legacy-singlefile`, + dieser Doku-Eintrag)
+
 ## 2026-06-17 20:05 — Hero-Performance + Geräte-Politur-Stand
 - **Hero-Perf** (`ccbad1d`): Hero-Bild war das LCP-Element, lud aber unpriorisiert. Jetzt
   `fetchPriority="high"` + `decoding="async"` am Hero-`<img>` (HomeHeroLive.tsx) und ein

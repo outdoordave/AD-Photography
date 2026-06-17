@@ -86,9 +86,9 @@
 - **EN-`<title>` auf der DE-Startseite** (K8) — ⏸️ **geparkt**: Wortlaut hängt an der offenen Namensentscheidung.
 - **Reisen-Timeline-Folgephasen:** weiterer Feinschliff ergibt sich aus der Nutzung
   (Bug-/Wunsch-Sammlung) — wird bei Bedarf konkretisiert, kein Plan vorab.
-- **Aufräumen:** alte `index.html` (+ `admin/`, `build-indexes.js`, `content/`, evtl.
-  Wurzel-`_headers`/`_redirects`/`prototype-astro/`) aus `main` entfernen — **eigener,
-  geprüfter Commit später**; **`/uploads` im Wurzel bleibt** (tragend). Details → IDEEN.md §4.1.
+- ~~Aufräumen: alte `index.html` & Pre-Cutover-Altlasten aus der Repo-Wurzel~~ — ✅ **erledigt** (`8ca1bee`):
+  `index.html`, `admin/`, `build-indexes.js`, `content/`, Wurzel-`_headers`/`_redirects`, `prototype-astro/`,
+  Wurzel-`package-lock.json` entfernt; `/uploads` unangetastet. Sicherung: Tag **`legacy-singlefile`** (= Stand `140eb59`).
 
 ## 7. Wo nachschauen
 - **CHANGELOG.md** — chronologische Historie (nur ergänzen).
