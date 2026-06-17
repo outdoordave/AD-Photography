@@ -135,12 +135,14 @@
     vom Versand gar nicht gelesen → reiner A11y-/Autofill-Gewinn, kein Verhaltensrisiko.
   - *Blocker:* **Nein** (kosmetisch/A11y).
 
-- [ ] **K8 · Englischer `<title>` auf der DE-Startseite** (🟡, SEO/Korrektheit).
-  - *Befund (2026-06-16, Davids Geräte-Smoke-Test):* die deutsche Startseite `/` trägt einen
-    **englischen `<title>`** (statt eines deutschen). Falsche Sprache im Browser-Tab/Suchergebnis.
-  - *Fix (vermutlich klein):* den `<title>` der DE-Home auf den deutschen Text setzen — im echten
-    Code prüfen (`web/src/pages/index.astro` bzw. `BaseLayout`-Aufruf), ob `title`/`lang` dort
-    sprachrichtig durchgereicht wird. **Noch nicht gebaut — erst Befund am echten Code.**
+- [~] **K8 · Englischer `<title>` auf der DE-Startseite** (🟡, SEO/Korrektheit) — ⏸️ **GEPARKT (2026-06-17)**.
+  - *Befund (2026-06-16, Davids Geräte-Smoke-Test):* die deutsche Startseite `/` trägt in
+    `web/src/pages/index.astro:39` `title="Wide & Wild — Travel & Outdoor Photography"` (englisch),
+    obwohl alle anderen DE-Seiten deutsche Titel setzen. EN-Home (`en/index.astro:38`) hat denselben
+    String — dort korrekt.
+  - *Status:* bewusst **noch nicht geändert** — der finale Wortlaut hängt an der noch offenen
+    Namens-/Branding-Entscheidung. Sobald der Name steht: nur den DE-String in `index.astro:39`
+    auf den deutschen Titel setzen (Einzeiler), EN bleibt.
   - *Blocker:* **Nein.**
 
 ---
