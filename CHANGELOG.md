@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-17 21:13 — Doku-Nachzug: Vorschau getrennt + veraltete Stellen korrigiert
+- **Vorschau-Projekt von GitHub getrennt** (`fb927de`): `aandd-photography-astro` (baute von `astro-umbau`)
+  ist am 17.06. von GitHub getrennt → kein Auto-Build mehr, stillgelegt. CLAUDE.md + STATUS.md + FAHRPLAN.md
+  (inkl. Phase-3-Punkt 7) angeglichen; Widerspruch „läuft als Spielwiese weiter" entfernt. Branch `astro-umbau` bleibt.
+- **Veraltete Stellen korrigiert** (`<dieser Commit>`): IDEEN.md §4.1 „Aufräumen" auf „teilweise erledigt"
+  (Wurzel-Cleanup `8ca1bee` + Tag `legacy-singlefile` vermerkt; offen bleibt: toter Code in `web/`, ungenutzte
+  `/uploads`-Assets); ABNAHME.md §8 + §9 W5: „Formular sendet noch NICHT" → **sendet echt** (Web3Forms getestet).
+- betroffene Dateien: CLAUDE.md, STATUS.md, FAHRPLAN.md, IDEEN.md, ABNAHME.md, CHANGELOG.md
+- Commits: `fb927de` + dieser Eintrag
+
 ## 2026-06-17 20:20 — Cleanup: Pre-Cutover-Altlasten aus Repo-Wurzel entfernt
 - **Sicherung zuerst:** annotierter Tag **`legacy-singlefile`** auf `140eb59` gesetzt (letzter Stand
   mit der alten Single-File `index.html`). ⚠️ Tag muss separat gepusht werden (`git push origin legacy-singlefile`).

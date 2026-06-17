@@ -148,12 +148,13 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
 > (echter Befund statt Vermutung). Nichts hiervon jetzt umsetzen.
 
 ### 4.1 Aufräumen / Ordnung
-- **Status:** offen · **„Inventur nach dem Umzug"**
-- Tote Code-Reste entfernen — u. a. der bereits gefundene **Legacy-Karten-Code
-  `projectUSA`/`projectAlaska`/`ensureXY`/`USA_PATH`/`ALASKA_PATH`** (s. `ANALYSE-Reisen.md`),
-  auskommentierter **Decap-Fallback**, **ungenutzte Bild-Assets** in `/uploads`.
-- Prüfen, ob **weitere ungenutzte Funktionen/Dateien** aus der alten `index.html`
-  übrig sind (erst sinnvoll, wenn alles portiert ist).
+- **Status:** teilweise erledigt · **„Inventur nach dem Umzug"**
+- ✅ **Pre-Cutover-Altlasten aus der Repo-Wurzel entfernt** (17.06.2026, `8ca1bee`): alte `index.html`,
+  `admin/`, `build-indexes.js`, `content/`, Wurzel-`_headers`/`_redirects`, `prototype-astro/`, verwaistes
+  `package-lock.json`. `/uploads` blieb (tragend). Sicherung: Tag `legacy-singlefile`. Damit ist auch der
+  Legacy-Karten-Code (`projectUSA`/`projectAlaska`/… in der alten `index.html`) mit der Datei verschwunden.
+- **Offen:** prüfen, ob in **`web/`** noch toter Code/ungenutzte Funktionen übrig sind; **ungenutzte
+  Bild-Assets** in `/uploads` ausmisten.
 
 ### 4.2 Stabilität
 - **Status:** offen

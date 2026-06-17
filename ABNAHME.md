@@ -175,7 +175,7 @@ Alles im **CMS → 🏠 Startseite**:
 ## 8. KONTAKT (`/contact`)
 - [ ] Kopf + „Schreib uns direkt"-Block + **Kanäle** (E-Mail/Social mit Icons) + Standort.
 - [ ] **Formular** sichtbar (Name/E-Mail/Nachricht + Senden).
-- [ ] ⚠️ **Formular sendet noch NICHT** wirklich (nur Vorschau) → „Offene Punkte" (W5).
+- [x] **Formular sendet echt** (Web3Forms) — von David getestet, Mail kommt an. *(früher nur Vorschau, W5)*
 - [ ] **CMS** → ✉️ Kontakt (Inhalte).
 - [ ] 🆕 **Kontakt-Seite an-/abschaltbar** (CMS → 🎨 Darstellung → „Kontakt zeigen") — wie Stories. Standard: an.
 
@@ -185,7 +185,7 @@ Alles im **CMS → 🏠 Startseite**:
 
 - [x] **Bild `IMG_5618.webp`** (Story „Utah-Drohne-Kevin") — **erledigt:** Test-Galerie der Story entfernt (Live hat keine).
 - [x] **Bild `IMG_5534.webp`** (Test-Upload) — **erledigt:** aus Alaska (Station-Fotos + Test-Station „Anchorage") entfernt.
-- [ ] **Kontaktformular-Versand (W5):** echter Versand-Dienst + Datenschutz — **später** (nach Cutover). *(Kontakt-Seite ist jetzt im CMS an-/abschaltbar.)*
+- [x] **Kontaktformular-Versand (W5):** ✅ **erledigt** — Web3Forms aktiv, echter Versand getestet (Mail kommt an); Datenschutz-Häkchen + Honeypot vorhanden. *(Kontakt-Seite im CMS an-/abschaltbar.)*
 - [ ] **Reisen-Vorschau-Feinschliff:** Stations-Durchscrollen/Snap im schmalen CMS-Vorschau-Iframe noch geradeziehen.
 - [x] **Alaska-Titel:** geklärt (Teil 1 — Tab = reiner CMS-Titel; Zusatz tippst du selbst).
 - [x] **Stories-Seitentitel:** **erledigt** — jetzt im CMS (📖 Stories – Einstellungen), DE/EN.
