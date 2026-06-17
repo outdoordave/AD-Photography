@@ -19,8 +19,9 @@ interface Props {
   title?: string;
   lang?: 'de' | 'en';
   noindex?: boolean;
+  preloadImage?: string; // LCP-Bild (z. B. Hero) vorab laden -> startet den Fetch beim HTML-Parsen
 }
-const { title = 'Wide & Wild', lang = 'de', noindex = false } = Astro.props;
+const { title = 'Wide & Wild', lang = 'de', noindex = false, preloadImage } = Astro.props;
 // VORSCHAU-noindex (env-gesteuert, NICHT statisch): greift nur, wenn die Build-Env-Var
 // PUBLIC_PREVIEW_NOINDEX === 'true' gesetzt ist. Diese Var wird AUSSCHLIESSLICH im
 // Vorschau-Cloudflare-Projekt gesetzt -> die spaetere Live-Seite (anderes Projekt / Var
@@ -51,6 +52,7 @@ const showFooterSocial = !!(hm.social_show && hm.social_show.footer);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
     {(noindex || previewNoindex) && <meta name="robots" content="noindex, nofollow" />}
     <title>{title}</title>
     {analyticsSnippet && <Fragment set:html={analyticsSnippet} />}

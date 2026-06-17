@@ -11,6 +11,7 @@ import HomeMoments from '../components/HomeMoments.tsx';
 import HomeLatest from '../components/HomeLatest.astro';
 import HomeDiscover from '../components/HomeDiscover.tsx';
 import { buildMoments, buildLatest, buildDiscover } from '../lib/home';
+import { normalizePath } from '../lib/stories';
 import home from '../data/home-settings.json';
 import appearance from '../data/appearance-settings.json';
 import highlights from '../data/highlights.json';
@@ -35,8 +36,16 @@ const hlImages = (highlights as any).images || [];
 const moments = buildMoments(albums, hlImages, lang);
 const latest = buildLatest({ stories, trips, albums, lang, showStories, prefix: '' });
 const discover = buildDiscover({ albums, trips, highlights: hlImages, lang, prefix: '' });
+// Hero-Bild (LCP) vorab laden: gleicher normalizePath wie im <img>, sonst verpufft der Preload.
+// Nur fuer Bild/Slideshow (kein Video); leerer Wert -> kein Preload.
+const heroData = ((stRes.data as any)?.startseite?.hero) || {};
+const heroFirst = heroData.mode === 'image' ? heroData.image
+  : (Array.isArray(heroData.slideshow) && heroData.slideshow[0])
+    ? (typeof heroData.slideshow[0] === 'string' ? heroData.slideshow[0] : heroData.slideshow[0]?.img)
+    : '';
+const heroPreload = heroFirst ? normalizePath(heroFirst) : undefined;
 ---
-<BaseLayout title="Wide & Wild — Travel & Outdoor Photography" lang="de">
+<BaseLayout title="Wide & Wild — Travel & Outdoor Photography" lang="de" preloadImage={heroPreload}>
   <HomeHeroLive client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="de" logo={ap.logo} showHeroLogo={ap.show_hero_logo !== false} showStories={showStories} />
 
   <HomeIntroLive client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="de" />
