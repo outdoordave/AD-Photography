@@ -152,16 +152,16 @@ export default function ContactContent(props: Props) {
               <div className={`form-success${sent ? ' show' : ''}`} data-tina-field={tf(c, 'form_success')}>{t(c, 'form_success')}</div>
               {error ? <div className="form-error show" role="alert">{error}</div> : null}
               <div className="form-field">
-                <label data-tina-field={tf(c, 'form_name')}>{t(c, 'form_name')}</label>
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+                <label htmlFor="ww-name" data-tina-field={tf(c, 'form_name')}>{t(c, 'form_name')}</label>
+                <input id="ww-name" name="name" type="text" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} />
               </div>
               <div className="form-field">
-                <label data-tina-field={tf(c, 'form_email')}>{t(c, 'form_email')}</label>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <label htmlFor="ww-email" data-tina-field={tf(c, 'form_email')}>{t(c, 'form_email')}</label>
+                <input id="ww-email" name="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
               <div className="form-field">
-                <label data-tina-field={tf(c, 'form_message')}>{t(c, 'form_message')}</label>
-                <textarea ref={msgRef} value={msg} onChange={(e) => setMsg(e.target.value)} />
+                <label htmlFor="ww-message" data-tina-field={tf(c, 'form_message')}>{t(c, 'form_message')}</label>
+                <textarea id="ww-message" name="message" ref={msgRef} value={msg} onChange={(e) => setMsg(e.target.value)} />
               </div>
               {/* Honeypot: für Menschen unsichtbar; füllt ein Bot es aus, wird nicht gesendet. */}
               <input
