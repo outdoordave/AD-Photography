@@ -8,7 +8,7 @@
   "persons": [
     {
       "name": "Alexandra Apostel",
-      "photo": "{\"original\":\"/uploads/a7406523.jpg\",\"display\":\"https://assets.tina.io/defa5b44-687f-478c-a647-bad7355aedd3/a7406523-crop-mq2djyvy.webp\",\"crop\":{\"x\":7.306352038664269e-17,\"y\":0.350735920125841,\"w\":0.9999999999999999,\"h\":0.5003716982265184}}",
+      "photo": "{\"original\":\"/uploads/a7406523.jpg\",\"display\":\"/uploads/a7406523.jpg\",\"crop\":{\"x\":7.306352038664269e-17,\"y\":0.350735920125841,\"w\":0.9999999999999999,\"h\":0.5003716982265184}}",
       "role_de": "Landschaft & Wildlife",
       "role_en": "Landscape & Wildlife",
       "bio_de": "Frisch verliebt in die Fotografie und schon nicht mehr zu bremsen. Alexandra hat das Auge für Tiere und Licht — und die Geduld, die beides braucht.",
