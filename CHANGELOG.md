@@ -17,6 +17,19 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-17 20:05 — Hero-Performance + Geräte-Politur-Stand
+- **Hero-Perf** (`ccbad1d`): Hero-Bild war das LCP-Element, lud aber unpriorisiert. Jetzt
+  `fetchPriority="high"` + `decoding="async"` am Hero-`<img>` (HomeHeroLive.tsx) und ein
+  `<link rel="preload" as="image" fetchpriority="high">` im `<head>` (BaseLayout-Prop `preloadImage`,
+  von index.astro + en/index.astro durchgereicht, gleicher `normalizePath` wie im `<img>`).
+  Rein additiv; Format/WebP-Pipeline war nie das Problem (Hero ist bereits WebP, 742 KB). esbuild grün.
+- **Geräte-Politur eingeordnet** (Doku): G3 (iPad-Hochformat) **gestrichen** (alles okay);
+  G1 (iOS safe-area) **zurückgestellt** (kein konkreter Mangel, `viewport-fit=cover` risikoreich);
+  G2 (Reisen quer am iPhone) **zurückgestellt, aber diagnostiziert** (Desktop-Layout in ~390px Höhe;
+  Orientierung sperren auf iOS nicht möglich; Fix B = Mobil-Layout im Landscape erzwingen).
+- betroffene Dateien: HomeHeroLive.tsx, BaseLayout.astro, index.astro, en/index.astro, MAENGEL.md, STATUS.md, CHANGELOG.md
+- Commits: `ccbad1d` (+ dieser Doku-Eintrag)
+
 ## 2026-06-17 19:34 — Nacharbeits-Fixes K1 + K7 (K8 geparkt)
 - **K1** (`3e04c92`): `web/src/data/about.json` — `display`-URL von `assets.tina.io` auf das lokale
   `/uploads/a7406523.jpg` umgebogen. Live unverändert (Rendering nutzt `original` + CSS-`crop`),

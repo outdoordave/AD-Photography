@@ -78,9 +78,10 @@
 
 ## 6. Offene Nacharbeiten (KEIN Cutover-Blocker — ruhige Politur an der Live-Seite)
 > Cutover ist durch; nichts hiervon blockiert. Ergibt sich teils aus der echten Nutzung.
-- **iOS safe-area-insets** (Notch/Home-Indicator) auf iPhone sauber abfangen.
-- **Lightbox im Querformat am Phone** (Landscape) — Verhalten polieren.
-- **iPad-Hochformat-Polish** (Portrait-Breakpoint).
+- **G1 · iOS safe-area-insets** — ⏸️ zurückgestellt: kein konkreter Mangel, `viewport-fit=cover` wäre risikoreich (s. MAENGEL).
+- **G2 · Reisen-Timeline im Querformat (iPhone)** — ⏸️ zurückgestellt, aber diagnostiziert (Fix B: Mobil-Layout im Landscape erzwingen; Sperren geht auf iOS nicht).
+- ~~G3 · iPad-Hochformat~~ — ✅ gestrichen (alles okay).
+- **Hero-Ladezeit** — ✅ verbessert (`ccbad1d`): `fetchpriority`/`decoding` + `<head>`-Preload des Hero-Bilds.
 - ~~K7 · Kontaktformular-A11y~~ — ✅ **erledigt** (`3c1a8a9`); David: Browser-Konsole nach Push gegenchecken.
 - **EN-`<title>` auf der DE-Startseite** (K8) — ⏸️ **geparkt**: Wortlaut hängt an der offenen Namensentscheidung.
 - **Reisen-Timeline-Folgephasen:** weiterer Feinschliff ergibt sich aus der Nutzung

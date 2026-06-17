@@ -149,13 +149,20 @@
 
 ## 🟡 Geräte-Politur (iOS/iPad) — Nacharbeit aus dem Smoke-Test (keine Blocker)
 
-- [ ] **G1 · iOS safe-area-insets** (Notch/Home-Indicator): Ränder/Sticky-Elemente auf iPhone
-  sauber gegen die safe areas absetzen (`env(safe-area-inset-*)` + `viewport-fit=cover`).
-- [ ] **G2 · Lightbox im Querformat am Phone** (Landscape): Verhalten/Größe polieren.
-- [ ] **G3 · iPad-Hochformat-Polish** (Portrait-Breakpoint) — Layout-Feinschliff.
+- [~] **G1 · iOS safe-area-insets** — ⏸️ **zurückgestellt (2026-06-17)**. Analyse: `env(safe-area-inset-*)`
+  ist an einigen Stellen schon vorbereitet (`.lb-filmstrip`/`.lb-strip-marker`/`.ww-totop`), aber `viewport-fit=cover`
+  fehlt in `BaseLayout.astro:53` → die `env()` sind „schlafend" (Fallback 0). David sah **kein** konkretes Problem
+  (keine Balken, nichts abgeschnitten) → `viewport-fit=cover` wäre rein kosmetisch + risikoreich (mehrere Elemente
+  müssten nachgepolstert werden). **Erst angehen, wenn ein echter Mangel auffällt.**
+- [~] **G2 · Reisen-Timeline im Querformat am iPhone** — ⏸️ **zurückgestellt (2026-06-17)**, aber diagnostiziert.
+  Ursache: Timeline hat nur breitenbasierte Umbrüche (`max-width:767px`); große iPhones sind quer **>767px** breit →
+  bekommen das **Desktop-Zweispalten-Layout** in ein ~390px hohes Fenster gequetscht. Orientierung **sperren geht
+  auf iOS Safari nicht** (`screen.orientation.lock()` nicht unterstützt). **Fix B** (geplant): per
+  `@media (orientation:landscape) and (max-height:…)` das gestapelte Mobil-Layout erzwingen. Betrifft nur die Reisen-Detailseite.
+- [x] **G3 · iPad-Hochformat** — ✅ **gestrichen**: David: „alles okay, nichts zu bemängeln".
 
-> Alle drei aus Davids echtem Gerätetest; **kein Cutover-Blocker** (Cutover ist durch).
-> Vor dem Bau jeweils erst am echten Code/Gerät befunden.
+> Aus Davids echtem Gerätetest; **kein Cutover-Blocker** (Cutover ist durch).
+> Mobil/Layout-Politur (G1/G2) auf Davids Wunsch vorerst zurückgestellt.
 
 ---
 
