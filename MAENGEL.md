@@ -74,10 +74,10 @@
 
 ## ⚪ Kosmetisch / Kleinigkeiten
 
-- [ ] **K1 · `about.json` „display"-Feld hält noch eine `assets.tina.io`-URL.**
-  - *Ursache:* About-Foto-Feld speichert `{"original":"/uploads/a7406523.jpg","display":"https://assets.tina.io/.../…"}`.
-    Gerendert wird `/uploads` (normalizePath) → nur **Daten-Hygiene**, keine sichtbare Wirkung.
-  - *Fix:* `display`-URL auf `/uploads/` zurückschreiben.
+- [x] **K1 · `about.json` „display"-Feld hielt noch eine `assets.tina.io`-URL** — ✅ **erledigt (`3e04c92`)**.
+  - *Ursache:* About-Foto-Feld speicherte `{"original":"/uploads/a7406523.jpg","display":"https://assets.tina.io/.../…"}`.
+    Gerendert wird `/uploads` (`photoFrame` nutzt `original` + CSS-`crop`) → war nur **Daten-Hygiene**, keine sichtbare Wirkung.
+  - *Fix:* `display`-URL auf `/uploads/a7406523.jpg` zurückgeschrieben; `original`+`crop` unverändert. Keine `assets.tina.io`-URL mehr in `web/src/data/`.
   - *Cutover-Blocker:* Nein.
 
 - [x] **K2 · Instagram-Handles** — ✅ **erledigt** (`d5ffe73`): zentral aus der Kontaktseite (`contact.json`), Home leitet ab; `@david.bastisch` + `@shot.by.alx_`. ⚠️ Re-Index nach Push.
@@ -116,7 +116,7 @@
 - [ ] **K6 · Video-Clips: kein Auto-Workflow (offener Wunsch).** → Details in **IDEEN.md, Punkt „Video-Clips"**.
   - *Cutover-Blocker:* **Nein** (ausdrücklich kein Blocker).
 
-- [ ] **K7 · Kontaktformular: Felder ohne `id`/`name` + `<label>` nicht verknüpft** (Accessibility).
+- [x] **K7 · Kontaktformular: Felder ohne `id`/`name` + `<label>` nicht verknüpft** (Accessibility) — ✅ **erledigt (`3c1a8a9`)**. *(Name/E-Mail/Nachricht: `id`+`htmlFor`+`name`, Name/E-Mail zusätzlich `autoComplete`; Versandpfad unangetastet. David: Browser-Konsole nach Push gegenchecken.)*
   - *Befund (2026-06-16, Davids Chrome-Konsolen-Check Win11):* keine JS-Fehler, nur zwei
     Best-Practice-Hinweise am Kontaktformular. In `web/src/components/ContactContent.tsx`:
     die drei sichtbaren Felder Name (`:156`), E-Mail (`:160`) und Nachricht (`:164`) haben
