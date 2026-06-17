@@ -17,8 +17,9 @@
   `https://aandd-photography.pages.dev`. Root `web`, Build **`npm run build`**, Output `dist`.
 - **Karte:** MapLibre GL (selbst gebündelt), Kartenstile von **OpenFreeMap**.
 - **Fonts:** **lokal** (Fontsource Variable) — Fraunces (Display) + Mulish (Body), **kein Google**.
-- **Vorschau:** Branch **`astro-umbau`** → Cloudflare-Projekt `aandd-photography-astro`
-  (`https://aandd-photography-astro.pages.dev`, **`PUBLIC_PREVIEW_NOINDEX=true` → noindex**).
+- **Vorschau (stillgelegt seit 17.06.2026):** Das Cloudflare-Projekt `aandd-photography-astro`
+  (baute von `astro-umbau`, noindex) ist **von GitHub getrennt** — kein Auto-Build mehr. Der Branch
+  `astro-umbau` bleibt im Repo. Tests laufen jetzt lokal bzw. über Tinas CMS-Vorschau.
 
 ## Feste Arbeitsweise (verbindlich)
 1. **Erst prüfen & besprechen, dann bauen.** Bei Unklarheiten **Rückfragen**, nicht raten.

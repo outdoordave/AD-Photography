@@ -10,8 +10,8 @@ Ursprung: 2026-06-07 (Beschluss mit David). **Cutover vollzogen am 2026-06-16.**
 - **Tina Cloud** hat `main` indexiert.
 - **Live-Smoke-Test bestanden:** `robots.txt` erlaubt Crawling, kein `noindex`-Meta,
   `/admin`-Login geht, Kontaktformular sendet → Mail kommt an. Live = exakt der astro-umbau-Stand.
-- **Vorschau-Projekt `aandd-photography-astro`** läuft weiter von `astro-umbau` mit
-  **`PUBLIC_PREVIEW_NOINDEX=true`** (noindex gewollt).
+- **Vorschau-Projekt `aandd-photography-astro`**: lief von `astro-umbau` mit `PUBLIC_PREVIEW_NOINDEX=true`;
+  **seit 17.06.2026 von GitHub getrennt → stillgelegt** (kein Auto-Build mehr; Branch `astro-umbau` bleibt).
 
 > ### ⚠️ Cutover-Lehre: Tina-Token ist branch-gebunden
 > Der erste `main`-Build schlug mit **403** fehl, weil der bestehende `TINA_TOKEN` nur für
@@ -79,8 +79,8 @@ Ziel (erreicht): Die Astro-Version ist die echte Seite unter der kanonischen URL
        darf das **Live**-Projekt **niemals** bekommen.
 6. [x] **Funktions-Smoke-Test** live: Lightbox, Karte, Kontaktformular-Versand (echte Mail kommt an?),
        Statistik (Umami zählt), Datenschutz/Impressum verlinkt.
-7. [ ] **Vorschau-Domain** (offen, kein Eile): bleibt vorerst als Spielwiese (astro-umbau, noindex);
-       später optional abschalten oder weiterleiten.
+7. [x] **Vorschau-Domain**: Projekt `aandd-photography-astro` am 17.06.2026 **von GitHub getrennt**
+       (kein Auto-Build mehr). Damit erledigt; Branch `astro-umbau` bleibt im Repo.
 
 ## Offene Einzelthemen (kein Eile)
 - Snap-Stärke (`proximity`) bei Bedarf nachregeln.

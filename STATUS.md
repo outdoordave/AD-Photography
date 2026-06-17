@@ -16,9 +16,9 @@
   `https://aandd-photography.pages.dev`. Root `web`, Build `npm run build`, Output `dist`.
   Build-Env (Plaintext): `TINA_CLIENT_ID`, `TINA_TOKEN` (geheim, **main-berechtigt**),
   `TINA_BRANCH=main`, `NODE_VERSION=22`.
-- **Vorschau:** Branch **`astro-umbau`** → Projekt **`aandd-photography-astro`**
-  (`https://aandd-photography-astro.pages.dev`), **`PUBLIC_PREVIEW_NOINDEX=true` → noindex**.
-  Läuft als Spielwiese weiter; die Live-Seite bekommt diese Variable **niemals**.
+- **Vorschau:** ⏸️ **stillgelegt (17.06.2026)** — das Projekt **`aandd-photography-astro`** (baute von
+  `astro-umbau`, noindex) ist **von GitHub getrennt**, kein Auto-Build mehr. Branch `astro-umbau` bleibt im Repo.
+  *(Merke fürs Live-Projekt: `PUBLIC_PREVIEW_NOINDEX` gehört ausschließlich in die Vorschau — die Live-Seite bekommt diese Variable **niemals**.)*
 - **Build-Pipeline** (`web/package.json`): `copy-uploads.mjs` (zieht Wurzel-`/uploads` in den
   Build — **tragend**) → `gen-uploads-manifest.mjs` → `tinacms build -c "astro build"` →
   `optimize-uploads.mjs` (Sharp, optimiert `dist/uploads`, Repo-Originale bleiben).
