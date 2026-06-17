@@ -81,8 +81,8 @@
 - **iOS safe-area-insets** (Notch/Home-Indicator) auf iPhone sauber abfangen.
 - **Lightbox im Querformat am Phone** (Landscape) — Verhalten polieren.
 - **iPad-Hochformat-Polish** (Portrait-Breakpoint).
-- **K7 · Kontaktformular-A11y** (Felder ohne `id`/`name`, Labels nicht verknüpft) → MAENGEL.md.
-- **EN-`<title>` auf der DE-Startseite** (englischer Title-Tag auf `/`) → MAENGEL.md (K8).
+- ~~K7 · Kontaktformular-A11y~~ — ✅ **erledigt** (`3c1a8a9`); David: Browser-Konsole nach Push gegenchecken.
+- **EN-`<title>` auf der DE-Startseite** (K8) — ⏸️ **geparkt**: Wortlaut hängt an der offenen Namensentscheidung.
 - **Reisen-Timeline-Folgephasen:** weiterer Feinschliff ergibt sich aus der Nutzung
   (Bug-/Wunsch-Sammlung) — wird bei Bedarf konkretisiert, kein Plan vorab.
 - **Aufräumen:** alte `index.html` (+ `admin/`, `build-indexes.js`, `content/`, evtl.

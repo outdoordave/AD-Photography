@@ -17,6 +17,20 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-17 19:34 — Nacharbeits-Fixes K1 + K7 (K8 geparkt)
+- **K1** (`3e04c92`): `web/src/data/about.json` — `display`-URL von `assets.tina.io` auf das lokale
+  `/uploads/a7406523.jpg` umgebogen. Live unverändert (Rendering nutzt `original` + CSS-`crop`),
+  entfernt aber die letzte tina.io-Laufzeitabhängigkeit in den Repo-Daten. JSON validiert.
+- **K7** (`3c1a8a9`): `web/src/components/ContactContent.tsx` — Kontaktformular-A11y: Name/E-Mail/Nachricht
+  bekommen `id` + verknüpftes `htmlFor` + `name` (Muster wie Consent-Häkchen), Name/E-Mail zusätzlich
+  `autoComplete`. Versandpfad unangetastet (kein `<form>`, `onSend` baut den Body aus React-State).
+  esbuild-Check grün. **Offen für David:** nach Push einmal in der Browser-Konsole gegenchecken.
+- **K8** (`b115fcb`): englischer `<title>` auf der DE-Startseite **bewusst geparkt** (Wortlaut hängt an
+  der offenen Namensentscheidung) — Code unverändert, in MAENGEL als ⏸️ markiert.
+- **Doku** (`816b8f1`): MAENGEL K1/K7 als erledigt abgehakt.
+- betroffene Dateien: about.json, ContactContent.tsx, MAENGEL.md, CHANGELOG.md
+- Commits: `3e04c92`, `3c1a8a9`, `b115fcb`, `816b8f1` (+ dieser Eintrag)
+
 ## 2026-06-16 20:56 — Doku auf Post-Cutover-Stand gebracht
 - Gesamte Projekt-Doku vom pre-Cutover-Zustand auf den aktuellen Stand aktualisiert.
 - **CLAUDE.md** (`8bff270`): Faktenkorrektur (CMS=TinaCMS statt Sveltia, Stack=Astro in `web/`,
