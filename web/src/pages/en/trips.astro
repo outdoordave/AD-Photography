@@ -13,7 +13,7 @@ const edges = (res.data.reisenConnection?.edges || []).filter(Boolean);
 const trips = sortTrips(edges.map((e: any) => ({ slug: e.node._sys.filename, data: e.node as RawTrip })));
 const s = settings as any;
 ---
-<BaseLayout title={`${s.title_en || s.title_de || 'Trips'} — Wide & Wild`} lang="en">
+<BaseLayout title={`${s.title_en || s.title_de || 'Trips'} — Wide & Wild`} lang="en" description="Our road trips — journeys by Wide & Wild as a map timeline with stops, photos and experiences.">
   <section>
     <div class="wrap">
       <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="reisen_settings" lang="en" />

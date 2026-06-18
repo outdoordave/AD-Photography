@@ -14,7 +14,7 @@ if ((appearance as any).show_contact === false) return Astro.redirect('/');
 const res = await client.queries.kontakt({ relativePath: 'contact.json' });
 const title = (res.data.kontakt as any)?.title_de || 'Kontakt';
 ---
-<BaseLayout title={`${title} — Wide & Wild`} lang="de">
+<BaseLayout title={`${title} — Wide & Wild`} lang="de" description="Kontakt zu Wide & Wild — schreib Alexandra & David für Anfragen, Fragen zu Bildern oder einfach ein Hallo.">
   <div id="page-contact">
     <ContactContent
       client:load

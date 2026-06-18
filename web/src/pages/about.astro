@@ -8,7 +8,7 @@ import { client } from '../../tina/__generated__/client';
 const res = await client.queries.ueber_uns({ relativePath: 'about.json' });
 const title = (res.data.ueber_uns as any)?.title_de || 'Über uns';
 ---
-<BaseLayout title={`${title} — Wide & Wild`} lang="de">
+<BaseLayout title={`${title} — Wide & Wild`} lang="de" description="Die zwei Menschen hinter Wide & Wild — wie Alexandra & David zur Reise- und Outdoor-Fotografie kamen.">
   <div id="page-about">
     <AboutContent
       client:load

@@ -32,9 +32,12 @@ const { prev, next } = Astro.props as {
 // Stories ausgeblendet? Dann auch Einzelbeitrag /stories/<slug> nicht direkt zeigen.
 if ((appearance as any).show_stories !== true) return Astro.redirect('/');
 const res = await client.queries.story({ relativePath: `${slug}.md` });
-const title = buildStory(res.data.story as any).de.title;
+const story = buildStory(res.data.story as any);
+const title = story.de.title;
+// Meta-Description aus dem Story-Anriss (excerpt), Fallback templatisiert. Story = og:type article.
+const metaDesc = (story.de.excerpt || `„${title}“ — eine Reisegeschichte von Wide & Wild.`).replace(/\s+/g, ' ').trim().slice(0, 200);
 ---
-<BaseLayout title={`${title} — Wide & Wild`} lang="de">
+<BaseLayout title={`${title} — Wide & Wild`} lang="de" description={metaDesc} ogType="article">
   <div id="page-story">
     <StoryReaderContent
       client:load

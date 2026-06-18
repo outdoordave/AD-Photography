@@ -166,6 +166,22 @@
 
 ---
 
+## 🟡 Sicherheit — Nachträge nach Charge 1
+
+- [ ] **S1 · Clickjacking-Schutz (CSP `frame-ancestors`)** — folgt nach Charge 1.
+  - *Kontext:* In Charge 1 (`web/public/_headers`) wurden `X-Content-Type-Options: nosniff` und
+    `Referrer-Policy: strict-origin-when-cross-origin` gesetzt. **`X-Frame-Options: SAMEORIGIN` wurde
+    bewusst weggelassen**, weil Tina-Cloud das Visual-Editing **cross-origin** (vermutlich `app.tina.io`)
+    in einen iframe rahmt → SAMEORIGIN würde die CMS-Vorschau (u. a. am iPad) blocken.
+  - *Fix (eigener kleiner Schritt):* Clickjacking-Schutz per **CSP `frame-ancestors`** mit **verifizierter**
+    Tina-Editing-Domain. **Zuerst** die exakte Rahmer-Domain im `/admin`-Netzwerkverkehr bestätigen,
+    **dann** `Content-Security-Policy: frame-ancestors 'self' https://<verifizierte-tina-domain>;` setzen.
+    CSP nur mit diesem einen Direktiv beginnen (kein `default-src`/`script-src`, sonst Risiko für
+    MapLibre/Umami/Inline-Skripte — das ist die separate CSP-Planung).
+  - *Blocker:* **Nein.**
+
+---
+
 ## ✅ Geprüft & in Ordnung (kein Mangel)
 
 - **Google Fonts wirklich weg:** deployte CSS 0× googleapis/gstatic, 11× lokale woff2, 7× „Fraunces Variable".
