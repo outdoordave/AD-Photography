@@ -156,9 +156,10 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
 - ✅ **Toten Prototyp-Code aus `web/` entfernt** (18.06.2026, `2108861`, ~1285 Zeilen): verwaiste
   Komponenten `ProtoGallery.tsx`/`TripMapProto.tsx` + die interne Vorschauroute `/proto/reisen-timeline`
   (`pages/proto/…`, `components/proto/…`, `styles/proto-timeline.css`).
-- **Offen:** tiefere Analyse (ungenutzte Funktionen/Exports in `lib/`, tote CSS-Klassen in `global.css`) +
-  **ungenutzte Bild-Assets** in `/uploads` ausmisten. *(Hinweis: `astro.config.mjs`-Sitemap-Filter `!…/proto/`
-  ist jetzt inert, aber harmlos — bleibt als Schutz.)*
+- ✅ **`/uploads` ausgemistet** (18.06.2026, `59e21d5`): von 18 Bildern war genau eines verwaist
+  (`IMG_6001.jpg`, 3,6 MB — Original ohne Referenz, genutzt wird die WebP-Variante) → entfernt. Rest sauber.
+- **Offen:** tiefere Analyse (ungenutzte Funktionen/Exports in `lib/`, tote CSS-Klassen in `global.css`).
+  *(Hinweis: `astro.config.mjs`-Sitemap-Filter `!…/proto/` ist jetzt inert, aber harmlos — bleibt als Schutz.)*
 
 ### 4.2 Stabilität
 - **Status:** offen

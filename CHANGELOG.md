@@ -17,6 +17,13 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-18 20:30 — Cleanup: verwaiste /uploads-Bilddatei entfernt
+- **/uploads-Inventur** (`59e21d5`): read-only-Referenz-Check aller 18 Bilder → genau eines verwaist:
+  `IMG_6001.jpg` (3,6 MB, Original ohne Referenz; genutzt wird `IMG_6001.webp`, 250 KB) → entfernt.
+  Restliche 17 Bilder referenziert. WebP-Variante + Album `2026-usa-2023.json` unberührt.
+- IDEEN §4.1: `/uploads`-Punkt abgehakt; offen bleibt nur noch Detail-Analyse (`lib/`/CSS).
+- Commit: `59e21d5` + dieser Eintrag
+
 ## 2026-06-18 20:23 — Cleanup: toter Prototyp-Code aus web/ entfernt
 - **Code-Inventur (IDEEN §4.1 Fortsetzung)** (`2108861`, ~1285 Zeilen): read-only-Analyse → dann entfernt:
   verwaiste Komponenten `ProtoGallery.tsx` + `TripMapProto.tsx` (0 Referenzen) sowie die interne Vorschauroute
