@@ -9,7 +9,7 @@ import { viewStops, bi, tripTitle, sortTrips, type RawTrip, type ViewStop, type 
 import { vehicleSvg, PLANE_SVG } from '../lib/vehicles';
 
 // Reisen-DETAILSEITE — Variante B (vertikale Timeline / Reise-Journal), 1:1-Port aus dem
-// abgestimmten Prototyp /proto/reisen-timeline, ERWEITERT um die echten /trips-Fähigkeiten:
+// damaligen Prototyp (entfernt 06/2026; alter Stand via Git-Tag legacy-singlefile), ERWEITERT um die echten /trips-Fähigkeiten:
 // useTina-Live-Daten + data-tina-field + Editor-Scroll-Sync, DE/EN, 5 Karten-Stile (live),
 // CSS-Crop-Hero, Filmstreifen->Lightbox, Video/YouTube, verknüpftes Album, „Reisefazit"-Galerie.
 // Globale Tuning-Werte (Spotlight/Übergang/Reveal/Snap) kommen als Props (aus reisen_settings).
