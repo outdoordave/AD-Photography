@@ -8,7 +8,7 @@ import { client } from '../../tina/__generated__/client';
 const res = await client.queries.gear({ relativePath: 'gear.json' });
 const title = (res.data.gear as any)?.title_de || 'Equipment';
 ---
-<BaseLayout title={`${title} — Wide & Wild`} lang="de">
+<BaseLayout title={`${title} — Wide & Wild`} lang="de" description="Die Ausrüstung hinter Wide & Wild — Kameras, Objektive, Drohnen und Reise-Gear von Alexandra & David.">
   <section>
     <div class="wrap">
       <GearContent

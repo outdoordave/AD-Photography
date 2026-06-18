@@ -41,8 +41,10 @@ const vehicleId = (typeof customSvg === 'string' && customSvg.trim().slice(0, 4)
 // Design ist ZENTRAL (gilt für alle Reisen) -> aus den Reisen-Einstellungen, nicht pro Reise.
 const tripDesign = resolveTripDesign((s as any).design);
 const tripDesignCss = tripDesignsCss(mergeTuning(s.designs));
+// Meta-Description aus vorhandenem Inhalt (Reise-Zusammenfassung), Fallback templatisiert.
+const metaDesc = (trip.summary_de || `Reisebericht „${ttl}“ — Stationen, Karte und Fotos einer Reise von Wide & Wild.`).replace(/\s+/g, ' ').trim().slice(0, 200);
 ---
-<BaseLayout title={`${ttl} — Wide & Wild`} lang="de">
+<BaseLayout title={`${ttl} — Wide & Wild`} lang="de" description={metaDesc}>
   <Fragment set:html={`<style>${tripDesignCss}</style>`} />
   <section style="padding-top:8px;">
     <div class="wrap">

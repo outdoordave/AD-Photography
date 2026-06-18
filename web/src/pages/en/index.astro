@@ -44,7 +44,7 @@ const heroFirst = heroData.mode === 'image' ? heroData.image
     : '';
 const heroPreload = heroFirst ? normalizePath(heroFirst) : undefined;
 ---
-<BaseLayout title="Wide & Wild — Travel & Outdoor Photography" lang="en" preloadImage={heroPreload}>
+<BaseLayout title="Wide & Wild — Travel & Outdoor Photography" lang="en" preloadImage={heroPreload} description="Travel & outdoor photography by Alexandra & David — road trips through wild landscapes, with maps, photo albums and stories from the road.">
   <HomeHeroLive client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="en" logo={ap.logo} showHeroLogo={ap.show_hero_logo !== false} showStories={showStories} />
 
   <HomeIntroLive client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="en" />

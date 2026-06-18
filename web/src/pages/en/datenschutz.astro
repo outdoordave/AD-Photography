@@ -7,7 +7,7 @@ import { client } from '../../../tina/__generated__/client';
 const res = await client.queries.datenschutz({ relativePath: 'datenschutz.json' });
 const title = (res.data.datenschutz as any)?.title_en || (res.data.datenschutz as any)?.title_de || 'Privacy Policy';
 ---
-<BaseLayout title={`${title} — Wide & Wild`} lang="en">
+<BaseLayout title={`${title} — Wide & Wild`} lang="en" description="Privacy policy of Wide & Wild — how we handle your data.">
   <div id="page-legal">
     <LegalContent client:load query={res.query} variables={res.variables} data={res.data} lang="en" docKey="datenschutz" />
   </div>

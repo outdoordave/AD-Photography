@@ -20,8 +20,13 @@ interface Props {
   lang?: 'de' | 'en';
   noindex?: boolean;
   preloadImage?: string; // LCP-Bild (z. B. Hero) vorab laden -> startet den Fetch beim HTML-Parsen
+  description?: string;            // Meta-Description; Default = Marken-Satz (sprachabhängig)
+  ogType?: 'website' | 'article';  // 'article' für Story-Detailseiten, sonst 'website'
+  ogImage?: string;                // Share-Bild (wird absolut aufgelöst). PLATZHALTER: Hero-Bild;
+                                   // pro Seite überschreibbar; CMS-Feld folgt in Charge 2 (dann 1200×630-jpg).
 }
-const { title = 'Wide & Wild', lang = 'de', noindex = false, preloadImage } = Astro.props;
+const { title = 'Wide & Wild', lang = 'de', noindex = false, preloadImage,
+        description, ogType = 'website', ogImage = '/uploads/IMG_5904.webp' } = Astro.props;
 // VORSCHAU-noindex (env-gesteuert, NICHT statisch): greift nur, wenn die Build-Env-Var
 // PUBLIC_PREVIEW_NOINDEX === 'true' gesetzt ist. Diese Var wird AUSSCHLIESSLICH im
 // Vorschau-Cloudflare-Projekt gesetzt -> die spaetere Live-Seite (anderes Projekt / Var
@@ -46,6 +51,26 @@ const albumHover = ap.album_hover !== false;
 const pathname = Astro.url.pathname;
 const footerSocial = (hm.intro && hm.intro.social) || [];
 const showFooterSocial = !!(hm.social_show && hm.social_show.footer);
+
+// --- SEO/Head (Charge 1, reine Template-Ebene) ---
+const metaDescription = description || (lang === 'en'
+  ? 'Travel & outdoor photography by Alexandra & David — road trips, wild landscapes and the stories behind the images.'
+  : 'Reise- & Outdoor-Fotografie von Alexandra & David — Roadtrips, wilde Landschaften und die Geschichten hinter den Bildern.');
+const site = Astro.site; // kanonische Produktions-URL aus astro.config (site)
+// Sprachneutraler Pfad wie im Sprachumschalter (SiteNav) -> DE/EN-Pendant je Seite.
+const trimmed = pathname.replace(/\/+$/, '') || '/';
+const bare = lang === 'en' ? (trimmed.replace(/^\/en/, '') || '/') : trimmed;
+const dePath = bare === '/' ? '/' : bare + '/';
+const enPath = bare === '/' ? '/en/' : '/en' + bare + '/';
+const selfPath = lang === 'en' ? enPath : dePath;
+const abs = (p: string) => (site ? new URL(p, site).href : p);
+const canonicalURL = abs(selfPath);
+const deAltURL = abs(dePath);
+const enAltURL = abs(enPath);
+const ogImageURL = abs(ogImage);
+const ogLocale = lang === 'en' ? 'en_US' : 'de_DE';
+// canonical/hreflang nur auf indexierbaren Seiten (nicht 404/Statistik/Vorschau).
+const indexable = !(noindex || previewNoindex);
 ---
 <!doctype html>
 <html lang={lang}>
@@ -55,6 +80,23 @@ const showFooterSocial = !!(hm.social_show && hm.social_show.footer);
     {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
     {(noindex || previewNoindex) && <meta name="robots" content="noindex, nofollow" />}
     <title>{title}</title>
+    <meta name="description" content={metaDescription} />
+    {indexable && <link rel="canonical" href={canonicalURL} />}
+    {indexable && <link rel="alternate" hreflang="de" href={deAltURL} />}
+    {indexable && <link rel="alternate" hreflang="en" href={enAltURL} />}
+    {indexable && <link rel="alternate" hreflang="x-default" href={deAltURL} />}
+    {/* Open Graph / Twitter — og:image ist vorerst das Hero-Bild (PLATZHALTER); CMS-Feld folgt Charge 2 */}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:site_name" content="Wide & Wild" />
+    <meta property="og:locale" content={ogLocale} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={metaDescription} />
+    <meta name="twitter:image" content={ogImageURL} />
     {analyticsSnippet && <Fragment set:html={analyticsSnippet} />}
     {/* Fonts werden LOKAL via Fontsource gebündelt (Imports im Frontmatter) — KEINE
         Google-Fonts-Links mehr (DSGVO: keine Besucher-IP an Google). */}

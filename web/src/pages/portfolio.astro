@@ -13,7 +13,7 @@ const setRes = await client.queries.galerie_settings({ relativePath: 'gallery-se
 const s = settings as any;
 const modes = s.modes || { album: true, chronological: false, alphabetical: false };
 ---
-<BaseLayout title={`${s.title_de || 'Portfolio'} — Wide & Wild`} lang="de">
+<BaseLayout title={`${s.title_de || 'Portfolio'} — Wide & Wild`} lang="de" description="Ausgewählte Aufnahmen von Wide & Wild — Landschaften, Wildlife und Reisemomente in Foto-Alben.">
   <section>
     <div class="wrap">
       <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="galerie_settings" lang="de" />

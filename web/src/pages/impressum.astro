@@ -8,7 +8,7 @@ import { client } from '../../tina/__generated__/client';
 const res = await client.queries.impressum({ relativePath: 'impressum.json' });
 const title = (res.data.impressum as any)?.title_de || 'Impressum';
 ---
-<BaseLayout title={`${title} — Wide & Wild`} lang="de">
+<BaseLayout title={`${title} — Wide & Wild`} lang="de" description="Impressum von Wide & Wild — Anbieterkennzeichnung und Kontakt.">
   <div id="page-legal">
     <LegalContent client:load query={res.query} variables={res.variables} data={res.data} lang="de" docKey="impressum" />
   </div>

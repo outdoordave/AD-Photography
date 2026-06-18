@@ -20,7 +20,7 @@ const stories = toSortedStories(entries.map((e) => ({ slug: e.slug, data: e.data
 const setRes = await client.queries.stories_settings({ relativePath: 'stories-settings.json' });
 const s = settings as any;
 ---
-<BaseLayout title={`${s.title_en || s.title_de || 'Stories from the road'} — Wide & Wild`} lang="en">
+<BaseLayout title={`${s.title_en || s.title_de || 'Stories from the road'} — Wide & Wild`} lang="en" description="Stories from the road — travel reports and photo essays by Alexandra & David.">
   <section>
     <div class="wrap">
       <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="stories_settings" lang="en" />

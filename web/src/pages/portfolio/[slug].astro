@@ -13,9 +13,12 @@ export async function getStaticPaths() {
 
 const { slug } = Astro.params;
 const res = await client.queries.alben({ relativePath: `${slug}.json` });
-const name = (res.data.alben as any)?.name || 'Album';
+const alb = (res.data.alben as any) || {};
+const name = alb.name || 'Album';
+// Meta-Description aus der Album-Notiz, Fallback templatisiert.
+const metaDesc = (alb.note_de || `Foto-Album „${name}“ von Wide & Wild.`).replace(/\s+/g, ' ').trim().slice(0, 200);
 ---
-<BaseLayout title={`${name} — Wide & Wild`} lang="de">
+<BaseLayout title={`${name} — Wide & Wild`} lang="de" description={metaDesc}>
   <section>
     <div class="wrap">
       <AlbumContent client:load query={res.query} variables={res.variables} data={res.data} lang="de" />
