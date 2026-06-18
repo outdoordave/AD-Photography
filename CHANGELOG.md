@@ -17,6 +17,17 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-18 20:23 — Cleanup: toter Prototyp-Code aus web/ entfernt
+- **Code-Inventur (IDEEN §4.1 Fortsetzung)** (`2108861`, ~1285 Zeilen): read-only-Analyse → dann entfernt:
+  verwaiste Komponenten `ProtoGallery.tsx` + `TripMapProto.tsx` (0 Referenzen) sowie die interne Vorschauroute
+  **`/proto/reisen-timeline`** (`pages/proto/reisen-timeline.astro`, `components/proto/TripsTimelineProto.tsx`,
+  `components/proto/alaskaTimelineDemo.ts`, `styles/proto-timeline.css`). War der Prototyp der jetzt live
+  laufenden Reisen-Timeline (`TripTimeline.tsx`); nirgends verlinkt, noindex, nicht in der Sitemap.
+- `TripTimeline.tsx`: Kommentar-Verweis auf den entfernten Prototyp angepasst. esbuild grün.
+- **Offen** (in IDEEN §4.1 notiert): ungenutzte Funktionen/CSS auf Detail-Ebene, ungenutzte `/uploads`-Bilder.
+- betroffene Dateien: 6 gelöscht + TripTimeline.tsx + IDEEN.md + CHANGELOG.md
+- Commits: `2108861` + dieser Eintrag
+
 ## 2026-06-17 21:13 — Doku-Nachzug: Vorschau getrennt + veraltete Stellen korrigiert
 - **Vorschau-Projekt von GitHub getrennt** (`fb927de`): `aandd-photography-astro` (baute von `astro-umbau`)
   ist am 17.06. von GitHub getrennt → kein Auto-Build mehr, stillgelegt. CLAUDE.md + STATUS.md + FAHRPLAN.md
