@@ -636,7 +636,7 @@ export default function TripTimeline(props: Props) {
             natürlich nach oben unter die deckende Titelleiste (background + z4) — kein Sprung. */}
         <div className="tl-head" ref={headRef}>
           <div className="tl-meta" data-tina-field={tf(trip, 'meta')}>{bi(trip, 'meta', lang)}{trip.upcoming ? (lang === 'de' ? ' · bald ✦' : ' · soon ✦') : ''}</div>
-          <h2 data-tina-field={tinaField(trip, 'title')}>{tripTitle(trip, lang)}</h2>
+          <h1 data-tina-field={tinaField(trip, 'title')}>{tripTitle(trip, lang)}</h1>
         </div>
 
         <div className="tl-intro">
@@ -664,7 +664,7 @@ export default function TripTimeline(props: Props) {
                 <div className="tl-rail" aria-hidden="true"><span className="tl-dot" /></div>
                 <div className="tl-body">
                   <div className="tl-step">{stepWord}{i + 1}/{stops.length}{isMain ? '' : interWord}</div>
-                  <h3 className="tl-title" data-tina-field={rs ? tf(rs, 'title') : undefined}>{s.title}</h3>
+                  <h2 className="tl-title" data-tina-field={rs ? tf(rs, 'title') : undefined}>{s.title}</h2>
                   <div className="tl-date" data-tina-field={rs ? tf(rs, 'date') : undefined}>{s.date}</div>
 
                   {isMain && s.frame.src ? (

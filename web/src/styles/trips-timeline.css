@@ -67,7 +67,7 @@
 }
 .tl-head.is-scrolled::after { opacity: 1; }
 .tl-head .tl-meta { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 4px; }
-.tl-head h2 { font-family: var(--font-display); font-size: var(--fs-title-lg); font-weight: var(--fw-medium); line-height: 1.1; }
+.tl-head h1 { font-family: var(--font-display); font-size: var(--fs-title-lg); font-weight: var(--fw-medium); line-height: 1.1; }
 /* Nicht-klebender Block (Grid-Zeile 2) UNTER der sticky Titelleiste: Zusammenfassung (+ Album-Link).
    Scrollt beim Lesen natürlich nach oben unter die deckende Titelleiste und verschwindet. */
 .tl-intro { grid-column: 1; grid-row: 2; min-width: 0; }

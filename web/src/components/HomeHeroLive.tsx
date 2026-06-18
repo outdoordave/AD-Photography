@@ -91,7 +91,7 @@ export default function HomeHeroLive(props: Props) {
         <div className="hero-logo"><img src={logoSrc} alt="Wide & Wild" /></div>
       ) : null}
 
-      <p className="hero-tag" data-tina-field={tf(hero, 'headline')}>{headline}</p>
+      <h1 className="hero-tag" data-tina-field={tf(hero, 'headline')}>{headline}</h1>
 
       <div className="hero-cta">
         <a className="btn" href={`${prefix}/portfolio`} data-tina-field={tf(hero, 'cta_portfolio')}>{ctaP}</a>
