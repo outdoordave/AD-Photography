@@ -18,7 +18,7 @@ const cover = story.photo ? normalizePath(story.photo) : '';
 <a class="story-card" href={href}>
   {cover ? (
     <div class="ph has-photo ww-photo" style="--ph-c1:#8a9a7e; --ph-c2:#3a4a38;">
-      <img src={cover} alt="" loading="lazy" />
+      <img src={cover} alt={d.title} loading="lazy" />
     </div>
   ) : (
     <PhPlaceholder c1="#8a9a7e" c2="#3a4a38" imgKey="mountains" />

@@ -61,7 +61,7 @@ export default function AboutContent(props: Props) {
                     style={photo ? undefined : illusStyle}
                     data-tina-field={tinaField(person, 'photo')}
                   >
-                    {photo ? <img className="ww-person-img" src={photo} alt="" style={frame.style} /> : null}
+                    {photo ? <img className="ww-person-img" src={photo} alt={person.name || ''} style={frame.style} /> : null}
                   </div>
                   <div className="info">
                     <h3 data-tina-field={tinaField(person, 'name')}>{person.name}</h3>

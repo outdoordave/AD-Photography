@@ -103,7 +103,7 @@ export default function StoryReaderContent(props: Props) {
     <>
       <div className="reader-hero">
         {cover ? (
-          <img className="reader-cover-img" src={cover} alt="" data-tina-field={tinaField(story, 'cover')} />
+          <img className="reader-cover-img" src={cover} alt={d.title} data-tina-field={tinaField(story, 'cover')} />
         ) : (
           <div className="ph has-illus" data-ph="PLATZHALTER" data-tina-field={tinaField(story, 'cover')} style={phStyle} />
         )}

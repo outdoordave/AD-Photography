@@ -22,7 +22,7 @@ const base = isEn ? '/en/trips/' : '/trips/';
     return (
       <a class="trip-card" href={base + t.slug}>
         <div class="trip-card-cover ph ww-photo">
-          {cover ? <img src={cover} alt="" loading="lazy" /> : null}
+          {cover ? <img src={cover} alt={title} loading="lazy" /> : null}
           {d.upcoming ? <span class="trip-card-badge">{isEn ? 'soon ✦' : 'bald ✦'}</span> : null}
         </div>
         <div class="trip-card-body">

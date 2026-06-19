@@ -16,7 +16,7 @@ const { cards = [] } = Astro.props;
       return (
         <a class="latest-card" href={c.href}>
           <div class={`ph ww-photo${src ? '' : ' has-illus'}`} style={src ? undefined : illusStyle}>
-            {src ? <img src={src} alt="" loading="lazy" /> : null}
+            {src ? <img src={src} alt={c.title} loading="lazy" /> : null}
           </div>
           <div class="body">
             <div class="tag">{c.tag}</div>

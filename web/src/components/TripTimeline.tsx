@@ -669,7 +669,7 @@ export default function TripTimeline(props: Props) {
 
                   {isMain && s.frame.src ? (
                     <div className="tl-hero ph ww-photo" style={{ aspectRatio: 'var(--ar-media)' }} data-tina-field={rs ? tinaField(rs, 'photo') : undefined} onClick={() => openStopLightbox(s, 0)}>
-                      <img src={s.frame.src} alt="" style={s.frame.style} />
+                      <img src={s.frame.src} alt={s.title} style={s.frame.style} />
                     </div>
                   ) : null}
 
@@ -687,7 +687,7 @@ export default function TripTimeline(props: Props) {
 
                   {!isMain && s.frame.src ? (
                     <div className="tl-thumb ww-photo" data-tina-field={rs ? tinaField(rs, 'photo') : undefined} onClick={() => openStopLightbox(s, 0)}>
-                      <img src={s.frame.src} alt="" style={s.frame.style} />
+                      <img src={s.frame.src} alt={s.title} style={s.frame.style} />
                     </div>
                   ) : null}
 
