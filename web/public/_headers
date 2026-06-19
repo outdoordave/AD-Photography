@@ -1,13 +1,15 @@
 # Cloudflare Pages – HTTP-Header.
 
-# Sicherheits-Header fuer ALLE Seiten/Assets (Charge 1).
-# KEIN X-Frame-Options: Tina-Cloud rahmt das Visual-Editing cross-origin (app.tina.io)
-#   -> SAMEORIGIN wuerde die CMS-Vorschau (iPad) blocken. Clickjacking-Schutz kommt separat
-#   per CSP frame-ancestors mit verifizierter Tina-Domain (s. MAENGEL.md).
-# KEINE CSP hier (MapLibre/Umami/Inline-Skripte) -> separat geplant.
+# Sicherheits-Header fuer ALLE Seiten/Assets.
+# Clickjacking-Schutz per CSP frame-ancestors 'self': VERIFIZIERT, dass der Tina-Editor die
+#   Live-Seiten SAME-ORIGIN rahmt (Editor-iframe src="/gear" auf eigener Domain, NICHT app.tina.io)
+#   -> 'self' laesst die CMS-Vorschau zu UND blockt das Einbetten von Fremddomains. Ersetzt X-Frame-Options.
+# Bewusst NUR frame-ancestors (KEINE weiteren CSP-Direktiven wie default-src/script-src --
+#   die wuerden MapLibre/Umami/Inline-Skripte brechen; eigener Schritt, falls je gewuenscht).
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
+  Content-Security-Policy: frame-ancestors 'self'
 
 # Bilder lange cachen: Cloudflares Default fuer /uploads war "max-age=0, must-revalidate"
 # -> bei JEDEM Seitenaufruf neu validiert/geladen. Die Dateien sind dateinamenstreu
