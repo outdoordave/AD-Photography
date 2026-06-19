@@ -127,7 +127,7 @@ function buildPath(route: ReturnType<typeof buildRoute>): RoutePath {
 type LinkedAlbum = { slug: string; name: { de?: string; en?: string } };
 type Props = {
   query: string; variables: object; data: any; lang: Lang;
-  mapStyle?: string; scrollZoom?: boolean; initialSlug?: string;
+  mapStyle?: string; scrollZoom?: boolean; autoPopup?: boolean; initialSlug?: string;
   linkedAlbums?: Record<string, LinkedAlbum>;
   settingsQuery?: string; settingsVariables?: object; settingsData?: any;
   // Globale Tuning-Werte (Phase 3: aus reisen_settings). Defaults = eingefroren.
@@ -241,7 +241,7 @@ export default function TripTimeline(props: Props) {
     // (Station 1) und bei jedem Stationswechsel, da drawMarkers() in beiden Fällen läuft.
     // WICHTIG: über den Marker öffnen (togglePopup setzt die lnglat-Position) — popup.addTo(map)
     // allein hätte keine Position und würde NICHT am Stationspunkt erscheinen.
-    if (activeMarker) { const p = (activeMarker as maplibregl.Marker).getPopup(); if (p && !p.isOpen()) (activeMarker as maplibregl.Marker).togglePopup(); }
+    if (props.autoPopup !== false && activeMarker) { const p = (activeMarker as maplibregl.Marker).getPopup(); if (p && !p.isOpen()) (activeMarker as maplibregl.Marker).togglePopup(); }
   }
 
   function fitAll() {

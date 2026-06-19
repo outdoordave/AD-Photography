@@ -458,6 +458,10 @@ export default defineConfig({
             type: 'boolean', name: 'map_scroll_zoom', label: 'Karte: Mit Mausrad zoomen',
             description: 'AN (Standard): Mausrad über der Karte zoomt die Karte (am Handy: ein Finger bewegt die Karte). AUS: Mausrad scrollt die Seite (am Handy zwei Finger für die Karte) — wie auf der alten Live-Seite.',
           },
+          {
+            type: 'boolean', name: 'map_auto_popup', label: 'Karte: Info-Sprechblase automatisch zeigen',
+            description: 'AN (Standard): Beim Öffnen/Scrollen erscheint die Sprechblase (Stationsname + Datum) der aktiven Station automatisch. AUS: nur, wenn man den Kartenpunkt anklickt.',
+          },
           // --- Globale Timeline-Regler (gelten für ALLE Reisen, auch mobil). Leer = Standard. ---
           { type: 'number', name: 'spotlight_strength', label: 'Spotlight-Stärke (%)', description: 'Wie stark Stationen abseits des Lesefokus zurücktreten. Empfohlen: 70. Höher = klarer Spotlight, niedriger = ruhiger/gleichmäßiger. Bereich 0–90. Leer = 70.' },
           { type: 'number', name: 'dim_fade_ms', label: 'Übergang (ms)', description: 'Weiche Ein-/Ausblend-Dauer des Fokus. Leer = 800.' },

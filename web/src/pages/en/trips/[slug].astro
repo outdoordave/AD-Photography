@@ -23,6 +23,7 @@ const linkedAlbums = linkedAlbumsByTrip(albRes.data);
 const s = settings as any;
 const mapStyle = s.map_style || 'liberty';
 const mapScrollZoom = s.map_scroll_zoom !== false;
+const mapAutoPopup = s.map_auto_popup !== false;
 const spotlight = typeof s.spotlight_strength === 'number' ? s.spotlight_strength : 70;
 const dimMs = typeof s.dim_fade_ms === 'number' ? s.dim_fade_ms : 800;
 const revealMs = typeof s.reveal_ms === 'number' ? s.reveal_ms : 800;
@@ -53,6 +54,7 @@ const metaDesc = (trip.summary_en || trip.summary_de || `Travel journal “${ttl
         lang="en"
         mapStyle={mapStyle}
         scrollZoom={mapScrollZoom}
+        autoPopup={mapAutoPopup}
         initialSlug={slug}
         linkedAlbums={linkedAlbums}
         settingsQuery={setRes.query}
