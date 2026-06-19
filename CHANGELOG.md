@@ -17,6 +17,14 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-19 — CMS: Karten-Auto-Popup ein-/ausschaltbar (⚠️ Re-Index)
+- Neues zentrales Schalter-Feld **`reisen_settings.map_auto_popup`** (`1a1ef30`, Muster wie `map_scroll_zoom`):
+  CMS → „Reisen – Einstellungen" → **„Karte: Info-Sprechblase automatisch zeigen"** (Standard AN).
+  AUS = Popup nur bei Klick auf den Kartenpunkt.
+- `tina/config.ts` (Feld), `TripTimeline` (Prop `autoPopup` → Gate in `drawMarkers`), `trips/[slug].astro` + EN
+  (durchreichen), `trips-settings.json` (Default `true`), `tina-lock.json` neu erzeugt (idempotent geprüft).
+- **Schema-Änderung → Tina-Cloud-Re-Index nötig** (nach dem Push, von David).
+
 ## 2026-06-19 — Reisen-Karte: Auto-Popup + stabile Fahrzeug-Ausrichtung
 - **Auto-Popup** (`d3b8db9`): das (schon vorhandene) Marker-Popup „{Station} + {Datum}" erscheint jetzt
   automatisch für die aktive Station — beim Laden und bei jedem Stationswechsel, ohne Klick.
