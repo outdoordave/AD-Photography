@@ -221,6 +221,7 @@ export default function TripTimeline(props: Props) {
     if (!map || !readyRef.current) return;
     markersRef.current.forEach((m) => m.remove());
     markersRef.current = [];
+    let activePopup: maplibregl.Popup | null = null; // index-sicher: Stationen ohne Koordinaten werden übersprungen
     stops.forEach((s, idx) => {
       if (s.lat == null || s.lon == null) return;
       const sel = idx === activeRef.current;
@@ -234,7 +235,11 @@ export default function TripTimeline(props: Props) {
       const marker = new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat([s.lon, s.lat]).setPopup(popup).addTo(map);
       el.addEventListener('click', () => scrollToStop(idx));
       markersRef.current.push(marker);
+      if (sel) activePopup = popup;
     });
+    // Popup der AKTIVEN Station automatisch zeigen (ohne Klick) — Name + Datum. Greift beim Laden
+    // (Station 1) und bei jedem Stationswechsel, da drawMarkers() in beiden Fällen läuft.
+    if (activePopup && !(activePopup as maplibregl.Popup).isOpen()) (activePopup as maplibregl.Popup).addTo(map);
   }
 
   function fitAll() {
