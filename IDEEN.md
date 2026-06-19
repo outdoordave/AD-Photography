@@ -83,11 +83,16 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
 - **Warum besser:** apple-typische Rücksicht; nimmt nichts weg.
 - **Aufwand:** sehr niedrig · **Capability-Lock:** additiv.
 
-### W4 · Alt-Texte aus Bildunterschriften befüllen — (B, additiv)
-- **Status:** freigegeben (klein) · **Zugeordnet:** **beim jeweiligen Sektions-Bau mitnehmen**
-- **Was:** statt vieler `alt=""` die vorhandenen Captions als Alt-Text nutzen.
-- **Warum besser:** Zugänglichkeit + SEO, kostet im CMS quasi nichts.
-- **Aufwand:** niedrig · **Capability-Lock:** additiv.
+### W4 · Alt-Texte — Klasse 1 + Sammel-alt ✅ (Charge 2); pro-Bild-alt geparkt
+- **Status:** **Klasse 1** (Einzelbilder aus vorhandenem Titel/Namen) + **Klasse 3** (Sammel-alt
+  „Foto aus Album {X}" für Galerie/Lightbox/Momentaufnahmen/Stationen) **umgesetzt in Charge 2**
+  (Branch `charge2-alt-og`: `d2c9a83`, `f8a067d`). Hero (dekorativ) + Lightbox-Platzhalter bewusst `alt=""`.
+- **Offen — eigenes späteres Projekt: pro-Bild-`alt` für Bulk-Galerien.** Erfordert Umbau der
+  `type:'image', list:true`-Felder (Alben-`photos`, Highlights-`images`, Hero-`slideshow`, Stations-`photos`)
+  auf **Objekt-Listen `{image, alt}`** + Rework der Custom-Upload-Komponenten (`BulkPhotoField`, Auto-WebP)
+  + **Daten-Migration** bestehender String-Arrays + **eigener Tina-Re-Index**. Galerie/Lightbox sind
+  🔴-Capability-Lock → sorgfältige Abnahme nötig.
+- **Aufwand:** Klasse 1/3 niedrig (erledigt) · pro-Bild-alt **mittel–hoch** (Schema + Migration).
 
 ### W5 · Kontaktformular wirklich versenden — ✅ UMGESETZT (06.06.2026, Web3Forms)
 - **Status:** ✅ umgesetzt (Commit `671a742`). Kontaktbox sendet echt: POST an

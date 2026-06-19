@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-16** · Branch `main` · **Cutover vollzogen.**
+> **Stand: 2026-06-19** · Branch `main` · **Cutover vollzogen.** SEO/a11y: Charge 1 live, Charge 2 auf Branch.
 > Die Astro+TinaCMS-Version ist **live** auf `main`. Die alte Single-File-`index.html`
 > ist abgelöst. Diese Datei ist eine **Momentaufnahme** (wird bei jeder Session
 > überschrieben, nie angehängt). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
@@ -89,6 +89,17 @@
 - ~~Aufräumen: alte `index.html` & Pre-Cutover-Altlasten aus der Repo-Wurzel~~ — ✅ **erledigt** (`8ca1bee`):
   `index.html`, `admin/`, `build-indexes.js`, `content/`, Wurzel-`_headers`/`_redirects`, `prototype-astro/`,
   Wurzel-`package-lock.json` entfernt; `/uploads` unangetastet. Sicherung: Tag **`legacy-singlefile`** (= Stand `140eb59`).
+
+**SEO & Barrierefreiheit (Chargen, reine Template-Ebene):**
+- **Charge 1 — ✅ live** (PR #5): per-Seite `meta description` + Open Graph/Twitter + `canonical` + `hreflang` (BaseLayout);
+  **h1-Semantik** (Hero + Reise-Titel = `h1`, Stationen `h2`); Security-Header `nosniff` + `Referrer-Policy` (`web/public/_headers`).
+- **Charge 2 — ⏳ Branch `charge2-alt-og`** (wartet auf Preview-Test + Merge, **kein Re-Index**): `og:image` automatisch aus dem
+  Startseiten-Hero (`d72eae2`); **alt Klasse 1** aus vorhandenem Titel/Namen (`d2c9a83`); **Sammel-alt Klasse 3** für
+  Galerie/Lightbox/Momentaufnahmen/Stationen (`f8a067d`). Hero + Lightbox-Platzhalter bleiben bewusst `alt=""`.
+- **CSP `frame-ancestors 'self'`** — geplant als eigener Branch `csp-frame-ancestors` (Tina-Editor rahmt **same-origin**
+  verifiziert; ersetzt das in Charge 1 weggelassene `X-Frame-Options`). Siehe MAENGEL **S1**.
+- **alt pro-Bild für Bulk-Galerien (Klasse 2)** — bewusst **geparkt** (Objekt-Listen-Umbau + Custom-Upload-Rework +
+  Daten-Migration + eigener Re-Index) → IDEEN.md.
 
 ## 7. Wo nachschauen
 - **CHANGELOG.md** — chronologische Historie (nur ergänzen).

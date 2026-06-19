@@ -17,6 +17,32 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-19 11:51 — Charge 2: alt-Texte + Hero-als-OG (Branch charge2-alt-og)
+- Reine Template-Ebene, **kein Tina-Re-Index**. Auf Feature-Branch `charge2-alt-og`, wartet auf Davids Preview-Test + Merge.
+- **Hero-als-OG** (`d72eae2`): `og:image`/`twitter:image` kommen automatisch aus dem Startseiten-Hero
+  (`hero.image` → sonst erstes Slideshow-Bild → sonst Fallback IMG_5904; via `normalizePath` + `Astro.site`).
+  Pro-Seite-`ogImage`-Override entfällt. Eine Quelle, zieht mit dem Hero mit.
+- **alt Klasse 1** (`d2c9a83`): Einzelbilder (Story-/Reise-Cover, Personen-Foto, Stations-Hero, „Aktuell"-Karte)
+  bekommen `alt` aus vorhandenem Titel/Namen — kein neues Schema.
+- **alt Klasse 3 / Sammel-alt** (`f8a067d`): Galerie-/Lightbox-/Momentaufnahmen-/Stations-Bilder bekommen ein
+  kontextbezogenes Sammel-alt (DE/EN, „Foto aus Album {X}" o. ä.) via optionale `alt`/`photoAlt`-Props.
+  Sichtbare Lightbox-Caption unverändert (nur `alt`-Attribut). Hero + Lightbox-Platzhalter bleiben bewusst `alt=""`.
+- pro-Bild-`alt` für Bulk-Galerien (Objekt-Listen + Migration + Re-Index) bewusst **geparkt** → IDEEN.md W4.
+- betroffene Dateien: BaseLayout.astro + 9 Komponenten + STATUS.md/CHANGELOG.md/IDEEN.md. esbuild grün.
+- Commits: `d72eae2`, `d2c9a83`, `f8a067d` (+ Doku).
+
+## 2026-06-18 23:01 — Charge 1 LIVE: SEO-Head + h1-Semantik + Security-Header (PR #5)
+- `charge1-seo-head` → `main` gemergt (`6b76397`), live.
+- **SEO-Head** (BaseLayout): per-Seite `meta description`, Open Graph + Twitter Card, `canonical`, `hreflang`
+  de/en/x-default (nur indexierbare Seiten; DE/EN-Pendant pfadbasiert). Statische Seiten feste Description,
+  dynamische aus vorhandenen Feldern (summary/excerpt/note; Story = `og:type article`).
+- **h1-Semantik:** Hero-Headline `<p>`→`<h1>`, Reise-Titel `<h2>`→`<h1>` (+ Selektor `.tl-head h1`),
+  Stationen `<h3>`→`<h2>` — Optik 1:1 (universeller Reset + klassenbasierte Styles). Genau ein h1/Seite.
+- **Security-Header** (`web/public/_headers`, `/*`): `X-Content-Type-Options: nosniff`,
+  `Referrer-Policy: strict-origin-when-cross-origin`. `X-Frame-Options` bewusst weggelassen (Tina-iframe);
+  Clickjacking-Schutz folgt als CSP `frame-ancestors` (MAENGEL S1).
+- Commits: `1b1539c`, `bd25956`, `5de7495`, `340aea7` (Merge `6b76397`).
+
 ## 2026-06-18 20:30 — Cleanup: verwaiste /uploads-Bilddatei entfernt
 - **/uploads-Inventur** (`59e21d5`): read-only-Referenz-Check aller 18 Bilder → genau eines verwaist:
   `IMG_6001.jpg` (3,6 MB, Original ohne Referenz; genutzt wird `IMG_6001.webp`, 250 KB) → entfernt.
