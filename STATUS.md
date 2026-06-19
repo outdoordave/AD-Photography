@@ -93,9 +93,9 @@
 **SEO & Barrierefreiheit (Chargen, reine Template-Ebene):**
 - **Charge 1 — ✅ live** (PR #5): per-Seite `meta description` + Open Graph/Twitter + `canonical` + `hreflang` (BaseLayout);
   **h1-Semantik** (Hero + Reise-Titel = `h1`, Stationen `h2`); Security-Header `nosniff` + `Referrer-Policy` (`web/public/_headers`).
-- **Charge 2 — ⏳ Branch `charge2-alt-og`** (wartet auf Preview-Test + Merge, **kein Re-Index**): `og:image` automatisch aus dem
-  Startseiten-Hero (`d72eae2`); **alt Klasse 1** aus vorhandenem Titel/Namen (`d2c9a83`); **Sammel-alt Klasse 3** für
-  Galerie/Lightbox/Momentaufnahmen/Stationen (`f8a067d`). Hero + Lightbox-Platzhalter bleiben bewusst `alt=""`.
+- **Charge 2 — ✅ auf `main`** (auf Davids Wunsch ohne Preview-Umweg per Fast-Forward; **kein Re-Index**; geht mit dem nächsten Push live):
+  `og:image` automatisch aus dem Startseiten-Hero (`d72eae2`); **alt Klasse 1** aus vorhandenem Titel/Namen (`d2c9a83`);
+  **Sammel-alt Klasse 3** für Galerie/Lightbox/Momentaufnahmen/Stationen (`f8a067d`). Hero + Lightbox-Platzhalter bleiben bewusst `alt=""`.
 - **CSP `frame-ancestors 'self'`** — geplant als eigener Branch `csp-frame-ancestors` (Tina-Editor rahmt **same-origin**
   verifiziert; ersetzt das in Charge 1 weggelassene `X-Frame-Options`). Siehe MAENGEL **S1**.
 - **alt pro-Bild für Bulk-Galerien (Klasse 2)** — bewusst **geparkt** (Objekt-Listen-Umbau + Custom-Upload-Rework +

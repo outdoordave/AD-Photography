@@ -17,8 +17,9 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
-## 2026-06-19 11:51 — Charge 2: alt-Texte + Hero-als-OG (Branch charge2-alt-og)
-- Reine Template-Ebene, **kein Tina-Re-Index**. Auf Feature-Branch `charge2-alt-og`, wartet auf Davids Preview-Test + Merge.
+## 2026-06-19 11:51 — Charge 2: alt-Texte + Hero-als-OG (direkt auf main)
+- Reine Template-Ebene, **kein Tina-Re-Index**. Auf Davids Wunsch **ohne Preview-Umweg** per Fast-Forward direkt auf `main`
+  (Branch `charge2-alt-og` wieder gelöscht); Verifikation = Live-Build nach dem Push + kurzer Gegencheck Lightbox/Galerie.
 - **Hero-als-OG** (`d72eae2`): `og:image`/`twitter:image` kommen automatisch aus dem Startseiten-Hero
   (`hero.image` → sonst erstes Slideshow-Bild → sonst Fallback IMG_5904; via `normalizePath` + `Astro.site`).
   Pro-Seite-`ogImage`-Override entfällt. Eine Quelle, zieht mit dem Hero mit.
