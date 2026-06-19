@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-19 — Fix: Reise-Timeline startet wieder bei Station 1
+- Regression (live aufgefallen): bei einer Reise mit kurzem Zwischenstopp als Station 2
+  (z. B. „FRA - Airport") sprang die Timeline beim Öffnen sofort von Station 1 auf 2.
+- Ursache: die höhenadaptive Aktivierung (Punkt 2, `53c3f71`) zog den `lead` kurzer Stationen
+  zu weit nach oben. **Nicht** durch Charge 1/2 verursacht (die berühren die Scroll-Spy nicht).
+- Fix (`0c29b98`): `lead` je Station auf den Abstand zur vorigen Station gedeckelt
+  (`min(lead, blocks[i].top - blocks[i-1].top)`) → Aktivierungspunkt bleibt ≥ Oberkante der
+  vorigen Station; beim Laden (Anker über Station 1) kann keine spätere Station aktiv werden.
+  Getunte Früh-Umschaltung beim Scrollen bleibt. `TripTimeline.tsx`, esbuild grün.
+
 ## 2026-06-19 12:30 — Security: CSP frame-ancestors 'self' (direkt auf main)
 - `web/public/_headers` `/*`: `Content-Security-Policy: frame-ancestors 'self'` ergänzt (`f608a11`).
 - Clickjacking-Schutz; ersetzt das in Charge 1 weggelassene `X-Frame-Options`. **Verifiziert same-origin**:
