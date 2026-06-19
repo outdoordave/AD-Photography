@@ -17,6 +17,13 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-19 12:30 — Security: CSP frame-ancestors 'self' (direkt auf main)
+- `web/public/_headers` `/*`: `Content-Security-Policy: frame-ancestors 'self'` ergänzt (`f608a11`).
+- Clickjacking-Schutz; ersetzt das in Charge 1 weggelassene `X-Frame-Options`. **Verifiziert same-origin**:
+  der Tina-Editor rahmt die Seiten per iframe `src="/gear"` (eigene Domain, nicht `app.tina.io`) → `'self'`
+  lässt die CMS-Vorschau zu und blockt Fremd-Einbettung. BEWUSST nur `frame-ancestors` (keine weitere CSP).
+- nosniff/Referrer-Policy + /uploads-Caching unverändert. MAENGEL **S1** erledigt.
+
 ## 2026-06-19 11:51 — Charge 2: alt-Texte + Hero-als-OG (direkt auf main)
 - Reine Template-Ebene, **kein Tina-Re-Index**. Auf Davids Wunsch **ohne Preview-Umweg** per Fast-Forward direkt auf `main`
   (Branch `charge2-alt-og` wieder gelöscht); Verifikation = Live-Build nach dem Push + kurzer Gegencheck Lightbox/Galerie.

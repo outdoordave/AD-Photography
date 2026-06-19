@@ -168,16 +168,13 @@
 
 ## 🟡 Sicherheit — Nachträge nach Charge 1
 
-- [ ] **S1 · Clickjacking-Schutz (CSP `frame-ancestors`)** — folgt nach Charge 1.
-  - *Kontext:* In Charge 1 (`web/public/_headers`) wurden `X-Content-Type-Options: nosniff` und
-    `Referrer-Policy: strict-origin-when-cross-origin` gesetzt. **`X-Frame-Options: SAMEORIGIN` wurde
-    bewusst weggelassen**, weil Tina-Cloud das Visual-Editing **cross-origin** (vermutlich `app.tina.io`)
-    in einen iframe rahmt → SAMEORIGIN würde die CMS-Vorschau (u. a. am iPad) blocken.
-  - *Fix (eigener kleiner Schritt):* Clickjacking-Schutz per **CSP `frame-ancestors`** mit **verifizierter**
-    Tina-Editing-Domain. **Zuerst** die exakte Rahmer-Domain im `/admin`-Netzwerkverkehr bestätigen,
-    **dann** `Content-Security-Policy: frame-ancestors 'self' https://<verifizierte-tina-domain>;` setzen.
-    CSP nur mit diesem einen Direktiv beginnen (kein `default-src`/`script-src`, sonst Risiko für
-    MapLibre/Umami/Inline-Skripte — das ist die separate CSP-Planung).
+- [x] **S1 · Clickjacking-Schutz (CSP `frame-ancestors`)** — ✅ **erledigt** (`f608a11`, direkt auf `main`).
+  - *Verifikation:* Der Tina-Editor rahmt die Live-Seiten **same-origin** (Editor-iframe `src="/gear"` auf
+    eigener Domain, **nicht** `app.tina.io`) — die frühere cross-origin-Annahme war falsch.
+  - *Umsetzung:* `web/public/_headers` `/*` → `Content-Security-Policy: frame-ancestors 'self'`.
+    `'self'` lässt die CMS-Vorschau zu und blockt Fremd-Einbettung; ersetzt das weggelassene X-Frame-Options.
+    BEWUSST nur `frame-ancestors` (kein `default-src`/`script-src` — würde MapLibre/Umami/Inline-Skripte brechen;
+    eigener Schritt, falls je gewünscht). nosniff/Referrer-Policy + /uploads-Caching unverändert.
   - *Blocker:* **Nein.**
 
 ---
