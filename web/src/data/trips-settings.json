@@ -7,7 +7,7 @@
   "intro_en": "Thousands of miles, countless stops. Tap a station to see what we got up to there.",
   "map_style": "bright",
   "map_scroll_zoom": true,
-  "map_auto_popup": true,
+  "map_auto_popup": false,
   "design": "luftig",
   "designs": {
     "none": {
