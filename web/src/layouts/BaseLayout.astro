@@ -14,6 +14,7 @@ import SiteFooter from '../components/SiteFooter.astro';
 import SiteAdminBar from '../components/SiteAdminBar.astro';
 import appearance from '../data/appearance-settings.json';
 import home from '../data/home-settings.json';
+import { normalizePath } from '../lib/stories';
 import statistik from '../data/statistik.json';
 interface Props {
   title?: string;
@@ -22,11 +23,9 @@ interface Props {
   preloadImage?: string; // LCP-Bild (z. B. Hero) vorab laden -> startet den Fetch beim HTML-Parsen
   description?: string;            // Meta-Description; Default = Marken-Satz (sprachabhängig)
   ogType?: 'website' | 'article';  // 'article' für Story-Detailseiten, sonst 'website'
-  ogImage?: string;                // Share-Bild (wird absolut aufgelöst). PLATZHALTER: Hero-Bild;
-                                   // pro Seite überschreibbar; CMS-Feld folgt in Charge 2 (dann 1200×630-jpg).
 }
 const { title = 'Wide & Wild', lang = 'de', noindex = false, preloadImage,
-        description, ogType = 'website', ogImage = '/uploads/IMG_5904.webp' } = Astro.props;
+        description, ogType = 'website' } = Astro.props;
 // VORSCHAU-noindex (env-gesteuert, NICHT statisch): greift nur, wenn die Build-Env-Var
 // PUBLIC_PREVIEW_NOINDEX === 'true' gesetzt ist. Diese Var wird AUSSCHLIESSLICH im
 // Vorschau-Cloudflare-Projekt gesetzt -> die spaetere Live-Seite (anderes Projekt / Var
@@ -67,7 +66,13 @@ const abs = (p: string) => (site ? new URL(p, site).href : p);
 const canonicalURL = abs(selfPath);
 const deAltURL = abs(dePath);
 const enAltURL = abs(enPath);
-const ogImageURL = abs(ogImage);
+// OG-/Twitter-Bild = Startseiten-Hero (EINE Quelle, zieht automatisch mit): Einzelbild,
+// sonst erstes Diashow-Bild, sonst Fallback IMG_5904. Gleiche normalizePath-Logik wie im <img>.
+const heroData = (hm.hero || {}) as any;
+const heroFirstSlide = (Array.isArray(heroData.slideshow) && heroData.slideshow[0])
+  ? (typeof heroData.slideshow[0] === 'string' ? heroData.slideshow[0] : heroData.slideshow[0]?.img)
+  : '';
+const ogImageURL = abs(normalizePath(heroData.image || heroFirstSlide || '/uploads/IMG_5904.webp'));
 const ogLocale = lang === 'en' ? 'en_US' : 'de_DE';
 // canonical/hreflang nur auf indexierbaren Seiten (nicht 404/Statistik/Vorschau).
 const indexable = !(noindex || previewNoindex);
@@ -85,7 +90,7 @@ const indexable = !(noindex || previewNoindex);
     {indexable && <link rel="alternate" hreflang="de" href={deAltURL} />}
     {indexable && <link rel="alternate" hreflang="en" href={enAltURL} />}
     {indexable && <link rel="alternate" hreflang="x-default" href={deAltURL} />}
-    {/* Open Graph / Twitter — og:image ist vorerst das Hero-Bild (PLATZHALTER); CMS-Feld folgt Charge 2 */}
+    {/* Open Graph / Twitter — og:image = Startseiten-Hero (automatisch, eine Quelle, kein eigenes Feld) */}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={metaDescription} />
     <meta property="og:type" content={ogType} />
