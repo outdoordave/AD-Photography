@@ -351,7 +351,11 @@ export default function TripTimeline(props: Props) {
     // Symbol am Stop nach der ANKUNFTSART richten (legFlight[idx]) statt hart auf Auto -> kein
     // Flieger->Auto->Flieger-Geflacker bei aufeinanderfolgenden Flügen (z. B. Dresden->FRA->SF).
     const flight = !!routeRef.current.legFlight[idx];
-    if (c) placeVehicle(c[0], c[1], flight, 0, 1);
+    // Ausrichtung im Ruhezustand nach der ANKUNFTSrichtung (Längengrad-Delta des letzten Legs),
+    // nicht hart „rechts" -> kein Flip beim nächsten Abfahren in dieselbe Richtung.
+    const prev = routeRef.current.coords[idx - 1];
+    const dxArr = (prev && c) ? c[0] - prev[0] : 1;
+    if (c) placeVehicle(c[0], c[1], flight, 0, dxArr);
     drawDoneUpTo(pathRef.current.stopDist[idx] ?? 0);
   }
 
@@ -396,13 +400,16 @@ export default function TripTimeline(props: Props) {
     const easeCubic = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
     const easeSine = (x: number) => -(Math.cos(Math.PI * x) - 1) / 2; // gemächlich rein/raus
     const ease = isFlightAnim ? easeSine : easeCubic;
+    // Auto-Spiegelung an der GESAMTrichtung der Etappe festmachen (Längengrad-Netto über den
+    // ganzen animierten Pfad) statt am zittrigen Mini-Segment -> kein Links/Rechts-Flackern.
+    const carDx = flat[flat.length - 1].p[0] - flat[0].p[0];
     const stepFn = (now: number) => {
       const u = Math.max(0, Math.min(1, (now - t0) / dur)); const want = ease(u) * total;
       let acc = 0, j = 1;
       while (j < flat.length && acc + segLen[j - 1] < want) { acc += segLen[j - 1]; j++; }
       j = Math.min(j, flat.length - 1);
       const a = flat[j - 1].p, b = flat[j].p; const sl = segLen[j - 1] || 1; const f = (want - acc) / sl;
-      placeVehicle(a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, flat[j].flight, bearingDeg(a, b), b[0] - a[0]);
+      placeVehicle(a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, flat[j].flight, bearingDeg(a, b), carDx);
       drawDoneUpTo(baseDist + dir * want); // Linie wächst/schrumpft synchron mit dem Fahrzeug
       if (u < 1) animRef.current = requestAnimationFrame(stepFn);
       else { animRef.current = null; vehicleAtRef.current = target; placeVehicleAtStop(target); }
