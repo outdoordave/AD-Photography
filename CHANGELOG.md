@@ -21,6 +21,8 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 - **Auto-Popup** (`d3b8db9`): das (schon vorhandene) Marker-Popup „{Station} + {Datum}" erscheint jetzt
   automatisch für die aktive Station — beim Laden und bei jedem Stationswechsel, ohne Klick.
   Umsetzung in `drawMarkers()` (index-sicher, da Stationen ohne Koordinaten übersprungen werden).
+  - **Nachtrag (`145bbd6`):** Popup erschien zunächst nicht — `popup.addTo(map)` öffnet ohne Position.
+    Korrektur: über den aktiven Marker `togglePopup()` öffnen (setzt lnglat) + `closeOnClick:false`.
 - **Fahrzeug-Flackern behoben** (`1e7d4d5`): das Auto sprang beim Losfahren kurz links/rechts. Ursache:
   Spiegelung (`scaleX`) hing am zittrigen Mini-Segment + Ruhezustand hart „rechts". Jetzt an der
   Gesamtrichtung der Etappe (Netto-Längengrad) bzw. Ankunftsrichtung. Flugzeug-Rotation unverändert.
