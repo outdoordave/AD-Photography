@@ -26,6 +26,10 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   (`min(lead, blocks[i].top - blocks[i-1].top)`) → Aktivierungspunkt bleibt ≥ Oberkante der
   vorigen Station; beim Laden (Anker über Station 1) kann keine spätere Station aktiv werden.
   Getunte Früh-Umschaltung beim Scrollen bleibt. `TripTimeline.tsx`, esbuild grün.
+  - **Nachtrag (`1b8e648`):** erster Deckel (Oberkante der vorigen Station) griff bei großer
+    Viewport-Höhe nicht (Konsolen-Diagnose: `lead` < Abstand → wirkungslos; St2 trotzdem beim Laden aktiv).
+    Korrektur: Deckel auf die **Unterkante** der vorigen Station (`blocks[i].top - blocks[i-1].bottom`)
+    → eine Station wird erst aktiv, wenn die vorige den Anker passiert hat. Nachweis vh~1050: St2 466 > Anker 344.
 
 ## 2026-06-19 12:30 — Security: CSP frame-ancestors 'self' (direkt auf main)
 - `web/public/_headers` `/*`: `Content-Security-Policy: frame-ancestors 'self'` ergänzt (`f608a11`).
