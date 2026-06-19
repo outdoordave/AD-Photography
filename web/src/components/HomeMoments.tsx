@@ -18,7 +18,7 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-export default function HomeMoments({ moments }: Props) {
+export default function HomeMoments({ moments, lang }: Props) {
   const [shown, setShown] = React.useState<Moment[]>(() => moments.slice(0, 6));
   const [lb, setLb] = React.useState<{ photos: LbPhoto[]; start: number } | null>(null);
   React.useEffect(() => {
@@ -31,12 +31,12 @@ export default function HomeMoments({ moments }: Props) {
       <div className="random-box">
         {shown.map((m, i) => (
           <div className="item" key={i} onClick={() => setLb({ photos, start: i })}>
-            <MediaBox ph={{ image: m.image, c1: m.c1, c2: m.c2, img: m.img, idx: i }} />
+            <MediaBox ph={{ image: m.image, c1: m.c1, c2: m.c2, img: m.img, idx: i }} alt={m.album ? (lang === 'en' ? `Photo from album ${m.album}` : `Foto aus Album ${m.album}`) : ''} />
             <div className="label"><div className="ttl">{m.album}</div></div>
           </div>
         ))}
       </div>
-      {lb && <Lightbox photos={lb.photos} startIndex={lb.start} loop onClose={() => setLb(null)} />}
+      {lb && <Lightbox photos={lb.photos} startIndex={lb.start} photoAlt={lang === 'en' ? 'Photo from our albums' : 'Foto aus unseren Alben'} loop onClose={() => setLb(null)} />}
     </>
   );
 }

@@ -55,6 +55,7 @@ export default function StoryReaderContent(props: Props) {
       name={albumName}
       photos={albumPhotos}
       href={albumHref}
+      photoAlt={props.lang === 'en' ? `Photo from album ${albumName}` : `Foto aus Album ${albumName}`}
       linkLabel={props.lang === 'en' ? 'View full album →' : 'Ganzes Album ansehen →'}
       kicker={props.lang === 'en' ? 'Photo gallery' : 'Bildergalerie'}
     />

@@ -19,7 +19,7 @@ type Props = { query: string; variables: object; data: any; lang: Lang; modes?: 
 export type LbState = { photos: LbPhoto[]; start: number; album: string } | null;
 
 // ---- Platzhalter-Medienbox: Palette/Illustration + echtes Bild (wie wwMediaBox) ----
-export function MediaBox({ ph }: { ph: ViewPhoto }) {
+export function MediaBox({ ph, alt = '' }: { ph: ViewPhoto; alt?: string }) {
   const src = ph.image ? normalizePath(ph.image) : '';
   const style = {
     ['--ph-c1' as any]: ph.c1,
@@ -28,16 +28,16 @@ export function MediaBox({ ph }: { ph: ViewPhoto }) {
   } as React.CSSProperties;
   return (
     <div className={`ph ww-photo${src ? '' : ' has-illus'}`} style={src ? undefined : style}>
-      {src ? <img src={src} alt="" loading="lazy" /> : null}
+      {src ? <img src={src} alt={alt} loading="lazy" /> : null}
     </div>
   );
 }
 
 // ---- Eine Galerie-Kachel (Foto eines Albums) + Hover-Albumname ----
-export function Tile({ albName, ph, onOpen }: { albName: string; ph: ViewPhoto; onOpen: () => void }) {
+export function Tile({ albName, ph, onOpen, alt = '' }: { albName: string; ph: ViewPhoto; onOpen: () => void; alt?: string }) {
   return (
     <div className="item" onClick={onOpen}>
-      <MediaBox ph={ph} />
+      <MediaBox ph={ph} alt={alt} />
       <div className="tile-hover">{albName}</div>
     </div>
   );
@@ -227,6 +227,7 @@ export default function GalleryContent(props: Props) {
                 key={it.alb.slug + ':' + it.ph.idx + ':' + k}
                 albName={albName(it.alb)}
                 ph={it.ph}
+                alt={lang === 'en' ? `Photo from album ${albName(it.alb)}` : `Foto aus Album ${albName(it.alb)}`}
                 onOpen={() => openAlbumLightbox(it.photos, it.photos.indexOf(it.ph), albName(it.alb))}
               />
             ))}
@@ -239,6 +240,7 @@ export default function GalleryContent(props: Props) {
           photos={lb.photos}
           startIndex={lb.start}
           albumName={lb.album}
+          photoAlt={lb.album ? (lang === 'en' ? `Photo from album ${lb.album}` : `Foto aus Album ${lb.album}`) : ''}
           loop
           onClose={() => setLb(null)}
         />

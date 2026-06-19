@@ -14,11 +14,12 @@ type Props = {
   photos: LbPhoto[];
   startIndex: number;
   albumName?: string;
+  photoAlt?: string; // Sammel-alt fuer die Bilder (NUR alt-Attribut; aendert die sichtbare Caption NICHT)
   loop?: boolean; // Default true (entspricht gallery_loop Default an)
   onClose: () => void;
 };
 
-export default function Lightbox({ photos, startIndex, albumName = '', loop = true, onClose }: Props) {
+export default function Lightbox({ photos, startIndex, albumName = '', photoAlt = '', loop = true, onClose }: Props) {
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   const trackRef = React.useRef<HTMLDivElement | null>(null);
   const stripRef = React.useRef<HTMLDivElement | null>(null);
@@ -227,7 +228,7 @@ export default function Lightbox({ photos, startIndex, albumName = '', loop = tr
         <div className="lb-track" ref={trackRef}>
           {photos.map((p, i) => (
             <div className="lb-slide" data-idx={i} key={i}>
-              <img src={normalizePath(p.photo)} alt="" loading="lazy" />
+              <img src={normalizePath(p.photo)} alt={p.caption || photoAlt} loading="lazy" />
             </div>
           ))}
         </div>

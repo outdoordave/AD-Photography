@@ -680,7 +680,7 @@ export default function TripTimeline(props: Props) {
                   {isMain && s.photos.length ? (
                     <div className="tl-strip">
                       {s.photos.map((p, pi) => (
-                        <img key={pi} src={normalizePath(p)} alt="" loading="lazy" onClick={() => openStopLightbox(s, (s.photoFull ? 1 : 0) + pi)} />
+                        <img key={pi} src={normalizePath(p)} alt={lang === 'en' ? `Photo: ${s.title}` : `Foto: ${s.title}`} loading="lazy" onClick={() => openStopLightbox(s, (s.photoFull ? 1 : 0) + pi)} />
                       ))}
                     </div>
                   ) : null}
@@ -744,7 +744,7 @@ export default function TripTimeline(props: Props) {
         </div>
       ) : null}
 
-      {lb && <Lightbox photos={lb.photos} startIndex={lb.start} loop onClose={() => setLb(null)} />}
+      {lb && <Lightbox photos={lb.photos} startIndex={lb.start} photoAlt={lang === 'en' ? `Photo from trip ${tripTitle(trip, lang)}` : `Foto aus der Reise ${tripTitle(trip, lang)}`} loop onClose={() => setLb(null)} />}
     </div>
   );
 }

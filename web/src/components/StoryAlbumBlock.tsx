@@ -13,9 +13,10 @@ type Props = {
   loop?: boolean;
   linkLabel?: string;
   kicker?: string;
+  photoAlt?: string; // Sammel-alt fuer die Galerie-Bilder (vom Aufrufer sprachrichtig gebaut)
 };
 
-export default function StoryAlbumBlock({ name, photos, href, loop = true, linkLabel = 'Ganzes Album ansehen →', kicker = 'Bildergalerie' }: Props) {
+export default function StoryAlbumBlock({ name, photos, href, loop = true, linkLabel = 'Ganzes Album ansehen →', kicker = 'Bildergalerie', photoAlt = '' }: Props) {
   const [open, setOpen] = React.useState(false);
   const [start, setStart] = React.useState(0);
 
@@ -42,13 +43,13 @@ export default function StoryAlbumBlock({ name, photos, href, loop = true, linkL
             onClick={() => { setStart(i); setOpen(true); }}
             aria-label={`Bild ${i + 1} von ${list.length} öffnen`}
           >
-            <img src={normalizePath(p)} alt="" loading="lazy" />
+            <img src={normalizePath(p)} alt={photoAlt} loading="lazy" />
             {i === tiles.length - 1 && more > 0 ? <span className="sae-more">+{more}</span> : null}
           </button>
         ))}
       </div>
       {open ? (
-        <Lightbox photos={lbPhotos} startIndex={start} albumName={name} loop={loop} onClose={() => setOpen(false)} />
+        <Lightbox photos={lbPhotos} startIndex={start} albumName={name} photoAlt={photoAlt} loop={loop} onClose={() => setOpen(false)} />
       ) : null}
     </div>
   );
