@@ -4,7 +4,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import StoryReaderContent from '../../components/StoryReaderContent.tsx';
 import { client } from '../../../tina/__generated__/client';
-import { buildStory } from '../../lib/stories';
+import { buildStory, normalizePath } from '../../lib/stories';
 import appearance from '../../data/appearance-settings.json';
 
 export async function getStaticPaths() {
@@ -36,8 +36,25 @@ const story = buildStory(res.data.story as any);
 const title = story.de.title;
 // Meta-Description aus dem Story-Anriss (excerpt), Fallback templatisiert. Story = og:type article.
 const metaDesc = (story.de.excerpt || `„${title}“ — eine Reisegeschichte von Wide & Wild.`).replace(/\s+/g, ' ').trim().slice(0, 200);
+// JSON-LD Article — nur real existierende Felder (Titel, excerpt, Datum, Cover). author/publisher
+// = Organization „Wide & Wild" (per @id, global im BaseLayout definiert). Kein Tina-Re-Index.
+const site = Astro.site;
+const abs = (p: string) => (site ? new URL(p, site).href : p);
+const canonical = abs(`/stories/${slug}/`);
+const orgRef = { '@id': abs('/') + '#org' };
+const articleLd: Record<string, any> = {
+  '@type': 'Article',
+  headline: title,
+  ...(story.de.excerpt ? { description: metaDesc } : {}),
+  ...(story.date ? { datePublished: story.date } : {}),
+  ...(story.photo ? { image: abs(normalizePath(story.photo)) } : {}),
+  inLanguage: 'de',
+  mainEntityOfPage: canonical,
+  author: orgRef,
+  publisher: orgRef,
+};
 ---
-<BaseLayout title={`${title} — Wide & Wild`} lang="de" description={metaDesc} ogType="article">
+<BaseLayout title={`${title} — Wide & Wild`} lang="de" description={metaDesc} ogType="article" jsonld={articleLd}>
   <div id="page-story">
     <StoryReaderContent
       client:load

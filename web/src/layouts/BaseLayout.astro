@@ -16,6 +16,7 @@ import appearance from '../data/appearance-settings.json';
 import home from '../data/home-settings.json';
 import { normalizePath } from '../lib/stories';
 import statistik from '../data/statistik.json';
+import contact from '../data/contact.json';
 interface Props {
   title?: string;
   lang?: 'de' | 'en';
@@ -23,9 +24,10 @@ interface Props {
   preloadImage?: string; // LCP-Bild (z. B. Hero) vorab laden -> startet den Fetch beim HTML-Parsen
   description?: string;            // Meta-Description; Default = Marken-Satz (sprachabhängig)
   ogType?: 'website' | 'article';  // 'article' für Story-Detailseiten, sonst 'website'
+  jsonld?: Record<string, any> | Record<string, any>[]; // zusätzliche JSON-LD-Knoten (z. B. Article)
 }
 const { title = 'Wide & Wild', lang = 'de', noindex = false, preloadImage,
-        description, ogType = 'website' } = Astro.props;
+        description, ogType = 'website', jsonld } = Astro.props;
 // VORSCHAU-noindex (env-gesteuert, NICHT statisch): greift nur, wenn die Build-Env-Var
 // PUBLIC_PREVIEW_NOINDEX === 'true' gesetzt ist. Diese Var wird AUSSCHLIESSLICH im
 // Vorschau-Cloudflare-Projekt gesetzt -> die spaetere Live-Seite (anderes Projekt / Var
@@ -76,6 +78,29 @@ const ogImageURL = abs(normalizePath(heroData.image || heroFirstSlide || '/uploa
 const ogLocale = lang === 'en' ? 'en_US' : 'de_DE';
 // canonical/hreflang nur auf indexierbaren Seiten (nicht 404/Statistik/Vorschau).
 const indexable = !(noindex || previewNoindex);
+
+// --- JSON-LD (strukturierte Daten, reine Template-Ebene, kein Tina-Re-Index) ---
+// Global: WebSite + Organization „Wide & Wild". Nur real existierende Felder.
+// sameAs = Instagram-Profile aus contact.json; logo aus appearance-settings.
+const orgId = abs('/') + '#org';
+const websiteId = abs('/') + '#website';
+const instagramUrls = (((contact as any).channels) || [])
+  .filter((c: any) => c && c.type === 'instagram' && c.url)
+  .map((c: any) => String(c.url));
+const logoURL = logo ? abs(normalizePath(logo)) : '';
+const orgNode: Record<string, any> = {
+  '@type': 'Organization', '@id': orgId, name: 'Wide & Wild', url: abs('/'),
+  ...(logoURL ? { logo: logoURL } : {}),
+  ...(instagramUrls.length ? { sameAs: instagramUrls } : {}),
+};
+const websiteNode: Record<string, any> = {
+  '@type': 'WebSite', '@id': websiteId, name: 'Wide & Wild', url: abs('/'),
+  inLanguage: lang === 'en' ? 'en' : 'de', publisher: { '@id': orgId },
+};
+const extraLd = jsonld ? (Array.isArray(jsonld) ? jsonld : [jsonld]) : [];
+const jsonLdGraph = [websiteNode, orgNode, ...extraLd];
+// </script> in Inhalten neutralisieren, damit das Skript nicht vorzeitig schließt.
+const jsonLdString = JSON.stringify({ '@context': 'https://schema.org', '@graph': jsonLdGraph }).replace(/</g, '\\u003c');
 ---
 <!doctype html>
 <html lang={lang}>
@@ -102,6 +127,8 @@ const indexable = !(noindex || previewNoindex);
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={metaDescription} />
     <meta name="twitter:image" content={ogImageURL} />
+    {/* Strukturierte Daten (JSON-LD): WebSite + Organization global, ggf. Article je Seite */}
+    <script type="application/ld+json" set:html={jsonLdString} />
     {analyticsSnippet && <Fragment set:html={analyticsSnippet} />}
     {/* Fonts werden LOKAL via Fontsource gebündelt (Imports im Frontmatter) — KEINE
         Google-Fonts-Links mehr (DSGVO: keine Besucher-IP an Google). */}
