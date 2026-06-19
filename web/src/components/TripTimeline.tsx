@@ -221,7 +221,7 @@ export default function TripTimeline(props: Props) {
     if (!map || !readyRef.current) return;
     markersRef.current.forEach((m) => m.remove());
     markersRef.current = [];
-    let activePopup: maplibregl.Popup | null = null; // index-sicher: Stationen ohne Koordinaten werden übersprungen
+    let activeMarker: maplibregl.Marker | null = null; // index-sicher: Stationen ohne Koordinaten werden übersprungen
     stops.forEach((s, idx) => {
       if (s.lat == null || s.lon == null) return;
       const sel = idx === activeRef.current;
@@ -231,15 +231,17 @@ export default function TripTimeline(props: Props) {
       const dot = document.createElement('div');
       dot.style.cssText = 'width:' + size + 'px;height:' + size + 'px;background:' + (sel ? '#f0c9a8' : '#a7672f') + ';border:2.5px solid ' + (sel ? '#a7672f' : '#f4ede1') + ';border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.45);transition:width .2s,height .2s';
       el.appendChild(dot);
-      const popup = new maplibregl.Popup({ offset: 14, closeButton: false }).setHTML('<p class="ww-popup-name">' + (s.title || s.name) + '</p>' + (s.date ? '<p class="ww-popup-date">' + s.date + '</p>' : ''));
+      const popup = new maplibregl.Popup({ offset: 14, closeButton: false, closeOnClick: false }).setHTML('<p class="ww-popup-name">' + (s.title || s.name) + '</p>' + (s.date ? '<p class="ww-popup-date">' + s.date + '</p>' : ''));
       const marker = new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat([s.lon, s.lat]).setPopup(popup).addTo(map);
       el.addEventListener('click', () => scrollToStop(idx));
       markersRef.current.push(marker);
-      if (sel) activePopup = popup;
+      if (sel) activeMarker = marker;
     });
     // Popup der AKTIVEN Station automatisch zeigen (ohne Klick) — Name + Datum. Greift beim Laden
     // (Station 1) und bei jedem Stationswechsel, da drawMarkers() in beiden Fällen läuft.
-    if (activePopup && !(activePopup as maplibregl.Popup).isOpen()) (activePopup as maplibregl.Popup).addTo(map);
+    // WICHTIG: über den Marker öffnen (togglePopup setzt die lnglat-Position) — popup.addTo(map)
+    // allein hätte keine Position und würde NICHT am Stationspunkt erscheinen.
+    if (activeMarker) { const p = (activeMarker as maplibregl.Marker).getPopup(); if (p && !p.isOpen()) (activeMarker as maplibregl.Marker).togglePopup(); }
   }
 
   function fitAll() {
