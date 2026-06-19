@@ -468,10 +468,11 @@ export default function TripTimeline(props: Props) {
     for (let i = 0; i < blocks.length; i++) {
       const h = blocks[i].bottom - blocks[i].top;
       let lead = Math.max(0, READ - h) * LEAD_FACTOR;
-      // Den Lead NIE über die Oberkante der vorigen Station hinausziehen: der Aktivierungspunkt
-      // bleibt dadurch >= blocks[i-1].top. Sonst werden kurze Stationen (z. B. ein Zwischenstopp
-      // ganz oben) schon beim Laden aktiv, obwohl der Anker noch über Station 1 steht.
-      if (i > 0) lead = Math.min(lead, blocks[i].top - blocks[i - 1].top);
+      // Lead so deckeln, dass der Aktivierungspunkt (top - lead) NIE über die UNTERKANTE der vorigen
+      // Station steigt -> eine Station wird erst aktiv, wenn die vorige den Anker passiert hat. Sonst
+      // schalten kurze Stationen bei grosser Viewport-Hoehe (grosser lead) schon beim Laden zu frueh um
+      // (Bug: Reise oeffnet direkt auf Station 2). Getunte Frueh-Umschaltung bleibt, nur gedeckelt.
+      if (i > 0) lead = Math.min(lead, blocks[i].top - blocks[i - 1].bottom);
       if (blocks[i].top - lead <= anchorDoc + 1) best = i; else break;
     }
     if (best !== activeRef.current) {
