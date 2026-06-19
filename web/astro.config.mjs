@@ -29,7 +29,9 @@ export default defineConfig({
     // DE-Seiten aber keinen Praefix, was den Build crasht. hreflang-Alternates entfallen
     // daher bewusst; alle Seiten sind trotzdem vollstaendig in der Sitemap enthalten.
     // /proto/* sind interne Vorschauen (noindex) -> nicht in die Sitemap aufnehmen.
-    sitemap({ filter: (page) => !page.includes('/proto/') }),
+    // /statistik (DE + EN) ist noindex (versteckte Auswerte-Seite) -> ebenfalls raus,
+    // sonst meldet die Search Console "Uebermittelte URL als 'noindex' gekennzeichnet".
+    sitemap({ filter: (page) => !page.includes('/proto/') && !page.includes('/statistik') }),
   ],
   i18n: {
     defaultLocale: 'de',
