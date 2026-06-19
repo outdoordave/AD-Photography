@@ -17,6 +17,20 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-19 — SEO: Sitemap-Fix (Statistik raus) + JSON-LD strukturierte Daten
+- **Sitemap** (`c24f579`): noindex-Seiten `/statistik` (DE+EN) aus der Sitemap ausgeschlossen
+  (Filter um `!page.includes('/statistik')` erweitert), sonst meldet die Search Console
+  „Übermittelte URL als ‚noindex' gekennzeichnet". Am echten `dist/sitemap-0.xml` geprüft:
+  38 URLs, kein `/statistik/` mehr. Einzureichende URL bleibt `/sitemap-index.xml`.
+- **JSON-LD** (`fda0f74`): WebSite + Organization „Wide & Wild" global im `BaseLayout`
+  (`sameAs` = Instagram aus `contact.json`, `logo` aus appearance-settings) als `@graph`;
+  Story-Detailseiten (DE+EN) ergänzen einen `Article`-Knoten aus real existierenden Feldern
+  (headline, excerpt, datePublished, Cover-Bild), author/publisher per `@id` auf die Organization.
+- Dateien: `web/astro.config.mjs`, `web/src/layouts/BaseLayout.astro`,
+  `web/src/pages/stories/[slug].astro` + EN-Pendant.
+- **Rein Template-Ebene — KEIN Tina-Re-Index nötig.** Am echten Build (lokaler Tina-Dev-Server)
+  gegengeprüft: DE+EN, Story mit/ohne Cover, valide JSON-LD-Struktur.
+
 ## 2026-06-19 — CMS: Karten-Auto-Popup ein-/ausschaltbar (⚠️ Re-Index)
 - Neues zentrales Schalter-Feld **`reisen_settings.map_auto_popup`** (`1a1ef30`, Muster wie `map_scroll_zoom`):
   CMS → „Reisen – Einstellungen" → **„Karte: Info-Sprechblase automatisch zeigen"** (Standard AN).

@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-19** · Branch `main` · **Cutover vollzogen.** SEO/a11y: Charge 1 live, Charge 2 auf Branch.
+> **Stand: 2026-06-19** · Branch `main` · **Cutover vollzogen.** SEO/a11y: Charge 1+2 live; Sitemap-Fix + JSON-LD live.
 > Die Astro+TinaCMS-Version ist **live** auf `main`. Die alte Single-File-`index.html`
 > ist abgelöst. Diese Datei ist eine **Momentaufnahme** (wird bei jeder Session
 > überschrieben, nie angehängt). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
@@ -25,7 +25,10 @@
 - **Karte:** MapLibre GL (selbst gebündelt), Kartenstile von **OpenFreeMap**.
 - **Fonts:** lokal (Fontsource Variable) — Fraunces + Mulish, **kein Google**.
 - **SEO:** `404.astro` (echtes HTTP-404), `robots.txt`-Endpoint + Sitemap (`@astrojs/sitemap`,
-  35 Seiten DE+EN) — beide env-gesteuert (Vorschau `Disallow: /`, Live `Allow`).
+  **38 Seiten DE+EN, `/statistik` ausgeschlossen** — beide noindex) — env-gesteuert (Vorschau `Disallow: /`,
+  Live `Allow`). Pro Seite: title/description/OG/Twitter/canonical/hreflang (BaseLayout).
+  **JSON-LD** (`@graph`): WebSite + Organization „Wide & Wild" global, `Article` auf Story-Detailseiten.
+  Einzureichen bei GSC: `/sitemap-index.xml`.
 
 ## 2. Inhalts-Struktur
 - **Settings/Texte:** JSON in `web/src/data/` (`home-*.json`, `appearance-settings.json`,
