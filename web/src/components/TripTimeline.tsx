@@ -467,7 +467,11 @@ export default function TripTimeline(props: Props) {
     let best = 0;
     for (let i = 0; i < blocks.length; i++) {
       const h = blocks[i].bottom - blocks[i].top;
-      const lead = Math.max(0, READ - h) * LEAD_FACTOR;
+      let lead = Math.max(0, READ - h) * LEAD_FACTOR;
+      // Den Lead NIE über die Oberkante der vorigen Station hinausziehen: der Aktivierungspunkt
+      // bleibt dadurch >= blocks[i-1].top. Sonst werden kurze Stationen (z. B. ein Zwischenstopp
+      // ganz oben) schon beim Laden aktiv, obwohl der Anker noch über Station 1 steht.
+      if (i > 0) lead = Math.min(lead, blocks[i].top - blocks[i - 1].top);
       if (blocks[i].top - lead <= anchorDoc + 1) best = i; else break;
     }
     if (best !== activeRef.current) {
