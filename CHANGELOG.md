@@ -17,6 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-19 — Reisen-Karte: Auto-Popup + stabile Fahrzeug-Ausrichtung
+- **Auto-Popup** (`d3b8db9`): das (schon vorhandene) Marker-Popup „{Station} + {Datum}" erscheint jetzt
+  automatisch für die aktive Station — beim Laden und bei jedem Stationswechsel, ohne Klick.
+  Umsetzung in `drawMarkers()` (index-sicher, da Stationen ohne Koordinaten übersprungen werden).
+- **Fahrzeug-Flackern behoben** (`1e7d4d5`): das Auto sprang beim Losfahren kurz links/rechts. Ursache:
+  Spiegelung (`scaleX`) hing am zittrigen Mini-Segment + Ruhezustand hart „rechts". Jetzt an der
+  Gesamtrichtung der Etappe (Netto-Längengrad) bzw. Ankunftsrichtung. Flugzeug-Rotation unverändert.
+- Map-„Ruckeln" war nach dem Timeline-Fix weg (war Konsolen-/Mess-Churn beim Debuggen) → erledigt.
+
 ## 2026-06-19 — Fix: Reise-Timeline startet wieder bei Station 1
 - Regression (live aufgefallen): bei einer Reise mit kurzem Zwischenstopp als Station 2
   (z. B. „FRA - Airport") sprang die Timeline beim Öffnen sofort von Station 1 auf 2.
