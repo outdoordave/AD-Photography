@@ -35,9 +35,13 @@ export default function GearContent(props: Props) {
       </div>
 
       <div className={`gear-list gear-style-${['plain', 'card', 'notes'].includes(gear.gear_style) ? gear.gear_style : 'card'} gear-scope-${gear.gear_scope === 'groups' ? 'groups' : 'whole'}`}>
-        {groups.map((g) => (
+        {groups.map((g) => {
+          // Zugehöriges Kategorie-Objekt aus der Inline-Liste -> Klick auf die Überschrift
+          // springt im CMS direkt zu DIESER Kategorie (wie der Klick auf ein Gerät).
+          const catObj = categories.find((c: any) => (c?.key || '').trim() === g.id);
+          return (
           <div className="gear-cat" key={g.id}>
-            <h3>{lang === 'en' ? g.en : g.de}</h3>
+            <h3 data-tina-field={catObj ? tinaField(catObj as any) : undefined}>{lang === 'en' ? g.en : g.de}</h3>
             {g.items.map((it, i) => {
               const href = safeUrl(it.link);
               return (
@@ -54,7 +58,8 @@ export default function GearContent(props: Props) {
               );
             })}
           </div>
-        ))}
+          );
+        })}
       </div>
     </>
   );
