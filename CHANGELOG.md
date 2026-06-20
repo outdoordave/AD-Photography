@@ -17,6 +17,12 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-20 — Equipment-Kategorie-Überschriften klickbar + CMS-UX-Doku
+- **Klick-zum-Bearbeiten**: `data-tina-field` auf den Kategorie-`<h3>` der Equipment-Seite → Klick in der
+  CMS-Vorschau springt direkt zur Kategorie (wie schon beim Klick auf ein Gerät). Kein Re-Index.
+- **`CMS-UX.md`** neu: hält fest, **wie sich das CMS anfühlen soll** (Leitprinzipien P1–P4 + festgehaltene
+  Entscheidungen). Dort kann David CMS-Wünsche dokumentieren (Text + Screenshot via GitHub-Issue/PR).
+
 ## 2026-06-20 — Nachjustierung (Feedback): Kategorien inline + Hover-Schalter auf „Über uns"
 - **Equipment-Kategorien** (`d2b629d`): von der separaten Collection `gear_categories` auf eine
   **Inline-Liste `categories`** im Equipment-Formular umgestellt (David wollte keine eigene Datei-Liste,
