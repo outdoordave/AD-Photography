@@ -40,3 +40,9 @@
 ### Über uns — Profile-Hover (Stand 20.06.2026)
 - **So gewollt:** Der Schalter „**Profile beim Drüberfahren anheben?**" sitzt **im „Über uns"-Formular**
   (unter „Personen") — nicht in „Darstellung". Effekt = Profile heben sich an wie die Story-Karten.
+
+### Logo — überall anklickbar (Stand 20.06.2026, P2)
+- **So gewollt:** Das Logo ist **an allen Stellen (Nav, Footer, Hero) anklickbar** → Klick in der
+  CMS-Vorschau springt direkt ins **Logo-Feld unter 🎨 Darstellung**.
+- Umgesetzt via Insel `LogoLink` (liest `darstellung` per `useTina`, `data-tina-field` am `<img>`).
+- 🎨 Darstellung + ⭐ Highlights haben jetzt einen Vorschau-Router (`/`) → auffindbar + Live-Vorschau.

@@ -17,6 +17,13 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-20 — CMS: Logo überall anklickbar (-> Darstellung-Logo-Feld)
+- **Logo klickbar** (`ce21b29`): neue Insel `LogoLink` (liest `darstellung` via `useTina`, `data-tina-field`
+  am Logo-`<img>`); in Nav, Footer und Hero eingesetzt. BaseLayout + beide index-Seiten holen die
+  `darstellung`-Doc (`client.queries.darstellung`) und reichen sie durch. Klick aufs Logo in der CMS-Vorschau
+  öffnet das Logo-Feld unter 🎨 Darstellung. Markup/CSS 1:1, Fallback auf statisches Logo. **Kein Re-Index.**
+- Doku: `CMS-UX.md` um die Logo-Entscheidung ergänzt.
+
 ## 2026-06-20 — Fix: doppelter /uploads-Pfad bei Medien + Vorschau-Router (Darstellung/Highlights)
 - **Medien-Fix** (`fa4e8e7`): Pfade kamen teils als `/uploads/uploads/<datei>` an (assets.tina.io-Umschreibung
   enthielt den mediaRoot doppelt) → „?" in CMS-Vorschau **und** live (Hero-Diashow). `normalizePath` (Frontend)
