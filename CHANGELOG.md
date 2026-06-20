@@ -17,6 +17,22 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-21 — CMS-Format-Leiste + Markdown nachgerüstet + Zurück-Pille
+- **Format-Leiste** `MarkdownToolbar` (`72e8175`): Fett/Kursiv (umschließt Auswahl) + Überschrift/Zitat/
+  Liste (Zeilen-Präfix, Toggle). Laientauglich — kein Tippen von `**`/`>`. Per `allow` einschränkbar.
+- **Markdown-Rendering nachgerüstet** (`2b2219c`): Stations-Text, Reise-Zusammenfassung, Über-uns-Bio,
+  Startseite-Intro rendern jetzt via `mdToHtml` (vorher reiner Text). `<p>`→`<div class="… ww-rich">` +
+  Reset-CSS, damit Text **ohne** Markdown 1:1 gleich aussieht. Karten-Teaser (`.trip-card-sum`):
+  `stripMarkdown` → kein rohes `**` im Clamp. Speicherformat bleibt Markdown.
+- **Story-Editor** (`2eea005`): Format-Leiste + Album-Status-Hinweis mit **Albumname** (aus `linked_album`
+  via `useFormState`) statt nacktem `[[album]]`; „entfernen"-Knopf. Renderer/Token unverändert.
+- **Leiste in alle nachgerüsteten Felder** (`7d2c4d9`): neue Feld-Komponenten `MarkdownTextarea`(+Inline)
+  und EN-Varianten `EnglishMarkdownTextField`(+Inline, sprachschalter-tauglich) für Stations-Text/Bio/
+  Intro/Datenschutz/Impressum (volle Leiste) + Reise-Summary (nur Fett/Kursiv). UI-only → Lock neu, **kein Re-Index**.
+- **Zurück-Pille** (`dab705e`): `.story-back` ist jetzt eine **fixierte, halbtransparente Pille** (Blur,
+  abgerundet, gleiches Idiom wie der Nach-oben-Button) statt einer Leiste, die das Hero-Bild runterschob.
+- Alle Schritte Build-grün gegengeprüft; Speicherformat überall Markdown → **kein Tina-Re-Index**.
+
 ## 2026-06-20 — Jahreskapitel (Stories + Reisen) + Zurück-Link auf Story-Detail
 - **Helper** (`9ff3f93`): `lib/groupByYear.ts` — gruppiert eine sortierte Liste nach Jahr (absteigend) aus
   dem vorhandenen `date`; ungültiges/leeres Datum → „Archiv" zuletzt. **Kein `year`-Feld, kein Re-Index.**
