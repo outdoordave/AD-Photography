@@ -1,7 +1,8 @@
 import { defineConfig } from 'tinacms';
 import BulkPhotoField from './fields/BulkPhotoField';
 import SinglePhotoField from './fields/SinglePhotoField';
-import { EnglishOnlyField, EnglishOnlyTextField, EnglishStyledField, EnglishStyledTextField } from './fields/EnglishOnlyField';
+import { EnglishOnlyField, EnglishOnlyTextField, EnglishStyledField, EnglishStyledTextField, EnglishMarkdownTextField, EnglishMarkdownTextFieldInline } from './fields/EnglishOnlyField';
+import { MarkdownTextarea, MarkdownTextareaInline } from './fields/MarkdownTextarea';
 import CropPhotoField from './fields/CropPhotoField';
 import StoryBodyField from './fields/StoryBodyField';
 import ImageFrameField from './fields/ImageFrameField';
@@ -165,8 +166,8 @@ export default defineConfig({
             fields: [
               { type: 'string', name: 'subline_de', label: 'Zwischenüberschrift' },
               { type: 'string', name: 'subline_en', label: '↳ English', ui: { component: EnglishOnlyField } },
-              { type: 'string', name: 'subtext_de', label: 'Intro-Text', ui: { component: 'textarea' } },
-              { type: 'string', name: 'subtext_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+              { type: 'string', name: 'subtext_de', label: 'Intro-Text', ui: { component: MarkdownTextarea } },
+              { type: 'string', name: 'subtext_en', label: '↳ English', ui: { component: EnglishMarkdownTextField } },
               // Social-Links (Instagram etc.) werden NICHT mehr hier gepflegt, sondern zentral
               // auf der KONTAKTSEITE (✉️ Kontakt -> Kanäle / contact.json -> channels). Die Intro-
               // Reihe zieht ihre Links von dort -> nur EINE Pflegestelle. An/aus via social_show.intro.
@@ -363,8 +364,8 @@ export default defineConfig({
           { type: 'string', name: 'date', label: 'Datum (YYYY-MM-DD)', description: 'Für Sortierung/Meta.' },
           { type: 'string', name: 'meta_de', label: 'Meta-Zeile (Datum · km · …)' },
           { type: 'string', name: 'meta_en', label: '↳ English', ui: { component: EnglishOnlyField } },
-          { type: 'string', name: 'summary_de', label: 'Zusammenfassung', ui: { component: 'textarea' } },
-          { type: 'string', name: 'summary_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+          { type: 'string', name: 'summary_de', label: 'Zusammenfassung', ui: { component: MarkdownTextareaInline } },
+          { type: 'string', name: 'summary_en', label: '↳ English', ui: { component: EnglishMarkdownTextFieldInline } },
           { type: 'boolean', name: 'upcoming', label: 'Kommende Reise? (zeigt „bald ✦")' },
           {
             type: 'string', name: 'vehicle', label: 'Fahrzeug auf der Karte',
@@ -403,8 +404,8 @@ export default defineConfig({
               { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
               { type: 'string', name: 'date_de', label: 'Datum/Zeitraum' },
               { type: 'string', name: 'date_en', label: '↳ English', ui: { component: EnglishOnlyField } },
-              { type: 'string', name: 'text_de', label: 'Text', ui: { component: 'textarea' } },
-              { type: 'string', name: 'text_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+              { type: 'string', name: 'text_de', label: 'Text', ui: { component: MarkdownTextarea } },
+              { type: 'string', name: 'text_en', label: '↳ English', ui: { component: EnglishMarkdownTextField } },
               { type: 'string', name: 'photo', label: 'Titelbild (Zoom/Zuschnitt 16:10, Auto-WebP)', cropRatio: 16 / 10, ui: { component: CropPhotoField } },
               { type: 'image', name: 'photos', label: 'Weitere Fotos (Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
               { type: 'string', name: 'video', label: 'Video-Loop (optional)', description: 'Pfad zu /uploads/… — Video vorher lokal komprimieren (HandBrake/CapCut).' },
@@ -631,8 +632,8 @@ export default defineConfig({
               { type: 'string', name: 'photo', label: 'Foto (Zuschnitt 4:3, Auto-WebP)', cropRatio: 4 / 3, ui: { component: CropPhotoField } },
               { type: 'string', name: 'role_de', label: 'Rolle' },
               { type: 'string', name: 'role_en', label: '↳ English', ui: { component: EnglishOnlyField } },
-              { type: 'string', name: 'bio_de', label: 'Bio', ui: { component: 'textarea' } },
-              { type: 'string', name: 'bio_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+              { type: 'string', name: 'bio_de', label: 'Bio', ui: { component: MarkdownTextarea } },
+              { type: 'string', name: 'bio_en', label: '↳ English', ui: { component: EnglishMarkdownTextField } },
               { type: 'string', name: 'gear_de', label: 'Ausrüstungs-Zeile', description: 'Freie Textzeile (z. B. „Ausrüstung: Sony A7 IV · …"). NICHT automatisch aus der Equipment-Liste.' },
               { type: 'string', name: 'gear_en', label: '↳ English', ui: { component: EnglishOnlyField } },
             ],
@@ -796,8 +797,8 @@ export default defineConfig({
           { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
           { type: 'string', name: 'updated_de', label: 'Stand (z. B. „Stand: Juni 2026")' },
           { type: 'string', name: 'updated_en', label: '↳ English', ui: { component: EnglishOnlyField } },
-          { type: 'string', name: 'body_de', label: 'Inhalt (Markdown: ## Überschrift, - Liste, [Text](Link))', description: 'Du kannst Text aus einem Datenschutz-Generator hier einfügen — Markdown ODER fertiges HTML funktioniert.', ui: { component: 'textarea' } },
-          { type: 'string', name: 'body_en', label: '↳ English (leer = Deutsch wird gezeigt)', ui: { component: EnglishOnlyTextField } },
+          { type: 'string', name: 'body_de', label: 'Inhalt (Markdown: ## Überschrift, - Liste, [Text](Link))', description: 'Du kannst Text aus einem Datenschutz-Generator hier einfügen — Markdown ODER fertiges HTML funktioniert.', ui: { component: MarkdownTextarea } },
+          { type: 'string', name: 'body_en', label: '↳ English (leer = Deutsch wird gezeigt)', ui: { component: EnglishMarkdownTextField } },
         ],
       },
       // --- Impressum: eigene Rechtstext-Seite (/impressum) ---
@@ -814,8 +815,8 @@ export default defineConfig({
           { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
           { type: 'string', name: 'updated_de', label: 'Stand (optional)' },
           { type: 'string', name: 'updated_en', label: '↳ English', ui: { component: EnglishOnlyField } },
-          { type: 'string', name: 'body_de', label: 'Inhalt (Markdown: ## Überschrift, - Liste, [Text](Link))', description: 'Du kannst Text aus einem Impressum-Generator hier einfügen — Markdown ODER fertiges HTML funktioniert.', ui: { component: 'textarea' } },
-          { type: 'string', name: 'body_en', label: '↳ English (leer = Deutsch wird gezeigt)', ui: { component: EnglishOnlyTextField } },
+          { type: 'string', name: 'body_de', label: 'Inhalt (Markdown: ## Überschrift, - Liste, [Text](Link))', description: 'Du kannst Text aus einem Impressum-Generator hier einfügen — Markdown ODER fertiges HTML funktioniert.', ui: { component: MarkdownTextarea } },
+          { type: 'string', name: 'body_en', label: '↳ English (leer = Deutsch wird gezeigt)', ui: { component: EnglishMarkdownTextField } },
         ],
       },
       // --- Statistik: versteckte Auswerte-Seite (/statistik), cookielose Web-Analyse ---

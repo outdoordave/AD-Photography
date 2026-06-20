@@ -1,5 +1,6 @@
 import React from 'react';
 import { useEnglishOn } from './englishStore';
+import MarkdownToolbar, { type MdKind } from './MarkdownToolbar';
 
 // Flaches „nur Englisch"-Textfeld für den FLACHEN Zweisprach-Ansatz (statt
 // Objekt {de,en}). Verhalten wie der EN-Teil von BilingualField:
@@ -60,8 +61,36 @@ function makeEnglishOnly(multiline: boolean, alwaysShow = false) {
   return Comp;
 }
 
+// Wie makeEnglishOnly (mehrzeilig, Sprachschalter-tauglich), aber MIT Format-Leiste.
+function makeEnglishMarkdown(alwaysShow = false, allow?: MdKind[]) {
+  const Comp = (props: any) => {
+    const on = useEnglishOn();
+    if (!alwaysShow && !on) return null;
+    const input = props.input || {};
+    const value: string = typeof input.value === 'string' ? input.value : '';
+    const label = (props.field && props.field.label) || 'English';
+    const ref = React.useRef<HTMLTextAreaElement>(null);
+    const fit = () => {
+      const el = ref.current;
+      if (el) { el.style.height = 'auto'; el.style.height = Math.max(el.scrollHeight, 56) + 'px'; }
+    };
+    React.useLayoutEffect(() => { fit(); }, [value]);
+    return (
+      <div style={wrapStyle}>
+        <span style={labelStyle}><span aria-hidden="true">🌐</span>{label}</span>
+        <MarkdownToolbar textareaRef={ref} value={value} onChange={(v) => input.onChange(v)} allow={allow} />
+        <textarea ref={ref} value={value} onChange={(e) => input.onChange(e.target.value)} rows={2}
+          style={{ ...fieldStyle, overflow: 'hidden', resize: 'none', minHeight: 56 }} />
+      </div>
+    );
+  };
+  return Comp;
+}
+
 export const EnglishOnlyField = makeEnglishOnly(false);
 export const EnglishOnlyTextField = makeEnglishOnly(true);
+export const EnglishMarkdownTextField = makeEnglishMarkdown(false);
+export const EnglishMarkdownTextFieldInline = makeEnglishMarkdown(false, ['bold', 'italic']);
 // Immer sichtbar + gestylt (für Collections ohne Sprach-Schalter, z. B. Story-Beiträge).
 export const EnglishStyledField = makeEnglishOnly(false, true);
 export const EnglishStyledTextField = makeEnglishOnly(true, true);
