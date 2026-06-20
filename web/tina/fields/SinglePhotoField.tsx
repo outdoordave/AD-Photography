@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCMS, wrapFieldsWithMeta } from 'tinacms';
 import { fmt, detectEncoder, toOptimized, type EncoderMode } from './webpEncode';
-import { toLocalMedia } from './mediaPath';
+import { toLocalMedia, dedupeUploads } from './mediaPath';
 import { MediaPickerButton } from './MediaPicker';
 
 // Einzelfoto-Feld mit Auto-WebP (gleiche Logik wie BulkPhotoField, aber EIN Bild):
@@ -43,7 +43,7 @@ const SinglePhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
       const { file, format } = await toOptimized(files[0], mode);
       setProgress('Lade hoch …');
       const media = await cms.media.persist([{ directory: '', file }]);
-      const src = media.map((m: any) => m.src).filter(Boolean)[0];
+      const src = media.map((m: any) => dedupeUploads(m.src)).filter(Boolean)[0];
       if (!src) throw new Error('Upload ohne Ergebnis');
       input.onChange(src);
       const note = format === 'jpeg' ? ' (JPEG)' : ' (WebP)';

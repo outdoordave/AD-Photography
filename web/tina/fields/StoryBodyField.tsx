@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCMS, wrapFieldsWithMeta } from 'tinacms';
 import { detectEncoder, toOptimized, fmt, type EncoderMode } from './webpEncode';
-import { toLocalMedia } from './mediaPath';
+import { toLocalMedia, dedupeUploads } from './mediaPath';
 
 // Story-Haupttext-Editor — laientauglich, OHNE Markdown-Syntax tippen.
 // Gespeichert wird weiterhin normales Markdown (der mdToHtml-Port bleibt 1:1),
@@ -71,7 +71,7 @@ const StoryBodyFieldInner = wrapFieldsWithMeta(({ input }: any) => {
       const { file, format } = await toOptimized(files[0], mode);
       setProgress('Lade hoch …');
       const m = await cms.media.persist([{ directory: '', file }]);
-      const src = m.map((x: any) => x.src).filter(Boolean)[0];
+      const src = m.map((x: any) => dedupeUploads(x.src)).filter(Boolean)[0];
       if (!src) throw new Error('Upload ohne Ergebnis');
       insertAtCursor(`![](${src})`);
       setNote(`✓ Bild eingefügt — ${fmt(files[0].size)} → ${fmt(file.size)} (${format === 'jpeg' ? 'JPEG' : 'WebP'})`);

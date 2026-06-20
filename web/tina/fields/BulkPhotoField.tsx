@@ -17,7 +17,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { fmt, detectEncoder, toOptimized, type EncoderMode } from './webpEncode';
-import { toLocalMedia } from './mediaPath';
+import { toLocalMedia, dedupeUploads } from './mediaPath';
 
 // Eigenes Galerie-Feld fuer AD-Photography:
 //  - mehrere Fotos auf einmal: Button, Drag-&-Drop-Ablage ODER ganzer Ordner,
@@ -110,7 +110,7 @@ const BulkPhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
       }
       setProgress(`Lade ${converted.length} Bild(er) hoch …`);
       const media = await cms.media.persist(converted.map((file) => ({ directory: '', file })));
-      const newSrcs = media.map((m: any) => m.src).filter(Boolean);
+      const newSrcs = media.map((m: any) => dedupeUploads(m.src)).filter(Boolean);
       input.onChange([...value, ...newSrcs]);
       const note = anyJpeg ? ' (JPEG)' : ' (WebP)';
       setSavings(`${converted.length} Foto(s): ${fmt(origBytes)} → ${fmt(newBytes)}${note}`);

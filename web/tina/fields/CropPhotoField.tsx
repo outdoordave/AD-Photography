@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCMS, wrapFieldsWithMeta } from 'tinacms';
 import { detectEncoder, toOptimized, loadImage, type EncoderMode } from './webpEncode';
-import { toLocalMedia } from './mediaPath';
+import { toLocalMedia, dedupeUploads } from './mediaPath';
 import { MediaPickerButton } from './MediaPicker';
 
 // Zuschnitt-Foto-Feld: EIN gerahmtes Bild mit Zoom + Verschieben. Wert = String-JSON
@@ -188,7 +188,7 @@ const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
       const { file } = await toOptimized(files[0], mode);
       setProgress('Lade hoch …');
       const media = await cms.media.persist([{ directory: '', file }]);
-      const src = media.map((m: any) => m.src).filter(Boolean)[0];
+      const src = media.map((m: any) => dedupeUploads(m.src)).filter(Boolean)[0];
       if (!src) throw new Error('Upload ohne Ergebnis');
       input.onChange(serialize({ original: src, display: src, crop: null })); // erstmal unbeschnitten
     } catch (e: any) { setError(e?.message || 'Upload fehlgeschlagen'); }
