@@ -132,9 +132,21 @@ section { padding: 84px 0; }
 .ww-rich li { margin: 0 0 0.2em; }
 .ww-rich h2, .ww-rich h3 { font-family: var(--font-display); font-weight: var(--fw-medium); line-height: 1.2; margin: 0.2em 0 0.4em; }
 .ww-rich .pullquote { font-style: italic; border-left: 3px solid var(--c-accent); padding-left: 14px; margin: 0 0 0.7em; }
-/* Zurück-Link auf der Story-Detailseite (Stil identisch zu .trip-back) */
-.story-back { display: inline-block; font-size: var(--fs-label); letter-spacing: var(--tracking-slight); text-transform: uppercase; font-weight: var(--fw-bold); color: var(--c-ink-soft); text-decoration: none; margin: 16px 0 6px; }
-.story-back:hover { color: var(--c-accent); }
+/* Zurück-„Pille" auf der Story-Detailseite: fixiert (scrollt mit), halbtransparent
+   + Blur (auf Fotos lesbar), abgerundet — gleiches Idiom wie der Nach-oben-Button.
+   z-index UNTER Mobil-Nav(1099)/Lightbox(1100), damit nichts kollidiert. */
+.story-back {
+  position: fixed; top: 102px; left: calc(20px + env(safe-area-inset-left, 0px)); z-index: 1090;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 15px; border-radius: var(--radius-full);
+  font-size: var(--fs-label); letter-spacing: var(--tracking-slight); text-transform: uppercase; font-weight: var(--fw-bold);
+  color: var(--c-ink-soft); text-decoration: none;
+  background: rgba(244, 237, 225, 0.82); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  border: 1px solid var(--c-line); box-shadow: 0 6px 18px -6px rgba(46, 36, 24, 0.35);
+  transition: color var(--dur-base) var(--ease), background var(--dur-base) var(--ease);
+}
+.story-back:hover { color: var(--c-accent); background: var(--c-bg-alt); }
+@media (max-width: 640px) { .story-back { top: 80px; padding: 7px 13px; } }
 .story-card { background: var(--c-bg-alt); border-radius: var(--radius-sm); overflow: hidden; cursor: pointer; border: 1px solid var(--c-line); transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease); display: flex; flex-direction: column; }
 .story-card:hover { transform: translateY(-6px); box-shadow: 0 20px 44px -20px rgba(46,36,24,0.5); }
 .story-card .ph { aspect-ratio: var(--ar-card); }

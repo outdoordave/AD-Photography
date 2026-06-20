@@ -56,7 +56,7 @@ const articleLd: Record<string, any> = {
 ---
 <BaseLayout title={`${title} — Wide & Wild`} lang="en" description={metaDesc} ogType="article" jsonld={articleLd}>
   <div id="page-story">
-    <div class="wrap"><a class="story-back" href="/en/stories">← Stories</a></div>
+    <a class="story-back" href="/en/stories">← Stories</a>
     <StoryReaderContent
       client:load
       query={res.query}
