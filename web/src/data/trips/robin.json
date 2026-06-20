@@ -1,4 +1,5 @@
 {
+  "design": "luftig",
   "order": 4,
   "title": "2025 · Tennessee",
   "title_en": "Robin 2025 · Tennessee",
@@ -8,7 +9,6 @@
   "summary_de": "Ein Kurztrip nach Chattanooga, um Robin — einen Arbeitskollegen — zu besuchen. Mit Abstechern nach Piken Forge, in die Smoky Mountains und natürlich Buc-ee's!",
   "summary_en": "A short trip to Chattanooga to visit Robin — a work colleague. With side trips to Atlanta, the Smoky Mountains and of course Buc-ee's.",
   "upcoming": false,
-  "design": "luftig",
   "stops": [
     {
       "name": "Atlanta",
@@ -63,5 +63,9 @@
       "youtube": ""
     }
   ],
-  "gallery": []
+  "gallery": [
+    {
+      "image": "/uploads/IMG_6654-2.webp"
+    }
+  ]
 }
