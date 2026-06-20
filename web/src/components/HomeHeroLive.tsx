@@ -3,6 +3,7 @@ import { useTina, tinaField } from 'tinacms/dist/react';
 import { bi, type Lang } from '../lib/albums';
 import { normalizePath } from '../lib/stories';
 import { socialIcon, socialUrl } from '../lib/socialIcons';
+import LogoLink from './LogoLink';
 import PaperRip from './PaperRip';
 
 // Hero als LIVE-Insel (useTina startseite) — 1:1-Port von HomeHero.astro:
@@ -13,6 +14,7 @@ import PaperRip from './PaperRip';
 type Props = {
   query: string; variables: object; data: any; lang: Lang;
   logo?: string; showHeroLogo?: boolean; showStories?: boolean;
+  logoQuery?: string; logoVariables?: object; logoData?: any;
 };
 
 export default function HomeHeroLive(props: Props) {
@@ -87,8 +89,10 @@ export default function HomeHeroLive(props: Props) {
         ) : null}
       </div>
 
-      {showHeroLogo && logoSrc ? (
-        <div className="hero-logo"><img src={logoSrc} alt="Wide & Wild" /></div>
+      {showHeroLogo ? (
+        props.logoData ? (
+          <LogoLink variant="hero" query={props.logoQuery!} variables={props.logoVariables!} data={props.logoData} />
+        ) : (logoSrc ? <div className="hero-logo"><img src={logoSrc} alt="Wide & Wild" /></div> : null)
       ) : null}
 
       <h1 className="hero-tag" data-tina-field={tf(hero, 'headline')}>{headline}</h1>

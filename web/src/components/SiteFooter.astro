@@ -3,6 +3,7 @@
 // (mit Admin-Link → /admin) + Untertitel. Stories-Link nur wenn showStories.
 import { socialIcon, socialUrl } from '../lib/socialIcons';
 import PaperRip from './PaperRip';
+import LogoLink from './LogoLink.tsx';
 interface Props {
   lang: 'de' | 'en';
   logo?: string;
@@ -10,8 +11,11 @@ interface Props {
   showContact?: boolean;
   social?: { platform?: string; username?: string }[];
   showSocial?: boolean;
+  logoQuery?: string;
+  logoVariables?: object;
+  logoData?: any;
 }
-const { lang, logo = '', showStories = false, showContact = true, social = [], showSocial = false } = Astro.props;
+const { lang, logo = '', showStories = false, showContact = true, social = [], showSocial = false, logoQuery, logoVariables, logoData } = Astro.props;
 const isEn = lang === 'en';
 const prefix = isEn ? '/en' : '';
 const socialLinks = showSocial ? (social || []).filter((s) => s && s.username) : [];
@@ -30,7 +34,9 @@ const logoSrc = logo && logo.charAt(0) !== '/' && !/^https?:/.test(logo) ? '/' +
 ---
 <footer>
   <PaperRip idp="footerRip" className="band-rip band-rip-top" />
-  {logoSrc ? <div class="footer-logo"><a href={linkHref('/')} aria-label={isEn ? 'Home' : 'Zur Startseite'}><img src={logoSrc} alt="Wide & Wild" loading="lazy" /></a></div> : null}
+  {logoData ? (
+    <LogoLink client:load variant="footer" query={logoQuery} variables={logoVariables} data={logoData} href={linkHref('/')} ariaLabel={isEn ? 'Home' : 'Zur Startseite'} />
+  ) : (logoSrc ? <div class="footer-logo"><a href={linkHref('/')} aria-label={isEn ? 'Home' : 'Zur Startseite'}><img src={logoSrc} alt="Wide & Wild" loading="lazy" /></a></div> : null)}
   <div class="footer-nav">
     {NAV.filter((i) => (!i.storiesOnly || showStories) && (!i.contactOnly || showContact)).map((i) => (
       <a href={linkHref(i.href)}>{isEn ? i.en : i.de}</a>
