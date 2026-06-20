@@ -637,6 +637,10 @@ export default defineConfig({
               { type: 'string', name: 'gear_en', label: '↳ English', ui: { component: EnglishOnlyField } },
             ],
           },
+          {
+            type: 'boolean', name: 'person_hover', label: 'Profile beim Drüberfahren anheben?',
+            description: 'AN (Standard): die beiden Profil-Karten oben heben sich beim Hovern leicht an (wie die Story-Karten). AUS: keine Hover-Bewegung.',
+          },
           // --- „Warum die USA?" — flach (Überschrift + Text), je inline aufklappbar ---
           { type: 'string', name: 'why_title_de', label: '„Warum die USA?" — Überschrift' },
           { type: 'string', name: 'why_title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
@@ -768,10 +772,6 @@ export default defineConfig({
           {
             type: 'boolean', name: 'album_hover', label: 'Alben beim Drüberfahren anheben?',
             description: 'AN (Standard): Portfolio-Alben heben sich beim Hovern leicht an (Klick-Signal). AUS: keine Hover-Bewegung bei den Alben (sinnvoll, da man Alben auch ohne Klick durchscrollen kann).',
-          },
-          {
-            type: 'boolean', name: 'about_person_hover', label: 'Über-uns-Profile beim Drüberfahren anheben?',
-            description: 'AN (Standard): die beiden Profil-Karten auf „Über uns" heben sich beim Hovern leicht an (wie die Story-Karten). AUS: keine Hover-Bewegung.',
           },
           { type: 'boolean', name: 'show_hero_logo', label: 'Logo im Hero zeigen?' },
           { type: 'boolean', name: 'show_discover', label: '„Entdecken"-Bereich auf der Startseite zeigen?' },

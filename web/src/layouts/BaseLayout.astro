@@ -17,6 +17,7 @@ import home from '../data/home-settings.json';
 import { normalizePath } from '../lib/stories';
 import statistik from '../data/statistik.json';
 import contact from '../data/contact.json';
+import about from '../data/about.json';
 interface Props {
   title?: string;
   lang?: 'de' | 'en';
@@ -49,8 +50,8 @@ const imageFrame = ['none', 'soft', 'strong'].includes(ap.image_frame) ? ap.imag
 const frameControls = ap.frame_controls !== false;
 // Portfolio-Alben beim Hovern anheben? (Standard an)
 const albumHover = ap.album_hover !== false;
-// Über-uns-Profile beim Hovern anheben? (Standard an)
-const personHover = ap.about_person_hover !== false;
+// Über-uns-Profile beim Hovern anheben? (Schalter auf der „Über uns"-Seite; Standard an)
+const personHover = (about as any).person_hover !== false;
 const pathname = Astro.url.pathname;
 const footerSocial = (hm.intro && hm.intro.social) || [];
 const showFooterSocial = !!(hm.social_show && hm.social_show.footer);
