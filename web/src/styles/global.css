@@ -119,6 +119,9 @@ section { padding: 84px 0; }
 
 /* ---------- Story-Liste (Karten) ---------- */
 .stories-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+/* Jahreskapitel (Stories- + Reisen-Übersicht): große Fraunces-Überschrift je Jahr */
+.year-chapter + .year-chapter { margin-top: 52px; }
+.year-head { font-family: var(--font-display); font-size: 38px; font-weight: 300; letter-spacing: -0.02em; color: var(--c-ink); border-bottom: 1px solid var(--c-line); padding-bottom: 12px; margin: 0 0 26px; }
 .story-card { background: var(--c-bg-alt); border-radius: var(--radius-sm); overflow: hidden; cursor: pointer; border: 1px solid var(--c-line); transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease); display: flex; flex-direction: column; }
 .story-card:hover { transform: translateY(-6px); box-shadow: 0 20px 44px -20px rgba(46,36,24,0.5); }
 .story-card .ph { aspect-ratio: var(--ar-card); }
