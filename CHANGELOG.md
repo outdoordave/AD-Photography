@@ -17,6 +17,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-20 — Jahreskapitel (Stories + Reisen) + Zurück-Link auf Story-Detail
+- **Helper** (`9ff3f93`): `lib/groupByYear.ts` — gruppiert eine sortierte Liste nach Jahr (absteigend) aus
+  dem vorhandenen `date`; ungültiges/leeres Datum → „Archiv" zuletzt. **Kein `year`-Feld, kein Re-Index.**
+- **Stories-Übersicht** (`b6a6abb`): DE+EN nach Jahr gruppiert, Fraunces-Überschrift `.year-head`
+  (38px/300/-0.02em, `border-bottom var(--c-line)`), Cards unverändert.
+- **Reisen-Übersicht** (`4656237`): gleiche Gruppierung in `TripsOverview.astro` (DE+EN), Reihenfolge im
+  Jahr = `sortTrips` (order, dann Datum).
+- **Story-Detail-Zurück-Link** (`09c9f36`): `.story-back` „← Stories" (DE `/stories`, EN `/en/stories`),
+  Stil identisch zu `.trip-back`. Reisen-Detail hatte `trip-back` bereits — nur verifiziert.
+- Lokal gegengeprüft: Jahres-Überschriften 2026→2023 (Stories+Reisen, DE+EN), 6 Story-/5 Reise-Karten,
+  Back-Links DE+EN, `trip-back` intakt, Build grün. Timeline/Lightbox/Karte unberührt.
+
 ## 2026-06-20 — CMS: Logo überall anklickbar (-> Darstellung-Logo-Feld)
 - **Logo klickbar** (`ce21b29`): neue Insel `LogoLink` (liest `darstellung` via `useTina`, `data-tina-field`
   am Logo-`<img>`); in Nav, Footer und Hero eingesetzt. BaseLayout + beide index-Seiten holen die
