@@ -2,6 +2,7 @@
 // Reisen-Übersicht: ruhige Karten-Liste (eine Karte pro Reise) -> Klick auf die
 // Reise-Detailseite /trips/<slug> (bzw. /en/trips/<slug>). Ersetzt die alten Reise-Tabs.
 import { tripTitle, bi, tripCover, type RawTrip } from '../lib/trips';
+import { groupByYear } from '../lib/groupByYear';
 interface Props {
   trips: { slug: string; data: RawTrip }[];
   lang: 'de' | 'en';
@@ -10,9 +11,12 @@ const { trips, lang } = Astro.props;
 const isEn = lang === 'en';
 const base = isEn ? '/en/trips/' : '/trips/';
 ---
-<div class="trips-overview">
-  {trips.map((t) => {
-    const d = t.data;
+{groupByYear(trips, (t) => t.data.date).map((g) => (
+  <div class="year-chapter">
+    <h2 class="year-head">{g.isArchive ? (isEn ? 'Archive' : 'Archiv') : g.year}</h2>
+    <div class="trips-overview">
+      {g.items.map((t) => {
+        const d = t.data;
     const cover = tripCover(d);
     const title = tripTitle(d, lang);
     const meta = bi(d, 'meta', lang);
@@ -32,6 +36,8 @@ const base = isEn ? '/en/trips/' : '/trips/';
           {summary ? <p class="trip-card-sum">{summary}</p> : null}
         </div>
       </a>
-    );
-  })}
-</div>
+        );
+      })}
+    </div>
+  </div>
+))}
