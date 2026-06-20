@@ -8,6 +8,10 @@
 > (§6, „bei Bedarf/Lust"). Die Seite wird jetzt **genutzt** (Inhalte pflegen, teilen) statt weitergebaut.
 > Die alte Single-File-`index.html` ist abgelöst. Diese Datei ist eine **Momentaufnahme** (wird bei
 > jeder Session überschrieben, nie angehängt). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
+>
+> ⏳ **Nach dem Meilenstein dazugekommen (20.06., committet, noch nicht live):** Equipment-Kategorien
+> im CMS editierbar (neue Collection `gear_categories`) + Über-uns-Profile-Hover-Schalter. **Offen für David:
+> Push + Tina-Cloud-Re-Index** (Schema-Änderung), danach im CMS gegentesten.
 
 ---
 
@@ -52,6 +56,8 @@
   **Reisen-Design-System zentral** (`reisen_settings.design` + Regler-Editor, s. §4).
 - **Stories:** Liste + Reader (Markdown, Cover, YouTube, Album-Einbettung), an-/abschaltbar.
 - **Equipment, Über uns, Kontakt:** portiert; Kontaktformular **sendet echt** (Web3Forms).
+  Equipment-**Kategorien im CMS editierbar** (Collection `gear_categories` → `reference`-Dropdown je Gerät).
+  Über-uns-Profile-**Hover** per CMS-Schalter `about_person_hover` (an/aus).
 - **Querschnitt:** DE/EN überall, Lightbox/Filmstreifen, 5 Kartenstile live, Statistik (Umami,
   cookielos), CMS-Live-Vorschau + Admin-Leiste, Sichtbarkeits-Schalter (🎨 Darstellung).
 

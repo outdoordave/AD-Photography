@@ -17,6 +17,20 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-20 — Equipment-Kategorien im CMS editierbar + Über-uns-Profile-Hover (⚠️ Re-Index)
+- **Equipment-Kategorien** (`a112551`): die bisher im Code feste Kategorie-Liste ist jetzt eine
+  eigene CMS-Collection **`gear_categories`** („🎒 Equipment – Kategorien": anlegen/umbenennen/
+  sortieren via `order`). Das Geräte-Feld `category` ist ein natives **`reference`-Dropdown** darauf.
+  7 bestehende Kategorien geseedet, alle 12 Geräte 1:1 auf die Referenzen migriert. Frontend
+  (`lib/gear.ts` + `GearContent.tsx`) gruppiert nach referenzierter Kategorie, sortiert nach `order`.
+- **Über-uns-Profile-Hover** (`a112551`): neuer CMS-Schalter **`about_person_hover`** (Standard an),
+  Body-Klasse `ww-person-hover` → Profile heben sich beim Hovern an wie die Story-Karten (Muster von `album_hover`).
+- Dateien: `web/tina/config.ts`, `web/tina/tina-lock.json`, `web/src/data/gear.json`,
+  `web/src/data/gear-categories/*.json` (neu), `web/src/lib/gear.ts`, `web/src/components/GearContent.tsx`,
+  `web/src/data/appearance-settings.json`, `web/src/layouts/BaseLayout.astro`, `web/src/styles/global.css`.
+- **Schema-Änderung (neue Collection + neues Feld) → Tina-Cloud-Re-Index nötig** (nach dem Push, von David).
+  Lokal gegengeprüft: Build grün, DE+EN-Überschriften in alter Reihenfolge, alle 12 Geräte erhalten.
+
 ## 2026-06-20 — ✅ Stabiler Abschluss-Stand (Meilenstein, bewusster Pausenpunkt)
 - Kein Code, nur Stand festgehalten: Seite live auf `main`, Cutover durch, SEO-Grundlage steht
   (Sitemap, JSON-LD, Search Console: Property bestätigt + Sitemap erfolgreich gelesen),
