@@ -1,27 +1,46 @@
-// Gear / Equipment — Logik 1:1 aus index.html (GEAR_CATS, buildGearFromItems,
-// renderGear). Kategorien fest + in fester Reihenfolge; leere entfallen.
+// Gear / Equipment — Gruppierung nach den (im CMS editierbaren) Kategorien.
+// Die Kategorie eines Geräts ist eine Tina-`reference` auf die Collection
+// `gear_categories`; der generierte Query expandiert sie zu einem Objekt
+// { id, label_de, label_en, order }. Reihenfolge = `order` (klein -> oben),
+// Gleichstand alphabetisch nach DE-Label. Leere Kategorien entfallen; Geräte
+// ohne Kategorie fallen raus (wie zuvor unbekannte Kategorien).
 
-export type GearItem = { name: string; brand?: string; category?: string; link?: string };
-export type GearCat = { cat: string; de: string; en: string };
+export type GearCategoryRef = {
+  id?: string;
+  label_de?: string;
+  label_en?: string;
+  order?: number | null;
+} | null;
 
-// Feste Kategorien — Reihenfolge bestimmt die Anzeige (NICHT alphabetisch).
-// 1:1 aus index.html (var GEAR_CATS).
-export const GEAR_CATS: GearCat[] = [
-  { cat: 'cameras',  de: 'Kameras',         en: 'Cameras' },
-  { cat: 'lenses',   de: 'Objektive',       en: 'Lenses' },
-  { cat: 'drones',   de: 'Drohne & Action', en: 'Drone & Action' },
-  { cat: 'phone',    de: 'Smartphone',      en: 'Phone' },
-  { cat: 'tripod',   de: 'Stativ',          en: 'Tripod' },
-  { cat: 'backpack', de: 'Rucksack',        en: 'Backpack' },
-  { cat: 'cooking',  de: 'Kochen & Camp',   en: 'Cooking & Camp' },
-];
+export type GearItem = { name: string; brand?: string; category?: GearCategoryRef; link?: string };
 
-// Flache Item-Liste -> gruppiert nach GEAR_CATS-Reihenfolge.
-// Leere Kategorien entfallen; Items mit unbekannter category fallen raus.
-export function groupGear(items: GearItem[]): (GearCat & { items: GearItem[] })[] {
-  return GEAR_CATS
-    .map((c) => ({ ...c, items: (items || []).filter((it) => it.category === c.cat) }))
-    .filter((g) => g.items.length > 0);
+export type GearGroup = { id: string; de: string; en: string; order: number; items: GearItem[] };
+
+// Flache Item-Liste -> gruppiert nach referenzierter Kategorie, sortiert nach `order`.
+export function groupGear(items: GearItem[]): GearGroup[] {
+  const map = new Map<string, GearGroup>();
+  for (const it of items || []) {
+    const cat = it?.category;
+    if (!cat) continue; // ohne Kategorie -> nicht anzeigen (Parität zum alten Verhalten)
+    const de = cat.label_de || '';
+    if (!de) continue;
+    const key = cat.id || de; // stabile Gruppierung (Datei-id), Fallback Label
+    let g = map.get(key);
+    if (!g) {
+      g = {
+        id: key,
+        de,
+        en: cat.label_en || de,
+        order: typeof cat.order === 'number' ? cat.order : Number.POSITIVE_INFINITY,
+        items: [],
+      };
+      map.set(key, g);
+    }
+    g.items.push(it);
+  }
+  return Array.from(map.values())
+    .filter((g) => g.items.length > 0)
+    .sort((a, b) => (a.order - b.order) || a.de.localeCompare(b.de, 'de'));
 }
 
 // Nur http(s)-Links zulassen (Pendant zu wwSafeUrl); sonst kein Link.

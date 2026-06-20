@@ -35,7 +35,7 @@ export default function GearContent(props: Props) {
 
       <div className={`gear-list gear-style-${['plain', 'card', 'notes'].includes(gear.gear_style) ? gear.gear_style : 'card'} gear-scope-${gear.gear_scope === 'groups' ? 'groups' : 'whole'}`}>
         {groups.map((g) => (
-          <div className="gear-cat" key={g.cat}>
+          <div className="gear-cat" key={g.id}>
             <h3>{lang === 'en' ? g.en : g.de}</h3>
             {g.items.map((it, i) => {
               const href = safeUrl(it.link);

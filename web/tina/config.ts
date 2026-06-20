@@ -558,24 +558,35 @@ export default defineConfig({
               { type: 'string', name: 'name', label: 'Name', required: true, description: 'z. B. Sony A7 IV' },
               { type: 'string', name: 'brand', label: 'Marke', description: 'z. B. Sony' },
               {
-                type: 'string',
+                // Dropdown aus der editierbaren Collection „Equipment – Kategorien".
+                // Tina zeigt nativ ein Auswahl-Dropdown (zeigt das DE-Label = isTitle der Kategorie).
+                // Neue Kategorien: unter „🎒 Equipment – Kategorien" anlegen/umbenennen/sortieren.
+                type: 'reference',
                 name: 'category',
                 label: 'Kategorie',
-                description: 'Bestimmt, unter welcher Überschrift das Teil erscheint.',
-                // Dropdown statt Freitext: kein Vertippen, keine erfundenen Kategorien.
-                options: [
-                  { value: 'cameras', label: 'Kameras (Cameras)' },
-                  { value: 'lenses', label: 'Objektive (Lenses)' },
-                  { value: 'drones', label: 'Drohne & Action (Drone & Action)' },
-                  { value: 'phone', label: 'Smartphone (Phone)' },
-                  { value: 'tripod', label: 'Stativ (Tripod)' },
-                  { value: 'backpack', label: 'Rucksack (Backpack)' },
-                  { value: 'cooking', label: 'Kochen & Camp (Cooking & Camp)' },
-                ],
+                description: 'Bestimmt, unter welcher Überschrift das Teil erscheint. Kategorien verwaltest du unter „🎒 Equipment – Kategorien".',
+                collections: ['gear_categories'],
               },
               { type: 'string', name: 'link', label: 'Link (optional)', description: 'Volle URL (https://…). Leer lassen = kein Link.' },
             ],
           },
+        ],
+      },
+      // --- Equipment-Kategorien: editierbare Liste (anlegen/umbenennen/sortieren).
+      //     Speist das Kategorie-Dropdown der Ausrüstungs-Teile (reference). ---
+      {
+        name: 'gear_categories',
+        label: '🎒 Equipment – Kategorien',
+        path: 'src/data/gear-categories',
+        format: 'json',
+        // Dropdown-Anzeige = label_de (isTitle). Anlegen/Löschen im CMS erlaubt.
+        ui: {
+          itemProps: (item: any) => ({ label: item?.label_de || 'Neue Kategorie' }),
+        },
+        fields: [
+          { type: 'string', name: 'label_de', label: 'Kategorie (Deutsch)', isTitle: true, required: true, description: 'Überschrift auf der Equipment-Seite, z. B. „Kameras". Frei änderbar.' },
+          { type: 'string', name: 'label_en', label: '↳ English', description: 'Englische Überschrift (optional; leer = Deutsch).' },
+          { type: 'number', name: 'order', label: 'Reihenfolge', description: 'Kleinere Zahl = weiter oben. Leer = ans Ende.' },
         ],
       },
       // --- Über uns: EIN Eintrag (Kopf-Texte + 2 Personen + „Warum die USA?") ---
@@ -756,6 +767,10 @@ export default defineConfig({
           {
             type: 'boolean', name: 'album_hover', label: 'Alben beim Drüberfahren anheben?',
             description: 'AN (Standard): Portfolio-Alben heben sich beim Hovern leicht an (Klick-Signal). AUS: keine Hover-Bewegung bei den Alben (sinnvoll, da man Alben auch ohne Klick durchscrollen kann).',
+          },
+          {
+            type: 'boolean', name: 'about_person_hover', label: 'Über-uns-Profile beim Drüberfahren anheben?',
+            description: 'AN (Standard): die beiden Profil-Karten auf „Über uns" heben sich beim Hovern leicht an (wie die Story-Karten). AUS: keine Hover-Bewegung.',
           },
           { type: 'boolean', name: 'show_hero_logo', label: 'Logo im Hero zeigen?' },
           { type: 'boolean', name: 'show_discover', label: '„Entdecken"-Bereich auf der Startseite zeigen?' },

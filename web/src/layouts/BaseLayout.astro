@@ -49,6 +49,8 @@ const imageFrame = ['none', 'soft', 'strong'].includes(ap.image_frame) ? ap.imag
 const frameControls = ap.frame_controls !== false;
 // Portfolio-Alben beim Hovern anheben? (Standard an)
 const albumHover = ap.album_hover !== false;
+// Über-uns-Profile beim Hovern anheben? (Standard an)
+const personHover = ap.about_person_hover !== false;
 const pathname = Astro.url.pathname;
 const footerSocial = (hm.intro && hm.intro.social) || [];
 const showFooterSocial = !!(hm.social_show && hm.social_show.footer);
@@ -135,7 +137,7 @@ const jsonLdString = JSON.stringify({ '@context': 'https://schema.org', '@graph'
     {/* Fonts werden LOKAL via Fontsource gebündelt (Imports im Frontmatter) — KEINE
         Google-Fonts-Links mehr (DSGVO: keine Besucher-IP an Google). */}
   </head>
-  <body class={`ww-frame-${imageFrame}${frameControls ? ' ww-frame-controls' : ''}${albumHover ? ' ww-album-hover' : ''}`}>
+  <body class={`ww-frame-${imageFrame}${frameControls ? ' ww-frame-controls' : ''}${albumHover ? ' ww-album-hover' : ''}${personHover ? ' ww-person-hover' : ''}`}>
     {showAdminBar && <SiteAdminBar />}
     <SiteNav lang={lang} pathname={pathname} logo={logo} showStories={showStories} showContact={showContact} />
     <main id="main">

@@ -875,6 +875,10 @@ body.ww-frame-controls .hero-cta .btn:hover { box-shadow: 0 14px 30px -10px rgba
 body.ww-album-hover .album-section { transition: transform var(--dur-base) var(--ease); }
 body.ww-album-hover .album-section:not(.open):hover { transform: translateY(-5px); }
 
+/* Über-uns-Profile-Hover (per CMS-Schalter about_person_hover, Standard an) — wie die Story-Karten anheben */
+body.ww-person-hover .person { transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease); }
+body.ww-person-hover .person:hover { transform: translateY(-6px); box-shadow: 0 20px 44px -20px rgba(46,36,24,0.5); }
+
 /* Über uns: „Riss"-Papierkante OBEN + UNTEN an der dunklen Profil-Box (wie Hero-Übergang) */
 #page-about .about-band { position: relative; overflow: hidden; }
 .band-rip { position: absolute; left: 0; right: 0; width: 100%; height: 72px; z-index: 2; color: var(--c-bg); display: block; pointer-events: none; }
