@@ -17,6 +17,14 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-20 — Fix: doppelter /uploads-Pfad bei Medien + Vorschau-Router (Darstellung/Highlights)
+- **Medien-Fix** (`fa4e8e7`): Pfade kamen teils als `/uploads/uploads/<datei>` an (assets.tina.io-Umschreibung
+  enthielt den mediaRoot doppelt) → „?" in CMS-Vorschau **und** live (Hero-Diashow). `normalizePath` (Frontend)
+  + `toLocalMedia` (CMS) klappen den doppelten Präfix ein; Upload-Felder speichern via `dedupeUploads` sauber.
+  Bestehende Doppel-Daten rendern dadurch korrekt **ohne** Daten-Eingriff. Kein Re-Index.
+- **Vorschau-Router** (`827a3e0`): `🎨 Darstellung` + `⭐ Highlights` bekommen `router () => '/'` → Live-Vorschau
+  + auffindbar (u. a. das Logo unter Darstellung). UI-only, kein Re-Index.
+
 ## 2026-06-20 — Equipment-Kategorie-Überschriften klickbar + CMS-UX-Doku
 - **Klick-zum-Bearbeiten**: `data-tina-field` auf den Kategorie-`<h3>` der Equipment-Seite → Klick in der
   CMS-Vorschau springt direkt zur Kategorie (wie schon beim Klick auf ein Gerät). Kein Re-Index.
