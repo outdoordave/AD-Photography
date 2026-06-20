@@ -2,6 +2,8 @@ import React from 'react';
 import { useCMS, wrapFieldsWithMeta } from 'tinacms';
 import { detectEncoder, toOptimized, fmt, type EncoderMode } from './webpEncode';
 import { toLocalMedia, dedupeUploads } from './mediaPath';
+import MarkdownToolbar from './MarkdownToolbar';
+import { useFormState } from 'react-final-form';
 
 // Story-Haupttext-Editor — laientauglich, OHNE Markdown-Syntax tippen.
 // Gespeichert wird weiterhin normales Markdown (der mdToHtml-Port bleibt 1:1),
@@ -100,8 +102,21 @@ const StoryBodyFieldInner = wrapFieldsWithMeta(({ input }: any) => {
     setNote('✓ Bild aus der Mediathek eingefügt');
   }
 
+  const hasAlbum = value.includes('[[album]]');
+  function removeAlbum() {
+    input.onChange(value.replace(/\n*\[\[album\]\]\n*/, '\n\n').replace(/\n{3,}/g, '\n\n').replace(/^\n+|\n+$/g, ''));
+  }
+  // Geschwister-Feld „Verknüpftes Album" (linked_album) live aus dem Formular lesen,
+  // um im Status-Hinweis den Album-Namen zu zeigen. react-final-form: eine Instanz im Baum.
+  const formState = useFormState({ subscription: { values: true } });
+  const linkedAlbum: string = ((formState?.values as any)?.linked_album as string) || '';
+  const albumName = linkedAlbum
+    ? (linkedAlbum.split('/').pop() || '').replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').trim()
+    : '';
+
   return (
     <div>
+      <MarkdownToolbar textareaRef={ref} value={value} onChange={input.onChange} />
       <div style={{ display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap', alignItems: 'center' }}>
         <label style={btn(busy)}>
           📷 Bild einfügen
@@ -129,12 +144,26 @@ const StoryBodyFieldInner = wrapFieldsWithMeta(({ input }: any) => {
         }}
       />
 
+      {hasAlbum ? (
+        <div style={albumBadge}>
+          <span>
+            📸{' '}
+            {albumName
+              ? <>Album-Galerie <strong>„{albumName}"</strong> erscheint an dieser Stelle</>
+              : <>Album-Marker gesetzt — aber unten noch <strong>kein Album gewählt</strong> („Verknüpftes Album")</>}{' '}
+            <span style={{ color: '#7a674e' }}>(sichtbar in der Vorschau rechts)</span>
+          </span>
+          <button type="button" onClick={removeAlbum} style={miniBtn}>entfernen</button>
+        </div>
+      ) : null}
+
       {note ? <div style={{ color: '#2d6a4f', fontSize: 12, marginTop: 6 }}>{note}</div> : null}
       {error ? <div style={{ color: '#b00', fontSize: 12, marginTop: 6 }}>{error}</div> : null}
       <div style={{ color: '#6e5e49', fontSize: 12, marginTop: 6 }}>
-        „📷 Bild einfügen" lädt ein neues Foto hoch · „🖼️ Aus Mediathek wählen" nimmt ein bereits
-        vorhandenes · „📸 Album hier einfügen" platziert die Bilder-Lightbox des unten gewählten
-        Albums. Alles wird an die Cursor-Stelle gesetzt.
+        Über dem Textfeld: <strong>Fett · Kursiv · Überschrift · Zitat · Liste</strong> — Text markieren
+        und klicken (kein Tippen von Zeichen). · „📷 Bild einfügen" lädt ein neues Foto hoch ·
+        „🖼️ Aus Mediathek wählen" nimmt ein vorhandenes · „📸 Album hier einfügen" platziert die
+        Bilder-Galerie des unten gewählten Albums. Alles an die Cursor-Stelle.
       </div>
 
       {pickerOpen ? (
@@ -187,5 +216,16 @@ function btn(busy: boolean): React.CSSProperties {
     fontSize: 13, fontWeight: 600, cursor: busy ? 'default' : 'pointer',
   };
 }
+
+const albumBadge: React.CSSProperties = {
+  display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap',
+  marginTop: 8, padding: '8px 12px', borderRadius: 8,
+  background: '#f3ece0', border: '1px solid #e4d8c4', color: '#2e2418', fontSize: 12.5,
+};
+
+const miniBtn: React.CSSProperties = {
+  border: '1px solid #d8cab2', background: '#fff', color: '#7a674e', borderRadius: 6,
+  padding: '4px 10px', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+};
 
 export default StoryBodyFieldInner;
