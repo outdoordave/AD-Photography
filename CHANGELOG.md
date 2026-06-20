@@ -17,6 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-20 — ✅ Stabiler Abschluss-Stand (Meilenstein, bewusster Pausenpunkt)
+- Kein Code, nur Stand festgehalten: Seite live auf `main`, Cutover durch, SEO-Grundlage steht
+  (Sitemap, JSON-LD, Search Console: Property bestätigt + Sitemap erfolgreich gelesen),
+  Datenschutz vollständig (inkl. Web3Forms), Performance ok, a11y-Basics (alt-Texte),
+  Security-Header + CSP `frame-ancestors`. **Keine offenen Pflicht-Punkte.**
+- Verbleibendes (eigene Domain/Namensentscheidung inkl. K8, G1, G2, alt Klasse 2, datePublished-Zeitzone,
+  K3, K6, Kontakt-Empfängeradresse) als **geparkt/Kür** dokumentiert — keine offenen Aufgaben.
+- Dateien: `STATUS.md` (Header + §1 SEO + §6 neu gefasst), `CHANGELOG.md`.
+
 ## 2026-06-19 — SEO: Sitemap-Fix (Statistik raus) + JSON-LD strukturierte Daten
 - **Sitemap** (`c24f579`): noindex-Seiten `/statistik` (DE+EN) aus der Sitemap ausgeschlossen
   (Filter um `!page.includes('/statistik')` erweitert), sonst meldet die Search Console

@@ -1,9 +1,13 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-19** · Branch `main` · **Cutover vollzogen.** SEO/a11y: Charge 1+2 live; Sitemap-Fix + JSON-LD live.
-> Die Astro+TinaCMS-Version ist **live** auf `main`. Die alte Single-File-`index.html`
-> ist abgelöst. Diese Datei ist eine **Momentaufnahme** (wird bei jeder Session
-> überschrieben, nie angehängt). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
+> **Stand: 2026-06-20** · Branch `main` · ✅ **STABILER ABSCHLUSS-STAND — bewusster Pausenpunkt.**
+> Seite **live** auf `main`, Cutover durch. SEO-Grundlage steht (Sitemap, JSON-LD, Google Search
+> Console: Property bestätigt + **Sitemap erfolgreich gelesen**), Datenschutz **vollständig**
+> (inkl. Web3Forms), Performance ok, Barrierefreiheit-Basics (alt-Texte) drin, Security-Header +
+> CSP `frame-ancestors` gesetzt. **Keine offenen Pflicht-Punkte.** Alles Übrige ist **geparkt/Kür**
+> (§6, „bei Bedarf/Lust"). Die Seite wird jetzt **genutzt** (Inhalte pflegen, teilen) statt weitergebaut.
+> Die alte Single-File-`index.html` ist abgelöst. Diese Datei ist eine **Momentaufnahme** (wird bei
+> jeder Session überschrieben, nie angehängt). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
 
 ---
 
@@ -28,7 +32,8 @@
   **38 Seiten DE+EN, `/statistik` ausgeschlossen** — beide noindex) — env-gesteuert (Vorschau `Disallow: /`,
   Live `Allow`). Pro Seite: title/description/OG/Twitter/canonical/hreflang (BaseLayout).
   **JSON-LD** (`@graph`): WebSite + Organization „Wide & Wild" global, `Article` auf Story-Detailseiten.
-  Einzureichen bei GSC: `/sitemap-index.xml`.
+  **Google Search Console:** URL-Präfix-Property bestätigt (Meta-Tag im Head), `sitemap-index.xml`
+  eingereicht und **erfolgreich gelesen**. (Indexierung/Ranking dauern naturgemäß Tage–Wochen.)
 
 ## 2. Inhalts-Struktur
 - **Settings/Texte:** JSON in `web/src/data/` (`home-*.json`, `appearance-settings.json`,
@@ -79,30 +84,32 @@
 - **Bilder online erst nach Save+Deploy** (repo-basierte Git-Medien); lokal sofort.
 - **Cloudflare-Cache:** nach Deploy Hard-Reload (Strg/Cmd+F5).
 
-## 6. Offene Nacharbeiten (KEIN Cutover-Blocker — ruhige Politur an der Live-Seite)
-> Cutover ist durch; nichts hiervon blockiert. Ergibt sich teils aus der echten Nutzung.
-- **G1 · iOS safe-area-insets** — ⏸️ zurückgestellt: kein konkreter Mangel, `viewport-fit=cover` wäre risikoreich (s. MAENGEL).
-- **G2 · Reisen-Timeline im Querformat (iPhone)** — ⏸️ zurückgestellt, aber diagnostiziert (Fix B: Mobil-Layout im Landscape erzwingen; Sperren geht auf iOS nicht).
-- ~~G3 · iPad-Hochformat~~ — ✅ gestrichen (alles okay).
-- **Hero-Ladezeit** — ✅ verbessert (`ccbad1d`): `fetchpriority`/`decoding` + `<head>`-Preload des Hero-Bilds.
-- ~~K7 · Kontaktformular-A11y~~ — ✅ **erledigt** (`3c1a8a9`); David: Browser-Konsole nach Push gegenchecken.
-- **EN-`<title>` auf der DE-Startseite** (K8) — ⏸️ **geparkt**: Wortlaut hängt an der offenen Namensentscheidung.
-- **Reisen-Timeline-Folgephasen:** weiterer Feinschliff ergibt sich aus der Nutzung
-  (Bug-/Wunsch-Sammlung) — wird bei Bedarf konkretisiert, kein Plan vorab.
-- ~~Aufräumen: alte `index.html` & Pre-Cutover-Altlasten aus der Repo-Wurzel~~ — ✅ **erledigt** (`8ca1bee`):
-  `index.html`, `admin/`, `build-indexes.js`, `content/`, Wurzel-`_headers`/`_redirects`, `prototype-astro/`,
-  Wurzel-`package-lock.json` entfernt; `/uploads` unangetastet. Sicherung: Tag **`legacy-singlefile`** (= Stand `140eb59`).
+## 6. Abschluss-Bilanz & geparkte Kür (KEINE offenen Pflicht-Punkte)
+> Stabiler Abschluss-Stand. Nichts hier unten ist eine Pflicht oder blockiert etwas —
+> es ist „bei Bedarf/Lust". Vieles ergibt sich erst aus der echten Nutzung.
 
-**SEO & Barrierefreiheit (Chargen, reine Template-Ebene):**
-- **Charge 1 — ✅ live** (PR #5): per-Seite `meta description` + Open Graph/Twitter + `canonical` + `hreflang` (BaseLayout);
-  **h1-Semantik** (Hero + Reise-Titel = `h1`, Stationen `h2`); Security-Header `nosniff` + `Referrer-Policy` (`web/public/_headers`).
-- **Charge 2 — ✅ auf `main`** (auf Davids Wunsch ohne Preview-Umweg per Fast-Forward; **kein Re-Index**; geht mit dem nächsten Push live):
-  `og:image` automatisch aus dem Startseiten-Hero (`d72eae2`); **alt Klasse 1** aus vorhandenem Titel/Namen (`d2c9a83`);
-  **Sammel-alt Klasse 3** für Galerie/Lightbox/Momentaufnahmen/Stationen (`f8a067d`). Hero + Lightbox-Platzhalter bleiben bewusst `alt=""`.
-- **CSP `frame-ancestors 'self'`** — ✅ **erledigt** (`f608a11`, direkt auf `main`): Tina-Editor rahmt **same-origin**
-  verifiziert; ersetzt das in Charge 1 weggelassene `X-Frame-Options`. Nur `frame-ancestors`, keine weitere CSP. MAENGEL **S1**.
-- **alt pro-Bild für Bulk-Galerien (Klasse 2)** — bewusst **geparkt** (Objekt-Listen-Umbau + Custom-Upload-Rework +
-  Daten-Migration + eigener Re-Index) → IDEEN.md.
+**✅ Erledigt (das Fundament steht):**
+- **Cutover** Single-File → Astro+Tina, live auf `main`; Repo-Wurzel aufgeräumt (Tag `legacy-singlefile` = `140eb59`).
+- **SEO-Grundlage:** Sitemap (`@astrojs/sitemap`, 38 Seiten, `/statistik` ausgeschlossen), per-Seite
+  Meta/OG/Twitter/canonical/hreflang, **h1-Semantik**, **JSON-LD** (WebSite+Organization+Article),
+  **Google Search Console** bestätigt + Sitemap erfolgreich gelesen.
+- **Datenschutz vollständig:** Cloudflare, Umami, YouTube, OpenStreetMap/OpenFreeMap, **Web3Forms** (`ef62a44`); Impressum aktuell (§ 5 DDG).
+- **Security:** `nosniff` + `Referrer-Policy` + CSP `frame-ancestors 'self'` (`web/public/_headers`).
+- **Performance:** Hero-LCP via `fetchpriority`/`decoding` + `<head>`-Preload (`ccbad1d`).
+- **Barrierefreiheit-Basics:** alt-Texte Klasse 1 + Sammel-alt Klasse 3; Kontaktformular-A11y (`3c1a8a9`).
+- ~~G3 iPad-Hochformat~~ ✅ gestrichen (alles okay).
+
+**🅿️ Geparkt / Kür (bei Bedarf/Lust — keine offene Aufgabe):**
+- **Eigene Domain statt `pages.dev`** — **größter Hebel** (SEO-Vertrauen, Marke). Hängt an der
+  **Namensentscheidung** und löst zugleich **K8** (EN-`<title>` auf der DE-Startseite).
+- **G1 · iOS safe-area-insets** — kein konkreter Mangel; `viewport-fit=cover` wäre risikoreich (MAENGEL).
+- **G2 · Reisen-Timeline im Querformat (iPhone)** — diagnostiziert (Fix B: Mobil-Layout im Landscape erzwingen; iOS-Sperre nicht möglich).
+- **alt pro-Bild für Bulk-Galerien (Klasse 2)** — Objekt-Listen-Umbau + Custom-Upload-Rework + Daten-Migration + **eigener Re-Index** → IDEEN.md (W4).
+- **`datePublished` mit Zeitzone** (JSON-LD) — löst 2 gelbe (optionale) Rich-Results-Hinweise; nur sinnvoll für Stories mit vollem Tagesdatum.
+- **K3 · Dateiname mit Leerzeichen** (`Logo Website.webp`) — funktioniert (URL-escaped), kosmetisch.
+- **K6 · Video-Workflow** — bei Bedarf konkretisieren.
+- **Kontakt-Empfängeradresse final prüfen** — Web3Forms-Key/Zieladresse gegenchecken.
+- **Reisen-Timeline-Folgephasen / sonstiger Feinschliff** — ergibt sich aus der Nutzung (Bug-/Wunsch-Sammlung), kein Plan vorab.
 
 ## 7. Wo nachschauen
 - **CHANGELOG.md** — chronologische Historie (nur ergänzen).
