@@ -10,7 +10,8 @@
 > jeder Session überschrieben, nie angehängt). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
 >
 > ⏳ **Nach dem Meilenstein dazugekommen (20.06., committet, noch nicht live):** Equipment-Kategorien
-> im CMS editierbar (neue Collection `gear_categories`) + Über-uns-Profile-Hover-Schalter. **Offen für David:
+> **direkt im Equipment-Formular** editierbar (Inline-Liste `categories` + Custom-Dropdown je Gerät) +
+> Über-uns-Profile-Hover-**Schalter auf der „Über uns"-Seite** (`person_hover`). **Offen für David:
 > Push + Tina-Cloud-Re-Index** (Schema-Änderung), danach im CMS gegentesten.
 
 ---
@@ -56,8 +57,9 @@
   **Reisen-Design-System zentral** (`reisen_settings.design` + Regler-Editor, s. §4).
 - **Stories:** Liste + Reader (Markdown, Cover, YouTube, Album-Einbettung), an-/abschaltbar.
 - **Equipment, Über uns, Kontakt:** portiert; Kontaktformular **sendet echt** (Web3Forms).
-  Equipment-**Kategorien im CMS editierbar** (Collection `gear_categories` → `reference`-Dropdown je Gerät).
-  Über-uns-Profile-**Hover** per CMS-Schalter `about_person_hover` (an/aus).
+  Equipment-**Kategorien direkt im Equipment-Formular editierbar** (Inline-Liste `categories` mit `key`;
+  Geräte-Dropdown = Custom-Feld `GearCategoryField`, liest die Liste via react-final-form).
+  Über-uns-Profile-**Hover** per Schalter **auf der „Über uns"-Seite** (`person_hover`, an/aus).
 - **Querschnitt:** DE/EN überall, Lightbox/Filmstreifen, 5 Kartenstile live, Statistik (Umami,
   cookielos), CMS-Live-Vorschau + Admin-Leiste, Sichtbarkeits-Schalter (🎨 Darstellung).
 

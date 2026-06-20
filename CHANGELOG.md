@@ -17,6 +17,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-20 — Nachjustierung (Feedback): Kategorien inline + Hover-Schalter auf „Über uns"
+- **Equipment-Kategorien** (`d2b629d`): von der separaten Collection `gear_categories` auf eine
+  **Inline-Liste `categories`** im Equipment-Formular umgestellt (David wollte keine eigene Datei-Liste,
+  sondern Pflege direkt auf der Equipment-CMS-Seite mit Live-Vorschau). Geräte-Feld `category` = Custom-
+  Dropdown `GearCategoryField` (liest die Geschwister-Liste via `react-final-form` `useFormState` —
+  eine Instanz im Baum bestätigt; speichert die `key`). Separate Collection + 7 Dateien entfernt,
+  Geräte von Referenz-Pfaden zurück auf Kennungen migriert. `lib/gear.ts`/`GearContent` gruppieren nach
+  der Inline-Liste (Listenreihenfolge = Anzeige; unbekannte Kennung fällt nicht weg).
+- **Über-uns-Hover-Schalter** (`a3f9b15`): von „Darstellung" (`about_person_hover`) auf die **„Über uns"-Seite**
+  verschoben (`person_hover` in `about.json`); BaseLayout liest den Wert von dort.
+- Beides weiterhin **Schema-Änderung → ein Re-Index** (zusammen mit dem Eintrag unten).
+
 ## 2026-06-20 — Equipment-Kategorien im CMS editierbar + Über-uns-Profile-Hover (⚠️ Re-Index)
 - **Equipment-Kategorien** (`a112551`): die bisher im Code feste Kategorie-Liste ist jetzt eine
   eigene CMS-Collection **`gear_categories`** („🎒 Equipment – Kategorien": anlegen/umbenennen/
