@@ -6,6 +6,7 @@ import CropPhotoField from './fields/CropPhotoField';
 import StoryBodyField from './fields/StoryBodyField';
 import ImageFrameField from './fields/ImageFrameField';
 import GearStyleField from './fields/GearStyleField';
+import GearCategoryField from './fields/GearCategoryField';
 import TripDesignsEditor from './fields/TripDesignsEditor';
 import SectionBanner from './fields/SectionBanner';
 import EnglishToggle from './fields/EnglishToggle';
@@ -541,6 +542,23 @@ export default defineConfig({
               { value: 'groups', label: 'Nach Gruppe (je Kategorie ein Block)' },
             ],
           },
+          // --- Kategorien (direkt hier pflegbar): Reihenfolge der Liste = Reihenfolge
+          //     der Überschriften auf der Seite. Speist das Dropdown der Geräte unten. ---
+          {
+            type: 'object',
+            name: 'categories',
+            label: 'Kategorien',
+            description: 'Deine Kategorie-Überschriften. Hinzufügen, umbenennen, per Drag&Drop sortieren. Die „Kennung" einmal vergeben (klein, ohne Leerzeichen) — daran hängen die Geräte; das Label kannst du jederzeit ändern.',
+            list: true,
+            ui: {
+              itemProps: (item: any) => ({ label: item?.label_de || 'Neue Kategorie' }),
+            },
+            fields: [
+              { type: 'string', name: 'label_de', label: 'Überschrift (Deutsch)', required: true, description: 'z. B. „Kameras". Frei änderbar.' },
+              { type: 'string', name: 'label_en', label: '↳ English', description: 'Englische Überschrift (optional; leer = Deutsch).' },
+              { type: 'string', name: 'key', label: 'Kennung', required: true, description: 'Kurz, klein, ohne Leerzeichen (z. B. „cooler"). Einmal vergeben, danach nicht mehr ändern — die Geräte hängen daran.' },
+            ],
+          },
           // --- Ausrüstungs-Liste ---
           {
             type: 'object',
@@ -558,35 +576,18 @@ export default defineConfig({
               { type: 'string', name: 'name', label: 'Name', required: true, description: 'z. B. Sony A7 IV' },
               { type: 'string', name: 'brand', label: 'Marke', description: 'z. B. Sony' },
               {
-                // Dropdown aus der editierbaren Collection „Equipment – Kategorien".
-                // Tina zeigt nativ ein Auswahl-Dropdown (zeigt das DE-Label = isTitle der Kategorie).
-                // Neue Kategorien: unter „🎒 Equipment – Kategorien" anlegen/umbenennen/sortieren.
-                type: 'reference',
+                // Dropdown, gespeist aus der „Kategorien"-Liste oben (gleiches Dokument).
+                // Eigenes Feld (GearCategoryField), weil Tina-`options` nicht aus CMS-Inhalt
+                // gefüllt werden können. Speichert die „Kennung" (key) der Kategorie.
+                type: 'string',
                 name: 'category',
                 label: 'Kategorie',
-                description: 'Bestimmt, unter welcher Überschrift das Teil erscheint. Kategorien verwaltest du unter „🎒 Equipment – Kategorien".',
-                collections: ['gear_categories'],
+                description: 'Bestimmt, unter welcher Überschrift das Teil erscheint. Auswahl aus deinen Kategorien (oben „Kategorien" pflegen).',
+                ui: { component: GearCategoryField },
               },
               { type: 'string', name: 'link', label: 'Link (optional)', description: 'Volle URL (https://…). Leer lassen = kein Link.' },
             ],
           },
-        ],
-      },
-      // --- Equipment-Kategorien: editierbare Liste (anlegen/umbenennen/sortieren).
-      //     Speist das Kategorie-Dropdown der Ausrüstungs-Teile (reference). ---
-      {
-        name: 'gear_categories',
-        label: '🎒 Equipment – Kategorien',
-        path: 'src/data/gear-categories',
-        format: 'json',
-        // Dropdown-Anzeige = label_de (isTitle). Anlegen/Löschen im CMS erlaubt.
-        ui: {
-          itemProps: (item: any) => ({ label: item?.label_de || 'Neue Kategorie' }),
-        },
-        fields: [
-          { type: 'string', name: 'label_de', label: 'Kategorie (Deutsch)', isTitle: true, required: true, description: 'Überschrift auf der Equipment-Seite, z. B. „Kameras". Frei änderbar.' },
-          { type: 'string', name: 'label_en', label: '↳ English', description: 'Englische Überschrift (optional; leer = Deutsch).' },
-          { type: 'number', name: 'order', label: 'Reihenfolge', description: 'Kleinere Zahl = weiter oben. Leer = ans Ende.' },
         ],
       },
       // --- Über uns: EIN Eintrag (Kopf-Texte + 2 Personen + „Warum die USA?") ---

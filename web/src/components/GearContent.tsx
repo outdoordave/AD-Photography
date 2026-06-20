@@ -23,7 +23,8 @@ export default function GearContent(props: Props) {
   const tf = (o: any, base: string) => tinaField(o, (lang === 'en' ? base + '_en' : base + '_de') as any);
 
   const items: GearItem[] = Array.isArray(gear.items) ? gear.items : [];
-  const groups = groupGear(items);
+  const categories = Array.isArray(gear.categories) ? gear.categories : [];
+  const groups = groupGear(items, categories);
 
   return (
     <>
