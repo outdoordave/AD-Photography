@@ -1,6 +1,7 @@
 import { useTina, tinaField } from 'tinacms/dist/react';
 import { photoFrame } from '../lib/trips';
 import { ILLUS } from '../lib/illus';
+import { mdToHtml } from '../lib/stories';
 import PaperRip from './PaperRip';
 
 // Über-uns als React-Insel (wie Stories/Gear): useTina = LIVE-Daten, data-tina-field
@@ -66,7 +67,7 @@ export default function AboutContent(props: Props) {
                   <div className="info">
                     <h3 data-tina-field={tinaField(person, 'name')}>{person.name}</h3>
                     <div className="role" data-tina-field={tf(person, 'role')}>{t(person, 'role')}</div>
-                    <p className="bio" data-tina-field={tf(person, 'bio')}>{t(person, 'bio')}</p>
+                    <div className="bio ww-rich" data-tina-field={tf(person, 'bio')} dangerouslySetInnerHTML={{ __html: mdToHtml(t(person, 'bio')) }} />
                     <div className="gear" data-tina-field={tf(person, 'gear')}>{t(person, 'gear')}</div>
                   </div>
                 </div>

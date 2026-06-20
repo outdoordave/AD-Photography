@@ -1,6 +1,7 @@
 import { useTina, tinaField } from 'tinacms/dist/react';
 import { bi, type Lang } from '../lib/albums';
 import { socialIcon } from '../lib/socialIcons';
+import { mdToHtml } from '../lib/stories';
 import contact from '../data/contact.json';
 
 // Intro-Block als LIVE-Insel (useTina startseite) — 1:1-Port von HomeIntro.astro.
@@ -34,7 +35,7 @@ export default function HomeIntroLive(props: Props) {
         <div className="home-intro">
           <h2 data-tina-field={tf(intro, 'subline')}>{subline}</h2>
           <div className="divider-orn">✦</div>
-          <p data-tina-field={tf(intro, 'subtext')}>{subtext}</p>
+          <div className="ww-rich" data-tina-field={tf(intro, 'subtext')} dangerouslySetInnerHTML={{ __html: mdToHtml(subtext) }} />
           {links.length > 0 && (
             <div className="insta-row">
               {links.map((c, i) => (

@@ -122,6 +122,16 @@ section { padding: 84px 0; }
 /* Jahreskapitel (Stories- + Reisen-Übersicht): große Fraunces-Überschrift je Jahr */
 .year-chapter + .year-chapter { margin-top: 52px; }
 .year-head { font-family: var(--font-display); font-size: 38px; font-weight: 300; letter-spacing: -0.02em; color: var(--c-ink); border-bottom: 1px solid var(--c-line); padding-bottom: 12px; margin: 0 0 26px; }
+/* Gerenderter Markdown in ehemals reinen Text-Feldern (Stations-Text, Reise-Summary,
+   Bio, Startseite-Intro): Innen-Abstände zähmen, damit Text OHNE Formatierung 1:1 wie
+   vorher aussieht. Schrift/Farbe/Zeilenhöhe erbt vom umschließenden Feld-Element. */
+.ww-rich > :first-child { margin-top: 0; }
+.ww-rich > :last-child { margin-bottom: 0; }
+.ww-rich p { margin: 0 0 0.7em; }
+.ww-rich ul, .ww-rich ol { margin: 0 0 0.7em; padding-left: 1.25em; }
+.ww-rich li { margin: 0 0 0.2em; }
+.ww-rich h2, .ww-rich h3 { font-family: var(--font-display); font-weight: var(--fw-medium); line-height: 1.2; margin: 0.2em 0 0.4em; }
+.ww-rich .pullquote { font-style: italic; border-left: 3px solid var(--c-accent); padding-left: 14px; margin: 0 0 0.7em; }
 /* Zurück-Link auf der Story-Detailseite (Stil identisch zu .trip-back) */
 .story-back { display: inline-block; font-size: var(--fs-label); letter-spacing: var(--tracking-slight); text-transform: uppercase; font-weight: var(--fw-bold); color: var(--c-ink-soft); text-decoration: none; margin: 16px 0 6px; }
 .story-back:hover { color: var(--c-accent); }

@@ -57,6 +57,23 @@ export function normalizePath(p: string): string {
   return out.replace(/\/uploads(?:\/uploads)+\//g, '/uploads/');
 }
 
+// Markdown -> reiner Text. Fuer kurze Teaser/Karten (z. B. .trip-card-sum mit
+// 2-Zeilen-Clamp), wo Markdown nicht gerendert wird: entfernt **, *, >, Listen-,
+// Ueberschriften-Marker, macht Links zu ihrem Text. Damit erscheint dort kein
+// rohes "**Wort**" im Teaser, obwohl das Feld Markdown speichert.
+export function stripMarkdown(md: string): string {
+  if (!md) return '';
+  return String(md)
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')        // Bilder ganz raus
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')      // Links -> Linktext
+    .replace(/^\s{0,3}(?:#{1,6}|>|[-*])\s+/gm, '')// Ueberschrift/Zitat/Liste-Marker
+    .replace(/\*\*([^*]+)\*\*/g, '$1')            // fett
+    .replace(/\*([^*]+)\*/g, '$1')                // kursiv
+    .replace(/~~([^~]+)~~/g, '$1')                // durchgestrichen
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 // --- YouTube ---
 export function wwYouTubeId(url: string): string {
   if (!url) return '';

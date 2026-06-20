@@ -3,7 +3,7 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useTina, tinaField } from 'tinacms/dist/react';
 import Lightbox, { type LbPhoto } from './Lightbox';
-import { normalizePath, wwYouTubeEmbed } from '../lib/stories';
+import { normalizePath, wwYouTubeEmbed, mdToHtml } from '../lib/stories';
 import { track } from '../lib/track';
 import { viewStops, bi, tripTitle, sortTrips, type RawTrip, type ViewStop, type Lang } from '../lib/trips';
 import { vehicleSvg, PLANE_SVG } from '../lib/vehicles';
@@ -659,7 +659,7 @@ export default function TripTimeline(props: Props) {
         </div>
 
         <div className="tl-intro">
-          <p className="tl-summary" data-tina-field={tf(trip, 'summary')}>{bi(trip, 'summary', lang)}</p>
+          <div className="tl-summary ww-rich" data-tina-field={tf(trip, 'summary')} dangerouslySetInnerHTML={{ __html: mdToHtml(bi(trip, 'summary', lang)) }} />
           {la ? (
             <a className="trip-album-link" href={`${lang === 'en' ? '/en' : ''}/portfolio/${la.slug}`}>
               <span className="lbl">{lang === 'de' ? 'Mehr Fotos im Album' : 'More photos in album'}</span>
@@ -693,7 +693,7 @@ export default function TripTimeline(props: Props) {
                   ) : null}
 
                   <div data-tina-field={rs ? tf(rs, 'text') : undefined}>
-                    {(s.text || '').split('\n\n').map((para, pi) => <p key={pi} className={'tl-text' + (isMain ? '' : ' tl-text-slim')}>{para}</p>)}
+                    <div className={'tl-text ww-rich' + (isMain ? '' : ' tl-text-slim')} dangerouslySetInnerHTML={{ __html: mdToHtml(s.text || '') }} />
                   </div>
 
                   {isMain && s.photos.length ? (
