@@ -1,9 +1,15 @@
 {
   "editor_language": "de",
   "hero": {
-    "mode": "image",
+    "mode": "random",
     "image": "/uploads/IMG_5904.webp",
-    "slideshow": [],
+    "slideshow": [
+      "/uploads/uploads/img_1418-2.jpg",
+      "/uploads/uploads/img_5273.jpg",
+      "/uploads/uploads/IMG_5904.webp",
+      "/uploads/uploads/img_5916-3.jpg",
+      "/uploads/uploads/img_6039.jpg"
+    ],
     "video": "",
     "video_poster": "",
     "headline_de": "Wir fotografieren die Weite Amerikas — vom Boden, aus der Luft und mittendrin in der Wildnis.",
