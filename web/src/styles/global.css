@@ -138,15 +138,16 @@ section { padding: 84px 0; }
 .story-back {
   position: fixed; top: 102px; left: calc(20px + env(safe-area-inset-left, 0px)); z-index: 1090;
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 8px 15px; border-radius: var(--radius-full);
-  font-size: var(--fs-label); letter-spacing: var(--tracking-slight); text-transform: uppercase; font-weight: var(--fw-bold);
-  color: var(--c-ink-soft); text-decoration: none;
-  background: rgba(244, 237, 225, 0.82); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-  border: 1px solid var(--c-line); box-shadow: 0 6px 18px -6px rgba(46, 36, 24, 0.35);
-  transition: color var(--dur-base) var(--ease), background var(--dur-base) var(--ease);
+  padding: 9px 18px; border-radius: var(--radius-pill);
+  font-size: var(--fs-label); letter-spacing: var(--tracking-slight); font-weight: var(--fw-bold);
+  color: #f0d9bf; text-decoration: none;
+  /* gleiche „Ghost-Pille" wie die Hero-CTAs — gleicher Fill-Wert (0.32) wie .btn.ghost */
+  background: rgba(28,24,18,0.32); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  border: 1.5px solid rgba(240,217,191,0.5); box-shadow: 0 6px 18px -8px rgba(0,0,0,0.45);
+  transition: background var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease);
 }
-.story-back:hover { color: var(--c-accent); background: var(--c-bg-alt); }
-@media (max-width: 640px) { .story-back { top: 80px; padding: 7px 13px; } }
+.story-back:hover { background: rgba(28,24,18,0.5); border-color: #f0d9bf; }
+@media (max-width: 640px) { .story-back { top: 80px; padding: 8px 15px; } }
 .story-card { background: var(--c-bg-alt); border-radius: var(--radius-sm); overflow: hidden; cursor: pointer; border: 1px solid var(--c-line); transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease); display: flex; flex-direction: column; }
 .story-card:hover { transform: translateY(-6px); box-shadow: 0 20px 44px -20px rgba(46,36,24,0.5); }
 .story-card .ph { aspect-ratio: var(--ar-card); }
@@ -632,8 +633,8 @@ html.ww-cms-preview .nav-links > a.active::after { display: block; }
 html.ww-cms-preview .nav-links .lang-toggle { margin-top: 0; }
 
 /* ============ HERO (Startseite, 1:1 aus index.html) ============ */
-.btn.ghost { background: transparent; border: 1.5px solid rgba(240,217,191,0.5); color: #f0d9bf; }
-.btn.ghost:hover { background: rgba(240,217,191,0.12); border-color: #f0d9bf; }
+.btn.ghost { background: rgba(28,24,18,0.32); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); border: 1.5px solid rgba(240,217,191,0.5); color: #f0d9bf; }
+.btn.ghost:hover { background: rgba(28,24,18,0.5); border-color: #f0d9bf; }
 
 .hero { position: relative; min-height: 90vh; min-height: 90svh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; overflow: hidden; background: linear-gradient(160deg, #3a4038 0%, #2b2a22 45%, #4a3826 100%); padding: 60px 24px; }
 .hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(28,24,18,0.5), rgba(28,24,18,0.35)); z-index: 1; }
