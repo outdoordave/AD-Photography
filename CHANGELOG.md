@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-21 17:40 — Reise-Zurück mobil in die Mininav-Zeile
+- Auf dem Handy (`<768px`) lag die fixe „← Reisen"-Pille direkt auf dem Reise-Titel + der Mini-Karte
+  (Reisen haben kein Hero-Bild wie Stories, über das die Pille fällt). Fix: fixe Pille mobil ausgeblendet,
+  „← Reisen"/„← Trips" als schlanken Nav-Link in die ohnehin sticky `.tl-mininav`-Zeile gelegt (Akzentfarbe,
+  blendet beim Scrollen mit dem Titel zusammen ein). Desktop unverändert = fixe Pille wie Stories.
+- Mininav ist von der Scroll-Spy entkoppelt (misst nur `.tl-head`) → `alaska2026`-Station-1 unberührt.
+  Lokal verifiziert (mobil + Desktop, Scroll/Collapse, Scroll-Spy).
+- Dateien: `web/src/components/TripTimeline.tsx`, `web/src/styles/trips-timeline.css`, `DESIGN.md`
+- Commit: `78645d3`
+
 ## 2026-06-21 — CMS-Format-Leiste + Markdown nachgerüstet + Zurück-Pille
 - **Format-Leiste** `MarkdownToolbar` (`72e8175`): Fett/Kursiv (umschließt Auswahl) + Überschrift/Zitat/
   Liste (Zeilen-Präfix, Toggle). Laientauglich — kein Tippen von `**`/`>`. Per `allow` einschränkbar.

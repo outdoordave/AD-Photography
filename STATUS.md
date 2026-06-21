@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-20** · Branch `main` · ✅ **STABILER ABSCHLUSS-STAND — bewusster Pausenpunkt.**
+> **Stand: 2026-06-21** · Branch `main` · ✅ **STABILER ABSCHLUSS-STAND — bewusster Pausenpunkt.**
 > Seite **live** auf `main`, Cutover durch. SEO-Grundlage steht (Sitemap, JSON-LD, Google Search
 > Console: Property bestätigt + **Sitemap erfolgreich gelesen**), Datenschutz **vollständig**
 > (inkl. Web3Forms), Performance ok, Barrierefreiheit-Basics (alt-Texte) drin, Security-Header +
@@ -9,10 +9,13 @@
 > Die alte Single-File-`index.html` ist abgelöst. Diese Datei ist eine **Momentaufnahme** (wird bei
 > jeder Session überschrieben, nie angehängt). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
 >
-> ⏳ **Nach dem Meilenstein dazugekommen (20.06., committet, noch nicht live):** Equipment-Kategorien
+> ⏳ **Nach dem Meilenstein dazugekommen (20./21.06., committet, noch nicht live):** Equipment-Kategorien
 > **direkt im Equipment-Formular** editierbar (Inline-Liste `categories` + Custom-Dropdown je Gerät) +
-> Über-uns-Profile-Hover-**Schalter auf der „Über uns"-Seite** (`person_hover`). **Offen für David:
-> Push + Tina-Cloud-Re-Index** (Schema-Änderung), danach im CMS gegentesten.
+> Über-uns-Profile-Hover-**Schalter auf der „Über uns"-Seite** (`person_hover`) + **CMS-Format-Leiste**
+> (Markdown-Buttons, laientauglich) + Jahres-Kapitel (Stories/Reisen) + **Zurück-Pille** (Story+Reise,
+> mobil: in der `.tl-mininav`-Zeile statt fixer Pille — `78645d3`). **Offen für David: Push + Tina-Cloud-
+> Re-Index** (Schema-Änderung aus `7d2c4d9` — sonst bricht der Cloudflare-Build ab), dann Deploy-Retry,
+> danach im CMS gegentesten (Format-Buttons, Equipment-Dropdown, Diashow-Bilder, Zurück-Pille mobil/Desktop).
 
 ---
 
