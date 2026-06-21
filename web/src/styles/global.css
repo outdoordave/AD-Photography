@@ -135,18 +135,20 @@ section { padding: 84px 0; }
 /* Zurück-„Pille" auf der Story-Detailseite: fixiert (scrollt mit), halbtransparent
    + Blur (auf Fotos lesbar), abgerundet — gleiches Idiom wie der Nach-oben-Button.
    z-index UNTER Mobil-Nav(1099)/Lightbox(1100), damit nichts kollidiert. */
+/* Story-Zurück-Pille: fixiert (immer erreichbar), Standard-Ghost-Pille (gleicher Fill 0.32
+   wie .btn.ghost). Reise-Detail nutzt dieselbe Optik, aber IN der sticky Titelleiste
+   (.tl-head .trip-back in trips-timeline.css) — siehe DESIGN.md. */
 .story-back {
   position: fixed; top: 102px; left: calc(20px + env(safe-area-inset-left, 0px)); z-index: 1090;
   display: inline-flex; align-items: center; gap: 6px;
   padding: 9px 18px; border-radius: var(--radius-pill);
   font-size: var(--fs-label); letter-spacing: var(--tracking-slight); font-weight: var(--fw-bold);
-  color: #f0d9bf; text-decoration: none;
-  /* gleiche „Ghost-Pille" wie die Hero-CTAs — gleicher Fill-Wert (0.32) wie .btn.ghost */
+  text-transform: none; color: #f0d9bf; text-decoration: none;
   background: rgba(28,24,18,0.32); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
   border: 1.5px solid rgba(240,217,191,0.5); box-shadow: 0 6px 18px -8px rgba(0,0,0,0.45);
   transition: background var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease);
 }
-.story-back:hover { background: rgba(28,24,18,0.5); border-color: #f0d9bf; }
+.story-back:hover { background: rgba(28,24,18,0.5); border-color: #f0d9bf; color: #f0d9bf; }
 @media (max-width: 640px) { .story-back { top: 80px; padding: 8px 15px; } }
 .story-card { background: var(--c-bg-alt); border-radius: var(--radius-sm); overflow: hidden; cursor: pointer; border: 1px solid var(--c-line); transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease); display: flex; flex-direction: column; }
 .story-card:hover { transform: translateY(-6px); box-shadow: 0 20px 44px -20px rgba(46,36,24,0.5); }

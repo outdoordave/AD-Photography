@@ -11,8 +11,23 @@
 }
 
 /* Zurück zur Übersicht */
-.trip-back { display: inline-block; font-size: var(--fs-label); letter-spacing: var(--tracking-slight); text-transform: uppercase; font-weight: var(--fw-bold); color: var(--c-ink-soft); text-decoration: none; margin-bottom: 6px; }
-.trip-back:hover { color: var(--c-accent); }
+/* Zurück-Pille IN der sticky Titelleiste — Optik = Standard-Ghost-Pille (siehe DESIGN.md).
+   ABSOLUT positioniert -> ändert die tl-head-Höhe NICHT (die Scroll-Spy misst headRef-Höhe,
+   s. TripTimeline measure()). Klebt mit dem Titel mit, immer erreichbar, kein Doppel-Element. */
+.tl-head .trip-back {
+  position: absolute; top: 0; left: 0; z-index: 6;
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 12px; border-radius: var(--radius-pill);
+  font-size: var(--fs-label); letter-spacing: var(--tracking-slight); font-weight: var(--fw-bold); text-transform: none;
+  color: #f0d9bf; text-decoration: none; white-space: nowrap;
+  background: rgba(28,24,18,0.32); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  border: 1.5px solid rgba(240,217,191,0.5);
+  transition: background var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease);
+}
+.tl-head .trip-back:hover { background: rgba(28,24,18,0.5); border-color: #f0d9bf; color: #f0d9bf; }
+/* Meta-Eyebrow nach rechts einrücken, damit die Pille oben links Platz hat.
+   NUR padding-left (horizontal) -> tl-head-Höhe bleibt unverändert (Scroll-Spy sicher). */
+.tl-head .tl-meta { padding-left: 104px; }
 
 /* Mobile schlanke Nav-Zeile: auf Desktop/iPad ausgeblendet. */
 .tl-mininav {
