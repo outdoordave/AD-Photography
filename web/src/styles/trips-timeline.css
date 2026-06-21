@@ -18,11 +18,20 @@
 .tl-mininav {
   display: none; order: 0;
   position: sticky; top: var(--ww-sticky-top); z-index: 5;
-  height: var(--ww-mininav-h); align-items: center;
+  height: var(--ww-mininav-h); align-items: center; gap: 14px;
   background: transparent; border-bottom: 1px solid transparent;
   transition: background var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease);
 }
 .tl-mininav.is-collapsed { background: var(--c-bg); border-bottom-color: var(--c-line); }
+/* Mobiler Zurück-Link in der schlanken Nav-Zeile: ersetzt auf dem Handy die fixe Pille
+   (die schwebt ohne Reise-Hero über dem Titel — siehe DESIGN.md). Schlanker Nav-Link
+   statt Foto-Overlay-Pille, weil die Zeile auf hellem Grund liegt, nicht über einem Bild. */
+.tl-mininav-back {
+  display: inline-flex; align-items: center; gap: 6px; flex: none;
+  font-size: var(--fs-label); letter-spacing: var(--tracking-slight); font-weight: var(--fw-bold);
+  color: var(--c-accent); text-decoration: none; white-space: nowrap; padding: 6px 2px;
+}
+.tl-mininav-back:hover { color: var(--c-accent-dk); }
 .tl-mininav-title {
   font-family: var(--font-display); font-size: var(--fs-title-sm); font-weight: var(--fw-medium); color: var(--c-ink);
   opacity: 0; transform: translateY(4px);
@@ -166,6 +175,7 @@
 @media (max-width: 767px) {
   .tl-stage { display: flex; flex-direction: column; column-gap: 0; }
   .tl-mininav { display: flex; }
+  .trip-back { display: none; } /* Mobil übernimmt der Zurück-Link in der .tl-mininav (kein Überlappen mit dem Reise-Titel) */
   .tl-head { order: 1; position: static; top: auto; box-shadow: none; padding: 6px 0 12px; }
   .tl-intro { order: 1; } /* direkt nach dem Kopf (mobil ist nichts sticky -> alles scrollt ohnehin) */
   .tl-head::after, .tl-head::before { display: none; } /* Kopf mobil nicht sticky -> kein Untertauch/Lücken-Deck nötig */

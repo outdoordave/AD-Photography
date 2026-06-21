@@ -41,3 +41,11 @@
   (`.story-back, .trip-back` gemeinsam, `position: fixed; top: 102px; left: 20px`). Story **und** Reise
   identisch in Optik **und** Position (keine Sonderplatzierung). *(Eine Titelleisten-Variante wurde
   verworfen — David wollte 1:1 dieselbe Stelle.)*
+- **Reisen-Zurück MOBIL (21.06.2026):** Auf dem Handy (`<768px`) ist die fixe Pille **ausgeblendet**
+  und „← Reisen" sitzt **in der ohnehin sticky `.tl-mininav`-Zeile** (Nav-Text-Link, Akzentfarbe).
+  Grund (belegt): Die fixe Pille funktioniert bei Stories nur, weil deren Reader ein hohes Hero-Bild
+  hat (`.reader-hero` 60vh), über das die Pille fällt. Reisen haben **kein Hero** → die Pille läge mobil
+  direkt auf dem Titel + der Mini-Karte (gequetscht). Die Mininav ist für genau diesen Zweck schon da
+  und von der Scroll-Spy (misst nur `.tl-head`) entkoppelt — Station-1-Verhalten bleibt unberührt.
+  **Bewusste Ausnahme zur „gleiche Pille überall"-Regel:** anderer Kontext (heller Nav-Balken statt
+  Foto-Overlay) → schlanker Nav-Link statt dunkler Ghost-Pille. **Desktop bleibt 1:1 die fixe Pille.**

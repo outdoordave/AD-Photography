@@ -646,8 +646,9 @@ export default function TripTimeline(props: Props) {
       ) : null}
 
       <div className="tl-stage">
-        <div className="tl-mininav" ref={miniNavRef} aria-hidden="true">
-          <span className="tl-mininav-title">{tripTitle(trip, lang)}</span>
+        <div className="tl-mininav" ref={miniNavRef}>
+          <a className="tl-mininav-back" href={lang === 'en' ? '/en/trips' : '/trips'}>{lang === 'en' ? '← Trips' : '← Reisen'}</a>
+          <span className="tl-mininav-title" aria-hidden="true">{tripTitle(trip, lang)}</span>
         </div>
 
         {/* Schritt 2: NUR die schlanke Titelleiste (Meta + Titel) klebt sticky. Die Zusammenfassung
