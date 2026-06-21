@@ -44,6 +44,7 @@ const metaDesc = (trip.summary_en || trip.summary_de || `Travel journal “${ttl
   <Fragment set:html={`<style>${tripDesignCss}</style>`} />
   <section style="padding-top:8px;">
     <div class="wrap">
+      <a class="trip-back" href="/en/trips">← Trips</a>
       <TripTimeline
         design={tripDesign}
         client:load

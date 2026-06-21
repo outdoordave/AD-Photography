@@ -654,9 +654,6 @@ export default function TripTimeline(props: Props) {
             steht im nicht-klebenden .tl-intro-Block (eigene Grid-Zeile) und scrollt beim Lesen
             natürlich nach oben unter die deckende Titelleiste (background + z4) — kein Sprung. */}
         <div className="tl-head" ref={headRef}>
-          {/* Zurück-Pille IN der sticky Titelleiste (absolut -> ändert die tl-head-Höhe NICHT,
-              damit die Scroll-Spy-Messung gleich bleibt). Optik = Standard-Ghost-Pille. */}
-          <a className="trip-back" href={`${lang === 'en' ? '/en' : ''}/trips`}>← {lang === 'en' ? 'Trips' : 'Reisen'}</a>
           <div className="tl-meta" data-tina-field={tf(trip, 'meta')}>{bi(trip, 'meta', lang)}{trip.upcoming ? (lang === 'de' ? ' · bald ✦' : ' · soon ✦') : ''}</div>
           <h1 data-tina-field={tinaField(trip, 'title')}>{tripTitle(trip, lang)}</h1>
         </div>
