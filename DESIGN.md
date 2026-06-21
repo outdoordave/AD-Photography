@@ -37,4 +37,9 @@
 - **20./21.06.2026 — Zurück-Pille:** Der Story-Zurück-Button ist die **Standard-Ghost-Pille**
   (fixiert oben links, scrollt mit), **nicht** ein Sonderstil. `.btn.ghost`-Fill von `transparent`
   auf `rgba(28,24,18,0.32)` angehoben (weniger durchsichtig, auf Fotos lesbar) — **gleicher Wert** in beiden.
-- **Reisen-Zurück:** soll denselben Pillen-Look bekommen (offen: Platzierung wegen der sticky Timeline-Titelleiste — s. Diskussion).
+- **Reisen-Zurück (21.06.2026):** gleiche Ghost-Pille, aber **IN der sticky Timeline-Titelleiste**
+  (`.tl-head .trip-back`) statt als zweites fixes Element — „doppelt" ist nicht besser.
+  **Absolut** positioniert + Meta nur horizontal eingerückt → `tl-head`-Höhe unverändert, damit die
+  Scroll-Spy-Messung (`headRef`-Höhe) gleich bleibt. Lehre: Platzierung kann sich pro Seite
+  unterscheiden (Story = fixe Pille über dem Hero; Reise = Pille in der sticky Leiste) — der **Look**
+  bleibt identisch, die **Platzierung** folgt dem jeweiligen Layout.
