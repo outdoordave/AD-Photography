@@ -705,6 +705,44 @@ html.ww-cms-preview .nav-back { display: none; }
 .ww-totop:hover { opacity: 1; background: var(--c-bg-alt); }
 .ww-totop svg { width: 20px; height: 20px; display: block; }
 
+/* ============ Sprach-Hinweis-Banner (global, nur DE-Seiten, JS-gesteuert) ============
+   z UNTER Lightbox(1100)/Adminbar(1200), UEBER To-Top(1090). Safe-Area unten/seitlich. */
+.ww-langbanner { position: fixed; z-index: 1095; display: flex; gap: 12px 16px; }
+.ww-langbanner[hidden] { display: none; }
+/* „unten" = schwebende Karte unten rechts (Desktop) */
+.ww-langbanner--bottom {
+  right: calc(20px + env(safe-area-inset-right, 0px));
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  left: auto; max-width: 360px; flex-wrap: wrap; align-items: center;
+  background: var(--c-bg); border: 1px solid var(--c-line); border-radius: var(--radius-lg);
+  box-shadow: 0 14px 40px -12px rgba(46,36,24,0.45); padding: 16px 18px;
+}
+/* „oben" = dunkler Streifen unter der Nav (Header 88px + Notch-Inset) */
+.ww-langbanner--top {
+  top: calc(88px + env(safe-area-inset-top, 0px)); left: 0; right: 0;
+  align-items: center; justify-content: center; flex-wrap: wrap;
+  background: var(--c-dark); color: #f0e6d6; padding: 12px 20px;
+}
+.ww-langbanner-text { font-size: var(--fs-ui); margin: 0; color: inherit; }
+.ww-langbanner--bottom .ww-langbanner-text { color: var(--c-ink); }
+.ww-langbanner-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.ww-langbanner-switch { display: inline-flex; align-items: center; padding: 8px 16px; border-radius: var(--radius-pill); background: var(--c-accent); color: #fff; font-size: var(--fs-label); font-weight: var(--fw-bold); letter-spacing: var(--tracking-slight); text-decoration: none; white-space: nowrap; }
+.ww-langbanner-switch:hover { background: var(--c-accent-dk); }
+.ww-langbanner-stay { background: none; border: none; cursor: pointer; color: inherit; font-size: var(--fs-label); font-weight: var(--fw-bold); letter-spacing: var(--tracking-slight); text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; padding: 8px 4px; }
+.ww-langbanner--bottom .ww-langbanner-stay { color: var(--c-ink-soft); }
+.ww-langbanner-x { background: none; border: none; cursor: pointer; color: inherit; font-size: 18px; line-height: 1; padding: 4px; opacity: 0.7; align-self: flex-start; }
+.ww-langbanner-x:hover { opacity: 1; }
+/* To-Top-Button hochschieben, solange das UNTEN-Banner sichtbar ist (Body-Klasse via JS). */
+body.ww-langbanner-on .ww-totop { bottom: calc(140px + env(safe-area-inset-bottom, 0px)); }
+@media (max-width: 860px) {
+  .ww-langbanner--top { top: calc(72px + env(safe-area-inset-top, 0px)); }
+  .ww-langbanner--bottom {
+    left: calc(12px + env(safe-area-inset-left, 0px));
+    right: calc(12px + env(safe-area-inset-right, 0px));
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px)); max-width: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero.polish-kenburns .hero-img, .hero.polish-kenburns .hero-slide { animation: none; }
   .scroll-cue::after, .scroll-mouse::after { animation: none; }

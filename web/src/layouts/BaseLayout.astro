@@ -60,6 +60,15 @@ const personHover = (about as any).person_hover !== false;
 const pathname = Astro.url.pathname;
 const footerSocial = (hm.intro && hm.intro.social) || [];
 const showFooterSocial = !!(hm.social_show && hm.social_show.footer);
+// Sprach-Hinweis-Banner (Feature C): Konfig aus Darstellung. Markup wird nur auf DE-Seiten
+// und nur wenn aktiviert gerendert; ob es WIRKLICH erscheint, entscheidet clientseitig
+// navigator.language + localStorage (s. Inline-Skript unten). enPath = EN-Pendant dieser Seite.
+const sb = (ap.sprach_banner || {}) as any;
+const showLangBanner = lang === 'de' && sb.enabled !== false;
+const sbPos = sb.position === 'oben' ? 'top' : 'bottom';
+const sbText = sb.text || 'This site is also available in English.';
+const sbSwitch = sb.switch_label || 'Switch to English';
+const sbStay = sb.stay_label || 'Auf Deutsch bleiben';
 
 // --- SEO/Head (Charge 1, reine Template-Ebene) ---
 const metaDescription = description || (lang === 'en'
@@ -166,5 +175,41 @@ const jsonLdString = JSON.stringify({ '@context': 'https://schema.org', '@graph'
         });
       }
     </script>
+    {/* Sprach-Hinweis (nur DE-Seiten, wenn aktiviert). Versteckt gerendert; Sichtbarkeit
+        clientseitig: erscheint nur bei nicht-deutscher Browser-Sprache und wenn nicht
+        weggeklickt. navigator.language wird NUR gelesen, nichts gespeichert/gesendet. */}
+    {showLangBanner && (
+      <div id="wwLangBanner" class={`ww-langbanner ww-langbanner--${sbPos}`} hidden>
+        <p class="ww-langbanner-text">{sbText}</p>
+        <div class="ww-langbanner-actions">
+          <a class="ww-langbanner-switch" href={enPath}>{sbSwitch}</a>
+          <button type="button" class="ww-langbanner-stay" id="wwLangStay">{sbStay}</button>
+        </div>
+        <button type="button" class="ww-langbanner-x" id="wwLangClose" aria-label="Hinweis schließen">✕</button>
+      </div>
+      <script is:inline>
+        (function () {
+          var b = document.getElementById('wwLangBanner');
+          if (!b) return;
+          var KEY = 'ww-lang-banner-dismissed';
+          try { if (localStorage.getItem(KEY)) return; } catch (e) {}
+          // navigator.language nur LESEN: deutsche Browser bekommen keinen Hinweis.
+          var nl = (navigator.language || '').toLowerCase();
+          if (nl.indexOf('de') === 0) return;
+          b.hidden = false;
+          // To-Top-Button nur bei UNTEN-Banner hochschieben (oben-Streifen kollidiert nicht).
+          if (b.classList.contains('ww-langbanner--bottom')) document.body.classList.add('ww-langbanner-on');
+          function dismiss() {
+            b.hidden = true;
+            document.body.classList.remove('ww-langbanner-on');
+            try { localStorage.setItem(KEY, '1'); } catch (e) {}
+          }
+          var stay = document.getElementById('wwLangStay');
+          var close = document.getElementById('wwLangClose');
+          stay && stay.addEventListener('click', dismiss);
+          close && close.addEventListener('click', dismiss);
+        })();
+      </script>
+    )}
   </body>
 </html>
