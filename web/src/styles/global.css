@@ -148,7 +148,9 @@ section { padding: 84px 0; }
   transition: background var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease);
 }
 .story-back:hover, .trip-back:hover { background: rgba(28,24,18,0.5); border-color: #f0d9bf; color: #f0d9bf; }
-@media (max-width: 640px) { .story-back, .trip-back { top: 80px; padding: 8px 15px; } }
+/* Mobil (<=860px, gleicher Breakpoint wie die Nav): fixe Zurueck-Pillen aus — dort uebernimmt
+   der Zurueck-Link in der Nav (Logo zentriert). So kein Doppel-Link und keine Luecke 768–860px. */
+@media (max-width: 860px) { .story-back, .trip-back { display: none; } }
 .story-card { background: var(--c-bg-alt); border-radius: var(--radius-sm); overflow: hidden; cursor: pointer; border: 1px solid var(--c-line); transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease); display: flex; flex-direction: column; }
 .story-card:hover { transform: translateY(-6px); box-shadow: 0 20px 44px -20px rgba(46,36,24,0.5); }
 .story-card .ph { aspect-ratio: var(--ar-card); }
