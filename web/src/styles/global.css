@@ -566,6 +566,8 @@ header { position: sticky; top: 0; z-index: 1100; background: rgba(244,237,225,0
 .lang-toggle a.active { background: var(--c-accent); color: #fff; }
 .burger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; }
 .burger span { display: block; width: 24px; height: 2px; background: var(--c-ink); transition: var(--dur-base) var(--ease); }
+/* Mobil-Zurück-Link in der Nav (Detailseiten) — auf Desktop ausgeblendet, dort gelten die fixen Pillen. */
+.nav-back { display: none; }
 
 footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-align: center; position: relative; overflow: hidden; }
 .footer-logo { width: 200px; margin: 0 auto 22px; opacity: 0.95; transition: opacity var(--dur-base) var(--ease); }
@@ -603,8 +605,13 @@ footer .fnote .ww-admin-link { color: inherit; text-decoration: none; opacity: 0
 footer .fnote .ww-admin-link:hover { color: #f0c9a8; opacity: 1; }
 
 @media (max-width: 860px) {
-  .nav { height: 72px; }
+  /* Mobil: Logo zentriert, Zurück-Link (Detailseiten) links, Burger rechts. Desktop bleibt 1:1. */
+  .nav { height: 72px; position: relative; }
   .nav-logo img { height: 48px; }
+  .nav-logo { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+  .nav-back { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-label); letter-spacing: var(--tracking-slight); font-weight: var(--fw-bold); color: var(--c-accent); text-decoration: none; white-space: nowrap; padding: 6px 2px; }
+  .nav-back:hover { color: var(--c-accent-dk); }
+  .burger { margin-left: auto; }
   .nav-links { position: fixed; top: calc(72px + env(safe-area-inset-top, 0px)); right: 0; width: 78%; max-width: 320px; height: calc(100vh - 72px); height: calc(100dvh - 72px - env(safe-area-inset-top, 0px)); background: var(--c-bg); flex-direction: column; align-items: flex-start; padding: 32px 30px calc(32px + env(safe-area-inset-bottom, 0px)); gap: 8px; border-left: 1px solid var(--c-line); transform: translateX(100%); transition: transform var(--dur-base) var(--ease); overflow-y: auto; z-index: 1099; }
   .nav-links.open { transform: translateX(0); }
   .nav-links > a { font-size: var(--fs-ui); padding: 12px 0; width: 100%; border-bottom: 1px solid var(--c-line); }
@@ -632,6 +639,10 @@ html.ww-cms-preview .nav-links > a {
 }
 html.ww-cms-preview .nav-links > a.active::after { display: block; }
 html.ww-cms-preview .nav-links .lang-toggle { margin-top: 0; }
+/* Im CMS-Vorschau-Iframe das Logo NICHT zentrieren und keinen Mobil-Zurück-Link zeigen
+   (Stolperstein: sonst verschiebt sich das Logo im Tina-Editor). */
+html.ww-cms-preview .nav-logo { position: static; transform: none; }
+html.ww-cms-preview .nav-back { display: none; }
 
 /* ============ HERO (Startseite, 1:1 aus index.html) ============ */
 .btn.ghost { background: rgba(28,24,18,0.32); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); border: 1.5px solid rgba(240,217,191,0.5); color: #f0d9bf; }

@@ -40,9 +40,21 @@ const linkHref = (href: string) => (href === '/' ? (isEn ? '/en/' : '/') : prefi
 const isActive = (item: (typeof NAV)[number]) =>
   item.key === 'home' ? section === 'home' : item.href === section;
 const logoSrc = logo && logo.charAt(0) !== '/' && !/^https?:/.test(logo) ? '/' + logo : logo;
+
+// Mobil-Zurück-Link in der Nav (NUR Detailseiten, NUR <=860px sichtbar; CSS). Auf Desktop
+// bleiben die fixen Pillen (.story-back/.trip-back). Erkennung über den sprachneutralen Pfad:
+// 2 Segmente unter /trips oder /stories = Detailseite. Ziel + Label sprachabhängig.
+const segs = bare.split('/').filter(Boolean);
+const navBack =
+  segs[0] === 'trips' && segs.length >= 2 ? { href: linkHref('/trips'), label: isEn ? '← Trips' : '← Reisen' }
+  : segs[0] === 'stories' && segs.length >= 2 ? { href: linkHref('/stories'), label: '← Stories' }
+  : null;
 ---
 <header>
   <nav class="nav">
+    {navBack && (
+      <a class="nav-back" href={navBack.href}>{navBack.label}</a>
+    )}
     {logoData ? (
       <LogoLink client:load variant="nav" query={logoQuery} variables={logoVariables} data={logoData} href={isEn ? '/en/' : '/'} ariaLabel="Wide & Wild — Start" />
     ) : (
