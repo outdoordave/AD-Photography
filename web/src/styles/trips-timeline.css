@@ -3,7 +3,7 @@
    EIN Scroll-Kontext: Seite scrollt normal, Kopf + Karte sind sticky. */
 
 :root {
-  --ww-sticky-top: 96px;       /* unter der globalen Nav (88px) — von der Insel gemessen */
+  --ww-sticky-top: calc(96px + env(safe-area-inset-top, 0px));       /* unter der globalen Nav (88px) — von der Insel gemessen; +Notch-Inset (viewport-fit=cover) */
   --ww-mininav-h: 46px;        /* mobile schlanke Nav-Zeile */
   --ww-map-h-mobile: 170px;    /* mobile Mini-Karten-Höhe */
   --ww-map-h: min(62vh, 540px); /* Desktop-Karten-Höhe (auch für sticky Editor-Leiste) */

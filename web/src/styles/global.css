@@ -551,7 +551,7 @@ section { padding: 84px 0; }
 @media (max-width: 480px) { .gallery { grid-template-columns: 1fr; } .gallery .item { aspect-ratio: 4/3; } }
 
 /* ============ NAV-SHELL (Header / Footer, 1:1 aus index.html) ============ */
-header { position: sticky; top: 0; z-index: 1100; background: rgba(244,237,225,0.94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: 1px solid var(--c-line); }
+header { position: sticky; top: 0; z-index: 1100; background: rgba(244,237,225,0.94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: 1px solid var(--c-line); padding-top: env(safe-area-inset-top, 0px); }
 .nav { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; height: 88px; display: flex; align-items: center; justify-content: space-between; }
 .nav-logo { display: flex; align-items: center; cursor: pointer; height: 100%; text-decoration: none; color: var(--c-ink); }
 .nav-logo img { height: 62px; width: auto; }
@@ -605,7 +605,7 @@ footer .fnote .ww-admin-link:hover { color: #f0c9a8; opacity: 1; }
 @media (max-width: 860px) {
   .nav { height: 72px; }
   .nav-logo img { height: 48px; }
-  .nav-links { position: fixed; top: 72px; right: 0; width: 78%; max-width: 320px; height: calc(100vh - 72px); height: calc(100dvh - 72px); background: var(--c-bg); flex-direction: column; align-items: flex-start; padding: 32px 30px; gap: 8px; border-left: 1px solid var(--c-line); transform: translateX(100%); transition: transform var(--dur-base) var(--ease); overflow-y: auto; z-index: 1099; }
+  .nav-links { position: fixed; top: calc(72px + env(safe-area-inset-top, 0px)); right: 0; width: 78%; max-width: 320px; height: calc(100vh - 72px); height: calc(100dvh - 72px - env(safe-area-inset-top, 0px)); background: var(--c-bg); flex-direction: column; align-items: flex-start; padding: 32px 30px calc(32px + env(safe-area-inset-bottom, 0px)); gap: 8px; border-left: 1px solid var(--c-line); transform: translateX(100%); transition: transform var(--dur-base) var(--ease); overflow-y: auto; z-index: 1099; }
   .nav-links.open { transform: translateX(0); }
   .nav-links > a { font-size: var(--fs-ui); padding: 12px 0; width: 100%; border-bottom: 1px solid var(--c-line); }
   .nav-links > a.active::after { display: none; }
