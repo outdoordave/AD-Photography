@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-21** · Branch `main` · ✅ **STABILER ABSCHLUSS-STAND — bewusster Pausenpunkt.**
+> **Stand: 2026-06-23** · Live-Branch `main` · ⚙️ Feature-Branch `nav-safearea-langbanner` offen.
 > Seite **live** auf `main`, Cutover durch. SEO-Grundlage steht (Sitemap, JSON-LD, Google Search
 > Console: Property bestätigt + **Sitemap erfolgreich gelesen**), Datenschutz **vollständig**
 > (inkl. Web3Forms), Performance ok, Barrierefreiheit-Basics (alt-Texte) drin, Security-Header +
@@ -9,13 +9,20 @@
 > Die alte Single-File-`index.html` ist abgelöst. Diese Datei ist eine **Momentaufnahme** (wird bei
 > jeder Session überschrieben, nie angehängt). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
 >
-> ⏳ **Nach dem Meilenstein dazugekommen (20./21.06., committet, noch nicht live):** Equipment-Kategorien
-> **direkt im Equipment-Formular** editierbar (Inline-Liste `categories` + Custom-Dropdown je Gerät) +
-> Über-uns-Profile-Hover-**Schalter auf der „Über uns"-Seite** (`person_hover`) + **CMS-Format-Leiste**
-> (Markdown-Buttons, laientauglich) + Jahres-Kapitel (Stories/Reisen) + **Zurück-Pille** (Story+Reise,
-> mobil: in der `.tl-mininav`-Zeile statt fixer Pille — `78645d3`). **Offen für David: Push + Tina-Cloud-
-> Re-Index** (Schema-Änderung aus `7d2c4d9` — sonst bricht der Cloudflare-Build ab), dann Deploy-Retry,
-> danach im CMS gegentesten (Format-Buttons, Equipment-Dropdown, Diashow-Bilder, Zurück-Pille mobil/Desktop).
+> ⏳ **Auf `main`, committet, noch nicht live (20./21.06.):** Equipment-Kategorien **direkt im Equipment-
+> Formular** (Inline-Liste `categories` + Dropdown je Gerät) + Über-uns-Profile-Hover-Schalter (`person_hover`)
+> + **CMS-Format-Leiste** (Markdown-Buttons) + Jahres-Kapitel (Stories/Reisen) + Zurück-Pille (Story+Reise).
+>
+> ⚙️ **Feature-Branch `nav-safearea-langbanner` (23.06., NICHT auf main):** (A) **Nav mobil** umgebaut —
+> `<=860px` Logo zentriert, Zurück-Link links nur auf Detailseiten, Burger rechts; Desktop unverändert;
+> ersetzt mobil die fixen Pillen + den Mininav-Link. (B) **safe-area global** — `viewport-fit=cover` +
+> Insets für Header/Drawer/To-Top/Lightbox/Banner + `--ww-sticky-top`. (C) **Sprach-Banner** — neue
+> CMS-Felder `sprach_banner` in Darstellung; zeigt englischsprachigen Besuchern auf DE-Seiten einen Hinweis.
+>
+> **Offen für David (Reihenfolge):** 1) Branch `nav-safearea-langbanner` **pushen**. 2) **Tina-Cloud-Re-Index**
+> (Schema-Änderung `sprach_banner` — **und** die noch ausstehende aus `7d2c4d9`; sonst bricht der Build ab).
+> 3) **Cloudflare-Preview** des Branches auf **Mac/iPad/iPhone** testen (Nav mobil, safe-area an Notch/Punch-
+> Hole, Banner oben+unten, Sprachwechsel-Ziel, `alaska2026`→Station 1). 4) Nach OK Branch→`main` mergen.
 
 ---
 

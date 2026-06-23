@@ -17,6 +17,24 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-23 22:40 — Nav-Umbau mobil + globale safe-area + Sprach-Banner (Branch `nav-safearea-langbanner`)
+- **safe-area global** (`5530d1d`): `viewport-fit=cover` ergänzt → `env(safe-area-inset-*)` greifen jetzt
+  (vorher 0, G1). Header `padding-top: inset-top`, mobiler Nav-Drawer top/height/padding-bottom-Insets,
+  `--ww-sticky-top` der Reise-Timeline → `calc(96px + inset-top)`. Fallback 0 (kein Doppelabstand Hochformat).
+- **Nav mobil** (`fb09808`): auf `<=860px` Logo zentriert, Zurück-Link links **nur** auf Reise-/Story-Detail
+  (Ziel/Label sprachabhängig), Burger rechts. Desktop **1:1 unverändert**. Sprachumschalter unangetastet im
+  Drawer. CMS-Vorschau-Override neutralisiert (Logo bleibt im Tina-Iframe static).
+- **Kein Doppel-Zurück mobil** (`c061d77`): alles auf Breakpoint **860px** vereinheitlicht — fixe
+  `.story-back`/`.trip-back` `<=860` aus, `.tl-mininav-back` (aus `78645d3`) entfernt. Mininav-**Titel** bleibt.
+- **Sprach-Banner** (`c2c963a` Schema, `8059b72` UI): neue Objekt-Gruppe `sprach_banner` in **Darstellung**
+  (enabled, position oben/unten, text EN, switch/stay-Labels). Banner nur auf DE-Seiten gerendert; erscheint
+  clientseitig nur bei nicht-deutscher Browser-Sprache + ohne localStorage-Merker. „Switch to English" →
+  EN-Pendant der Seite; „Bleiben"/✕ → Merker, nie wieder. `navigator.language` nur gelesen. Unten-Banner
+  schiebt den To-Top-Button hoch (Body-Klasse). **Tina-Cloud-Re-Index nötig** (Schemaänderung).
+- **Datenschutz** (`f77cb43`): Abschnitt „Lokale Speicherung (Sprachhinweis)" in DE+EN (kein Re-Index).
+- Lokal verifiziert: Nav-Mobil (Reise+Story), Logo zentriert, Drawer+Sprachumschalter, `alaska2026`→Station 1,
+  Banner (DE-only/hidden/korrektes EN-Ziel/full-width unten). safe-area-Insets nur auf echtem Gerät testbar.
+
 ## 2026-06-21 17:40 — Reise-Zurück mobil in die Mininav-Zeile
 - Auf dem Handy (`<768px`) lag die fixe „← Reisen"-Pille direkt auf dem Reise-Titel + der Mini-Karte
   (Reisen haben kein Hero-Bild wie Stories, über das die Pille fällt). Fix: fixe Pille mobil ausgeblendet,

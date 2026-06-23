@@ -49,3 +49,14 @@
   und von der Scroll-Spy (misst nur `.tl-head`) entkoppelt — Station-1-Verhalten bleibt unberührt.
   **Bewusste Ausnahme zur „gleiche Pille überall"-Regel:** anderer Kontext (heller Nav-Balken statt
   Foto-Overlay) → schlanker Nav-Link statt dunkler Ghost-Pille. **Desktop bleibt 1:1 die fixe Pille.**
+- **Nav mobil (23.06.2026):** Auf `<=860px` (= Nav-Breakpoint) **Logo zentriert**, Zurück-Link links
+  **nur** auf Detailseiten (Reise/Story, sprachabhängig), Burger rechts. **Desktop unverändert.** Der
+  mobile Zurück-Link ersetzt dort die fixen Pillen **und** den früheren Mininav-Link — alles auf **einen**
+  Breakpoint (860px) vereinheitlicht (sonst Lücke/Doppel-Link im Bereich 768–860px). Stolpersteine, die
+  beachtet werden müssen: (1) **CMS-Vorschau** (`html.ww-cms-preview`) neutralisieren, sonst zentriert sich
+  das Logo im Tina-Editor; (2) Sprachumschalter (`.lang-toggle`) bleibt unangetastet im Burger-Drawer.
+- **safe-area (23.06.2026):** Seit `viewport-fit=cover` greifen `env(safe-area-inset-*)`. **Regel:** jedes
+  **fixierte/sticky** Element bekommt das passende Inset mit **Fallback 0** (`env(safe-area-inset-x, 0px)`):
+  Header `top`, untere fixierte Elemente (To-Top, Banner) `bottom`, seitliche `left/right`. Fixe Höhen-Tokens,
+  die an der Notch hängen (z. B. `--ww-sticky-top`), als `calc(... + env(safe-area-inset-top, 0px))`. Inset
+  ist im Hochformat meist 0 → kein Doppelabstand; relevant in Querformat/PWA → nur auf Gerät final testbar.
