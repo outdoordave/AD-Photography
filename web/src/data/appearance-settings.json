@@ -7,5 +7,12 @@
   "show_discover": true,
   "show_stories": true,
   "show_contact": true,
-  "show_admin_bar": true
+  "show_admin_bar": true,
+  "sprach_banner": {
+    "enabled": true,
+    "position": "unten",
+    "text": "This site is also available in English.",
+    "switch_label": "Switch to English",
+    "stay_label": "Auf Deutsch bleiben"
+  }
 }

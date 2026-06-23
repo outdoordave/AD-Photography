@@ -781,6 +781,23 @@ export default defineConfig({
           { type: 'boolean', name: 'show_stories', label: 'Stories zeigen? (Nav-Link, Footer, Startseiten-Teaser)' },
           { type: 'boolean', name: 'show_contact', label: 'Kontakt zeigen? (Nav-Link + Footer-Link)' },
           { type: 'boolean', name: 'show_admin_bar', label: 'Admin-Leiste auf der Website zeigen? (nur sichtbar, wenn im CMS angemeldet)' },
+          {
+            type: 'object', name: 'sprach_banner', label: '🌐 Sprach-Hinweis (für englischsprachige Besucher)',
+            description: 'Kleiner Hinweis, der NUR Besuchern mit nicht-deutscher Browser-Sprache auf den deutschen Seiten angezeigt wird — mit einem Knopf zur englischen Version. Wird einmal weggeklickt und danach nie wieder gezeigt (lokal auf dem Gerät gemerkt).',
+            fields: [
+              { type: 'boolean', name: 'enabled', label: 'Hinweis anzeigen?' },
+              {
+                type: 'string', name: 'position', label: 'Position',
+                options: [
+                  { value: 'unten', label: 'Unten (schwebende Karte, unten rechts)' },
+                  { value: 'oben', label: 'Oben (Streifen unter der Nav)' },
+                ],
+              },
+              { type: 'string', name: 'text', label: 'Hinweis-Text (Englisch)', ui: { component: 'textarea' } },
+              { type: 'string', name: 'switch_label', label: 'Knopf „Zur englischen Seite" (Englisch)' },
+              { type: 'string', name: 'stay_label', label: 'Knopf „Auf Deutsch bleiben"' },
+            ],
+          },
         ],
       },
       // --- Datenschutzerklärung: eigene Rechtstext-Seite (/datenschutz) ---
