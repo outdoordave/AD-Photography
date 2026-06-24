@@ -514,6 +514,10 @@ export default function TripTimeline(props: Props) {
   //       Übergang zwischen beiden Regimen, damit es nie umschaltet/springt.
   const CF_START = 36, CF_LEN = 40, CF_BASE = 0.12;
   const M_RANGE = 90, M_BASE = 0.14, M_LAG_FULL = 0.4;
+  // Unterstützt der Browser Scroll-Driven Animations, koppelt CSS den Mobil-Titel direkt an den Scroll
+  // (kein JS-Lerp/Drift). Dann treibt JS --tl-m auf dem Handy NICHT (würde sonst gegen die CSS-Animation
+  // schreiben). --tl-p ist Desktop-only. Fehlt der Support, bleibt der JS-Lerp als Fallback aktiv.
+  const sdaSupported = typeof CSS !== 'undefined' && typeof CSS.supports === 'function' && CSS.supports('animation-timeline: scroll()');
   const smoothstep = (x: number) => { const r = Math.min(1, Math.max(0, x)); return r * r * (3 - 2 * r); };
   // Pro-Frame-Faktor aus Basis-k (pro 16.7ms) und Frame-Zeit dt — frame-raten-unabhängig.
   const frameF = (k: number, dt: number) => 1 - Math.pow(1 - k, dt / 16.7);
@@ -542,6 +546,9 @@ export default function TripTimeline(props: Props) {
     else cfPrevTRef.current = 0; // Loop endet -> nächster Start frisch (kein dt-Sprung)
   }
   function armCrossfade() {
+    // Mobil + Scroll-Driven-Support: CSS koppelt den Titel direkt an den Scroll, --tl-p ist auf dem
+    // Handy ungenutzt -> hier nichts zu treiben (spart rAF/Batterie, kein Konflikt mit der CSS-Anim).
+    if (sdaSupported && window.matchMedia('(max-width: 767px)').matches) return;
     const sy = window.scrollY;
     pTargetRef.current = smoothstep((sy - CF_START) / CF_LEN);
     mTargetRef.current = smoothstep(sy / M_RANGE);

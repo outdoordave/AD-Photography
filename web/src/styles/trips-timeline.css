@@ -225,6 +225,33 @@
   .tl-strip img { width: 78%; max-width: 320px; height: auto; aspect-ratio: 3 / 2; scroll-snap-align: start; }
 }
 
+/* ── Apple-smooth: Mobil-Titel DIREKT an die Scroll-Position koppeln (statt JS-Lerp) ──
+   Scroll-Driven Animations laufen auf derselben Timeline wie der native Scroll -> der Titel klebt
+   1:1 am Inhalt, kein Drift/Nachlauf (das war der „unbeholfene" Eindruck). --tl-m wird vom Scroll
+   getrieben (Zeile + Pille lesen es weiter), der Titel-Transform direkt als Keyframe (auf dem
+   Compositor = buttrig). Ohne Browser-Support (ältere iOS) greift @supports nicht -> JS-Fallback
+   (heutiger Stand, unverändert). Titel bleibt position:fixed -> Scroll-Spy/headH unberührt. */
+@property --tl-m { syntax: "<number>"; inherits: true; initial-value: 0; }
+@keyframes tl-m-drive { from { --tl-m: 0; } to { --tl-m: 1; } }
+@keyframes tl-title-fly {
+  from { transform: translateX(0px) translateY(46px) scale(1.85); }
+  to   { transform: translateX(96px) translateY(0px) scale(1); }
+}
+@media (max-width: 767px) {
+  @supports (animation-timeline: scroll()) {
+    .tl-stage {
+      animation: tl-m-drive cubic-bezier(.42, 0, .58, 1) both;
+      animation-timeline: scroll(root);
+      animation-range: 0 90px;
+    }
+    .tl-herohead h1 {
+      animation: tl-title-fly cubic-bezier(.42, 0, .58, 1) both;
+      animation-timeline: scroll(root);
+      animation-range: 0 90px;
+    }
+  }
+}
+
 /* ===== Editor-Stationsleiste (NUR im Tina-Vorschau-Iframe sichtbar) ============================
    Beendet den „Hin-und-her-Tanz": Chip = Station direkt bearbeiten (fokussiert das Feld im
    Formular via data-tina-field), „+ Station / sortieren" springt zum flachen Stationen-Manager.

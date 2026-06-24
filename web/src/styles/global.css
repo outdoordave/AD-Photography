@@ -210,6 +210,32 @@ section { padding: 84px 0; }
       scale(calc(1 + (1 - var(--st-m, 0)) * (var(--st-scale-big, 1.6) - 1)));
   }
 }
+
+/* ── Apple-smooth: Story-Mobil-Titel direkt an die Scroll-Position koppeln (analog Reise) ──
+   Scroll-Driven Animations -> Titel klebt 1:1 am Inhalt, kein Drift. --st-m vom Scroll getrieben
+   (Zeile + Pille + max-width lesen es weiter), Titel-Transform direkt als Keyframe (kompositierbar).
+   Endpunkte/Range hängen an den per JS gemessenen Werten (--st-bigY/--st-scale-big/--st-range) -> die
+   Keyframes lesen diese Vars. Ohne Support: JS-Fallback. Titel bleibt fixed -> Spy unberührt. */
+@property --st-m { syntax: "<number>"; inherits: true; initial-value: 0; }
+@keyframes st-m-drive { from { --st-m: 0; } to { --st-m: 1; } }
+@keyframes st-title-fly {
+  from { transform: translateX(0px) translateY(var(--st-bigY, 380px)) scale(var(--st-scale-big, 1.6)); }
+  to   { transform: translateX(100px) translateY(0px) scale(1); }
+}
+@media (max-width: 767px) {
+  @supports (animation-timeline: scroll()) {
+    #page-story {
+      animation: st-m-drive cubic-bezier(.42, 0, .58, 1) both;
+      animation-timeline: scroll(root);
+      animation-range: 0 var(--st-range, 380px);
+    }
+    #page-story .reader-hero-inner h1 {
+      animation: st-title-fly cubic-bezier(.42, 0, .58, 1) both;
+      animation-timeline: scroll(root);
+      animation-range: 0 var(--st-range, 380px);
+    }
+  }
+}
 .reader-body { max-width: 720px; margin: 0 auto; padding: 40px 24px 30px; }
 .reader-body p { font-size: var(--fs-lead); line-height: 1.85; margin-bottom: 24px; color: #4a3d2c; }
 .reader-body p:first-of-type::first-letter { font-family: var(--font-display); font-size: var(--fs-display); font-weight: var(--fw-semibold); float: left; line-height: 0.8; padding: 6px 12px 0 0; color: var(--c-accent); }

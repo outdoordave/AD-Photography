@@ -111,6 +111,8 @@ export default function StoryReaderContent(props: Props) {
       const w = titleEl && titleEl.offsetWidth ? titleEl.offsetWidth : 1;
       const big = Math.max(1, Math.min(1.85, (window.innerWidth - 32) / w));
       root.style.setProperty('--st-scale-big', String(Math.round(big * 1000) / 1000));
+      // Scroll-Strecke (für die CSS animation-range UND den JS-Fallback): bis der Hero fast durch ist.
+      root.style.setProperty('--st-range', Math.max(140, Math.round(h - 80)) + 'px');
       return h;
     };
     const target = () => {
@@ -133,6 +135,16 @@ export default function StoryReaderContent(props: Props) {
       if (n !== t) stRafRef.current = requestAnimationFrame(step);
       else stPrevTRef.current = 0;
     };
+    // Scroll-Driven-Support (Mobil): CSS koppelt den Titel direkt an den Scroll (kein JS-Lerp/Drift).
+    // JS misst dann nur Hero-Höhe/Titelbreite -> --st-bigY/--st-scale-big/--st-range (die Keyframes &
+    // die animation-range lesen diese Vars) und aktualisiert das bei resize. Kein Scroll-Listener.
+    const sdaSupported = typeof CSS !== 'undefined' && typeof CSS.supports === 'function' && CSS.supports('animation-timeline: scroll()');
+    if (sdaSupported && window.matchMedia('(max-width: 767px)').matches) {
+      measure();
+      const onResize = () => measure();
+      window.addEventListener('resize', onResize);
+      return () => window.removeEventListener('resize', onResize);
+    }
     const onScroll = () => {
       stTargetRef.current = target();
       if (reduce) { stSmoothRef.current = stTargetRef.current; apply(stSmoothRef.current); return; }
