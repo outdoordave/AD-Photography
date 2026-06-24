@@ -60,3 +60,12 @@
   Header `top`, untere fixierte Elemente (To-Top, Banner) `bottom`, seitliche `left/right`. Fixe Höhen-Tokens,
   die an der Notch hängen (z. B. `--ww-sticky-top`), als `calc(... + env(safe-area-inset-top, 0px))`. Inset
   ist im Hochformat meist 0 → kein Doppelabstand; relevant in Querformat/PWA → nur auf Gerät final testbar.
+- **Reise-Detail-Zurück + Crossfade-Kopf (23.06.2026):** Die große `<h1>` ist NICHT klebend (`.tl-herohead`,
+  scrollt weg, fade+blur bis 5px); das sticky **`.tl-topbar`** (Milchglas: Alpha 0→0.58 + `backdrop-filter`
+  blur 0→14px, gerampt über `--tl-p`) trägt Zurück-Pille (**nur Desktop**) + Titel und blendet beim Scrollen
+  ein. Crossfade über **rAF-Lerp** (smoothstep, Ramp 36/40px, Faktor 0.12) — NICHT hart ans Scroll koppeln.
+  Story bekommt nur die reservierte Pille (kein Band). Mobil-Zurück bleibt im Nav (zentriertes Logo) — die
+  Band-Pille ist dort ausgeblendet (kein Doppel). Hero-Titel mobil fix 19px. Safari-Fallback via `@supports not`
+  (deckend ~0.95). **Lehre/Falle:** Die Scroll-Spy misst `headRef` (= jetzt `.tl-topbar`-Höhe) für Anker/
+  `band`/`lead` — den Kopf umbauen heißt diese Höhe ändern. Regel: **nach jedem Kopf-Umbau `alaska2026`→Station 1
+  im Browser beweisen**, bevor „fertig". Aktivierungs-*Logik* nie blind anfassen.

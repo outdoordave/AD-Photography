@@ -17,6 +17,22 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-23 11:45 — Reise-Detail: Crossfade-Kopf + reservierte Zurück-Pille (direkt auf main)
+- **Teil A — Story-Zurück-Pille** (`17dcaad`): von fenster-`fixed` auf an die 760px-Lesespalte gebundene
+  reservierte Pille über dem Hero (Desktop). Kollidiert bei keiner Breite mit dem Titel. Mobil unverändert
+  (Nav-Zurück-Link). `.trip-back`/`.story-back` teilen nur noch die Optik, Position getrennt.
+- **Reise-Kopf-Umbau (Teil A+B)** (`318b82d`): große `<h1>` raus aus dem Sticky in `.tl-herohead`
+  (nicht klebend, scrollt weg, fade+blur bis 5px). Neues sticky **`.tl-topbar`** (= `headRef`) mit
+  Zurück-Pille (**nur Desktop**; mobil `≤860` aus → Nav-Link) + eingeblendetem Titel (opacity + translateY).
+  Crossfade über **eigenen rAF-Lerp** (smoothstep, Ramp 36/40px, Faktor 0.12), entkoppelt von der Spy.
+  `headRef` misst jetzt das Kompaktband; **Aktivierungslogik unverändert** — `alaska2026` öffnet weiter auf
+  **Station 1** (Desktop + Mobil lokal verifiziert). Hero-Titel mobil fix **19px** (kein Schrumpfen).
+  Alte fixe `.trip-back` aus beiden `[slug].astro` entfernt; `::before/::after` (Trennlinie) entfallen.
+- **Milchglas + Safari-Fallback** (`e0cc719`): Band-Hintergrund Alpha 0→0.58 + `backdrop-filter` blur 0→14px
+  (+`-webkit-`), gerampt über `--tl-p`. `@supports not` → deckend ~0.95 ohne Frost. Linie-über-Karte behoben.
+- Direkt auf `main`. Lokal verifiziert (Desktop-Crossfade, Mobil Nav-Link unverändert + Crossfade, Pille
+  content-gebunden, Milchglas, keine Linie auf Karte, `alaska2026`→Station 1). Safari-Frost am Gerät prüfen.
+
 ## 2026-06-23 22:40 — Nav-Umbau mobil + globale safe-area + Sprach-Banner (Branch `nav-safearea-langbanner`)
 - **safe-area global** (`5530d1d`): `viewport-fit=cover` ergänzt → `env(safe-area-inset-*)` greifen jetzt
   (vorher 0, G1). Header `padding-top: inset-top`, mobiler Nav-Drawer top/height/padding-bottom-Insets,

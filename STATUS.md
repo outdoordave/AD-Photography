@@ -19,6 +19,11 @@
 > — `viewport-fit=cover` + Insets für Header/Drawer/To-Top/Lightbox/Banner + `--ww-sticky-top`. (C) **Sprach-Banner**
 > — neue CMS-Felder `sprach_banner` in Darstellung; Hinweis für englischsprachige Besucher auf DE-Seiten.
 >
+> ⏳ **Ebenfalls auf `main`, committet, noch nicht live (23.06.):** **Reise-Detail-Kopf neu** — große Überschrift
+> scrollt weg (fade+blur), sticky **Milchglas-Kompaktband** (`.tl-topbar`) blendet ein (Crossfade via rAF-Lerp),
+> Zurück-Pille im Band (Desktop) bzw. Nav (mobil). **Story-Zurück-Pille** in reservierter Zone (content-gebunden).
+> `alaska2026`→Station 1 verifiziert; Spy-Logik unverändert. Safari-Frost noch am Gerät zu prüfen.
+>
 > **Branch-Preview verworfen:** Cloudflare-Branch-Preview baute nicht (Preview-Environment ohne `TINA_TOKEN`,
 > `TINA_BRANCH` defaultet auf `astro-umbau`). Entscheidung: **kein Branch-Ritual** — wie den ganzen Bauzeitraum
 > **direkt auf `main`**, der main-Build hat Token/Branch korrekt. Branch wird gelöscht.
