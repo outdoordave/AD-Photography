@@ -41,16 +41,18 @@
 > klebt 1:1 am Inhalt, kein Drift, frame-raten-egal (60/120 Hz/ProMotion). Easing `cubic-bezier(.42,0,.58,1)`.
 > Story-Keyframes/`animation-range` lesen die per JS gemessenen Vars (`--st-bigY`/`--st-scale-big`/`--st-range`).
 > **Fallback:** ohne `scroll()`-Support (ältere iOS) greift `@supports` nicht → alte JS-Lerp-Lösung bleibt
-> (keine Regression), JS gated den Mobil-Pfad dann aus. Titel bleibt `position:fixed` → **Spy/`headH`
-> unberührt**, `alaska2026`→Station 1. Desktop-Crossfade `--tl-p` unangetastet. Reines CSS/JS, kein Re-Index.
-> Angedockter Reise-Titel **vertikal mittig** zum „← Reisen"-Button (Oberkante +13, Mitte auf 46px-Band-
-> Mitte; zentriert im Band, nicht über Band+Fade; Hero via `translateY 56` an Ort; `630ebc0`). Story bereits zentriert.
-> Titel **federt beim iOS-Overscroll mit** (`c145096`): `--tl-ov`/`--st-ov` = `max(0,-scrollY)` als führendes
-> `translateY` (Regel + Keyframes) → schiebt mit dem nach unten gefederten Inhalt mit (Plattform-Design pinnt
-> fixe Elemente sonst). Kein Wrapper → Spy unberührt; Desktop no-op. Rückfedern **gedämpft** über eine
-> frame-raten-unabhängige Attack/Release-Hüllkurve (ATK 25 ms / REL 90 ms) → kein Oszillieren mehr (`b8a2616`).
-> Horizontaler Überlauf behoben: `.tl-topbar::after` auf `left/right: 0` statt `-18px` (die Zeile ist schon
-> randbündig; `-18` ragte über den Viewport, Seite war horizontal schiebbar; `e69323a`).
+> (keine Regression), JS gated den Mobil-Pfad dann aus. Desktop-Crossfade `--tl-p` unangetastet.
+> Angedockter Titel **vertikal mittig** zur Zurück-Pille (Oberkante +13, Mitte auf 46px-Band-Mitte; `630ebc0`).
+>
+> **Overscroll-Mitfedern — Endlösung via `position: sticky` (Reise erledigt, `024165f`):** der Reise-Titel
+> ist **nicht mehr `fixed`**, sondern `.tl-herohead { position: sticky; top: var+13 }` → liegt im Fluss,
+> **federt beim iOS-Overscroll NATIV 1:1 mit dem Inhalt** (Compositor, kein JS), dockt nativ an (Containing-
+> Block `.tl-stage` → bleibt unten angedockt). h1 macht nur noch Schrumpfen + Horizontal-Versatz (`--tl-m`,
+> Scroll-Driven). Das `--tl-ov`-Nachjage-JS (und sein Pendeln) ist **weg**. Spy unberührt (headRef = nur
+> `.tl-topbar`). Stellschrauben: `.tl-herohead margin-top/-bottom`, `animation-range`/`M_RANGE` (70).
+> ⚠️ **Story noch NICHT umgebaut** — nutzt weiter `fixed` + `--st-ov`-Mitfedern (Attack/Release ATK 25/REL 90,
+> `b8a2616`) mit Rest-Pendeln; Sticky-Umbau dort steht aus (60vh-Hero = andere Bauform).
+> Horizontaler Überlauf behoben: `.tl-topbar::after` auf `left/right: 0` statt `-18px` (`e69323a`).
 > ⚠️ **Mobil-Optik (Reise + Story) nur am echten Gerät final prüfbar** — die lokale Preview liefert `innerWidth`
 > ≠ Render-Breite, kann Handy also nicht korrekt zeigen; Bewegung/kein-Überlauf wurde per DOM-Messung bestätigt.
 >

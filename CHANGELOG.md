@@ -17,6 +17,22 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-24 21:45 — Mobil Reise: Titel via position:sticky nativ mitfedern (Endlösung Overscroll)
+- **Wurzel:** der Titel lag als **fixe** h1 in einer anderen Koordinatenwelt und wurde per JS dem Gummiband
+  nachgejagt → Main-Thread-Lag + iOS-`scrollY`-Überschwinger = sichtbares „Regeln/Pendeln". Kein Tuning
+  konnte das beheben (Architektur-, kein Reglerproblem).
+- **Umbau** (`024165f`): `.tl-herohead` wird **`position: sticky`** (Titel liegt im Fluss) → federt beim
+  iOS-Overscroll **nativ 1:1** mit dem Inhalt (Compositor, kein JS) und dockt nativ an (`top+13` = Band-Mitte;
+  Containing-Block `.tl-stage` → bleibt die ganze Liste über angedockt). h1 macht nur noch Schrumpfen +
+  Horizontal-Versatz; vertikale Wanderung ist nativ. Während des Overscrolls ist die Scroll-Animation bei 0
+  geparkt → Titel federt als starres großes Element mit, **kein Pendeln**.
+- Das gesamte `--tl-ov`-Overscroll-JS **entfällt**. **Spy unberührt** (headRef misst weiter nur `.tl-topbar`;
+  `.tl-herohead` fließt in keine Spy-Größe ein). Stellschrauben: `.tl-herohead margin-top/-bottom` +
+  `animation-range`/`M_RANGE` (70).
+- Dateien: `trips-timeline.css`, `TripTimeline.tsx`. **Nur Mobil (≤767), CSS/JS, kein Re-Index.**
+  **Story folgt separat nach Geräte-Bestätigung** (60vh-Hero = andere Bauform).
+- Commit: `024165f`
+
 ## 2026-06-24 21:15 — Mobil: Overscroll-Federn gedämpft + horizontaler Überlauf behoben
 - **Horizontaler Überlauf (Reise)** (`e69323a`): die sticky Zeile ist via `margin:0 -18px` schon randbündig;
   das `.tl-topbar::after` (Fade) stand zusätzlich auf `left/right: -18px` → ragte je 18px über den Viewport
