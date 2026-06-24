@@ -30,11 +30,13 @@
 > Prosa-Titel werden per JS einzeilig auf die Breite skaliert + in der Zeile mit `…` gekürzt → bricht nie.
 > Zurück-Pille in der Zeile, Nav-Zurück-Link auf Story `≤767` aus. **Beide Detail-Köpfe mobil = wandernder Titel.**
 >
-> **Feinschliff Mobil-Titel (24.06., `45ee79e`+`004e2a2`):** unter der Titelzeile weicher full-bleed Fade
+> **Feinschliff Mobil-Titel (24.06., `45ee79e`→`790a25f`):** unter der Titelzeile weicher full-bleed Fade
 > (`.tl-topbar::after`, deckend→transparent) statt harter Kante — über der cremefarbenen Karten-Spalte
-> unsichtbar, Karten-Oberkante scharf. Glättung adaptiv an Scrollgeschwindigkeit: Faktor
-> `min(0.5, base + Rückstand·0.8)` (Reise `--tl-m`, Story `--st-m`) → schnell scrollen holt zügig auf,
-> Ausklingen rastet weich/flüssig ein. Reines CSS/JS, kein Re-Index.
+> unsichtbar, Karten-Oberkante scharf. Titel-Glättung (Reise `--tl-m`, Story `--st-m`): **frame-raten-
+> unabhängig** über echte Frame-Zeit `dt` (`1-(1-k)^(dt/16.7)`) + Pro-Frame-`k` wächst stufenlos
+> (smoothstep) mit dem Rückstand → langsam = sanftes Gleiten, schnell = holt nahezu voll auf (**kein
+> Trailing/Hinterherhinken**), kein Springen. `BASE 0.14`, `LAG_FULL 0.4`. Desktop-Crossfade `--tl-p`
+> bei 60 Hz unverändert. Reines CSS/JS, kein Re-Index.
 > ⚠️ **Mobil-Optik (Reise + Story) nur am echten Gerät final prüfbar** — die lokale Preview liefert `innerWidth`
 > ≠ Render-Breite, kann Handy also nicht korrekt zeigen; Bewegung/kein-Überlauf wurde per DOM-Messung bestätigt.
 >

@@ -17,6 +17,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-24 19:05 — Mobil: Titel-Glättung enger ans Scrollen koppeln (kein Trailing)
+- **Problem:** der wandernde Titel (Reise `--tl-m`, Story `--st-m`) hinkte bei schnellem Scrollen
+  hinterher — ein *fest gedeckelter* Lerp-Bruchteil kann „smooth bei langsam" und „kein Trailing bei
+  schnell" nicht zugleich.
+- **Fix** (`790a25f`): (1) frame-raten-unabhängige Glättung über die echte Frame-Zeit `dt`
+  (`1-(1-k)^(dt/16.7)`, konsistent 60/120 Hz); (2) Pro-Frame-Faktor `k` wächst stufenlos (smoothstep)
+  mit dem Rückstand → langsam = sanftes Gleiten, schnell = holt nahezu vollständig auf, kein Springen.
+  `M_BASE/ST_BASE 0.14`, `LAG_FULL 0.4`. Desktop-Crossfade `--tl-p` bei 60 Hz unverändert (k=0.12).
+- Dateien: `web/src/components/TripTimeline.tsx`, `web/src/components/StoryReaderContent.tsx`.
+  **Reines JS (≤767), kein Re-Index.**
+- Commit: `790a25f`
+
 ## 2026-06-24 18:35 — Mobil: weicher Fade unter Titel + flüssigerer Titel-Hochflug
 - **Weicher Fade unter der Titelzeile** (`45ee79e`): full-bleed Verlauf (deckend→transparent, 18px)
   als `.tl-topbar::after` — hochscrollender Text fadet sanft aus statt harter Kante; über der
