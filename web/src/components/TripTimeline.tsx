@@ -186,7 +186,7 @@ export default function TripTimeline(props: Props) {
   const headRef = React.useRef<HTMLDivElement | null>(null);
   const listRef = React.useRef<HTMLOListElement | null>(null);
   const mapColRef = React.useRef<HTMLDivElement | null>(null);
-  const miniNavRef = React.useRef<HTMLDivElement | null>(null);
+  const stageRef = React.useRef<HTMLDivElement | null>(null);
   const headHRef = React.useRef(0);
   const navHRef = React.useRef(STICKY_TOP);
   const centersRef = React.useRef<number[]>([]);
@@ -194,6 +194,10 @@ export default function TripTimeline(props: Props) {
   const firstAbsRef = React.useRef(0);
   const rafRef = React.useRef<number | null>(null);
   const snapAnimRef = React.useRef<number | null>(null);
+  // Crossfade große Überschrift -> sticky Kompaktband: geglättetes p (0..1) via rAF-Lerp.
+  const pTargetRef = React.useRef(0);
+  const pSmoothRef = React.useRef(0);
+  const cfRafRef = React.useRef<number | null>(null);
 
   const carSvg = vehicleSvg(props.vehicleId);
   const routeRef = React.useRef(buildRoute(stops.map((s, i) => ({ lon: s.lon, lat: s.lat, flight: rawStops[i]?.arriveBy === 'flight' }))));
@@ -461,14 +465,8 @@ export default function TripTimeline(props: Props) {
     if (!centers.length || !list) return;
     const sy = window.scrollY;
     const anchorDoc = sy + anchorViewportY();
-    // Weiche Kopf-Unterkante (::after) NUR zeigen, sobald gescrollt wird -> beim Laden keine
-    // ausgewaschene erste Summary-Zeile. Reiner Klassen-Toggle (kein Scroll-API -> Safari-sicher).
-    if (headRef.current) headRef.current.classList.toggle('is-scrolled', sy > 8);
-    if (miniNavRef.current) {
-      const mobile = window.matchMedia('(max-width: 767px)').matches;
-      const hb = headRef.current ? headRef.current.getBoundingClientRect().bottom : 0;
-      miniNavRef.current.classList.toggle('is-collapsed', mobile && hb <= navHRef.current + 48);
-    }
+    // Hinweis: Aussehen des Kompaktbands (Frost + Titel-Einblendung) macht jetzt der separate
+    // Crossfade-rAF (armCrossfade), NICHT diese Spy-Schleife — Aktivierungslogik bleibt unberührt.
     // Aktive Station = LETZTER Block, dessen Oberkante den Anker bereits passiert hat (klassisches
     // Scroll-Spy). Robust gegen Blockhöhe: kurze Stationen (kein Bild / 2-Zeiler) verschieben den
     // Fokus nicht mehr nach vorn. Vor der 1. Station bleibt Station 0 aktiv.
@@ -498,6 +496,33 @@ export default function TripTimeline(props: Props) {
     const lineH = centers[centers.length - 1] - firstAbsRef.current;
     const fillToActive = centers[best] - firstAbsRef.current;
     list.style.setProperty('--fill', Math.max(0, Math.min(lineH, fillToActive)) + 'px');
+  }
+
+  // ── Crossfade Kopf -> Kompaktband (eigener rAF, entkoppelt von der Spy-Schleife) ──
+  // p (0..1) als smoothstep aus der Scroll-Position (Ramp ~36px über ~40px), dann via
+  // Lerp (Faktor 0.12) sanft eingerastet -> kein hartes Scroll-Koppeln, weiches Loslassen.
+  const CF_START = 36, CF_LEN = 40, CF_LERP = 0.12;
+  function crossfadeTarget(): number {
+    const raw = Math.min(1, Math.max(0, (window.scrollY - CF_START) / CF_LEN));
+    return raw * raw * (3 - 2 * raw); // smoothstep
+  }
+  function applyCrossfade(p: number) {
+    const st = stageRef.current;
+    if (st) st.style.setProperty('--tl-p', String(Math.round(p * 1000) / 1000));
+  }
+  function crossfadeStep() {
+    cfRafRef.current = null;
+    const tgt = pTargetRef.current;
+    let next = pSmoothRef.current + (tgt - pSmoothRef.current) * CF_LERP;
+    if (Math.abs(tgt - next) < 0.001) next = tgt;
+    pSmoothRef.current = next;
+    applyCrossfade(next);
+    if (next !== tgt) cfRafRef.current = requestAnimationFrame(crossfadeStep);
+  }
+  function armCrossfade() {
+    pTargetRef.current = crossfadeTarget();
+    if (prefersReduced()) { pSmoothRef.current = pTargetRef.current; applyCrossfade(pSmoothRef.current); return; }
+    if (cfRafRef.current == null) cfRafRef.current = requestAnimationFrame(crossfadeStep);
   }
 
   function cancelSnap() { if (snapAnimRef.current != null) { cancelAnimationFrame(snapAnimRef.current); snapAnimRef.current = null; } }
@@ -565,7 +590,7 @@ export default function TripTimeline(props: Props) {
   React.useEffect(() => {
     let snapTimer: number | undefined;
     const armSnap = () => { if (!snap) return; if (snapTimer) window.clearTimeout(snapTimer); snapTimer = window.setTimeout(snapToNearest, 150); };
-    const onScroll = () => { armSnap(); if (rafRef.current != null) return; rafRef.current = requestAnimationFrame(() => { rafRef.current = null; update(); }); };
+    const onScroll = () => { armCrossfade(); armSnap(); if (rafRef.current != null) return; rafRef.current = requestAnimationFrame(() => { rafRef.current = null; update(); }); };
     const onResize = () => { if (mapRef.current) mapRef.current.resize(); measure(); };
     const onUserInput = () => cancelSnap();
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -573,11 +598,13 @@ export default function TripTimeline(props: Props) {
     window.addEventListener('wheel', onUserInput, { passive: true });
     window.addEventListener('touchstart', onUserInput, { passive: true });
     window.addEventListener('keydown', onUserInput);
+    armCrossfade(); // Anfangszustand (p=0 bei Scroll 0)
     return () => {
       window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onResize);
       window.removeEventListener('wheel', onUserInput); window.removeEventListener('touchstart', onUserInput); window.removeEventListener('keydown', onUserInput);
       if (snapTimer) window.clearTimeout(snapTimer); cancelSnap();
       if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
+      if (cfRafRef.current != null) cancelAnimationFrame(cfRafRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [snap]);
@@ -645,15 +672,19 @@ export default function TripTimeline(props: Props) {
         <MapStyleWatcher query={props.settingsQuery} variables={props.settingsVariables || {}} data={props.settingsData} onStyle={setLiveMapStyle} />
       ) : null}
 
-      <div className="tl-stage">
-        <div className="tl-mininav" ref={miniNavRef} aria-hidden="true">
-          <span className="tl-mininav-title">{tripTitle(trip, lang)}</span>
+      <div className="tl-stage" ref={stageRef}>
+        {/* Sticky Kompaktband (headRef -> Spy misst dessen Höhe). Bei Scroll-0 transparent: nur die
+            Zurück-Pille (Desktop) sichtbar, Titel ausgeblendet. Beim Scrollen frostet das Band ein
+            (--tl-p) und der Titel blendet ein -> Crossfade mit der großen Überschrift darunter.
+            Zurück-Pille mobil via CSS ausgeblendet (Nav-Zurück-Link übernimmt). */}
+        <div className="tl-topbar" ref={headRef}>
+          <a className="trip-back" href={lang === 'en' ? '/en/trips' : '/trips'}>{lang === 'en' ? '← Trips' : '← Reisen'}</a>
+          <span className="tl-topbar-title" aria-hidden="true">{tripTitle(trip, lang)}</span>
         </div>
 
-        {/* Schritt 2: NUR die schlanke Titelleiste (Meta + Titel) klebt sticky. Die Zusammenfassung
-            steht im nicht-klebenden .tl-intro-Block (eigene Grid-Zeile) und scrollt beim Lesen
-            natürlich nach oben unter die deckende Titelleiste (background + z4) — kein Sprung. */}
-        <div className="tl-head" ref={headRef}>
+        {/* Große Überschrift (NICHT sticky): scrollt natürlich weg, blendet dabei per --tl-p aus +
+            leicht unscharf. Trägt die echte <h1> (SEO/A11y) — der Band-Titel ist nur aria-hidden. */}
+        <div className="tl-herohead">
           <div className="tl-meta" data-tina-field={tf(trip, 'meta')}>{bi(trip, 'meta', lang)}{trip.upcoming ? (lang === 'de' ? ' · bald ✦' : ' · soon ✦') : ''}</div>
           <h1 data-tina-field={tinaField(trip, 'title')}>{tripTitle(trip, lang)}</h1>
         </div>

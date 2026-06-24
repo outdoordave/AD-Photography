@@ -14,63 +14,51 @@
 /* .trip-back = kanonische fixe Zurück-Pille (zentral in global.css, gemeinsam mit
    .story-back, EXAKT gleiche Stelle) — siehe DESIGN.md. */
 
-/* Mobile schlanke Nav-Zeile: auf Desktop/iPad ausgeblendet. */
-.tl-mininav {
-  display: none; order: 0;
-  position: sticky; top: var(--ww-sticky-top); z-index: 5;
-  height: var(--ww-mininav-h); align-items: center;
-  background: transparent; border-bottom: 1px solid transparent;
-  transition: background var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease);
+/* Sticky Kompaktband (Kopf, Mobil + Desktop): trägt die Zurück-Pille (nur Desktop) + den
+   eingeblendeten Reisenamen. headRef misst dieses Band -> Spy-Höhe. Bei Scroll-0 transparent
+   (--tl-p:0, nur die Zurück-Pille sichtbar), beim Scrollen blenden Hintergrund + Titel ein.
+   Hintergrund hier erst deckend gerampt; Milchglas + Safari-Fallback folgen separat. */
+.tl-topbar {
+  grid-column: 1; grid-row: 1; min-width: 0;
+  position: sticky; top: var(--ww-sticky-top); z-index: 6;
+  display: flex; align-items: center; gap: 14px; min-height: var(--ww-mininav-h);
+  background: rgba(244,237,225, calc(var(--tl-p, 0) * 0.95));
+  border-bottom: 1px solid rgba(216,202,178, var(--tl-p, 0));
 }
-.tl-mininav.is-collapsed { background: var(--c-bg); border-bottom-color: var(--c-line); }
-.tl-mininav-title {
+.tl-topbar-title {
   font-family: var(--font-display); font-size: var(--fs-title-sm); font-weight: var(--fw-medium); color: var(--c-ink);
-  opacity: 0; transform: translateY(4px);
-  transition: opacity var(--dur-base) var(--ease), transform var(--dur-base) var(--ease);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+  opacity: var(--tl-p, 0); transform: translateY(calc((1 - var(--tl-p, 0)) * 6px));
 }
-.tl-mininav.is-collapsed .tl-mininav-title { opacity: 1; transform: none; }
+/* Zurück-Pille sitzt IM Band (statt fenster-fix). Mobil via global.css (<=860) ausgeblendet. */
+.tl-topbar .trip-back { position: static; top: auto; left: auto; z-index: auto; flex: none; }
 
 /* ── Bühne: linke Spalte (Kopf sticky + Timeline) · rechte Spalte (Karte sticky) ── */
 .tl-stage {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 420px;
-  /* Zeile 1 = sticky Titelleiste · Zeile 2 = nicht-klebende Zusammenfassung (.tl-intro) · Zeile 3 = Liste.
-     Die Karte (Spalte 2) spannt 1/-1 über alle drei. */
-  grid-template-rows: auto auto 1fr;
+  /* Zeile 1 = sticky Kompaktband (.tl-topbar) · Zeile 2 = große Überschrift (.tl-herohead, nicht klebend)
+     · Zeile 3 = Zusammenfassung (.tl-intro) · Zeile 4 = Liste. Karte (Spalte 2) spannt 1/-1. */
+  grid-template-rows: auto auto auto 1fr;
   column-gap: 36px;
   max-width: 100%;
 }
 
-.tl-head {
-  grid-column: 1; grid-row: 1; min-width: 0;
-  position: sticky; top: var(--ww-sticky-top); z-index: 4;
-  background: var(--c-bg); padding: 0 0 4px;
-  box-shadow: 0 -60px 0 0 var(--c-bg);
+/* Große Überschrift (Grid-Zeile 2, NICHT klebend): scrollt natürlich weg und blendet dabei per
+   --tl-p aus + leicht unscharf (Crossfade mit dem Kompaktband). Trägt die echte <h1>.
+   Die alten .tl-head::before/::after (Deckfläche/Trennlinie über die Kartenkante) entfallen —
+   das einblendende deckende/milchige Band übernimmt das Verdecken, ohne Linie über die Karte. */
+.tl-herohead {
+  grid-column: 1; grid-row: 2; min-width: 0; padding: 2px 0 4px;
+  opacity: calc(1 - var(--tl-p, 0));
+  filter: blur(calc(var(--tl-p, 0) * 5px));
+  will-change: opacity, filter;
 }
-/* Deckfläche des Kopfes: läuft ab der Kopf-Rechtskante als durchgehende Schicht bis UNTER die Karte
-   (Spalten-Lücke 36px + Karten-Spalte 420px). So verschwindet der überstehende Rahmen/Schatten der
-   hochscrollenden Station rechts hinter der Überschrift, und es entsteht eine einzige Deck-Ebene.
-   Liegt im z4-Kontext des Kopfes; die Map liegt mit z5 DRÜBER -> ihr eigener Schatten bleibt erhalten,
-   die Karte selbst überdeckt die Deckfläche optisch (Tiles sind opak). */
-.tl-head::before {
-  content: ''; position: absolute; top: 0; bottom: 0; left: 100%; width: calc(36px + 420px);
-  background: var(--c-bg); pointer-events: none;
-}
-/* Weiche Unterkante des Kopfes (z4): Inhalt (Zusammenfassung, dann Stationen) taucht beim Scrollen weich
-   unter die sticky Titelleiste statt mit harter Kante. Reicht über Textspalte UND Spalten-Lücke bis zur
-   Karten-Kante (right:-36px). NUR beim Scrollen sichtbar (`.is-scrolled`) -> beim Laden (scrollY 0) wäscht
-   der Verlauf die erste Zeile der Zusammenfassung NICHT aus; weiches Ein-/Ausblenden via opacity. */
-.tl-head::after {
-  content: ''; position: absolute; left: 0; right: -36px; top: 100%; height: min(28px, 3.4vh);
-  background: linear-gradient(var(--c-bg) 20%, rgba(244,237,225,0));
-  pointer-events: none; opacity: 0; transition: opacity .25s ease;
-}
-.tl-head.is-scrolled::after { opacity: 1; }
-.tl-head .tl-meta { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 4px; }
-.tl-head h1 { font-family: var(--font-display); font-size: var(--fs-title-lg); font-weight: var(--fw-medium); line-height: 1.1; }
+.tl-herohead .tl-meta { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 4px; }
+.tl-herohead h1 { font-family: var(--font-display); font-size: var(--fs-title-lg); font-weight: var(--fw-medium); line-height: 1.1; }
 /* Nicht-klebender Block (Grid-Zeile 2) UNTER der sticky Titelleiste: Zusammenfassung (+ Album-Link).
    Scrollt beim Lesen natürlich nach oben unter die deckende Titelleiste und verschwindet. */
-.tl-intro { grid-column: 1; grid-row: 2; min-width: 0; }
+.tl-intro { grid-column: 1; grid-row: 3; min-width: 0; }
 .tl-summary { font-size: var(--fs-ui); color: var(--c-ink-soft); line-height: 1.55; margin-top: 2px; max-width: 56ch; }
 .tl-intro .trip-album-link { margin-top: 10px; }
 
@@ -80,7 +68,7 @@
 .tl-map .maplibregl-map { height: 100%; }
 
 /* ── Timeline (normaler Fluss) ── */
-.tl-list { grid-column: 1; grid-row: 3; min-width: 0; list-style: none; margin: 0; padding: 2vh 0 30vh; position: relative; }
+.tl-list { grid-column: 1; grid-row: 4; min-width: 0; list-style: none; margin: 0; padding: 2vh 0 30vh; position: relative; }
 
 /* Fades (z2) liegen UNTER der aktiven Karte (z3) -> deren Rahmen bleibt sauber; gedimmte Nachbarn
    (z auto) faden weich. Der weiche Übergang der aktiven Karte unter den Kopf macht .tl-head::after. */
@@ -159,16 +147,16 @@
 .tl-vehicle-ic.is-plane svg { width: calc(var(--ww-vehicle-size, 42px) * 0.6); }
 
 @media (prefers-reduced-motion: reduce) {
-  .tl-dot, .tl-line-fill, .tl-vehicle-ic, .tl-body, .tl-mininav, .tl-mininav-title { transition: none; }
+  .tl-dot, .tl-line-fill, .tl-vehicle-ic, .tl-body, .tl-topbar-title, .tl-herohead { transition: none; }
 }
 
 /* ════════ MOBILE (< 768px = Handy). iPad (≥768px, auch quer) bleibt Desktop! ════════ */
 @media (max-width: 767px) {
   .tl-stage { display: flex; flex-direction: column; column-gap: 0; }
-  .tl-mininav { display: flex; }
-  .tl-head { order: 1; position: static; top: auto; box-shadow: none; padding: 6px 0 12px; }
-  .tl-intro { order: 1; } /* direkt nach dem Kopf (mobil ist nichts sticky -> alles scrollt ohnehin) */
-  .tl-head::after, .tl-head::before { display: none; } /* Kopf mobil nicht sticky -> kein Untertauch/Lücken-Deck nötig */
+  .tl-topbar { order: 0; }                 /* sticky Kompaktband bleibt oben (Titel, ohne Zurück-Pille) */
+  .tl-herohead { order: 1; padding: 6px 0 12px; }  /* große Überschrift scrollt weg (nicht klebend) */
+  .tl-herohead h1 { font-size: 19px; }     /* feste Größe mobil (kein Schrumpfen) — Mockup-Vorgabe */
+  .tl-intro { order: 1; } /* direkt nach der Überschrift (mobil ist nur das Band sticky) */
   .tl-map-col .tl-map { z-index: auto; } /* mobil kein z-Index-Heben der Karte */
   .tl-map-col { order: 2; position: sticky; top: calc(var(--ww-sticky-top) + var(--ww-mininav-h)); z-index: 3; }
   .tl-map-col .tl-map { position: static; top: auto; height: var(--ww-map-h-mobile); width: 100%; }
