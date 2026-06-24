@@ -23,6 +23,11 @@
   Erklärung (AN/AUS), auf der Seite, zu der sie gehören.
 - **P4 — Kein Fachjargon, keine Kennungen ohne Not.** Wo eine technische „Kennung" nötig ist,
   klar erklären, dass sie einmal vergeben und nicht mehr geändert wird.
+- **P5 — Immer eine visuelle Vorschau im CMS.** Wann immer im CMS etwas gebaut/bearbeitet/neu
+  hinzugefügt wird, ein **Vorschau-Feld** mitliefern, das das Ergebnis zeigt (reines Anzeige-Feld,
+  schreibt nichts; liest die Geschwisterwerte live via `useFormState`). Text/Beschreibung sind gut,
+  aber **visuell erklärt mehr als tausend Worte.** Muster: `tina/fields/SprachBannerPreview.tsx`
+  (Mini-Mockup mit Live-Werten) bzw. `tina/fields/SectionBanner.tsx` (reines Info-Feld).
 
 ---
 
