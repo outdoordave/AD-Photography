@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-23** · Live-Branch `main` · ⚙️ Feature-Branch `nav-safearea-langbanner` offen.
+> **Stand: 2026-06-23** · Live-Branch `main` (Feature-Branch in main gemergt, FF — siehe unten).
 > Seite **live** auf `main`, Cutover durch. SEO-Grundlage steht (Sitemap, JSON-LD, Google Search
 > Console: Property bestätigt + **Sitemap erfolgreich gelesen**), Datenschutz **vollständig**
 > (inkl. Web3Forms), Performance ok, Barrierefreiheit-Basics (alt-Texte) drin, Security-Header +
@@ -13,16 +13,20 @@
 > Formular** (Inline-Liste `categories` + Dropdown je Gerät) + Über-uns-Profile-Hover-Schalter (`person_hover`)
 > + **CMS-Format-Leiste** (Markdown-Buttons) + Jahres-Kapitel (Stories/Reisen) + Zurück-Pille (Story+Reise).
 >
-> ⚙️ **Feature-Branch `nav-safearea-langbanner` (23.06., NICHT auf main):** (A) **Nav mobil** umgebaut —
-> `<=860px` Logo zentriert, Zurück-Link links nur auf Detailseiten, Burger rechts; Desktop unverändert;
-> ersetzt mobil die fixen Pillen + den Mininav-Link. (B) **safe-area global** — `viewport-fit=cover` +
-> Insets für Header/Drawer/To-Top/Lightbox/Banner + `--ww-sticky-top`. (C) **Sprach-Banner** — neue
-> CMS-Felder `sprach_banner` in Darstellung; zeigt englischsprachigen Besuchern auf DE-Seiten einen Hinweis.
+> ⏳ **Ebenfalls auf `main`, committet, noch nicht live (23.06. — war kurz im Branch `nav-safearea-langbanner`,
+> jetzt per FF in main):** (A) **Nav mobil** — `<=860px` Logo zentriert, Zurück-Link links nur auf Detailseiten,
+> Burger rechts; Desktop unverändert; ersetzt mobil die fixen Pillen + den Mininav-Link. (B) **safe-area global**
+> — `viewport-fit=cover` + Insets für Header/Drawer/To-Top/Lightbox/Banner + `--ww-sticky-top`. (C) **Sprach-Banner**
+> — neue CMS-Felder `sprach_banner` in Darstellung; Hinweis für englischsprachige Besucher auf DE-Seiten.
 >
-> **Offen für David (Reihenfolge):** 1) Branch `nav-safearea-langbanner` **pushen**. 2) **Tina-Cloud-Re-Index**
-> (Schema-Änderung `sprach_banner` — **und** die noch ausstehende aus `7d2c4d9`; sonst bricht der Build ab).
-> 3) **Cloudflare-Preview** des Branches auf **Mac/iPad/iPhone** testen (Nav mobil, safe-area an Notch/Punch-
-> Hole, Banner oben+unten, Sprachwechsel-Ziel, `alaska2026`→Station 1). 4) Nach OK Branch→`main` mergen.
+> **Branch-Preview verworfen:** Cloudflare-Branch-Preview baute nicht (Preview-Environment ohne `TINA_TOKEN`,
+> `TINA_BRANCH` defaultet auf `astro-umbau`). Entscheidung: **kein Branch-Ritual** — wie den ganzen Bauzeitraum
+> **direkt auf `main`**, der main-Build hat Token/Branch korrekt. Branch wird gelöscht.
+>
+> **Offen für David (Reihenfolge):** 1) **`main` pushen** (GitHub Desktop). 2) **Tina-Cloud-Re-Index auf `main`**
+> (neue Felder `sprach_banner` + ausstehend aus `7d2c4d9`; sonst bricht der Build ab). 3) Deploy abwarten, dann
+> auf `aandd-photography.pages.dev` am **Handy/iPad** testen (Nav mobil, safe-area an Notch, Banner oben+unten,
+> Sprachwechsel-Ziel, `alaska2026`→Station 1). 4) Branch `nav-safearea-langbanner` löschen (lokal + remote).
 
 ---
 
