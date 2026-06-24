@@ -95,7 +95,7 @@ export default function StoryReaderContent(props: Props) {
     if (typeof window === 'undefined') return;
     const root = document.documentElement;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const ST_LERP = 0.11;
+    const ST_LERP = 0.2;  // straffer (weniger Nachlauf bei schnellem Scrollen), noch geglättet
     const apply = (m: number) => root.style.setProperty('--st-m', String(Math.round(m * 1000) / 1000));
     const measure = () => {
       const heroEl = heroRef.current;

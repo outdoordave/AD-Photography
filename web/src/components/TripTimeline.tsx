@@ -507,7 +507,7 @@ export default function TripTimeline(props: Props) {
   // Nachlauf, kein hartes Scroll-Koppeln). --tl-p: Desktop-Crossfade (Ramp 36/40, Lerp 0.12).
   // --tl-m: Mobil-Titelwanderung (RANGE 90, Lerp 0.11).
   const CF_START = 36, CF_LEN = 40, CF_LERP = 0.12;
-  const M_RANGE = 90, M_LERP = 0.11;
+  const M_RANGE = 90, M_LERP = 0.2;  // straffer (weniger Nachlauf bei schnellem Scrollen), noch geglättet
   const smoothstep = (x: number) => { const r = Math.min(1, Math.max(0, x)); return r * r * (3 - 2 * r); };
   function applyCrossfade(p: number, m: number) {
     const st = stageRef.current;
