@@ -572,6 +572,10 @@ header { position: sticky; top: 0; z-index: 1100; background: rgba(244,237,225,0
 .burger span { display: block; width: 24px; height: 2px; background: var(--c-ink); transition: var(--dur-base) var(--ease); }
 /* Mobil-Zurück-Link in der Nav (Detailseiten) — auf Desktop ausgeblendet, dort gelten die fixen Pillen. */
 .nav-back { display: none; }
+/* Reise-Detail auf dem Handy (<=767): Nav-Zurück-Link aus -> die Zurück-Pille in der wandernden
+   Titelzeile ist das EINZIGE Zurück (kein Doppel). Im Korridor 768–860 (iPad-Hochkant, Reise =
+   Desktop-Layout, keine Titelzeile) bleibt der Nav-Link. Story behält den Nav-Link vorerst überall. */
+@media (max-width: 767px) { .nav-back.nav-back--trips { display: none; } }
 
 footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-align: center; position: relative; overflow: hidden; }
 .footer-logo { width: 200px; margin: 0 auto 22px; opacity: 0.95; transition: opacity var(--dur-base) var(--ease); }

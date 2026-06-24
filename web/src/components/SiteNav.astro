@@ -53,7 +53,7 @@ const navBack =
 <header>
   <nav class="nav">
     {navBack && (
-      <a class="nav-back" href={navBack.href}>{navBack.label}</a>
+      <a class={`nav-back nav-back--${segs[0]}`} href={navBack.href}>{navBack.label}</a>
     )}
     {logoData ? (
       <LogoLink client:load variant="nav" query={logoQuery} variables={logoVariables} data={logoData} href={isEn ? '/en/' : '/'} ariaLabel="Wide & Wild — Start" />
