@@ -167,15 +167,22 @@ export default function StoryReaderContent(props: Props) {
     if (typeof window === 'undefined') return;
     const root = document.documentElement;
     let raf: number | null = null;
+    let smooth = 0;
+    let lastT = 0;
     const read = () => Math.max(0, -(window.scrollY || 0));
-    // Per-Frame abtasten, solange überzogen ist -> Zurückfedern flüssig (nicht stufig an Scroll-Events).
-    const frame = () => {
-      const ov = read();
-      root.style.setProperty('--st-ov', ov ? ov + 'px' : '0px');
-      raf = ov > 0 ? requestAnimationFrame(frame) : null;
+    // Attack/Release-Hüllkurve (s. TripTimeline): schnell folgen beim Ziehen, weich ausregeln beim
+    // Zurückfedern -> dämpft das Hin-und-her, ohne dem Finger hinterherzuhängen.
+    const ATK = 25, REL = 90;  // ms
+    const frame = (now: number) => {
+      const dt = lastT ? Math.min(64, now - lastT) : 16.7; lastT = now;
+      const target = read();
+      smooth += (target - smooth) * (1 - Math.exp(-dt / (target > smooth ? ATK : REL)));
+      if (target === 0 && smooth < 0.4) smooth = 0;
+      root.style.setProperty('--st-ov', smooth > 0.05 ? smooth.toFixed(1) + 'px' : '0px');
+      if (target > 0 || smooth > 0.05) raf = requestAnimationFrame(frame);
+      else { raf = null; lastT = 0; }
     };
-    const onScroll = () => { if (raf == null) raf = requestAnimationFrame(frame); };
-    frame();
+    const onScroll = () => { if (raf == null) { lastT = 0; raf = requestAnimationFrame(frame); } };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => { window.removeEventListener('scroll', onScroll); if (raf != null) cancelAnimationFrame(raf); };
   }, []);

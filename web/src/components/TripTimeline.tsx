@@ -672,17 +672,24 @@ export default function TripTimeline(props: Props) {
     if (typeof window === 'undefined') return;
     const root = document.documentElement;
     let raf: number | null = null;
+    let smooth = 0;   // geglätteter Overscroll-Versatz (px)
+    let lastT = 0;
     const read = () => Math.max(0, -(window.scrollY || 0));
-    // Per-Frame abtasten, solange überzogen ist: das Zurückfedern (Compositor-Spring) wird so flüssig
-    // mitgenommen, statt an den groben Scroll-Events zu hängen (das wirkte stufig/ruckelig). 1:1 zur
-    // Inhaltsposition (kein Lerp -> kein neuer Versatz). Bei 0 angekommen -> Schleife stoppt.
-    const frame = () => {
-      const ov = read();
-      root.style.setProperty('--tl-ov', ov ? ov + 'px' : '0px');
-      raf = ov > 0 ? requestAnimationFrame(frame) : null;
+    // Attack/Release-Hüllkurve, frame-raten-unabhängig: schnelles Folgen beim Ziehen (ATK), weiches
+    // Ausregeln beim Zurückfedern (REL). iOS' scrollY ist beim Spring nicht sauber monoton (Überschwinger);
+    // rohes 1:1-Folgen machte daraus ein sichtbares Hin-und-her-„Regeln". Die Glättung dämpft das (die
+    // fehlende „Hysterese"), ohne dem Finger beim Ziehen hinterherzuhängen. Bei 0 angekommen -> Stopp.
+    const ATK = 25, REL = 90;  // ms
+    const frame = (now: number) => {
+      const dt = lastT ? Math.min(64, now - lastT) : 16.7; lastT = now;
+      const target = read();
+      smooth += (target - smooth) * (1 - Math.exp(-dt / (target > smooth ? ATK : REL)));
+      if (target === 0 && smooth < 0.4) smooth = 0;
+      root.style.setProperty('--tl-ov', smooth > 0.05 ? smooth.toFixed(1) + 'px' : '0px');
+      if (target > 0 || smooth > 0.05) raf = requestAnimationFrame(frame);
+      else { raf = null; lastT = 0; }
     };
-    const onScroll = () => { if (raf == null) raf = requestAnimationFrame(frame); };
-    frame();
+    const onScroll = () => { if (raf == null) { lastT = 0; raf = requestAnimationFrame(frame); } };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => { window.removeEventListener('scroll', onScroll); if (raf != null) cancelAnimationFrame(raf); };
   }, []);
