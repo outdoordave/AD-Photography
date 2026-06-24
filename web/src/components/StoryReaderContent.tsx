@@ -120,7 +120,7 @@ export default function StoryReaderContent(props: Props) {
       // Glättung an die Scrollgeschwindigkeit gekoppelt: großer Rückstand -> Faktor steigt (holt
       // zügig auf, nicht träge); beim Ausklingen klein (weich einrasten).
       const lag = Math.abs(t - stSmoothRef.current);
-      const f = Math.min(0.8, ST_LERP + lag * 1.2);
+      const f = Math.min(0.5, ST_LERP + lag * 0.8);
       let n = stSmoothRef.current + (t - stSmoothRef.current) * f;
       if (Math.abs(t - n) < 0.001) n = t;
       stSmoothRef.current = n; apply(n);

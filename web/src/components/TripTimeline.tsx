@@ -522,7 +522,7 @@ export default function TripTimeline(props: Props) {
     // Mobil: Glättung an die Scrollgeschwindigkeit gekoppelt — großer Rückstand (schnelles Scrollen)
     // -> Faktor steigt (holt zügig auf, nicht träge); beim Ausklingen klein (weich einrasten).
     const mLag = Math.abs(mt - mSmoothRef.current);
-    const mF = Math.min(0.8, M_LERP + mLag * 1.2);
+    const mF = Math.min(0.5, M_LERP + mLag * 0.8);
     let mn = mSmoothRef.current + (mt - mSmoothRef.current) * mF;
     if (Math.abs(pt - pn) < 0.001) pn = pt;
     if (Math.abs(mt - mn) < 0.001) mn = mt;
