@@ -132,13 +132,10 @@ section { padding: 84px 0; }
 .ww-rich li { margin: 0 0 0.2em; }
 .ww-rich h2, .ww-rich h3 { font-family: var(--font-display); font-weight: var(--fw-medium); line-height: 1.2; margin: 0.2em 0 0.4em; }
 .ww-rich .pullquote { font-style: italic; border-left: 3px solid var(--c-accent); padding-left: 14px; margin: 0 0 0.7em; }
-/* Zurück-„Pille" auf der Story-Detailseite: fixiert (scrollt mit), halbtransparent
-   + Blur (auf Fotos lesbar), abgerundet — gleiches Idiom wie der Nach-oben-Button.
-   z-index UNTER Mobil-Nav(1099)/Lightbox(1100), damit nichts kollidiert. */
-/* Kanonische Zurück-Pille (Story- UND Reise-Detail, EXAKT gleiche Stelle): fixiert oben links,
-   Standard-Ghost-Pille (gleicher Fill 0.32 wie .btn.ghost). Siehe DESIGN.md. */
+/* Kanonische Zurück-Pille (Story- + Reise-Detail): Standard-Ghost-Pille-Optik (Fill 0.32 wie .btn.ghost).
+   Teil A: in reservierter Zone oben links, an die INHALTSSPALTE gebunden (nicht ans Fenster), Desktop.
+   Mobil (<=860px) ausgeblendet — dort uebernimmt der Zurueck-Link in der Nav (Logo zentriert). */
 .story-back, .trip-back {
-  position: fixed; top: 102px; left: calc(20px + env(safe-area-inset-left, 0px)); z-index: 1090;
   display: inline-flex; align-items: center; gap: 6px;
   padding: 9px 18px; border-radius: var(--radius-pill);
   font-size: var(--fs-label); letter-spacing: var(--tracking-slight); font-weight: var(--fw-bold);
@@ -148,8 +145,12 @@ section { padding: 84px 0; }
   transition: background var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease);
 }
 .story-back:hover, .trip-back:hover { background: rgba(28,24,18,0.5); border-color: #f0d9bf; color: #f0d9bf; }
-/* Mobil (<=860px, gleicher Breakpoint wie die Nav): fixe Zurueck-Pillen aus — dort uebernimmt
-   der Zurueck-Link in der Nav (Logo zentriert). So kein Doppel-Link und keine Luecke 768–860px. */
+/* Story (Desktop): reservierte Zone oben links, an die 760px-Lesespalte gebunden (gleicher Gutter
+   24px), absolut ueber dem Hero — kollidiert nie mit dem Titel (der sitzt am Hero-Unterrand). */
+#page-story { position: relative; }
+.story-back { position: absolute; top: 18px; z-index: 5; left: max(24px, calc(50% - 380px + 24px)); }
+/* Reise: vorerst unveraendert (fix). Wird in Commit 2 ins sticky Kompaktband ueberfuehrt. */
+.trip-back { position: fixed; top: 102px; left: calc(20px + env(safe-area-inset-left, 0px)); z-index: 1090; }
 @media (max-width: 860px) { .story-back, .trip-back { display: none; } }
 .story-card { background: var(--c-bg-alt); border-radius: var(--radius-sm); overflow: hidden; cursor: pointer; border: 1px solid var(--c-line); transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease); display: flex; flex-direction: column; }
 .story-card:hover { transform: translateY(-6px); box-shadow: 0 20px 44px -20px rgba(46,36,24,0.5); }
