@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-24 20:50 — Mobil: Overscroll-Mitfedern per Frame abtasten (flüssigeres Rückfedern)
+- **Problem:** das Zurückfedern hing an den groben Scroll-Events → der Titel kam **stufig/ruckelig** zurück
+  („gewollt, nicht gekonnt").
+- **Fix** (`61d55be`): solange überzogen ist (`ov > 0`) läuft eine **rAF-Schleife**, die `scrollY` **jeden
+  Frame** liest und `--tl-ov`/`--st-ov` setzt → die elastische Rückbewegung wird mit Display-Rate
+  (60/120 Hz) mitgenommen, 1:1 zur Inhaltsposition (kein Lerp). Bei 0 stoppt die Schleife (Batterie).
+  Reise + Story.
+- Dateien: `TripTimeline.tsx`, `StoryReaderContent.tsx`. **Nur Mobil, reines JS, kein Re-Index.**
+- Commit: `61d55be`
+
 ## 2026-06-24 20:30 — Mobil: Titel beim iOS-Overscroll mitfedern (Reise + Story)
 - **Problem:** beim Überziehen am oberen Rand federt iOS (Android tlw.) den Inhalt elastisch nach unten;
   der fixierte/scroll-gekoppelte Titel macht das per Plattform-Design **nicht** mit → blieb stehen, während

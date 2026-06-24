@@ -47,7 +47,8 @@
 > Mitte; zentriert im Band, nicht über Band+Fade; Hero via `translateY 56` an Ort; `630ebc0`). Story bereits zentriert.
 > Titel **federt beim iOS-Overscroll mit** (`c145096`): `--tl-ov`/`--st-ov` = `max(0,-scrollY)` als führendes
 > `translateY` (Regel + Keyframes) → schiebt mit dem nach unten gefederten Inhalt mit (Plattform-Design pinnt
-> fixe Elemente sonst). Kein Wrapper → Spy unberührt; Desktop no-op.
+> fixe Elemente sonst). Kein Wrapper → Spy unberührt; Desktop no-op. Rückfedern wird **per Frame abgetastet**
+> (rAF-Schleife solange `ov>0`, liest `scrollY` jeden Frame) → flüssig statt stufig (`61d55be`).
 > ⚠️ **Mobil-Optik (Reise + Story) nur am echten Gerät final prüfbar** — die lokale Preview liefert `innerWidth`
 > ≠ Render-Breite, kann Handy also nicht korrekt zeigen; Bewegung/kein-Überlauf wurde per DOM-Messung bestätigt.
 >
