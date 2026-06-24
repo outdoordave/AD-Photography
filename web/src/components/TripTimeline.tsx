@@ -194,9 +194,13 @@ export default function TripTimeline(props: Props) {
   const firstAbsRef = React.useRef(0);
   const rafRef = React.useRef<number | null>(null);
   const snapAnimRef = React.useRef<number | null>(null);
-  // Crossfade große Überschrift -> sticky Kompaktband: geglättetes p (0..1) via rAF-Lerp.
+  // Kopf-Fortschritt, geglättet via rAF-Lerp:
+  //  --tl-p = Desktop-Crossfade (groß -> Kompaktband).
+  //  --tl-m = Mobil (<=767): EIN Titel wandert/schrumpft kontinuierlich von groß/tief nach klein/oben.
   const pTargetRef = React.useRef(0);
   const pSmoothRef = React.useRef(0);
+  const mTargetRef = React.useRef(0);
+  const mSmoothRef = React.useRef(0);
   const cfRafRef = React.useRef<number | null>(null);
 
   const carSvg = vehicleSvg(props.vehicleId);
@@ -498,30 +502,38 @@ export default function TripTimeline(props: Props) {
     list.style.setProperty('--fill', Math.max(0, Math.min(lineH, fillToActive)) + 'px');
   }
 
-  // ── Crossfade Kopf -> Kompaktband (eigener rAF, entkoppelt von der Spy-Schleife) ──
-  // p (0..1) als smoothstep aus der Scroll-Position (Ramp ~36px über ~40px), dann via
-  // Lerp (Faktor 0.12) sanft eingerastet -> kein hartes Scroll-Koppeln, weiches Loslassen.
+  // ── Kopf-Fortschritte (eigener rAF, entkoppelt von der Spy-Schleife) ──
+  // Beide als smoothstep aus der Scroll-Position, dann via Lerp sanft eingerastet (magnetischer
+  // Nachlauf, kein hartes Scroll-Koppeln). --tl-p: Desktop-Crossfade (Ramp 36/40, Lerp 0.12).
+  // --tl-m: Mobil-Titelwanderung (RANGE 90, Lerp 0.11).
   const CF_START = 36, CF_LEN = 40, CF_LERP = 0.12;
-  function crossfadeTarget(): number {
-    const raw = Math.min(1, Math.max(0, (window.scrollY - CF_START) / CF_LEN));
-    return raw * raw * (3 - 2 * raw); // smoothstep
-  }
-  function applyCrossfade(p: number) {
+  const M_RANGE = 90, M_LERP = 0.11;
+  const smoothstep = (x: number) => { const r = Math.min(1, Math.max(0, x)); return r * r * (3 - 2 * r); };
+  function applyCrossfade(p: number, m: number) {
     const st = stageRef.current;
-    if (st) st.style.setProperty('--tl-p', String(Math.round(p * 1000) / 1000));
+    if (!st) return;
+    st.style.setProperty('--tl-p', String(Math.round(p * 1000) / 1000));
+    st.style.setProperty('--tl-m', String(Math.round(m * 1000) / 1000));
   }
   function crossfadeStep() {
     cfRafRef.current = null;
-    const tgt = pTargetRef.current;
-    let next = pSmoothRef.current + (tgt - pSmoothRef.current) * CF_LERP;
-    if (Math.abs(tgt - next) < 0.001) next = tgt;
-    pSmoothRef.current = next;
-    applyCrossfade(next);
-    if (next !== tgt) cfRafRef.current = requestAnimationFrame(crossfadeStep);
+    const pt = pTargetRef.current, mt = mTargetRef.current;
+    let pn = pSmoothRef.current + (pt - pSmoothRef.current) * CF_LERP;
+    let mn = mSmoothRef.current + (mt - mSmoothRef.current) * M_LERP;
+    if (Math.abs(pt - pn) < 0.001) pn = pt;
+    if (Math.abs(mt - mn) < 0.001) mn = mt;
+    pSmoothRef.current = pn; mSmoothRef.current = mn;
+    applyCrossfade(pn, mn);
+    if (pn !== pt || mn !== mt) cfRafRef.current = requestAnimationFrame(crossfadeStep);
   }
   function armCrossfade() {
-    pTargetRef.current = crossfadeTarget();
-    if (prefersReduced()) { pSmoothRef.current = pTargetRef.current; applyCrossfade(pSmoothRef.current); return; }
+    const sy = window.scrollY;
+    pTargetRef.current = smoothstep((sy - CF_START) / CF_LEN);
+    mTargetRef.current = smoothstep(sy / M_RANGE);
+    if (prefersReduced()) {
+      pSmoothRef.current = pTargetRef.current; mSmoothRef.current = mTargetRef.current;
+      applyCrossfade(pSmoothRef.current, mSmoothRef.current); return;
+    }
     if (cfRafRef.current == null) cfRafRef.current = requestAnimationFrame(crossfadeStep);
   }
 

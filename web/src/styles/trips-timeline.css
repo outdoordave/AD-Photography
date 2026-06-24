@@ -161,10 +161,49 @@
 /* ════════ MOBILE (< 768px = Handy). iPad (≥768px, auch quer) bleibt Desktop! ════════ */
 @media (max-width: 767px) {
   .tl-stage { display: flex; flex-direction: column; column-gap: 0; }
-  .tl-topbar { order: 0; }                 /* sticky Kompaktband bleibt oben (Titel, ohne Zurück-Pille) */
-  .tl-herohead { order: 1; padding: 6px 0 12px; }  /* große Überschrift scrollt weg (nicht klebend) */
-  .tl-herohead h1 { font-size: 19px; }     /* feste Größe mobil (kein Schrumpfen) — Mockup-Vorgabe */
-  .tl-intro { order: 1; } /* direkt nach der Überschrift (mobil ist nur das Band sticky) */
+  /* ── Mobil: EIN Titel (die echte h1) wandert/schrumpft kontinuierlich von groß/tief nach
+     klein/oben in die Zeile; getrieben von --tl-m (rAF-Lerp). Kein Crossfade, kein Wegblenden. ── */
+  .tl-topbar {
+    order: 0; z-index: 6; overflow: visible;
+    /* Zeile selbst VOLL deckend (ramped mit --tl-m) -> verdeckt hochscrollenden Text/Karte sicher.
+       Kein Frost, kein harter Strich. Weiche Unterkante als ::after UNTERHALB der Zeile. */
+    background: rgba(244,237,225, var(--tl-m, 0));
+    -webkit-backdrop-filter: none; backdrop-filter: none; border-bottom: none;
+  }
+  .tl-topbar::after {
+    content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 22px; pointer-events: none;
+    background: linear-gradient(to bottom, rgba(244,237,225, var(--tl-m, 0)), rgba(244,237,225, 0));
+  }
+  .tl-topbar-title { display: none; }      /* Desktop-Crossfade-Span entfällt mobil (h1 selbst wandert) */
+  /* Zurück-Pille in der Zeile: kompakter Akzent-Link (lesbar auf hellem Grund, wie der Nav-Link),
+     NICHT die dunkle Foto-Ghost-Pille. Fadet ab ~40 % der Strecke ein. */
+  .tl-topbar .trip-back {
+    display: inline-flex; flex: none; gap: 5px; padding: 4px 2px;
+    background: transparent; border: none; box-shadow: none;
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+    color: var(--c-accent);
+    opacity: clamp(0, calc((var(--tl-m, 0) - 0.4) / 0.6), 1);
+    transition: none;
+  }
+  /* Platzhalter reserviert die Höhe des großen Titels bei Scroll 0 (die echte h1 ist fixiert -> zählt
+     NICHT zur gemessenen .tl-topbar-Höhe; headRef bleibt konstant -> Scroll-Spy unberührt).
+     filter/will-change vom Desktop-Crossfade MÜSSEN hier weg, sonst wird .tl-herohead zum Containing-
+     Block für die fixierte h1 (Titel würde relativ zur Box statt zum Viewport positioniert). */
+  .tl-herohead { order: 1; padding: 6px 0 12px; min-height: 52px; filter: none; opacity: 1; will-change: auto; }
+  /* Kicker (Datum/Region) mobil ausgeblendet, damit der wandernde Titel ein sauberer Hero ohne
+     Überlappung ist. (Falls gewünscht später in die Zeile/unter den Titel holen.) */
+  .tl-herohead .tl-meta { display: none; }
+  .tl-herohead h1 {
+    position: fixed; margin: 0; left: 16px;
+    top: calc(var(--ww-sticky-top) + 23px);
+    transform-origin: left center; z-index: 7; will-change: transform;
+    font-size: 18px; line-height: 1.05;
+    transform:
+      translateX(calc(var(--tl-m, 0) * 96px))
+      translateY(calc((1 - var(--tl-m, 0)) * 46px))
+      scale(calc(1 + (1 - var(--tl-m, 0)) * 0.85));
+  }
+  .tl-intro { order: 1; } /* direkt nach dem Platzhalter (mobil ist nur die Zeile sticky) */
   .tl-map-col .tl-map { z-index: auto; } /* mobil kein z-Index-Heben der Karte */
   .tl-map-col { order: 2; position: sticky; top: calc(var(--ww-sticky-top) + var(--ww-mininav-h)); z-index: 3; }
   .tl-map-col .tl-map { position: static; top: auto; height: var(--ww-map-h-mobile); width: 100%; }
