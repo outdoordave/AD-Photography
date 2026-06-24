@@ -150,8 +150,8 @@ section { padding: 84px 0; }
    Breite an exakt der gleichen Stelle wie auf Reise-Detailseiten; kollidiert nie mit dem Titel (Hero-Unterrand). */
 #page-story { position: relative; }
 .story-back { position: absolute; top: 14px; z-index: 5; left: max(24px, calc(50% - 590px + 24px)); }
-/* Reise: vorerst unveraendert (fix). Wird in Commit 2 ins sticky Kompaktband ueberfuehrt. */
-.trip-back { position: fixed; top: 102px; left: calc(20px + env(safe-area-inset-left, 0px)); z-index: 1090; }
+/* Reise-Pille lebt im sticky Kompaktband (.tl-topbar .trip-back, position: static — trips-timeline.css);
+   eigene Positionierung daher nur für .story-back nötig. Beide mobil (<=860) aus -> Nav-Zurück-Link. */
 @media (max-width: 860px) { .story-back, .trip-back { display: none; } }
 .story-card { background: var(--c-bg-alt); border-radius: var(--radius-sm); overflow: hidden; cursor: pointer; border: 1px solid var(--c-line); transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease); display: flex; flex-direction: column; }
 .story-card:hover { transform: translateY(-6px); box-shadow: 0 20px 44px -20px rgba(46,36,24,0.5); }
