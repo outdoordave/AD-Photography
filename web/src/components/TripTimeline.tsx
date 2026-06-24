@@ -513,7 +513,7 @@ export default function TripTimeline(props: Props) {
   //       schnell -> holt nahezu vollständig auf (kein Hinterherhinken). smoothstep glättet den
   //       Übergang zwischen beiden Regimen, damit es nie umschaltet/springt.
   const CF_START = 36, CF_LEN = 40, CF_BASE = 0.12;
-  const M_RANGE = 90, M_BASE = 0.14, M_LAG_FULL = 0.4;
+  const M_RANGE = 70, M_BASE = 0.14, M_LAG_FULL = 0.4;  // ~ native Sticky-Wanderstrecke (.tl-herohead margin-top)
   // Unterstützt der Browser Scroll-Driven Animations, koppelt CSS den Mobil-Titel direkt an den Scroll
   // (kein JS-Lerp/Drift). Dann treibt JS --tl-m auf dem Handy NICHT (würde sonst gegen die CSS-Animation
   // schreiben). --tl-p ist Desktop-only. Fehlt der Support, bleibt der JS-Lerp als Fallback aktiv.
@@ -664,35 +664,8 @@ export default function TripTimeline(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Mobil: Titel mit dem iOS-Overscroll (Gummiband am oberen Rand) mitfedern. Dort wird scrollY negativ
-  // (Inhalt nach unten gefedert) — --tl-ov = max(0,-scrollY) schiebt den fixierten Titel exakt mit, sodass
-  // er nicht „stehen bleibt", während der Hero darunter wegfedert. Greift in SDA- UND Fallback-Pfad
-  // (translateY(var(--tl-ov)) steht in Regel + Keyframes). Desktop: scrollY wird nicht negativ -> no-op.
-  React.useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const root = document.documentElement;
-    let raf: number | null = null;
-    let smooth = 0;   // geglätteter Overscroll-Versatz (px)
-    let lastT = 0;
-    const read = () => Math.max(0, -(window.scrollY || 0));
-    // Attack/Release-Hüllkurve, frame-raten-unabhängig: schnelles Folgen beim Ziehen (ATK), weiches
-    // Ausregeln beim Zurückfedern (REL). iOS' scrollY ist beim Spring nicht sauber monoton (Überschwinger);
-    // rohes 1:1-Folgen machte daraus ein sichtbares Hin-und-her-„Regeln". Die Glättung dämpft das (die
-    // fehlende „Hysterese"), ohne dem Finger beim Ziehen hinterherzuhängen. Bei 0 angekommen -> Stopp.
-    const ATK = 25, REL = 90;  // ms
-    const frame = (now: number) => {
-      const dt = lastT ? Math.min(64, now - lastT) : 16.7; lastT = now;
-      const target = read();
-      smooth += (target - smooth) * (1 - Math.exp(-dt / (target > smooth ? ATK : REL)));
-      if (target === 0 && smooth < 0.4) smooth = 0;
-      root.style.setProperty('--tl-ov', smooth > 0.05 ? smooth.toFixed(1) + 'px' : '0px');
-      if (target > 0 || smooth > 0.05) raf = requestAnimationFrame(frame);
-      else { raf = null; lastT = 0; }
-    };
-    const onScroll = () => { if (raf == null) { lastT = 0; raf = requestAnimationFrame(frame); } };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => { window.removeEventListener('scroll', onScroll); if (raf != null) cancelAnimationFrame(raf); };
-  }, []);
+  // (Der frühere --tl-ov-Overscroll-Effekt entfällt: der Titel liegt jetzt via .tl-herohead { position:
+  //  sticky } im Fluss und federt NATIV mit dem Inhalt — kein JS-Nachjagen, kein Pendeln mehr.)
 
   // Dezente Reveals (einmal, per IO).
   React.useEffect(() => {

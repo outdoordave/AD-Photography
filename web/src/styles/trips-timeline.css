@@ -198,21 +198,28 @@
      NICHT zur gemessenen .tl-topbar-Höhe; headRef bleibt konstant -> Scroll-Spy unberührt).
      filter/will-change vom Desktop-Crossfade MÜSSEN hier weg, sonst wird .tl-herohead zum Containing-
      Block für die fixierte h1 (Titel würde relativ zur Box statt zum Viewport positioniert). */
-  .tl-herohead { order: 1; padding: 6px 0 12px; min-height: 52px; filter: none; opacity: 1; will-change: auto; }
+  /* Sticky STATT fixe h1: der Titel liegt im Fluss -> federt beim iOS-Overscroll NATIV 1:1 mit dem
+     Inhalt (kein JS-Nachjagen, kein Pendeln) und dockt beim Hochscrollen nativ an (top+13 = Band-Mitte).
+     Containing-Block ist .tl-stage (hoch) -> bleibt die ganze Liste über angedockt.
+     STELLSCHRAUBEN (am Gerät justieren): margin-top = native Wanderstrecke (wie tief der große Titel
+     startet); margin-bottom = -margin-top holt den Intro wieder hoch (Komposition wie bisher). */
+  .tl-herohead {
+    order: 1; position: sticky; top: calc(var(--ww-sticky-top) + 13px); z-index: 7;
+    margin: 40px 0 -40px; padding: 0; min-height: 0;
+    filter: none; opacity: 1; will-change: auto;
+  }
   /* Kicker (Datum/Region) mobil ausgeblendet, damit der wandernde Titel ein sauberer Hero ohne
      Überlappung ist. (Falls gewünscht später in die Zeile/unter den Titel holen.) */
   .tl-herohead .tl-meta { display: none; }
+  /* Die h1 liegt jetzt IM Fluss (sticky-Eltern .tl-herohead). Nur noch Schrumpfen + horizontaler
+     Versatz (Platz für die „← Reisen"-Pille beim Andocken); die vertikale Wanderung UND das Mitfedern
+     macht das native Sticky -> kein translateY, kein --tl-ov mehr. */
   .tl-herohead h1 {
-    position: fixed; margin: 0; left: 16px;
-    /* +13 statt +23: Titel-MITTE auf die Band-Mitte (46px-Band) -> vertikal mittig zum „← Reisen"-Button
-       (zentriert im Band, NICHT über Band+Fade). Großer Hero-Titel bleibt via +56 (statt 46) an Ort. */
-    top: calc(var(--ww-sticky-top) + 13px);
-    transform-origin: left center; z-index: 7; will-change: transform;
+    margin: 0;
+    transform-origin: left center; will-change: transform;
     font-size: 18px; line-height: 1.05;
     transform:
-      translateY(var(--tl-ov, 0px))   /* iOS-Overscroll: federt mit dem Inhalt mit (JS setzt --tl-ov = max(0,-scrollY)) */
       translateX(calc(var(--tl-m, 0) * 96px))
-      translateY(calc((1 - var(--tl-m, 0)) * 56px))
       scale(calc(1 + (1 - var(--tl-m, 0)) * 0.85));
   }
   .tl-intro { order: 1; } /* direkt nach dem Platzhalter (mobil ist nur die Zeile sticky) */
@@ -238,21 +245,24 @@
    (heutiger Stand, unverändert). Titel bleibt position:fixed -> Scroll-Spy/headH unberührt. */
 @property --tl-m { syntax: "<number>"; inherits: true; initial-value: 0; }
 @keyframes tl-m-drive { from { --tl-m: 0; } to { --tl-m: 1; } }
+/* Nur noch Schrumpfen + Horizontal-Versatz (vertikale Wanderung macht das native Sticky). Die Range muss
+   etwa der nativen Wanderstrecke (.tl-herohead margin-top) entsprechen, damit der Titel fertig geschrumpft
+   ist, wenn er andockt. STELLSCHRAUBE: 70px ~ margin-top 40 + Grund-Offset. */
 @keyframes tl-title-fly {
-  from { transform: translateY(var(--tl-ov, 0px)) translateX(0px) translateY(56px) scale(1.85); }
-  to   { transform: translateY(var(--tl-ov, 0px)) translateX(96px) translateY(0px) scale(1); }
+  from { transform: translateX(0px) scale(1.85); }
+  to   { transform: translateX(96px) scale(1); }
 }
 @media (max-width: 767px) {
   @supports (animation-timeline: scroll()) {
     .tl-stage {
       animation: tl-m-drive cubic-bezier(.42, 0, .58, 1) both;
       animation-timeline: scroll(root);
-      animation-range: 0 90px;
+      animation-range: 0 70px;
     }
     .tl-herohead h1 {
       animation: tl-title-fly cubic-bezier(.42, 0, .58, 1) both;
       animation-timeline: scroll(root);
-      animation-range: 0 90px;
+      animation-range: 0 70px;
     }
   }
 }
