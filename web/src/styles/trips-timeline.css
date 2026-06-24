@@ -163,21 +163,14 @@
   .tl-stage { display: flex; flex-direction: column; column-gap: 0; }
   /* ── Mobil: EIN Titel (die echte h1) wandert/schrumpft kontinuierlich von groß/tief nach
      klein/oben in die Zeile; getrieben von --tl-m (rAF-Lerp). Kein Crossfade, kein Wegblenden. ── */
+  /* Zeile + Karten-Fläche (s.u.) bilden EINE durchgehende, RANDLOSE deckende Kopf-Zone: Inhalt scrollt
+     sauber darunter durch, scheint nirgends hervor. Voll deckend, ramped mit --tl-m. Kein Frost.
+     Weicher Übergang erst UNTER der Karte (.tl-fade-top). */
   .tl-topbar {
     order: 0; z-index: 6; overflow: visible;
-    /* Zeile selbst VOLL deckend (ramped mit --tl-m) -> verdeckt hochscrollenden Text sicher. Kein Frost.
-       KEIN ::after-Verlauf mobil: direkt darunter klebt die opake Karte (runde Oberkante) — eine weiche
-       Kante läge über der Karten-Oberkante und schnitte sie optisch ab. */
     background: rgba(244,237,225, var(--tl-m, 0));
+    margin: 0 -18px; padding: 0 18px;   /* full-bleed bis an die Bildschirmkanten (Pille bleibt auf Inhaltsbreite) */
     -webkit-backdrop-filter: none; backdrop-filter: none; border-bottom: none;
-  }
-  /* Weiche Unterkante unter der Zeile: Verlauf deckend -> transparent (18px). Text, der hochscrollt,
-     fadet darunter sanft aus (keine harte Kante). Die Karte klebt am UNTEREN (transparenten) Ende des
-     Verlaufs (s.u.) -> ihre komplette runde Oberkante bleibt sichtbar, der Verlauf schneidet sie nicht an.
-     Pseudo -> ändert headH NICHT (Spy bleibt). */
-  .tl-topbar::after {
-    content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 18px; pointer-events: none;
-    background: linear-gradient(to bottom, rgba(244,237,225, var(--tl-m, 0)), rgba(244,237,225, 0));
   }
   .tl-topbar-title { display: none; }      /* Desktop-Crossfade-Span entfällt mobil (h1 selbst wandert) */
   /* Zurück-Pille in der Zeile: kompakter Akzent-Link (lesbar auf hellem Grund, wie der Nav-Link),
@@ -211,7 +204,11 @@
   }
   .tl-intro { order: 1; } /* direkt nach dem Platzhalter (mobil ist nur die Zeile sticky) */
   .tl-map-col .tl-map { z-index: auto; } /* mobil kein z-Index-Heben der Karte */
-  .tl-map-col { order: 2; position: sticky; top: calc(var(--ww-sticky-top) + var(--ww-mininav-h) + 18px); z-index: 3; }
+  /* RANDLOSE deckende Fläche hinter/neben der Karte: cremefarben + full-bleed (margin -18, an die Kanten).
+     padding-top deckt die Lücke zur Zeile, seitliches padding hält die Karte auf Inhaltsbreite. So scheint
+     NICHTS durch — weder in der Lücke, neben der Karte noch an den runden Ecken. */
+  .tl-map-col { order: 2; position: sticky; top: calc(var(--ww-sticky-top) + var(--ww-mininav-h)); z-index: 3;
+    background: var(--c-bg); margin: 0 -18px; padding: 18px 18px 0; }
   .tl-map-col .tl-map { position: static; top: auto; height: var(--ww-map-h-mobile); width: 100%; }
   .tl-list { order: 3; padding: 2vh 0 46vh; }
   .tl-fade-top { top: calc(var(--ww-sticky-top) + var(--ww-mininav-h) + 18px + var(--ww-map-h-mobile)); height: 40px; margin-bottom: -40px; }
