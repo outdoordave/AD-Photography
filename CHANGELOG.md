@@ -28,10 +28,13 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   Hero). Desktop-Crossfade (`--tl-p`) unverändert.
 - **Kein Doppel-Zurück** (`9a835e1`): Nav-Zurück-Link auf Reise-Detail `≤767` aus (`nav-back--trips`) — die
   Titelzeilen-Pille ist das einzige Zurück. 768–860 (iPad-Hochkant) + Story behalten den Nav-Link.
-- **Story mobil: ZURÜCKGESTELLT.** Das gleiche Muster scheitert an **langen Story-Titeln** (Prosa wie
-  „Tennessee Winter – Februar 2025"): ein einzelnes `scale(1.85)`-Element kann nicht zugleich großer
-  mehrzeiliger Hero UND kleine einzeilige Leiste sein (läuft rechts aus dem Bild). Scaffolding wieder
-  entfernt; wartet auf Davids Entscheidung zum Titel-Verhalten (s. STATUS). Reise-Commit davon unberührt.
+- **Story mobil (`≤767`)** (`6b9cf57`, nachgezogen): gleiches Muster fürs 60vh-Hero — die `<h1>` wandert
+  von groß/tief (Hero-Unterkante) in eine neue sticky deckende Titel-Zeile und schrumpft (`--st-m` via
+  rAF-Lerp in der `StoryReaderContent`-Insel, Strecke = Hero-Höhe). **Lösung für lange Prosa-Titel
+  (Option A):** per JS so skaliert, dass sie **einzeilig** in die Breite passen (`--st-scale-big`) +
+  **Ellipsis** in der Zeile → bricht/überläuft nie. Zurück-Pille (Akzent-Link) fadet ab ~40 %;
+  Nav-Zurück-Link auf Story `≤767` aus. Story hat keine Scroll-Spy. **Optik nur am echten Gerät final
+  prüfbar** (Preview-`innerWidth` ≠ Render-Breite → kann Mobil nicht zeigen; Logik per Messung bestätigt).
 
 ## 2026-06-23 11:45 — Reise-Detail: Crossfade-Kopf + reservierte Zurück-Pille (direkt auf main)
 - **Teil A — Story-Zurück-Pille** (`17dcaad`): von fenster-`fixed` auf an die 760px-Lesespalte gebundene

@@ -26,11 +26,11 @@
 > der Zeile, Nav-Zurück-Link auf Reise-Detail `≤767` aus (kein Doppel); Kicker mobil aus. **Story-Zurück-Pille**
 > Desktop in reservierter Zone (content-gebunden). Safari-Frost (Desktop-Band) noch am Gerät zu prüfen.
 >
-> 🔶 **OFFENE ENTSCHEIDUNG (Story-Mobil-Kopf):** Das „ein wandernder Titel"-Muster wurde für **Story** angefangen,
-> aber zurückgestellt — **lange Story-Titel** (Prosa) sprengen das `scale(1.85)`-Einzeiler-Modell (großer Hero
-> vs. kleine Zeile). Reise (kurze Titel) funktioniert. **David entscheidet**, wie lange Titel sich verhalten
-> (a: einzeilig per JS auf Breite skaliert + Ellipsis in der Zeile · b: großer Hero darf umbrechen + später
-> Ellipsis-Umschalt · c: Story behält den heutigen Stand). Danach baue ich die Story-Mobil-Zeile.
+> **Story-Mobil-Kopf (gelöst, Option A):** gleiches „ein wandernder Titel"-Muster fürs 60vh-Hero; lange
+> Prosa-Titel werden per JS einzeilig auf die Breite skaliert + in der Zeile mit `…` gekürzt → bricht nie.
+> Zurück-Pille in der Zeile, Nav-Zurück-Link auf Story `≤767` aus. **Beide Detail-Köpfe mobil = wandernder Titel.**
+> ⚠️ **Mobil-Optik (Reise + Story) nur am echten Gerät final prüfbar** — die lokale Preview liefert `innerWidth`
+> ≠ Render-Breite, kann Handy also nicht korrekt zeigen; Bewegung/kein-Überlauf wurde per DOM-Messung bestätigt.
 >
 > **Branch-Preview verworfen:** Cloudflare-Branch-Preview baute nicht (Preview-Environment ohne `TINA_TOKEN`,
 > `TINA_BRANCH` defaultet auf `astro-umbau`). Entscheidung: **kein Branch-Ritual** — wie den ganzen Bauzeitraum
