@@ -83,6 +83,60 @@ export default function StoryReaderContent(props: Props) {
   const bodyRef = React.useRef<HTMLDivElement | null>(null);
   const [lb, setLb] = React.useState<{ photos: LbPhoto[]; start: number } | null>(null);
 
+  // --- Mobil (<=767): EIN Titel wandert beim Scrollen von groß/tief (Hero-Unterkante) nach klein/oben
+  //     in eine sticky Zeile und schrumpft dabei. Strecke an die Hero-Höhe gekoppelt. Lange Titel
+  //     werden so skaliert, dass sie EINZEILIG in die Breite passen (--st-scale-big), in der Zeile mit …
+  //     gekürzt -> bricht nie. Fortschritt --st-m (0..1) via rAF-Lerp (magnetischer Nachlauf). ---
+  const heroRef = React.useRef<HTMLDivElement | null>(null);
+  const stTargetRef = React.useRef(0);
+  const stSmoothRef = React.useRef(0);
+  const stRafRef = React.useRef<number | null>(null);
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const root = document.documentElement;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const ST_LERP = 0.11;
+    const apply = (m: number) => root.style.setProperty('--st-m', String(Math.round(m * 1000) / 1000));
+    const measure = () => {
+      const heroEl = heroRef.current;
+      const h = heroEl ? heroEl.offsetHeight : window.innerHeight * 0.6;
+      root.style.setProperty('--st-bigY', Math.max(120, Math.round(h - 110)) + 'px');
+      // Großtitel-Skalierung: so groß wie möglich, aber einzeilig passend (Breite minus Rand).
+      const titleEl = heroEl ? heroEl.querySelector('h1') as HTMLElement | null : null;
+      const w = titleEl && titleEl.offsetWidth ? titleEl.offsetWidth : 1;
+      const big = Math.max(1, Math.min(1.85, (window.innerWidth - 32) / w));
+      root.style.setProperty('--st-scale-big', String(Math.round(big * 1000) / 1000));
+      return h;
+    };
+    const target = () => {
+      const h = measure();
+      const range = Math.max(140, h - 80); // bis der Hero fast durch ist
+      const r = Math.min(1, Math.max(0, window.scrollY / range));
+      return r * r * (3 - 2 * r); // smoothstep
+    };
+    const step = () => {
+      stRafRef.current = null;
+      const t = stTargetRef.current;
+      let n = stSmoothRef.current + (t - stSmoothRef.current) * ST_LERP;
+      if (Math.abs(t - n) < 0.001) n = t;
+      stSmoothRef.current = n; apply(n);
+      if (n !== t) stRafRef.current = requestAnimationFrame(step);
+    };
+    const onScroll = () => {
+      stTargetRef.current = target();
+      if (reduce) { stSmoothRef.current = stTargetRef.current; apply(stSmoothRef.current); return; }
+      if (stRafRef.current == null) stRafRef.current = requestAnimationFrame(step);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (stRafRef.current != null) cancelAnimationFrame(stRafRef.current);
+    };
+  }, []);
+
   React.useEffect(() => {
     const root = bodyRef.current;
     if (!root) return;
@@ -102,7 +156,12 @@ export default function StoryReaderContent(props: Props) {
 
   return (
     <>
-      <div className="reader-hero">
+      {/* Mobile sticky Titel-Zeile (nur <=767, CSS): deckend, trägt die Zurück-Pille. Der Hero-Titel
+          wandert beim Scrollen hier hinein (fixiert, via --st-m). Desktop: display:none. */}
+      <div className="story-topline">
+        <a className="story-back-line" href={props.lang === 'en' ? '/en/stories' : '/stories'}>← Stories</a>
+      </div>
+      <div className="reader-hero" ref={heroRef}>
         {cover ? (
           <img className="reader-cover-img" src={cover} alt={d.title} data-tina-field={tinaField(story, 'cover')} />
         ) : (

@@ -172,6 +172,43 @@ section { padding: 84px 0; }
 .reader-hero-inner { position: relative; z-index: 2; max-width: 760px; margin: 0 auto; width: 100%; padding: 0 24px 36px; }
 .reader-hero-inner .meta { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 12px; }
 .reader-hero-inner h1 { font-family: var(--font-display); font-size: var(--fs-display); font-weight: var(--fw-medium); line-height: 1.08; }
+/* Mobile Titel-Zeile (Story): Desktop ausgeblendet (dort: reservierte Pille über dem Hero). */
+.story-topline { display: none; }
+/* ── Story mobil (<=767): EIN Titel wandert von groß/tief (Hero-Unterkante) nach klein/oben in eine
+   sticky Zeile und schrumpft (analog Reise). JS setzt --st-m (0..1), --st-bigY, --st-scale-big.
+   Titel einzeilig + Ellipsis -> bricht/überläuft NIE (lange Prosa-Titel auto-skaliert). ── */
+@media (max-width: 767px) {
+  .story-topline {
+    display: flex; align-items: center; gap: 14px; min-height: 46px;
+    position: sticky; top: calc(72px + env(safe-area-inset-top, 0px)); z-index: 1095;
+    background: rgba(244,237,225, var(--st-m, 0));   /* voll deckend, ramped */
+  }
+  .story-topline::after {
+    content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 22px; pointer-events: none;
+    background: linear-gradient(to bottom, rgba(244,237,225, var(--st-m, 0)), rgba(244,237,225, 0));
+  }
+  .story-back-line {                                  /* kompakter Akzent-Link, fadet ab ~40 % der Strecke */
+    display: inline-flex; align-items: center; gap: 5px; flex: none; padding: 4px 2px;
+    color: var(--c-accent); text-decoration: none; white-space: nowrap;
+    font-size: var(--fs-label); letter-spacing: var(--tracking-slight); font-weight: var(--fw-bold);
+    opacity: clamp(0, calc((var(--st-m, 0) - 0.4) / 0.6), 1);
+  }
+  #page-story .reader-hero-inner .meta { display: none; }   /* Kicker mobil aus -> sauberer Hero */
+  #page-story .reader-hero-inner h1 {
+    position: fixed; left: 16px; margin: 0; z-index: 1096;
+    top: calc(72px + env(safe-area-inset-top, 0px) + 13px);
+    transform-origin: left center; will-change: transform;
+    font-size: 18px; line-height: 1.05; color: var(--c-ink);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    /* Breite: bei Scroll 0 fast volle Breite (Hero), in der Zeile Platz für die Pille (rechts gekürzt). */
+    max-width: calc(100vw - 32px - var(--st-m, 0) * 100px);
+    text-shadow: 0 1px 10px rgba(244,237,225,0.55);   /* Lesbarkeit über dem Foto während der Wanderung */
+    transform:
+      translateX(calc(var(--st-m, 0) * 100px))
+      translateY(calc((1 - var(--st-m, 0)) * var(--st-bigY, 380px)))
+      scale(calc(1 + (1 - var(--st-m, 0)) * (var(--st-scale-big, 1.6) - 1)));
+  }
+}
 .reader-body { max-width: 720px; margin: 0 auto; padding: 40px 24px 30px; }
 .reader-body p { font-size: var(--fs-lead); line-height: 1.85; margin-bottom: 24px; color: #4a3d2c; }
 .reader-body p:first-of-type::first-letter { font-family: var(--font-display); font-size: var(--fs-display); font-weight: var(--fw-semibold); float: left; line-height: 0.8; padding: 6px 12px 0 0; color: var(--c-accent); }
@@ -572,10 +609,10 @@ header { position: sticky; top: 0; z-index: 1100; background: rgba(244,237,225,0
 .burger span { display: block; width: 24px; height: 2px; background: var(--c-ink); transition: var(--dur-base) var(--ease); }
 /* Mobil-Zurück-Link in der Nav (Detailseiten) — auf Desktop ausgeblendet, dort gelten die fixen Pillen. */
 .nav-back { display: none; }
-/* Reise-Detail auf dem Handy (<=767): Nav-Zurück-Link aus -> die Zurück-Pille in der wandernden
-   Titelzeile ist das EINZIGE Zurück (kein Doppel). Im Korridor 768–860 (iPad-Hochkant, Reise =
-   Desktop-Layout, keine Titelzeile) bleibt der Nav-Link. Story behält den Nav-Link vorerst überall. */
-@media (max-width: 767px) { .nav-back.nav-back--trips { display: none; } }
+/* Reise- UND Story-Detail auf dem Handy (<=767): Nav-Zurück-Link aus -> die Zurück-Pille in der
+   wandernden Titelzeile ist das EINZIGE Zurück (kein Doppel). Im Korridor 768–860 (iPad-Hochkant,
+   Detail = Desktop-Layout, keine Titelzeile) bleibt der Nav-Link. */
+@media (max-width: 767px) { .nav-back.nav-back--trips, .nav-back.nav-back--stories { display: none; } }
 
 footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-align: center; position: relative; overflow: hidden; }
 .footer-logo { width: 200px; margin: 0 auto 22px; opacity: 0.95; transition: opacity var(--dur-base) var(--ease); }
