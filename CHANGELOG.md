@@ -17,6 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-24 20:05 — Mobil Reise: angedockten Titel vertikal mittig zum Zurück-Button
+- **Fix** (`630ebc0`): der angedockte Reise-Titel saß mit der Oberkante auf der Band-Mitte → hing unter
+  dem „← Reisen"-Button. Jetzt Titel-Oberkante **+13 px** (statt +23) → Titel-**Mitte** auf die 46px-Band-
+  Mitte = Höhe des Buttons; zentriert **im Band**, nicht über Band+Fade. Großer Hero-Titel bleibt via
+  `translateY 56` (statt 46) an Ort — nur der angedockte Zustand rückt hoch. Keyframe-Startwert (SDA-Pfad)
+  mitgezogen. **Story war bereits zentriert (+13), unverändert.**
+- Datei: `web/src/styles/trips-timeline.css`. **Nur Mobil (≤767), reines CSS, kein Re-Index.**
+- Commit: `630ebc0`
+
 ## 2026-06-24 19:40 — Mobil: Titel via Scroll-Driven Animation direkt an den Scroll koppeln
 - **Problem (struktureller Kern):** der wandernde Titel (Reise + Story) wirkte „unbeholfen", weil er per
   JS-Lerp *geglättet* war, der Inhalt darunter aber **1:1 nativ** scrollt → beide driften gegeneinander.

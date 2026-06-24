@@ -43,6 +43,8 @@
 > **Fallback:** ohne `scroll()`-Support (ältere iOS) greift `@supports` nicht → alte JS-Lerp-Lösung bleibt
 > (keine Regression), JS gated den Mobil-Pfad dann aus. Titel bleibt `position:fixed` → **Spy/`headH`
 > unberührt**, `alaska2026`→Station 1. Desktop-Crossfade `--tl-p` unangetastet. Reines CSS/JS, kein Re-Index.
+> Angedockter Reise-Titel **vertikal mittig** zum „← Reisen"-Button (Oberkante +13, Mitte auf 46px-Band-
+> Mitte; zentriert im Band, nicht über Band+Fade; Hero via `translateY 56` an Ort; `630ebc0`). Story bereits zentriert.
 > ⚠️ **Mobil-Optik (Reise + Story) nur am echten Gerät final prüfbar** — die lokale Preview liefert `innerWidth`
 > ≠ Render-Breite, kann Handy also nicht korrekt zeigen; Bewegung/kein-Überlauf wurde per DOM-Messung bestätigt.
 >
