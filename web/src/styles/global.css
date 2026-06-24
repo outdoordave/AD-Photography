@@ -187,11 +187,12 @@ section { padding: 84px 0; }
     content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 22px; pointer-events: none;
     background: linear-gradient(to bottom, rgba(244,237,225, var(--st-m, 0)), rgba(244,237,225, 0));
   }
-  .story-back-line {                                  /* kompakter Akzent-Link, fadet ab ~40 % der Strecke */
+  .story-back-line {                                  /* kompakter Akzent-Link, fliegt ab ~40 % ein (rauf+Fade) */
     display: inline-flex; align-items: center; gap: 5px; flex: none; padding: 4px 2px;
     color: var(--c-accent); text-decoration: none; white-space: nowrap;
     font-size: var(--fs-label); letter-spacing: var(--tracking-slight); font-weight: var(--fw-bold);
     opacity: clamp(0, calc((var(--st-m, 0) - 0.4) / 0.6), 1);
+    transform: translateY(calc((1 - clamp(0, calc((var(--st-m, 0) - 0.4) / 0.6), 1)) * 10px));
   }
   #page-story .reader-hero-inner .meta { display: none; }   /* Kicker mobil aus -> sauberer Hero */
   #page-story .reader-hero-inner h1 {

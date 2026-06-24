@@ -165,24 +165,22 @@
      klein/oben in die Zeile; getrieben von --tl-m (rAF-Lerp). Kein Crossfade, kein Wegblenden. ── */
   .tl-topbar {
     order: 0; z-index: 6; overflow: visible;
-    /* Zeile selbst VOLL deckend (ramped mit --tl-m) -> verdeckt hochscrollenden Text/Karte sicher.
-       Kein Frost, kein harter Strich. Weiche Unterkante als ::after UNTERHALB der Zeile. */
+    /* Zeile selbst VOLL deckend (ramped mit --tl-m) -> verdeckt hochscrollenden Text sicher. Kein Frost.
+       KEIN ::after-Verlauf mobil: direkt darunter klebt die opake Karte (runde Oberkante) — eine weiche
+       Kante läge über der Karten-Oberkante und schnitte sie optisch ab. */
     background: rgba(244,237,225, var(--tl-m, 0));
     -webkit-backdrop-filter: none; backdrop-filter: none; border-bottom: none;
   }
-  .tl-topbar::after {
-    content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 22px; pointer-events: none;
-    background: linear-gradient(to bottom, rgba(244,237,225, var(--tl-m, 0)), rgba(244,237,225, 0));
-  }
   .tl-topbar-title { display: none; }      /* Desktop-Crossfade-Span entfällt mobil (h1 selbst wandert) */
   /* Zurück-Pille in der Zeile: kompakter Akzent-Link (lesbar auf hellem Grund, wie der Nav-Link),
-     NICHT die dunkle Foto-Ghost-Pille. Fadet ab ~40 % der Strecke ein. */
+     NICHT die dunkle Foto-Ghost-Pille. Fliegt ab ~40 % der Strecke ein (rauf + Fade, wie der Titel). */
   .tl-topbar .trip-back {
     display: inline-flex; flex: none; gap: 5px; padding: 4px 2px;
     background: transparent; border: none; box-shadow: none;
     -webkit-backdrop-filter: none; backdrop-filter: none;
     color: var(--c-accent);
     opacity: clamp(0, calc((var(--tl-m, 0) - 0.4) / 0.6), 1);
+    transform: translateY(calc((1 - clamp(0, calc((var(--tl-m, 0) - 0.4) / 0.6), 1)) * 10px));
     transition: none;
   }
   /* Platzhalter reserviert die Höhe des großen Titels bei Scroll 0 (die echte h1 ist fixiert -> zählt
