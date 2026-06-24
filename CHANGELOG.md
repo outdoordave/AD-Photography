@@ -17,6 +17,20 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-24 20:30 — Mobil: Titel beim iOS-Overscroll mitfedern (Reise + Story)
+- **Problem:** beim Überziehen am oberen Rand federt iOS (Android tlw.) den Inhalt elastisch nach unten;
+  der fixierte/scroll-gekoppelte Titel macht das per Plattform-Design **nicht** mit → blieb stehen, während
+  der Hero wegfederte.
+- **Fix** (`c145096`): iOS meldet beim Top-Overscroll **negatives `scrollY`** (= Pull-Distanz). Ein kleiner
+  rAF-gedrosselter Scroll-Listener setzt `--tl-ov`/`--st-ov` = `max(0, -scrollY)`; diese stehen als
+  **führendes `translateY(var(--…-ov))`** im Titel-Transform (statische Regel **und** Keyframes → SDA- und
+  Fallback-Pfad) → Titel schiebt sich exakt mit dem Inhalt mit und schnellt mit zurück.
+- Kein Wrapper/JSX-Umbau → Titel bleibt `position:fixed`, **Spy/`headH` unberührt**. Pille/Band sind bei
+  `scrollY 0` unsichtbar (kein Mitfedern nötig). Desktop: `scrollY` wird nicht negativ → no-op.
+- Dateien: `trips-timeline.css`, `global.css`, `TripTimeline.tsx`, `StoryReaderContent.tsx`.
+  **Nur Mobil (≤767), reines CSS/JS, kein Re-Index.**
+- Commit: `c145096`
+
 ## 2026-06-24 20:05 — Mobil Reise: angedockten Titel vertikal mittig zum Zurück-Button
 - **Fix** (`630ebc0`): der angedockte Reise-Titel saß mit der Oberkante auf der Band-Mitte → hing unter
   dem „← Reisen"-Button. Jetzt Titel-Oberkante **+13 px** (statt +23) → Titel-**Mitte** auf die 46px-Band-

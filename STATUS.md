@@ -45,6 +45,9 @@
 > unberührt**, `alaska2026`→Station 1. Desktop-Crossfade `--tl-p` unangetastet. Reines CSS/JS, kein Re-Index.
 > Angedockter Reise-Titel **vertikal mittig** zum „← Reisen"-Button (Oberkante +13, Mitte auf 46px-Band-
 > Mitte; zentriert im Band, nicht über Band+Fade; Hero via `translateY 56` an Ort; `630ebc0`). Story bereits zentriert.
+> Titel **federt beim iOS-Overscroll mit** (`c145096`): `--tl-ov`/`--st-ov` = `max(0,-scrollY)` als führendes
+> `translateY` (Regel + Keyframes) → schiebt mit dem nach unten gefederten Inhalt mit (Plattform-Design pinnt
+> fixe Elemente sonst). Kein Wrapper → Spy unberührt; Desktop no-op.
 > ⚠️ **Mobil-Optik (Reise + Story) nur am echten Gerät final prüfbar** — die lokale Preview liefert `innerWidth`
 > ≠ Render-Breite, kann Handy also nicht korrekt zeigen; Bewegung/kein-Überlauf wurde per DOM-Messung bestätigt.
 >
