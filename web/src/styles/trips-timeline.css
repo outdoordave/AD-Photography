@@ -202,12 +202,14 @@
   .tl-herohead .tl-meta { display: none; }
   .tl-herohead h1 {
     position: fixed; margin: 0; left: 16px;
-    top: calc(var(--ww-sticky-top) + 23px);
+    /* +13 statt +23: Titel-MITTE auf die Band-Mitte (46px-Band) -> vertikal mittig zum „← Reisen"-Button
+       (zentriert im Band, NICHT über Band+Fade). Großer Hero-Titel bleibt via +56 (statt 46) an Ort. */
+    top: calc(var(--ww-sticky-top) + 13px);
     transform-origin: left center; z-index: 7; will-change: transform;
     font-size: 18px; line-height: 1.05;
     transform:
       translateX(calc(var(--tl-m, 0) * 96px))
-      translateY(calc((1 - var(--tl-m, 0)) * 46px))
+      translateY(calc((1 - var(--tl-m, 0)) * 56px))
       scale(calc(1 + (1 - var(--tl-m, 0)) * 0.85));
   }
   .tl-intro { order: 1; } /* direkt nach dem Platzhalter (mobil ist nur die Zeile sticky) */
@@ -234,7 +236,7 @@
 @property --tl-m { syntax: "<number>"; inherits: true; initial-value: 0; }
 @keyframes tl-m-drive { from { --tl-m: 0; } to { --tl-m: 1; } }
 @keyframes tl-title-fly {
-  from { transform: translateX(0px) translateY(46px) scale(1.85); }
+  from { transform: translateX(0px) translateY(56px) scale(1.85); }
   to   { transform: translateX(96px) translateY(0px) scale(1); }
 }
 @media (max-width: 767px) {
