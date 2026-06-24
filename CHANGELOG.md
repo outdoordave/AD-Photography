@@ -17,6 +17,17 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-24 21:15 — Mobil: Overscroll-Federn gedämpft + horizontaler Überlauf behoben
+- **Horizontaler Überlauf (Reise)** (`e69323a`): die sticky Zeile ist via `margin:0 -18px` schon randbündig;
+  das `.tl-topbar::after` (Fade) stand zusätzlich auf `left/right: -18px` → ragte je 18px über den Viewport
+  → Seite ließ sich horizontal verschieben. Jetzt `left/right: 0`. (Story war nicht betroffen.)
+- **Overscroll-Federn oszillierte** (`b8a2616`): beim Zurückfedern pendelte der Titel hin und her (iOS' `scrollY`
+  ist beim Spring nicht sauber monoton → rohes 1:1-Folgen wurde zum sichtbaren „Regeln ohne Hysterese").
+  Jetzt frame-raten-unabhängige **Attack/Release-Hüllkurve**: schnell folgen beim Ziehen (ATK 25 ms), weich
+  ausregeln beim Zurück (REL 90 ms) → gedämpft, ohne dem Finger hinterherzuhängen. Reise + Story.
+- Dateien: `trips-timeline.css`, `TripTimeline.tsx`, `StoryReaderContent.tsx`. **Nur Mobil, CSS/JS, kein Re-Index.**
+- Commits: `e69323a`, `b8a2616`
+
 ## 2026-06-24 20:50 — Mobil: Overscroll-Mitfedern per Frame abtasten (flüssigeres Rückfedern)
 - **Problem:** das Zurückfedern hing an den groben Scroll-Events → der Titel kam **stufig/ruckelig** zurück
   („gewollt, nicht gekonnt").
