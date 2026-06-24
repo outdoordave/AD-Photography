@@ -208,6 +208,7 @@
     transform-origin: left center; z-index: 7; will-change: transform;
     font-size: 18px; line-height: 1.05;
     transform:
+      translateY(var(--tl-ov, 0px))   /* iOS-Overscroll: federt mit dem Inhalt mit (JS setzt --tl-ov = max(0,-scrollY)) */
       translateX(calc(var(--tl-m, 0) * 96px))
       translateY(calc((1 - var(--tl-m, 0)) * 56px))
       scale(calc(1 + (1 - var(--tl-m, 0)) * 0.85));
@@ -236,8 +237,8 @@
 @property --tl-m { syntax: "<number>"; inherits: true; initial-value: 0; }
 @keyframes tl-m-drive { from { --tl-m: 0; } to { --tl-m: 1; } }
 @keyframes tl-title-fly {
-  from { transform: translateX(0px) translateY(56px) scale(1.85); }
-  to   { transform: translateX(96px) translateY(0px) scale(1); }
+  from { transform: translateY(var(--tl-ov, 0px)) translateX(0px) translateY(56px) scale(1.85); }
+  to   { transform: translateY(var(--tl-ov, 0px)) translateX(96px) translateY(0px) scale(1); }
 }
 @media (max-width: 767px) {
   @supports (animation-timeline: scroll()) {

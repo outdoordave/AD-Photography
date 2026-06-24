@@ -160,6 +160,20 @@ export default function StoryReaderContent(props: Props) {
     };
   }, []);
 
+  // Mobil: Titel mit dem iOS-Overscroll (Gummiband oben) mitfedern — scrollY wird dort negativ,
+  // --st-ov = max(0,-scrollY) schiebt den fixierten Titel exakt mit (Regel + Keyframes nutzen
+  // translateY(var(--st-ov))). Desktop: scrollY wird nicht negativ -> no-op.
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const root = document.documentElement;
+    let raf: number | null = null;
+    const apply = () => { raf = null; const ov = Math.max(0, -(window.scrollY || 0)); root.style.setProperty('--st-ov', ov ? ov + 'px' : '0px'); };
+    const onScroll = () => { if (raf == null) raf = requestAnimationFrame(apply); };
+    apply();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => { window.removeEventListener('scroll', onScroll); if (raf != null) cancelAnimationFrame(raf); };
+  }, []);
+
   React.useEffect(() => {
     const root = bodyRef.current;
     if (!root) return;

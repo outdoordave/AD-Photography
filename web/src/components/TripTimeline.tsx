@@ -664,6 +664,21 @@ export default function TripTimeline(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Mobil: Titel mit dem iOS-Overscroll (Gummiband am oberen Rand) mitfedern. Dort wird scrollY negativ
+  // (Inhalt nach unten gefedert) — --tl-ov = max(0,-scrollY) schiebt den fixierten Titel exakt mit, sodass
+  // er nicht „stehen bleibt", während der Hero darunter wegfedert. Greift in SDA- UND Fallback-Pfad
+  // (translateY(var(--tl-ov)) steht in Regel + Keyframes). Desktop: scrollY wird nicht negativ -> no-op.
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const root = document.documentElement;
+    let raf: number | null = null;
+    const apply = () => { raf = null; const ov = Math.max(0, -(window.scrollY || 0)); root.style.setProperty('--tl-ov', ov ? ov + 'px' : '0px'); };
+    const onScroll = () => { if (raf == null) raf = requestAnimationFrame(apply); };
+    apply();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => { window.removeEventListener('scroll', onScroll); if (raf != null) cancelAnimationFrame(raf); };
+  }, []);
+
   // Dezente Reveals (einmal, per IO).
   React.useEffect(() => {
     if (prefersReduced() || typeof IntersectionObserver === 'undefined') return;

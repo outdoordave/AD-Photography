@@ -205,6 +205,7 @@ section { padding: 84px 0; }
     max-width: calc(100vw - 32px - var(--st-m, 0) * 100px);
     text-shadow: 0 1px 10px rgba(244,237,225,0.55);   /* Lesbarkeit über dem Foto während der Wanderung */
     transform:
+      translateY(var(--st-ov, 0px))   /* iOS-Overscroll: federt mit dem Inhalt mit (JS setzt --st-ov = max(0,-scrollY)) */
       translateX(calc(var(--st-m, 0) * 100px))
       translateY(calc((1 - var(--st-m, 0)) * var(--st-bigY, 380px)))
       scale(calc(1 + (1 - var(--st-m, 0)) * (var(--st-scale-big, 1.6) - 1)));
@@ -219,8 +220,8 @@ section { padding: 84px 0; }
 @property --st-m { syntax: "<number>"; inherits: true; initial-value: 0; }
 @keyframes st-m-drive { from { --st-m: 0; } to { --st-m: 1; } }
 @keyframes st-title-fly {
-  from { transform: translateX(0px) translateY(var(--st-bigY, 380px)) scale(var(--st-scale-big, 1.6)); }
-  to   { transform: translateX(100px) translateY(0px) scale(1); }
+  from { transform: translateY(var(--st-ov, 0px)) translateX(0px) translateY(var(--st-bigY, 380px)) scale(var(--st-scale-big, 1.6)); }
+  to   { transform: translateY(var(--st-ov, 0px)) translateX(100px) translateY(0px) scale(1); }
 }
 @media (max-width: 767px) {
   @supports (animation-timeline: scroll()) {
