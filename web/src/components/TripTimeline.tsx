@@ -672,9 +672,17 @@ export default function TripTimeline(props: Props) {
     if (typeof window === 'undefined') return;
     const root = document.documentElement;
     let raf: number | null = null;
-    const apply = () => { raf = null; const ov = Math.max(0, -(window.scrollY || 0)); root.style.setProperty('--tl-ov', ov ? ov + 'px' : '0px'); };
-    const onScroll = () => { if (raf == null) raf = requestAnimationFrame(apply); };
-    apply();
+    const read = () => Math.max(0, -(window.scrollY || 0));
+    // Per-Frame abtasten, solange überzogen ist: das Zurückfedern (Compositor-Spring) wird so flüssig
+    // mitgenommen, statt an den groben Scroll-Events zu hängen (das wirkte stufig/ruckelig). 1:1 zur
+    // Inhaltsposition (kein Lerp -> kein neuer Versatz). Bei 0 angekommen -> Schleife stoppt.
+    const frame = () => {
+      const ov = read();
+      root.style.setProperty('--tl-ov', ov ? ov + 'px' : '0px');
+      raf = ov > 0 ? requestAnimationFrame(frame) : null;
+    };
+    const onScroll = () => { if (raf == null) raf = requestAnimationFrame(frame); };
+    frame();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => { window.removeEventListener('scroll', onScroll); if (raf != null) cancelAnimationFrame(raf); };
   }, []);

@@ -167,9 +167,15 @@ export default function StoryReaderContent(props: Props) {
     if (typeof window === 'undefined') return;
     const root = document.documentElement;
     let raf: number | null = null;
-    const apply = () => { raf = null; const ov = Math.max(0, -(window.scrollY || 0)); root.style.setProperty('--st-ov', ov ? ov + 'px' : '0px'); };
-    const onScroll = () => { if (raf == null) raf = requestAnimationFrame(apply); };
-    apply();
+    const read = () => Math.max(0, -(window.scrollY || 0));
+    // Per-Frame abtasten, solange überzogen ist -> Zurückfedern flüssig (nicht stufig an Scroll-Events).
+    const frame = () => {
+      const ov = read();
+      root.style.setProperty('--st-ov', ov ? ov + 'px' : '0px');
+      raf = ov > 0 ? requestAnimationFrame(frame) : null;
+    };
+    const onScroll = () => { if (raf == null) raf = requestAnimationFrame(frame); };
+    frame();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => { window.removeEventListener('scroll', onScroll); if (raf != null) cancelAnimationFrame(raf); };
   }, []);
