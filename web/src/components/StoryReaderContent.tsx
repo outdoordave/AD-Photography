@@ -91,11 +91,16 @@ export default function StoryReaderContent(props: Props) {
   const stTargetRef = React.useRef(0);
   const stSmoothRef = React.useRef(0);
   const stRafRef = React.useRef<number | null>(null);
+  const stPrevTRef = React.useRef(0);
   React.useEffect(() => {
     if (typeof window === 'undefined') return;
     const root = document.documentElement;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const ST_LERP = 0.2;  // straffer (weniger Nachlauf bei schnellem Scrollen), noch geglättet
+    // Glättung: frame-raten-unabhängig (echte Frame-Zeit dt) + Pro-Frame-k wächst mit dem Rückstand
+    // (langsam -> sanft, schnell -> holt nahezu voll auf, kein Hinterherhinken). smoothstep glättet
+    // den Übergang. Siehe TripTimeline (gleiche Technik).
+    const ST_BASE = 0.14, ST_LAG_FULL = 0.4;
+    const frameF = (k: number, dt: number) => 1 - Math.pow(1 - k, dt / 16.7);
     const apply = (m: number) => root.style.setProperty('--st-m', String(Math.round(m * 1000) / 1000));
     const measure = () => {
       const heroEl = heroRef.current;
@@ -114,17 +119,19 @@ export default function StoryReaderContent(props: Props) {
       const r = Math.min(1, Math.max(0, window.scrollY / range));
       return r * r * (3 - 2 * r); // smoothstep
     };
-    const step = () => {
+    const step = (now: number) => {
       stRafRef.current = null;
+      const prev = stPrevTRef.current; stPrevTRef.current = now;
+      const dt = prev ? Math.min(48, Math.max(1, now - prev)) : 16.7;
       const t = stTargetRef.current;
-      // Glättung an die Scrollgeschwindigkeit gekoppelt: großer Rückstand -> Faktor steigt (holt
-      // zügig auf, nicht träge); beim Ausklingen klein (weich einrasten).
       const lag = Math.abs(t - stSmoothRef.current);
-      const f = Math.min(0.5, ST_LERP + lag * 0.8);
+      const k = ST_BASE + (1 - ST_BASE) * (() => { const r = Math.min(1, lag / ST_LAG_FULL); return r * r * (3 - 2 * r); })();
+      const f = frameF(k, dt);
       let n = stSmoothRef.current + (t - stSmoothRef.current) * f;
       if (Math.abs(t - n) < 0.001) n = t;
       stSmoothRef.current = n; apply(n);
       if (n !== t) stRafRef.current = requestAnimationFrame(step);
+      else stPrevTRef.current = 0;
     };
     const onScroll = () => {
       stTargetRef.current = target();

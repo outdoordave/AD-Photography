@@ -202,6 +202,7 @@ export default function TripTimeline(props: Props) {
   const mTargetRef = React.useRef(0);
   const mSmoothRef = React.useRef(0);
   const cfRafRef = React.useRef<number | null>(null);
+  const cfPrevTRef = React.useRef(0);
 
   const carSvg = vehicleSvg(props.vehicleId);
   const routeRef = React.useRef(buildRoute(stops.map((s, i) => ({ lon: s.lon, lat: s.lat, flight: rawStops[i]?.arriveBy === 'flight' }))));
@@ -503,32 +504,42 @@ export default function TripTimeline(props: Props) {
   }
 
   // ── Kopf-Fortschritte (eigener rAF, entkoppelt von der Spy-Schleife) ──
-  // Beide als smoothstep aus der Scroll-Position, dann via Lerp sanft eingerastet (magnetischer
-  // Nachlauf, kein hartes Scroll-Koppeln). --tl-p: Desktop-Crossfade (Ramp 36/40, Lerp 0.12).
-  // --tl-m: Mobil-Titelwanderung (RANGE 90, Lerp 0.11).
-  const CF_START = 36, CF_LEN = 40, CF_LERP = 0.12;
-  const M_RANGE = 90, M_LERP = 0.2;  // Basis-Glättung mobil; in crossfadeStep adaptiv erhöht (Scrollgeschwindigkeit)
+  // Beide als smoothstep aus der Scroll-Position, dann sanft eingerastet. --tl-p: Desktop-Crossfade.
+  // --tl-m: Mobil-Titelwanderung (RANGE 90).
+  //
+  // Glättung: kein fester Lerp-Bruchteil mehr (der trailt bei schnellem Scrollen) — stattdessen
+  //   (1) frame-raten-unabhängig über die echte Frame-Zeit dt (konsistent auf 60/120 Hz) und
+  //   (2) der Pro-16.7ms-Faktor wächst stufenlos mit dem Rückstand: langsam -> sanft (smooth),
+  //       schnell -> holt nahezu vollständig auf (kein Hinterherhinken). smoothstep glättet den
+  //       Übergang zwischen beiden Regimen, damit es nie umschaltet/springt.
+  const CF_START = 36, CF_LEN = 40, CF_BASE = 0.12;
+  const M_RANGE = 90, M_BASE = 0.14, M_LAG_FULL = 0.4;
   const smoothstep = (x: number) => { const r = Math.min(1, Math.max(0, x)); return r * r * (3 - 2 * r); };
+  // Pro-Frame-Faktor aus Basis-k (pro 16.7ms) und Frame-Zeit dt — frame-raten-unabhängig.
+  const frameF = (k: number, dt: number) => 1 - Math.pow(1 - k, dt / 16.7);
   function applyCrossfade(p: number, m: number) {
     const st = stageRef.current;
     if (!st) return;
     st.style.setProperty('--tl-p', String(Math.round(p * 1000) / 1000));
     st.style.setProperty('--tl-m', String(Math.round(m * 1000) / 1000));
   }
-  function crossfadeStep() {
+  function crossfadeStep(now: number) {
     cfRafRef.current = null;
+    const prev = cfPrevTRef.current; cfPrevTRef.current = now;
+    const dt = prev ? Math.min(48, Math.max(1, now - prev)) : 16.7; // 1. Frame: Baseline; Tab-Rückkehr gedeckelt
     const pt = pTargetRef.current, mt = mTargetRef.current;
-    let pn = pSmoothRef.current + (pt - pSmoothRef.current) * CF_LERP;
-    // Mobil: Glättung an die Scrollgeschwindigkeit gekoppelt — großer Rückstand (schnelles Scrollen)
-    // -> Faktor steigt (holt zügig auf, nicht träge); beim Ausklingen klein (weich einrasten).
+    let pn = pSmoothRef.current + (pt - pSmoothRef.current) * frameF(CF_BASE, dt);
+    // Mobil: Pro-Frame-k wächst mit dem Rückstand (smoothstep) — schnelles Scrollen holt nahezu
+    // vollständig auf (kein Trailing), langsames bleibt sanft.
     const mLag = Math.abs(mt - mSmoothRef.current);
-    const mF = Math.min(0.5, M_LERP + mLag * 0.8);
-    let mn = mSmoothRef.current + (mt - mSmoothRef.current) * mF;
+    const mk = M_BASE + (1 - M_BASE) * smoothstep(mLag / M_LAG_FULL);
+    let mn = mSmoothRef.current + (mt - mSmoothRef.current) * frameF(mk, dt);
     if (Math.abs(pt - pn) < 0.001) pn = pt;
     if (Math.abs(mt - mn) < 0.001) mn = mt;
     pSmoothRef.current = pn; mSmoothRef.current = mn;
     applyCrossfade(pn, mn);
     if (pn !== pt || mn !== mt) cfRafRef.current = requestAnimationFrame(crossfadeStep);
+    else cfPrevTRef.current = 0; // Loop endet -> nächster Start frisch (kein dt-Sprung)
   }
   function armCrossfade() {
     const sy = window.scrollY;
