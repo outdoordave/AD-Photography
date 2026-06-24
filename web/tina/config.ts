@@ -10,6 +10,7 @@ import GearStyleField from './fields/GearStyleField';
 import GearCategoryField from './fields/GearCategoryField';
 import TripDesignsEditor from './fields/TripDesignsEditor';
 import SectionBanner from './fields/SectionBanner';
+import SprachBannerPreview from './fields/SprachBannerPreview';
 import EnglishToggle from './fields/EnglishToggle';
 import LocationSearchField from './fields/LocationSearchField';
 import { backToSiteScreen } from './screens/BackToSiteScreen';
@@ -785,6 +786,7 @@ export default defineConfig({
             type: 'object', name: 'sprach_banner', label: '🌐 Sprach-Hinweis (für englischsprachige Besucher)',
             description: 'Kleiner Hinweis, der NUR Besuchern mit nicht-deutscher Browser-Sprache auf den deutschen Seiten angezeigt wird — mit einem Knopf zur englischen Version. Wird einmal weggeklickt und danach nie wieder gezeigt (lokal auf dem Gerät gemerkt).',
             fields: [
+              { type: 'string', name: 'banner_preview', label: 'Vorschau', ui: { component: SprachBannerPreview } },
               { type: 'boolean', name: 'enabled', label: 'Hinweis anzeigen?' },
               {
                 type: 'string', name: 'position', label: 'Position',
