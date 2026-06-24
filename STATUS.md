@@ -19,10 +19,18 @@
 > — `viewport-fit=cover` + Insets für Header/Drawer/To-Top/Lightbox/Banner + `--ww-sticky-top`. (C) **Sprach-Banner**
 > — neue CMS-Felder `sprach_banner` in Darstellung; Hinweis für englischsprachige Besucher auf DE-Seiten.
 >
-> ⏳ **Ebenfalls auf `main`, committet, noch nicht live (23.06.):** **Reise-Detail-Kopf neu** — große Überschrift
-> scrollt weg (fade+blur), sticky **Milchglas-Kompaktband** (`.tl-topbar`) blendet ein (Crossfade via rAF-Lerp),
-> Zurück-Pille im Band (Desktop) bzw. Nav (mobil). **Story-Zurück-Pille** in reservierter Zone (content-gebunden).
-> `alaska2026`→Station 1 verifiziert; Spy-Logik unverändert. Safari-Frost noch am Gerät zu prüfen.
+> ⏳ **Ebenfalls auf `main`, committet, noch nicht live (23.06.):** **Reise-Detail-Kopf** — Desktop:
+> Crossfade-Milchglas-Band (`.tl-topbar`, `--tl-p`). **Mobil (`≤767`) neu:** EIN Titel-Element (die `<h1>`)
+> wandert/schrumpft kontinuierlich von groß/tief nach klein/oben in die deckende Zeile (`--tl-m`, rAF-Lerp,
+> fixierter Titel → `headH` konstant → Spy unberührt, `alaska2026`→Station 1 verifiziert); Zurück-Pille in
+> der Zeile, Nav-Zurück-Link auf Reise-Detail `≤767` aus (kein Doppel); Kicker mobil aus. **Story-Zurück-Pille**
+> Desktop in reservierter Zone (content-gebunden). Safari-Frost (Desktop-Band) noch am Gerät zu prüfen.
+>
+> 🔶 **OFFENE ENTSCHEIDUNG (Story-Mobil-Kopf):** Das „ein wandernder Titel"-Muster wurde für **Story** angefangen,
+> aber zurückgestellt — **lange Story-Titel** (Prosa) sprengen das `scale(1.85)`-Einzeiler-Modell (großer Hero
+> vs. kleine Zeile). Reise (kurze Titel) funktioniert. **David entscheidet**, wie lange Titel sich verhalten
+> (a: einzeilig per JS auf Breite skaliert + Ellipsis in der Zeile · b: großer Hero darf umbrechen + später
+> Ellipsis-Umschalt · c: Story behält den heutigen Stand). Danach baue ich die Story-Mobil-Zeile.
 >
 > **Branch-Preview verworfen:** Cloudflare-Branch-Preview baute nicht (Preview-Environment ohne `TINA_TOKEN`,
 > `TINA_BRANCH` defaultet auf `astro-umbau`). Entscheidung: **kein Branch-Ritual** — wie den ganzen Bauzeitraum

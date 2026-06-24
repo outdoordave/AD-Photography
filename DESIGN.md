@@ -69,3 +69,15 @@
   (deckend ~0.95). **Lehre/Falle:** Die Scroll-Spy misst `headRef` (= jetzt `.tl-topbar`-Höhe) für Anker/
   `band`/`lead` — den Kopf umbauen heißt diese Höhe ändern. Regel: **nach jedem Kopf-Umbau `alaska2026`→Station 1
   im Browser beweisen**, bevor „fertig". Aktivierungs-*Logik* nie blind anfassen.
+- **Reise-Kopf MOBIL — ein wandernder Titel (23.06.2026):** Auf `≤767` ersetzt **ein** Titel-Element das
+  Crossfade: die echte `<h1>` ist **`position: fixed`** (zählt NICHT zur gemessenen `.tl-topbar`-Höhe →
+  `headH` konstant → Spy unberührt) und wandert/schrumpft scroll-gekoppelt via `transform`
+  (`translateX`+`translateY`+`scale`, BIG 1.85→1.0) über `--tl-m` (rAF-Lerp 0.11, smoothstep, RANGE 90).
+  **Falle:** ein Vorfahre mit `filter`/`will-change:filter` (Desktop-Crossfade an `.tl-herohead`) macht sich
+  zum Containing-Block für `fixed` → Titel landet falsch; mobil daher `filter:none; will-change:auto`. Zeile
+  voll deckend (ramped) + weiche Unterkante als `::after` (kein harter Strich). In-Zeile-Pille = Akzent-Link
+  (lesbar auf hellem Grund, NICHT die dunkle Foto-Ghost-Pille); Nav-Zurück-Link auf Reise `≤767` aus.
+- **Langtitel-Falle (Story, 23.06.2026, OFFEN):** Das „ein wandernder, scale(1.85)-einzeiler"-Muster
+  funktioniert nur für **kurze** Titel (Reise: „Alaska 2026"). **Lange Prosa-Titel** (Story) können nicht
+  zugleich großer mehrzeiliger Hero UND kleine einzeilige Leiste sein → laufen aus dem Bild. Vor einem
+  Story-Mobil-Kopf erst das Titel-Verhalten klären (einzeilig-skaliert+Ellipsis · umbrechender Hero · …).

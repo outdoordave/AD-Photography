@@ -17,6 +17,22 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-23 14:15 — Reise-Detail mobil: EIN wandernder, schrumpfender Titel (direkt auf main)
+- **Reise mobil (`≤767`)** (`17eb5a8`): Das Zwei-Element-Crossfade ist durch **EIN** Titel-Element ersetzt —
+  die echte `<h1>` wandert beim Scrollen kontinuierlich von groß/tief nach klein/oben in die Zeile und
+  schrumpft dabei (`transform: translateX+translateY+scale`, BIG 1.85→1.0), getrieben von `--tl-m`
+  (rAF-Lerp 0.11 + smoothstep, RANGE 90 — magnetischer Nachlauf). Titel ist **fixiert** → zählt NICHT zur
+  gemessenen `.tl-topbar`-Höhe → `headH` konstant → **Scroll-Spy unberührt, `alaska2026`→Station 1**
+  (verifiziert). Zeile **voll deckend** (ramped) mit weicher Unterkante (`::after`), kein harter Strich.
+  Zurück-Pille in der Zeile = kompakter Akzent-Link, fadet ab ~40 %. Kicker mobil ausgeblendet (sauberer
+  Hero). Desktop-Crossfade (`--tl-p`) unverändert.
+- **Kein Doppel-Zurück** (`9a835e1`): Nav-Zurück-Link auf Reise-Detail `≤767` aus (`nav-back--trips`) — die
+  Titelzeilen-Pille ist das einzige Zurück. 768–860 (iPad-Hochkant) + Story behalten den Nav-Link.
+- **Story mobil: ZURÜCKGESTELLT.** Das gleiche Muster scheitert an **langen Story-Titeln** (Prosa wie
+  „Tennessee Winter – Februar 2025"): ein einzelnes `scale(1.85)`-Element kann nicht zugleich großer
+  mehrzeiliger Hero UND kleine einzeilige Leiste sein (läuft rechts aus dem Bild). Scaffolding wieder
+  entfernt; wartet auf Davids Entscheidung zum Titel-Verhalten (s. STATUS). Reise-Commit davon unberührt.
+
 ## 2026-06-23 11:45 — Reise-Detail: Crossfade-Kopf + reservierte Zurück-Pille (direkt auf main)
 - **Teil A — Story-Zurück-Pille** (`17dcaad`): von fenster-`fixed` auf an die 760px-Lesespalte gebundene
   reservierte Pille über dem Hero (Desktop). Kollidiert bei keiner Breite mit dem Titel. Mobil unverändert
