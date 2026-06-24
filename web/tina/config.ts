@@ -11,6 +11,7 @@ import GearCategoryField from './fields/GearCategoryField';
 import TripDesignsEditor from './fields/TripDesignsEditor';
 import SectionBanner from './fields/SectionBanner';
 import SprachBannerPreview from './fields/SprachBannerPreview';
+import ReiseTitelPreview from './fields/ReiseTitelPreview';
 import EnglishToggle from './fields/EnglishToggle';
 import LocationSearchField from './fields/LocationSearchField';
 import { backToSiteScreen } from './screens/BackToSiteScreen';
@@ -362,6 +363,7 @@ export default defineConfig({
           { type: 'number', name: 'order', label: 'Reihenfolge (Tab)', description: 'Kleinere Zahl = weiter links in den Reise-Tabs.' },
           { type: 'string', name: 'title', label: 'Reise-Titel (Tab)', isTitle: true, required: true, description: 'Erscheint als Anzeigename in der Übersicht & als Tab.' },
           { type: 'string', name: 'title_en', label: 'Reise-Titel (Englisch)', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'titel_vorschau', label: 'Vorschau (Handy)', ui: { component: ReiseTitelPreview } },
           { type: 'string', name: 'date', label: 'Datum (YYYY-MM-DD)', description: 'Für Sortierung/Meta.' },
           { type: 'string', name: 'meta_de', label: 'Meta-Zeile (Datum · km · …)' },
           { type: 'string', name: 'meta_en', label: '↳ English', ui: { component: EnglishOnlyField } },
