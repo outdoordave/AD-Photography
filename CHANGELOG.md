@@ -17,6 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-23 16:15 — Mobil-Nachbesserung: Karten-Einschnitt, Pillen-Einflug, Titel-Vorschau
+- **Karte oben eingeschnitten behoben** (`073fea7`): das mobile `.tl-topbar::after` (weiche Unterkante)
+  lag über der Oberkante der direkt darunter klebenden Karte → mobiles `::after` entfernt (Karte ist opak
+  mit runder Oberkante, sitzt sauber an der Zeile). Verifiziert: gap 0, kein `::after`.
+- **Zurück-Pille fliegt ein** (`073fea7`): Reise + Story — `translateY` (10→0) + Fade ab ~40 % statt nur Fade.
+- **CMS: „Vorschau (Handy)" für den Reise-Titel** (`e01a04c`): der Titel ist das bestehende Feld
+  „Reise-Titel" (editierbar); neu ein reines Vorschau-Feld darunter, das den Titel in der Mobil-Leiste
+  zeigt (mit „…"-Kürzung). Konsequenz aus P5. **Schema-Änderung → Tina-Re-Index nötig.**
+
 ## 2026-06-23 14:15 — Reise-Detail mobil: EIN wandernder, schrumpfender Titel (direkt auf main)
 - **Reise mobil (`≤767`)** (`17eb5a8`): Das Zwei-Element-Crossfade ist durch **EIN** Titel-Element ersetzt —
   die echte `<h1>` wandert beim Scrollen kontinuierlich von groß/tief nach klein/oben in die Zeile und

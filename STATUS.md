@@ -37,7 +37,8 @@
 > **direkt auf `main`**, der main-Build hat Token/Branch korrekt. Branch wird gelöscht.
 >
 > **Offen für David (Reihenfolge):** 1) **`main` pushen** (GitHub Desktop). 2) **Tina-Cloud-Re-Index auf `main`**
-> (neue Felder `sprach_banner` + ausstehend aus `7d2c4d9`; sonst bricht der Build ab). 3) Deploy abwarten, dann
+> (neue Felder `sprach_banner` + `titel_vorschau` (Reise-Titel-Vorschau) + ausstehend aus `7d2c4d9`; sonst
+> bricht der Build ab). 3) Deploy abwarten, dann
 > auf `aandd-photography.pages.dev` am **Handy/iPad** testen (Nav mobil, safe-area an Notch, Banner oben+unten,
 > Sprachwechsel-Ziel, `alaska2026`→Station 1). 4) Branch `nav-safearea-langbanner` löschen (lokal + remote).
 
