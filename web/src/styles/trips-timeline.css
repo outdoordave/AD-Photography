@@ -202,10 +202,11 @@
      Inhalt (kein JS-Nachjagen, kein Pendeln) und dockt beim Hochscrollen nativ an (top+13 = Band-Mitte).
      Containing-Block ist .tl-stage (hoch) -> bleibt die ganze Liste über angedockt.
      STELLSCHRAUBEN (am Gerät justieren): margin-top = native Wanderstrecke (wie tief der große Titel
-     startet); margin-bottom = -margin-top holt den Intro wieder hoch (Komposition wie bisher). */
+     startet); margin-bottom = Abstand zur Beschreibung (POSITIV — der große skalierte Titel braucht
+     eigenen Raum, sonst hängt er im Text). */
   .tl-herohead {
     order: 1; position: sticky; top: calc(var(--ww-sticky-top) + 13px); z-index: 7;
-    margin: 40px 0 -40px; padding: 0; min-height: 0;
+    margin: 40px 0 18px; padding: 0; min-height: 0;
     filter: none; opacity: 1; will-change: auto;
   }
   /* Kicker (Datum/Region) mobil ausgeblendet, damit der wandernde Titel ein sauberer Hero ohne
@@ -216,6 +217,10 @@
      macht das native Sticky -> kein translateY, kein --tl-ov mehr. */
   .tl-herohead h1 {
     margin: 0;
+    /* width:max-content -> Box umhüllt nur den Text (wie früher die fixe shrink-to-fit-h1). Ein
+       block-breiter Titel würde via scale(1.85) rechts aus dem Viewport ragen -> Seite horizontal
+       schiebbar. So bleibt der skalierte Titel innerhalb der Breite. */
+    width: max-content; max-width: 100%;
     transform-origin: left center; will-change: transform;
     font-size: 18px; line-height: 1.05;
     transform:
