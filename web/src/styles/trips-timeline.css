@@ -172,6 +172,14 @@
     margin: 0 -18px; padding: 0 18px;   /* full-bleed bis an die Bildschirmkanten (Pille bleibt auf Inhaltsbreite) */
     -webkit-backdrop-filter: none; backdrop-filter: none; border-bottom: none;
   }
+  /* Weicher Übergang am unteren Zeilen-Rand (full-bleed, deckend->transparent): hochscrollender Text
+     (z. B. die Zusammenfassung, solange die Karte noch nicht klebt) fadet sanft aus statt hart
+     abzuschneiden. Klebt die Karte, liegt dahinter die cremefarbene Karten-Fläche -> Fade unsichtbar,
+     Karte bleibt scharf (die Karte sitzt am unteren, transparenten Ende). */
+  .tl-topbar::after {
+    content: ''; position: absolute; left: -18px; right: -18px; top: 100%; height: 18px; pointer-events: none;
+    background: linear-gradient(to bottom, rgba(244,237,225, var(--tl-m, 0)), rgba(244,237,225, 0));
+  }
   .tl-topbar-title { display: none; }      /* Desktop-Crossfade-Span entfällt mobil (h1 selbst wandert) */
   /* Zurück-Pille in der Zeile: kompakter Akzent-Link (lesbar auf hellem Grund, wie der Nav-Link),
      NICHT die dunkle Foto-Ghost-Pille. Fliegt ab ~40 % der Strecke ein (rauf + Fade, wie der Titel). */

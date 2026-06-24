@@ -117,7 +117,11 @@ export default function StoryReaderContent(props: Props) {
     const step = () => {
       stRafRef.current = null;
       const t = stTargetRef.current;
-      let n = stSmoothRef.current + (t - stSmoothRef.current) * ST_LERP;
+      // Glättung an die Scrollgeschwindigkeit gekoppelt: großer Rückstand -> Faktor steigt (holt
+      // zügig auf, nicht träge); beim Ausklingen klein (weich einrasten).
+      const lag = Math.abs(t - stSmoothRef.current);
+      const f = Math.min(0.8, ST_LERP + lag * 1.2);
+      let n = stSmoothRef.current + (t - stSmoothRef.current) * f;
       if (Math.abs(t - n) < 0.001) n = t;
       stSmoothRef.current = n; apply(n);
       if (n !== t) stRafRef.current = requestAnimationFrame(step);
