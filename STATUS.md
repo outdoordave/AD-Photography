@@ -30,13 +30,19 @@
 > Prosa-Titel werden per JS einzeilig auf die Breite skaliert + in der Zeile mit `…` gekürzt → bricht nie.
 > Zurück-Pille in der Zeile, Nav-Zurück-Link auf Story `≤767` aus. **Beide Detail-Köpfe mobil = wandernder Titel.**
 >
-> **Feinschliff Mobil-Titel (24.06., `45ee79e`→`790a25f`):** unter der Titelzeile weicher full-bleed Fade
+> **Feinschliff Mobil-Titel (24.06., `45ee79e`→`fcd6504`):** unter der Titelzeile weicher full-bleed Fade
 > (`.tl-topbar::after`, deckend→transparent) statt harter Kante — über der cremefarbenen Karten-Spalte
-> unsichtbar, Karten-Oberkante scharf. Titel-Glättung (Reise `--tl-m`, Story `--st-m`): **frame-raten-
-> unabhängig** über echte Frame-Zeit `dt` (`1-(1-k)^(dt/16.7)`) + Pro-Frame-`k` wächst stufenlos
-> (smoothstep) mit dem Rückstand → langsam = sanftes Gleiten, schnell = holt nahezu voll auf (**kein
-> Trailing/Hinterherhinken**), kein Springen. `BASE 0.14`, `LAG_FULL 0.4`. Desktop-Crossfade `--tl-p`
-> bei 60 Hz unverändert. Reines CSS/JS, kein Re-Index.
+> unsichtbar, Karten-Oberkante scharf.
+>
+> **Titel-Bewegung jetzt scroll-gekoppelt (Apple-smooth, `fcd6504`):** der wandernde Titel (Reise + Story)
+> hängt nicht mehr an einem JS-geglätteten Wert (driftete gegen den 1:1 scrollenden Inhalt = „unbeholfen"),
+> sondern an **CSS Scroll-Driven Animations** (`animation-timeline: scroll(root)`): treiben `--tl-m`/`--st-m`
+> (Zeile, Pille, `max-width`) **und** den Titel-Transform direkt als `@keyframes` (kompositierbar). Titel
+> klebt 1:1 am Inhalt, kein Drift, frame-raten-egal (60/120 Hz/ProMotion). Easing `cubic-bezier(.42,0,.58,1)`.
+> Story-Keyframes/`animation-range` lesen die per JS gemessenen Vars (`--st-bigY`/`--st-scale-big`/`--st-range`).
+> **Fallback:** ohne `scroll()`-Support (ältere iOS) greift `@supports` nicht → alte JS-Lerp-Lösung bleibt
+> (keine Regression), JS gated den Mobil-Pfad dann aus. Titel bleibt `position:fixed` → **Spy/`headH`
+> unberührt**, `alaska2026`→Station 1. Desktop-Crossfade `--tl-p` unangetastet. Reines CSS/JS, kein Re-Index.
 > ⚠️ **Mobil-Optik (Reise + Story) nur am echten Gerät final prüfbar** — die lokale Preview liefert `innerWidth`
 > ≠ Render-Breite, kann Handy also nicht korrekt zeigen; Bewegung/kein-Überlauf wurde per DOM-Messung bestätigt.
 >

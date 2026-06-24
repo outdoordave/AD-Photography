@@ -17,6 +17,26 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-24 19:40 — Mobil: Titel via Scroll-Driven Animation direkt an den Scroll koppeln
+- **Problem (struktureller Kern):** der wandernde Titel (Reise + Story) wirkte „unbeholfen", weil er per
+  JS-Lerp *geglättet* war, der Inhalt darunter aber **1:1 nativ** scrollt → beide driften gegeneinander.
+  Kein Lerp-Wert kann „smooth bei langsam" und „klebt am Inhalt" zugleich. Lösung: Titel **direkt** an die
+  Scroll-Position koppeln, nicht an einen geglätteten Wert.
+- **Fix** (`fcd6504`): **CSS Scroll-Driven Animations** (`animation-timeline: scroll(root)`) treiben jetzt
+  `--tl-m`/`--st-m` (Zeile, Pille, `max-width`) **und** den Titel-Transform direkt als `@keyframes`
+  (kompositierbar = buttrig). Läuft auf derselben Timeline wie der native Scroll → Titel klebt 1:1 am
+  Inhalt, kein Drift/Nachlauf, frame-raten-egal (60/120 Hz / ProMotion). `@property --tl-m/--st-m`
+  registriert (interpolierbar), Easing `cubic-bezier(.42,0,.58,1)` ≈ smoothstep.
+- **Story:** Keyframe-Endpunkte + `animation-range` lesen die per JS gemessenen Vars
+  (`--st-bigY`/`--st-scale-big`/`--st-range`, neu); JS misst weiter bei resize.
+- **Fallback ohne Risiko:** ältere iOS ohne `scroll()`-Support → `@supports` greift nicht → alte JS-Lerp-
+  Lösung bleibt (heutiger Stand, keine Regression). JS gated den Mobil-Pfad dann aus (kein Konflikt).
+- **Sicherheit:** Titel bleibt `position: fixed` → zählt nicht zur `.tl-topbar`-Höhe → Scroll-Spy/`headH`
+  unberührt, `alaska2026`→Station 1 unverändert. Desktop-Crossfade (`--tl-p`) unangetastet.
+- Dateien: `TripTimeline.tsx`, `StoryReaderContent.tsx`, `global.css`, `trips-timeline.css`.
+  **Nur Mobil (≤767), reines CSS/JS, kein Re-Index.**
+- Commit: `fcd6504`
+
 ## 2026-06-24 19:05 — Mobil: Titel-Glättung enger ans Scrollen koppeln (kein Trailing)
 - **Problem:** der wandernde Titel (Reise `--tl-m`, Story `--st-m`) hinkte bei schnellem Scrollen
   hinterher — ein *fest gedeckelter* Lerp-Bruchteil kann „smooth bei langsam" und „kein Trailing bei
