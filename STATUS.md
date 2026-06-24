@@ -49,7 +49,9 @@
 > **federt beim iOS-Overscroll NATIV 1:1 mit dem Inhalt** (Compositor, kein JS), dockt nativ an (Containing-
 > Block `.tl-stage` → bleibt unten angedockt). h1 macht nur noch Schrumpfen + Horizontal-Versatz (`--tl-m`,
 > Scroll-Driven). Das `--tl-ov`-Nachjage-JS (und sein Pendeln) ist **weg**. Spy unberührt (headRef = nur
-> `.tl-topbar`). Stellschrauben: `.tl-herohead margin-top/-bottom`, `animation-range`/`M_RANGE` (70).
+> `.tl-topbar`). Stellschrauben: `.tl-herohead margin-top` (40, = Wanderstrecke) / `margin-bottom` (18,
+> POSITIV — Abstand zur Beschreibung), `animation-range`/`M_RANGE` (70). h1 hat `width: max-content`
+> (sonst ragt der block-breite, skalierte Titel rechts raus → Horizontal-Scroll; `de0dcf5`).
 > ⚠️ **Story noch NICHT umgebaut** — nutzt weiter `fixed` + `--st-ov`-Mitfedern (Attack/Release ATK 25/REL 90,
 > `b8a2616`) mit Rest-Pendeln; Sticky-Umbau dort steht aus (60vh-Hero = andere Bauform).
 > Horizontaler Überlauf behoben: `.tl-topbar::after` auf `left/right: 0` statt `-18px` (`e69323a`).

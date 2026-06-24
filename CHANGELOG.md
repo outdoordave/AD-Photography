@@ -17,6 +17,14 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-25 — Mobil Reise: zwei Sticky-Umbau-Regressionen gefixt
+- **Titel hing im Beschreibungstext** (`de0dcf5`): `.tl-herohead margin-bottom` war `-40px` (zog den Intro
+  unter den großen Titel) → jetzt `+18px`, der skalierte Titel hat eigenen Raum.
+- **Seite wieder horizontal schiebbar** (`de0dcf5`): die h1 ist im Fluss block-breit, `scale(1.85)` ragte
+  rechts aus dem Viewport → `width: max-content; max-width: 100%` (Box umhüllt nur den Text wie die frühere
+  fixe shrink-to-fit-h1).
+- Datei: `trips-timeline.css`. **Nur Mobil, CSS, kein Re-Index.** Commit: `de0dcf5`
+
 ## 2026-06-24 21:45 — Mobil Reise: Titel via position:sticky nativ mitfedern (Endlösung Overscroll)
 - **Wurzel:** der Titel lag als **fixe** h1 in einer anderen Koordinatenwelt und wurde per JS dem Gummiband
   nachgejagt → Main-Thread-Lag + iOS-`scrollY`-Überschwinger = sichtbares „Regeln/Pendeln". Kein Tuning
