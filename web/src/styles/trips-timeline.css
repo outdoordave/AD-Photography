@@ -171,6 +171,14 @@
     background: rgba(244,237,225, var(--tl-m, 0));
     -webkit-backdrop-filter: none; backdrop-filter: none; border-bottom: none;
   }
+  /* Solider deckender Streifen DIREKT unter der Zeile (14px): deckt die Lücke ab, damit kein Inhalt
+     durchscheint, UND die Karte (die 14px tiefer klebt, s.u.) mit ihrer kompletten runden Oberkante
+     sichtbar darunter sitzt — die Zeile schneidet den Karten-Rahmen nicht mehr an. Pseudo -> ändert
+     headH NICHT (Spy bleibt). */
+  .tl-topbar::after {
+    content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 14px; pointer-events: none;
+    background: rgba(244,237,225, var(--tl-m, 0));
+  }
   .tl-topbar-title { display: none; }      /* Desktop-Crossfade-Span entfällt mobil (h1 selbst wandert) */
   /* Zurück-Pille in der Zeile: kompakter Akzent-Link (lesbar auf hellem Grund, wie der Nav-Link),
      NICHT die dunkle Foto-Ghost-Pille. Fliegt ab ~40 % der Strecke ein (rauf + Fade, wie der Titel). */
@@ -203,10 +211,10 @@
   }
   .tl-intro { order: 1; } /* direkt nach dem Platzhalter (mobil ist nur die Zeile sticky) */
   .tl-map-col .tl-map { z-index: auto; } /* mobil kein z-Index-Heben der Karte */
-  .tl-map-col { order: 2; position: sticky; top: calc(var(--ww-sticky-top) + var(--ww-mininav-h)); z-index: 3; }
+  .tl-map-col { order: 2; position: sticky; top: calc(var(--ww-sticky-top) + var(--ww-mininav-h) + 14px); z-index: 3; }
   .tl-map-col .tl-map { position: static; top: auto; height: var(--ww-map-h-mobile); width: 100%; }
   .tl-list { order: 3; padding: 2vh 0 46vh; }
-  .tl-fade-top { top: calc(var(--ww-sticky-top) + var(--ww-mininav-h) + var(--ww-map-h-mobile)); height: 40px; margin-bottom: -40px; }
+  .tl-fade-top { top: calc(var(--ww-sticky-top) + var(--ww-mininav-h) + 14px + var(--ww-map-h-mobile)); height: 40px; margin-bottom: -40px; }
   .tl-body { opacity: max(var(--ww-trip-dim-op, var(--ww-dim-op, 0.3)), 0.4); }
   .tl-strip { scroll-snap-type: x proximity; gap: 10px; -webkit-overflow-scrolling: touch; }
   .tl-strip img { width: 78%; max-width: 320px; height: auto; aspect-ratio: 3 / 2; scroll-snap-align: start; }
