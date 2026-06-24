@@ -145,10 +145,11 @@ section { padding: 84px 0; }
   transition: background var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease);
 }
 .story-back:hover, .trip-back:hover { background: rgba(28,24,18,0.5); border-color: #f0d9bf; color: #f0d9bf; }
-/* Story (Desktop): reservierte Zone oben links, an die 760px-Lesespalte gebunden (gleicher Gutter
-   24px), absolut ueber dem Hero — kollidiert nie mit dem Titel (der sitzt am Hero-Unterrand). */
+/* Story (Desktop): reservierte Zone oben links, an DIESELBE Inhaltskante wie die Reise-Pille gebunden
+   (Wrap-Maxw 1180 -> 590 = halbe Breite, + 24px Gutter), absolut ueber dem Hero. So sitzt sie bei jeder
+   Breite an exakt der gleichen Stelle wie auf Reise-Detailseiten; kollidiert nie mit dem Titel (Hero-Unterrand). */
 #page-story { position: relative; }
-.story-back { position: absolute; top: 18px; z-index: 5; left: max(24px, calc(50% - 380px + 24px)); }
+.story-back { position: absolute; top: 14px; z-index: 5; left: max(24px, calc(50% - 590px + 24px)); }
 /* Reise: vorerst unveraendert (fix). Wird in Commit 2 ins sticky Kompaktband ueberfuehrt. */
 .trip-back { position: fixed; top: 102px; left: calc(20px + env(safe-area-inset-left, 0px)); z-index: 1090; }
 @media (max-width: 860px) { .story-back, .trip-back { display: none; } }
