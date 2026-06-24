@@ -17,6 +17,19 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-24 18:35 — Mobil: weicher Fade unter Titel + flüssigerer Titel-Hochflug
+- **Weicher Fade unter der Titelzeile** (`45ee79e`): full-bleed Verlauf (deckend→transparent, 18px)
+  als `.tl-topbar::after` — hochscrollender Text fadet sanft aus statt harter Kante; über der
+  cremefarbenen, full-bleed Karten-Spalte unsichtbar → Karten-Oberkante bleibt scharf.
+- **Glättung an Scrollgeschwindigkeit gekoppelt** (`45ee79e`): adaptiver Lerp-Faktor
+  `min(cap, base + Rückstand·k)` für Reise (`--tl-m`) und Story (`--st-m`) — schnell scrollen holt
+  zügig auf (nicht träge), Ausklingen rastet weich ein.
+- **Titel-Hochflug flüssiger** (`004e2a2`): Aufhol-Kappung gesenkt auf `0.5` (statt `0.8`) pro Frame,
+  Multiplikator `0.8` (statt `1.2`) — weicheres Gleiten, bleibt bei schnellem Scrollen reaktiv.
+- Dateien: `web/src/styles/trips-timeline.css`, `web/src/components/TripTimeline.tsx`,
+  `web/src/components/StoryReaderContent.tsx`. **Reines CSS/JS (≤767), kein Re-Index nötig.**
+- Commit: `45ee79e`, `004e2a2`
+
 ## 2026-06-23 16:15 — Mobil-Nachbesserung: Karten-Einschnitt, Pillen-Einflug, Titel-Vorschau
 - **Karte oben eingeschnitten behoben** (`073fea7`): das mobile `.tl-topbar::after` (weiche Unterkante)
   lag über der Oberkante der direkt darunter klebenden Karte → mobiles `::after` entfernt (Karte ist opak

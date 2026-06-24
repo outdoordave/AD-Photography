@@ -29,6 +29,12 @@
 > **Story-Mobil-Kopf (gelöst, Option A):** gleiches „ein wandernder Titel"-Muster fürs 60vh-Hero; lange
 > Prosa-Titel werden per JS einzeilig auf die Breite skaliert + in der Zeile mit `…` gekürzt → bricht nie.
 > Zurück-Pille in der Zeile, Nav-Zurück-Link auf Story `≤767` aus. **Beide Detail-Köpfe mobil = wandernder Titel.**
+>
+> **Feinschliff Mobil-Titel (24.06., `45ee79e`+`004e2a2`):** unter der Titelzeile weicher full-bleed Fade
+> (`.tl-topbar::after`, deckend→transparent) statt harter Kante — über der cremefarbenen Karten-Spalte
+> unsichtbar, Karten-Oberkante scharf. Glättung adaptiv an Scrollgeschwindigkeit: Faktor
+> `min(0.5, base + Rückstand·0.8)` (Reise `--tl-m`, Story `--st-m`) → schnell scrollen holt zügig auf,
+> Ausklingen rastet weich/flüssig ein. Reines CSS/JS, kein Re-Index.
 > ⚠️ **Mobil-Optik (Reise + Story) nur am echten Gerät final prüfbar** — die lokale Preview liefert `innerWidth`
 > ≠ Render-Breite, kann Handy also nicht korrekt zeigen; Bewegung/kein-Überlauf wurde per DOM-Messung bestätigt.
 >
