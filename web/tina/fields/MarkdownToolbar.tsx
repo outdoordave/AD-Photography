@@ -21,12 +21,12 @@ type Props = {
 
 const ALL: MdKind[] = ['bold', 'italic', 'h3', 'quote', 'list'];
 
-const META: Record<MdKind, { txt: string; title: string; style?: React.CSSProperties }> = {
-  bold: { txt: 'F', title: 'Fett', style: { fontWeight: 800 } },
-  italic: { txt: 'K', title: 'Kursiv', style: { fontStyle: 'italic' } },
-  h3: { txt: 'H', title: 'Überschrift' },
-  quote: { txt: '❝', title: 'Zitat' },
-  list: { txt: '•', title: 'Aufzählung' },
+const META: Record<MdKind, { glyph: string; label: string; title: string; style?: React.CSSProperties }> = {
+  bold: { glyph: 'F', label: 'Fett', title: 'Fett — markierten Text fett machen', style: { fontWeight: 800 } },
+  italic: { glyph: 'K', label: 'Kursiv', title: 'Kursiv — markierten Text kursiv machen', style: { fontStyle: 'italic' } },
+  h3: { glyph: 'H', label: 'Überschrift', title: 'Überschrift — die Zeile zur Überschrift machen' },
+  quote: { glyph: '❝', label: 'Zitat', title: 'Zitat — die Zeile als Zitat hervorheben' },
+  list: { glyph: '•', label: 'Liste', title: 'Liste — Aufzählung mit Punkten' },
 };
 
 // Zeilen-Grenzen rund um die aktuelle Auswahl (für Zeilen-Präfixe).
@@ -91,7 +91,8 @@ export default function MarkdownToolbar({ textareaRef, value, onChange, allow }:
           onClick={() => apply(k)}
           style={btnStyle}
         >
-          <span style={META[k].style}>{META[k].txt}</span>
+          <span style={{ ...glyphStyle, ...(META[k].style || {}) }}>{META[k].glyph}</span>
+          <span>{META[k].label}</span>
         </button>
       ))}
     </div>
@@ -99,15 +100,30 @@ export default function MarkdownToolbar({ textareaRef, value, onChange, allow }:
 }
 
 const btnStyle: React.CSSProperties = {
-  minWidth: 32,
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 6,
   height: 30,
-  padding: '0 9px',
+  padding: '0 11px',
   borderRadius: 6,
   cursor: 'pointer',
   border: '1px solid #d8cab2',
   background: '#faf6ef',
   color: '#2e2418',
-  fontSize: 14,
+  fontSize: 13,
   fontWeight: 600,
-  lineHeight: '28px',
+};
+
+// Das kleine Mono-Symbol vor dem Wort (F / K / H / ❝ / •).
+const glyphStyle: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 18,
+  height: 18,
+  borderRadius: 4,
+  background: '#efe6d6',
+  color: '#5a4a33',
+  fontSize: 12,
+  lineHeight: 1,
 };
