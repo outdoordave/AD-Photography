@@ -2,6 +2,13 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "web-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "web",
+      "port": 4321
+    },
+    {
       "name": "web-dist",
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "4399", "--directory", "dist"],

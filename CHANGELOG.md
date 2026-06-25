@@ -70,6 +70,23 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   bleibt, liegt über dem leeren Abstand statt über dem Lesetext. Snap aus → rein Layout, spy-neutral
   (Station 1 bleibt aktiv). Stellschraube: die 40px.
 
+## 2026-06-25 — Story DESKTOP: wandernder Titel mit verzögertem Andocken (Variante B)
+- **Neu** (`6c95e83`): Story-Desktop-Kopf auf den Wander-Mechanismus umgestellt (vorher nur „erhalten").
+  Wie Reise-Desktop + Story-Mobil, aber **verzögert**: der Titel bleibt erst groß auf dem Hero-Foto und
+  dockt erst an, wenn das Foto fast durch ist (`animation-range: 42vh → 64vh`) — „erst Foto genießen".
+  `.reader-hero-inner` desktop `absolute` → `position: sticky` (wandert + dockt, `top` nav+12); `margin-top`
+  hebt den großen Titel auf den Hero. Titel **render-big-scale-down** (scharf): `font: --fs-display`, via
+  `--st-fitscale` einzeilig auf die Spaltenbreite, dann via `--st-m` auf `--st-dock` (~22px). Vollbreite
+  deckende `.story-topline` (desktop), erscheint mit `--st-m`; **Balken-Pille** (Ghost-Optik wie Reise) fadet
+  ab ~40 % ein; **Foto-Pille** (`.story-back`) scrollt mit dem Bild weg. SDA treibt `--st-m` + `st-title-fly-d`
+  über den verzögerten Range, `@supports`-Fallback JS-Lerp; JS misst `--st-nav`/`--st-fitscale`/`--st-dock`,
+  Gate jetzt `sdaSupported` (Mobil+Desktop). **Story hat keinen Scroll-Spy.** Mobil unverändert.
+- **Lokal in der Desktop-Preview (1300px) verifiziert** (Dev-Server via `tinacms dev` läuft offline):
+  Scroll 0 = großer einzeiliger Titel auf dem Hero; gescrollt = angedockt (Leiste deckend `top 89`, Titel
+  bei `top 101`, Foto-Pille weggescrollt). Stellschrauben: `--st-lift`, `animation-range` (42vh/64vh),
+  `--st-dock`, `translateX`.
+- Dateien: `global.css`, `StoryReaderContent.tsx`. **Kein Re-Index.** Commit: `6c95e83`
+
 ## 2026-06-25 — Mobil Story: Lücke über dem Titelbild behoben
 - **Bug** (`126a1bf`): bei frisch geöffneter Story saß das Hero-Bild um die Banner-Höhe (~46px) nach unten
   versetzt. Ursache: die sticky `.story-topline` reservierte als erstes Kind ihren Fluss-Platz
