@@ -19,19 +19,18 @@
    (--tl-p:0, nur die Zurück-Pille sichtbar), beim Scrollen blenden Hintergrund + Titel ein.
    Hintergrund hier erst deckend gerampt; Milchglas + Safari-Fallback folgen separat. */
 .tl-topbar {
-  grid-column: 1; grid-row: 1; min-width: 0;
+  grid-column: 1 / -1; grid-row: 1; min-width: 0;     /* Variante B: vollbreit (auch über die Karten-Oberkante) */
   position: sticky; top: var(--ww-sticky-top); z-index: 6;
   display: flex; align-items: center; gap: 14px; min-height: var(--ww-mininav-h);
-  /* Milchglas: Hintergrund-Alpha (0->0.58) + Frost-Blur (0->14px) rampen mit --tl-p hoch. */
-  background: rgba(244,237,225, calc(var(--tl-p, 0) * 0.58));
-  -webkit-backdrop-filter: blur(calc(var(--tl-p, 0) * 14px));
-  backdrop-filter: blur(calc(var(--tl-p, 0) * 14px));
-  border-bottom: 1px solid rgba(216,202,178, var(--tl-p, 0));
+  /* Voll DECKENDE Leiste (verdeckt durchscrollenden Text/Stationen + Karten-Oberkante), Deckkraft rampt
+     mit --tl-p. Kein Frost/Border mehr -> weiche Unterkante via ::after (kein harter Strich). */
+  background: rgba(244,237,225, var(--tl-p, 0));
 }
-/* Safari-Fallback: wenn backdrop-filter (inkl. -webkit) NICHT unterstützt wird, weich auf einen
-   deckenden Hintergrund (~0.95, kein Frost) zurückfallen. Crossfade + Titel-Blur bleiben erhalten. */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .tl-topbar { background: rgba(244,237,225, calc(var(--tl-p, 0) * 0.95)); }
+/* Weiche Unterkante (deckend -> transparent), left/right:0 = Leistenbreite (kein Horizontal-Scroll).
+   Liegt über Karte/Inhalt; pointer-events:none -> Karte bleibt bedienbar. (Mobil ≤767 hat eigene ::after.) */
+.tl-topbar::after {
+  content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 22px; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(244,237,225, var(--tl-p, 0)), rgba(244,237,225, 0));
 }
 .tl-topbar-title {
   font-family: var(--font-display); font-size: var(--fs-title-sm); font-weight: var(--fw-medium); color: var(--c-ink);
