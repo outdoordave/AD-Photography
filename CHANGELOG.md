@@ -60,6 +60,11 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   koordiniert Fade-Höhe `map-gap+8` UND Karten-Position `+map-gap`: Fade zieht tiefer, Karte wandert mit
   runter, 8px-Schwanz über der Karte konstant). `.tl-editbar` (Editor) um fehlendes `--ww-mininav-h`
   ergänzt (saß im Editor zu hoch; live unberührt). Mobil/Spy unberührt.
+- **Test-Runde 7** (`56c36f0`): zwei Spalten getrennt (per Skizze bestätigt) — der `::after`-Fade ist jetzt
+  **nur linke Spalte** (`right: calc(420px + 36px)` = Karten-Spalte + gap → Karte rechts unberührt, kein
+  Fade auf der Karte), Höhe 40px → Timeline verschwindet weich an tieferer Linie. Karte tuckt separat knapp
+  unter die Leiste (`--ww-map-gap` 28→12, Oberkante nicht gefadet). Stellschrauben: `--ww-map-gap`
+  (Karten-Spalt), `::after height` (Timeline-Cut-Tiefe).
 
 ## 2026-06-25 — Mobil Story: Lücke über dem Titelbild behoben
 - **Bug** (`126a1bf`): bei frisch geöffneter Story saß das Hero-Bild um die Banner-Höhe (~46px) nach unten
