@@ -65,6 +65,10 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   Fade auf der Karte), Höhe 40px → Timeline verschwindet weich an tieferer Linie. Karte tuckt separat knapp
   unter die Leiste (`--ww-map-gap` 28→12, Oberkante nicht gefadet). Stellschrauben: `--ww-map-gap`
   (Karten-Spalt), `::after height` (Timeline-Cut-Tiefe).
+- **Test-Runde 8** (`3516ec4`): mehr Luft unter dem Banner (Variante A) → `.tl-list` `padding-top`
+  `2vh` → `calc(2vh + 40px)`, Timeline startet tiefer (Abstand Banner↔erste Station). Weicher Fade (40px)
+  bleibt, liegt über dem leeren Abstand statt über dem Lesetext. Snap aus → rein Layout, spy-neutral
+  (Station 1 bleibt aktiv). Stellschraube: die 40px.
 
 ## 2026-06-25 — Mobil Story: Lücke über dem Titelbild behoben
 - **Bug** (`126a1bf`): bei frisch geöffneter Story saß das Hero-Bild um die Banner-Höhe (~46px) nach unten
