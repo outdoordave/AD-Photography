@@ -55,11 +55,10 @@
    --tl-p aus + leicht unscharf (Crossfade mit dem Kompaktband). Trägt die echte <h1>.
    Die alten .tl-head::before/::after (Deckfläche/Trennlinie über die Kartenkante) entfallen —
    das einblendende deckende/milchige Band übernimmt das Verdecken, ohne Linie über die Karte. */
+/* Variante B: kein Crossfade-Ausblenden mehr — die echte h1 WANDERT + schrumpft (Desktop-Regeln im
+   @media (min-width:768px)-Block unten; Mobil im ≤767-Block). Basis bleibt schlank. */
 .tl-herohead {
   grid-column: 1; grid-row: 2; min-width: 0; padding: 2px 0 4px;
-  opacity: calc(1 - var(--tl-p, 0));
-  filter: blur(calc(var(--tl-p, 0) * 5px));
-  will-change: opacity, filter;
 }
 .tl-herohead .tl-meta { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 4px; }
 .tl-herohead h1 { font-family: var(--font-display); font-size: var(--fs-title-lg); font-weight: var(--fw-medium); line-height: 1.1; }
@@ -249,6 +248,16 @@
    (heutiger Stand, unverändert). Titel bleibt position:fixed -> Scroll-Spy/headH unberührt. */
 @property --tl-m { syntax: "<number>"; inherits: true; initial-value: 0; }
 @keyframes tl-m-drive { from { --tl-m: 0; } to { --tl-m: 1; } }
+/* Desktop-Fortschritt --tl-p (Wander-Titel + Band-Deckkraft + Pille). @property -> interpolierbar für die
+   Scroll-Driven Animation; Fallback = JS-Lerp (armCrossfade). tl-hero-fly: nur Schrumpfen + Horizontal-
+   Versatz (vertikale Wanderung = natives Sticky). --tl-bigscale wird per JS adaptiv gemessen (scrollWidth
+   vs. Spaltenbreite), Default 1.8. */
+@property --tl-p { syntax: "<number>"; inherits: true; initial-value: 0; }
+@keyframes tl-p-drive { from { --tl-p: 0; } to { --tl-p: 1; } }
+@keyframes tl-hero-fly {
+  from { transform: translateX(0px) scale(var(--tl-bigscale, 1.8)); }
+  to   { transform: translateX(110px) scale(1); }
+}
 /* Nur noch Schrumpfen + Horizontal-Versatz (vertikale Wanderung macht das native Sticky). Die Range muss
    etwa der nativen Wanderstrecke (.tl-herohead margin-top) entsprechen, damit der Titel fertig geschrumpft
    ist, wenn er andockt. STELLSCHRAUBE: 70px ~ margin-top 40 + Grund-Offset. */
@@ -297,4 +306,46 @@
   .tl-editbar-chips { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
   .tl-chip { flex: 0 0 auto; }
   .tl-chip-name { max-width: 110px; }
+}
+
+/* ── Variante B Desktop (>767): EIN wandernder, schrumpfender Titel statt Crossfade. Mechanik wie mobil,
+   auf das Desktop-Layout übertragen. Mobil (≤767) wird hier NICHT berührt.
+   - Vertikale Wanderung + Andocken = natives position:sticky (Halt über den hohen Grid-Container).
+   - Schrumpfen + Horizontal-Versatz = Scroll-Driven (tl-p-drive/tl-hero-fly) bzw. JS-Fallback (--tl-p).
+   - .tl-topbar (headRef) bleibt 46px hoch -> Scroll-Spy unberührt; der Titel liegt in .tl-herohead.
+   STELLSCHRAUBEN: margin-top (Wanderstrecke ~ +36 Grund), top-Offset (vertikale Mitte im Band),
+   animation-range/CF-Range (Schrumpf-Strecke), translateX (Platz für die Pille), --tl-bigscale (max 2.0). */
+@media (min-width: 768px) {
+  .tl-topbar-title { display: none; }            /* Crossfade-Span entfällt — die echte h1 wandert */
+  .tl-herohead {
+    grid-row: 2; position: sticky; top: calc(var(--ww-sticky-top) + 12px); z-index: 7;
+    margin-top: 84px;                            /* großer Titel startet tiefer -> Wanderstrecke ~120px */
+    padding: 0; will-change: transform;
+  }
+  .tl-herohead .tl-meta { display: none; }       /* Kicker im Wander-Kopf aus (wie mobil) */
+  .tl-herohead h1 {
+    width: max-content; max-width: 100%;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-size: var(--fs-title-sm);               /* angedockte Größe (20px); skaliert hoch via --tl-bigscale */
+    transform-origin: left center; will-change: transform;
+    transform:
+      translateX(calc(var(--tl-p, 0) * 110px))
+      scale(calc(1 + (1 - var(--tl-p, 0)) * (var(--tl-bigscale, 1.8) - 1)));
+  }
+  /* Zurück-Pille fadet in der zweiten Hälfte ein (wie mobil), links im Band. */
+  .tl-topbar .trip-back {
+    opacity: clamp(0, calc((var(--tl-p, 0) - 0.4) / 0.6), 1);
+    transform: translateY(calc((1 - clamp(0, calc((var(--tl-p, 0) - 0.4) / 0.6), 1)) * 8px));
+    transition: none;
+  }
+  @supports (animation-timeline: scroll()) {
+    .tl-stage {
+      animation: tl-p-drive cubic-bezier(.42, 0, .58, 1) both;
+      animation-timeline: scroll(root); animation-range: 0 120px;
+    }
+    .tl-herohead h1 {
+      animation: tl-hero-fly cubic-bezier(.42, 0, .58, 1) both;
+      animation-timeline: scroll(root); animation-range: 0 120px;
+    }
+  }
 }

@@ -184,6 +184,7 @@ export default function TripTimeline(props: Props) {
   const editSyncTimerRef = React.useRef<number | null>(null);
 
   const headRef = React.useRef<HTMLDivElement | null>(null);
+  const heroheadRef = React.useRef<HTMLDivElement | null>(null);
   const listRef = React.useRef<HTMLOListElement | null>(null);
   const mapColRef = React.useRef<HTMLDivElement | null>(null);
   const stageRef = React.useRef<HTMLDivElement | null>(null);
@@ -512,11 +513,11 @@ export default function TripTimeline(props: Props) {
   //   (2) der Pro-16.7ms-Faktor wächst stufenlos mit dem Rückstand: langsam -> sanft (smooth),
   //       schnell -> holt nahezu vollständig auf (kein Hinterherhinken). smoothstep glättet den
   //       Übergang zwischen beiden Regimen, damit es nie umschaltet/springt.
-  const CF_START = 36, CF_LEN = 40, CF_BASE = 0.12;
+  const CF_START = 0, CF_LEN = 120, CF_BASE = 0.12;  // Desktop-Wanderstrecke (= animation-range 0 120px)
   const M_RANGE = 70, M_BASE = 0.14, M_LAG_FULL = 0.4;  // ~ native Sticky-Wanderstrecke (.tl-herohead margin-top)
-  // Unterstützt der Browser Scroll-Driven Animations, koppelt CSS den Mobil-Titel direkt an den Scroll
-  // (kein JS-Lerp/Drift). Dann treibt JS --tl-m auf dem Handy NICHT (würde sonst gegen die CSS-Animation
-  // schreiben). --tl-p ist Desktop-only. Fehlt der Support, bleibt der JS-Lerp als Fallback aktiv.
+  // Unterstützt der Browser Scroll-Driven Animations, koppeln die CSS-Keyframes Titel/Band direkt an den
+  // Scroll (kein JS-Lerp/Drift) — auf Desktop (--tl-p) UND Mobil (--tl-m). Dann treibt JS die Vars NICHT
+  // (würde gegen die CSS-Animation schreiben). Fehlt der Support, bleibt der JS-Lerp als Fallback aktiv.
   const sdaSupported = typeof CSS !== 'undefined' && typeof CSS.supports === 'function' && CSS.supports('animation-timeline: scroll()');
   const smoothstep = (x: number) => { const r = Math.min(1, Math.max(0, x)); return r * r * (3 - 2 * r); };
   // Pro-Frame-Faktor aus Basis-k (pro 16.7ms) und Frame-Zeit dt — frame-raten-unabhängig.
@@ -546,9 +547,10 @@ export default function TripTimeline(props: Props) {
     else cfPrevTRef.current = 0; // Loop endet -> nächster Start frisch (kein dt-Sprung)
   }
   function armCrossfade() {
-    // Mobil + Scroll-Driven-Support: CSS koppelt den Titel direkt an den Scroll, --tl-p ist auf dem
-    // Handy ungenutzt -> hier nichts zu treiben (spart rAF/Batterie, kein Konflikt mit der CSS-Anim).
-    if (sdaSupported && window.matchMedia('(max-width: 767px)').matches) return;
+    // Scroll-Driven-Support: CSS koppelt Titel/Band direkt an den Scroll (Desktop --tl-p UND Mobil --tl-m)
+    // -> hier nichts zu treiben (spart rAF/Batterie, kein Konflikt mit der CSS-Animation). Nur ohne
+    // Support (ältere Engines) übernimmt der JS-Lerp unten.
+    if (sdaSupported) return;
     const sy = window.scrollY;
     pTargetRef.current = smoothstep((sy - CF_START) / CF_LEN);
     mTargetRef.current = smoothstep(sy / M_RANGE);
@@ -667,6 +669,29 @@ export default function TripTimeline(props: Props) {
   // (Der frühere --tl-ov-Overscroll-Effekt entfällt: der Titel liegt jetzt via .tl-herohead { position:
   //  sticky } im Fluss und federt NATIV mit dem Inhalt — kein JS-Nachjagen, kein Pendeln mehr.)
 
+  // Desktop (>767): adaptive Großtitel-Skalierung (--tl-bigscale). Der Titel startet so groß wie möglich,
+  // aber EINZEILIG passend in die linke Spalte: natürliche Breite via scrollWidth (stabil, nicht offsetWidth)
+  // gegen die Spaltenbreite, gedeckelt bei 2.0. Lange Titel starten so automatisch kleiner. (Mobil nutzt
+  // --st-scale-big; --tl-bigscale ist dort ungenutzt.)
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const root = document.documentElement;
+    const measureBig = () => {
+      const head = heroheadRef.current; if (!head) return;
+      const h1 = head.querySelector('h1') as HTMLElement | null;
+      const w = h1 && h1.scrollWidth ? h1.scrollWidth : 1;
+      const avail = head.clientWidth || w;
+      const big = Math.max(1, Math.min(2.0, avail / w));
+      root.style.setProperty('--tl-bigscale', String(Math.round(big * 1000) / 1000));
+    };
+    measureBig();
+    const t = window.setTimeout(measureBig, 350);
+    const fonts = (document as any).fonts; if (fonts && fonts.ready) fonts.ready.then(measureBig).catch(() => {});
+    window.addEventListener('resize', measureBig);
+    return () => { window.clearTimeout(t); window.removeEventListener('resize', measureBig); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tripIdx, lang]);
+
   // Dezente Reveals (einmal, per IO).
   React.useEffect(() => {
     if (prefersReduced() || typeof IntersectionObserver === 'undefined') return;
@@ -721,7 +746,7 @@ export default function TripTimeline(props: Props) {
 
         {/* Große Überschrift (NICHT sticky): scrollt natürlich weg, blendet dabei per --tl-p aus +
             leicht unscharf. Trägt die echte <h1> (SEO/A11y) — der Band-Titel ist nur aria-hidden. */}
-        <div className="tl-herohead">
+        <div className="tl-herohead" ref={heroheadRef}>
           <div className="tl-meta" data-tina-field={tf(trip, 'meta')}>{bi(trip, 'meta', lang)}{trip.upcoming ? (lang === 'de' ? ' · bald ✦' : ' · soon ✦') : ''}</div>
           <h1 data-tina-field={tinaField(trip, 'title')}>{tripTitle(trip, lang)}</h1>
         </div>
