@@ -17,6 +17,14 @@ import LocationSearchField from './fields/LocationSearchField';
 import { backToSiteScreen } from './screens/BackToSiteScreen';
 import { logoutScreen } from './screens/LogoutScreen';
 
+// Harte 35-Zeichen-Grenze für Titel (Reise + Story). UI-only (ui.validate) -> KEIN Cloud-Re-Index,
+// nur tina-lock.json neu + Deploy. Hinweis: bei den EN-Titelfeldern (eigene Komponente OHNE
+// wrapFieldsWithMeta) wird der Fehlertext NICHT sichtbar gerendert; der DE-Titel (kanonisch) zeigt ihn,
+// EN ist still mit-validiert. Pro Titel zusätzlich ein „max. 35 Zeichen"-Hinweis in der description.
+const TITLE_MAX = 35;
+const validateTitleMax = (value?: string) =>
+  (typeof value === 'string' && value.length > TITLE_MAX ? `Maximal ${TITLE_MAX} Zeichen (aktuell ${value.length}).` : undefined);
+
 // Tina-Cloud-Anbindung:
 //   clientId + branch sind OEFFENTLICH (clientId steht ohnehin im Browser-Bundle).
 //   Daher fest verdrahtet als Fallback -> der Build haengt fuer diese beiden NICHT
@@ -284,7 +292,7 @@ export default defineConfig({
         fields: [
           { type: 'string', name: 'ww_here', label: '📖 Stories – Beitrag', ui: { component: SectionBanner } },
           // --- Deutsch (Haupt) ---
-          { type: 'string', name: 'title_de', label: 'Titel', isTitle: true, required: true },
+          { type: 'string', name: 'title_de', label: 'Titel', isTitle: true, required: true, description: 'Max. 35 Zeichen.', ui: { validate: validateTitleMax } },
           { type: 'string', name: 'category_de', label: 'Ort / Kategorie' },
           { type: 'string', name: 'date', label: 'Datum (YYYY-MM-DD)' },
           { type: 'image', name: 'cover', label: 'Titelbild (Auto-WebP)', ui: { component: SinglePhotoField } },
@@ -311,7 +319,7 @@ export default defineConfig({
           { type: 'string', name: 'youtube_url', label: 'YouTube-URL (optional)' },
           // --- Englische Version ---
           { type: 'boolean', name: 'has_english', label: 'Englische Version anzeigen?' },
-          { type: 'string', name: 'title_en', label: 'Title (EN)', ui: { component: EnglishStyledField } },
+          { type: 'string', name: 'title_en', label: 'Title (EN)', description: 'Max. 35 characters.', ui: { component: EnglishStyledField, validate: validateTitleMax } },
           { type: 'string', name: 'category_en', label: 'Category (EN)', ui: { component: EnglishStyledField } },
           { type: 'string', name: 'excerpt_en', label: 'Excerpt (EN)', ui: { component: EnglishStyledTextField } },
           { type: 'string', name: 'body_en', label: 'Body (EN)', ui: { component: StoryBodyField } },
@@ -361,8 +369,8 @@ export default defineConfig({
             ui: { component: EnglishToggle },
           },
           { type: 'number', name: 'order', label: 'Reihenfolge (Tab)', description: 'Kleinere Zahl = weiter links in den Reise-Tabs.' },
-          { type: 'string', name: 'title', label: 'Reise-Titel (Tab)', isTitle: true, required: true, description: 'Erscheint als Anzeigename in der Übersicht & als Tab.' },
-          { type: 'string', name: 'title_en', label: 'Reise-Titel (Englisch)', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'title', label: 'Reise-Titel (Tab)', isTitle: true, required: true, description: 'Erscheint als Anzeigename in der Übersicht & als Tab. Max. 35 Zeichen.', ui: { validate: validateTitleMax } },
+          { type: 'string', name: 'title_en', label: 'Reise-Titel (Englisch)', description: 'Max. 35 Zeichen.', ui: { component: EnglishOnlyField, validate: validateTitleMax } },
           { type: 'string', name: 'titel_vorschau', label: 'Vorschau (Handy)', ui: { component: ReiseTitelPreview } },
           { type: 'string', name: 'date', label: 'Datum (YYYY-MM-DD)', description: 'Für Sortierung/Meta.' },
           { type: 'string', name: 'meta_de', label: 'Meta-Zeile (Datum · km · …)' },
