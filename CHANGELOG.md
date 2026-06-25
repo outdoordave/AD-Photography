@@ -17,6 +17,25 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-25 — CMS: Haupttext-Editor verständlicher (Option 1 von „2 und 1")
+- **Format-Knöpfe beschriftet** (`1d4e271`): Die Markdown-Toolbar zeigte nur kryptische Symbole
+  (`F K H ❝ •`). Jetzt jeder Knopf = **Symbol-Chip + Wort** („Fett", „Kursiv", „Überschrift",
+  „Zitat", „Liste") + ausführlichere Tooltips. Laientauglich für Alexandra. Wirkt **überall**, wo
+  `MarkdownToolbar` genutzt wird (Story-Haupttext, Stations-Text, Bio, Startseite-Intro,
+  Datenschutz/Impressum). Datei: `web/tina/fields/MarkdownToolbar.tsx`.
+- **Live-Vorschau unter dem Story-Haupttext** (`7391f11`): Eine Vorschau-Box unterm Textfeld rendert
+  den Text mit demselben **`mdToHtml`-Port** wie die echte Seite (`web/src/lib/stories.ts`) →
+  Überschriften/Fett/Kursiv/Zitat erscheinen **formatiert** statt als rohes Markdown (`###`, `**`, `*`).
+  `[[album]]`-Marker → sichtbarer Platzhalter. Speicherformat bleibt unverändert Markdown.
+  Datei: `web/tina/fields/StoryBodyField.tsx` (Default-Export jetzt Wrapper mit `<style>` + Inner-Feld).
+- **Verifikation:** esbuild-Bundle beider Felder grün; `mdToHtml`-Output für Davids Alaska-Beispiel
+  geprüft (`### → <h3>`, `**Alaska** → <strong>`, `*…* → <em>`). CMS-Admin-UI headless nicht
+  zuverlässig erreichbar → finaler Look von David im echten CMS gegenzuchecken.
+- **Kontext:** David wählte „2 und 1" — dies ist **Option 1** (sicher, direkt auf `main`). **Option 2
+  (echtes WYSIWYG, kein rohes Markdown mehr im Feld)** folgt als eigenes Branch+Preview-Projekt mit
+  vorab-Capability-Liste (Schema-Änderung, Tina-Cloud-Re-Index, Bild-/Album-/WebP-Port). Noch offen.
+- Commits: `1d4e271`, `7391f11`
+
 ## 2026-06-25 — Reise DESKTOP: wandernder Titel, Variante B (Schritt 1+2, Mobil unberührt)
 - **Schritt 1 — vollbreite deckende Leiste** (`ec502b1`): `.tl-topbar` `grid-column: 1 → 1/-1` (auch über die
   Karten-Oberkante), Milchglas/Frost → **deckend** (rampt mit `--tl-p`), Border → weiche `::after`-Unterkante

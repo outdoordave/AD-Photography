@@ -1,90 +1,49 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-23** · Live-Branch `main` (Feature-Branch in main gemergt, FF — siehe unten).
-> Seite **live** auf `main`, Cutover durch. SEO-Grundlage steht (Sitemap, JSON-LD, Google Search
-> Console: Property bestätigt + **Sitemap erfolgreich gelesen**), Datenschutz **vollständig**
-> (inkl. Web3Forms), Performance ok, Barrierefreiheit-Basics (alt-Texte) drin, Security-Header +
-> CSP `frame-ancestors` gesetzt. **Keine offenen Pflicht-Punkte.** Alles Übrige ist **geparkt/Kür**
-> (§6, „bei Bedarf/Lust"). Die Seite wird jetzt **genutzt** (Inhalte pflegen, teilen) statt weitergebaut.
-> Die alte Single-File-`index.html` ist abgelöst. Diese Datei ist eine **Momentaufnahme** (wird bei
-> jeder Session überschrieben, nie angehängt). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
+> **Stand: 2026-06-25** · Live-Branch `main`. Seite **live**, Cutover durch. SEO-Grundlage steht
+> (Sitemap, JSON-LD, Google Search Console bestätigt + Sitemap gelesen), Datenschutz **vollständig**
+> (inkl. Web3Forms), Performance ok, A11y-Basics drin, Security-Header + CSP gesetzt. **Keine offenen
+> Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
+> Session überschrieben). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
 >
-> ⏳ **Auf `main`, committet, noch nicht live (20./21.06.):** Equipment-Kategorien **direkt im Equipment-
-> Formular** (Inline-Liste `categories` + Dropdown je Gerät) + Über-uns-Profile-Hover-Schalter (`person_hover`)
-> + **CMS-Format-Leiste** (Markdown-Buttons) + Jahres-Kapitel (Stories/Reisen) + Zurück-Pille (Story+Reise).
+> **✅ Detail-Köpfe „wandernder Titel" — Mobil UND Desktop fertig (von David abgenommen, 25.06.).**
+> Reise + Story, beide Breakpoints. Architektur (für künftige Header wiederverwendbar, s. Memory
+> `wandering-title-architektur`): vertikales Wandern + Andocken = natives `position: sticky` (hoher
+> Containing-Block: Reise `.tl-stage`, Story `#page-story`); Schrumpfen = **CSS Scroll-Driven Animation**
+> (`animation-timeline: scroll(root)` treibt `@property`-Vars `--tl-p`/`--st-m` → `transform` der h1),
+> Easing `cubic-bezier(.42,0,.58,1)`; `@supports`-Gate + **JS-rAF-Lerp-Fallback** (ältere iOS); Titel
+> immer einzeilig via gemessenem `scrollWidth` (`--*-fitscale`), **vom großen Font HERUNTER**skaliert
+> (scharf). **Desktop:** vollbreite deckende Leiste (Reise `.tl-topbar` grid 1/-1; Story `.story-topline`),
+> Fade nur über der Inhaltsspalte (Reise: Karte rechts bleibt scharf + tuckt unter die Leiste), ein
+> Zurück-Button, angedockter Titel auf Pillen-Höhe + neben der Pille (JS-gemessen `--st-dock-top/-x`).
+> Story dockt **spät** an (Foto erst genießen, `animation-range 34vh 46vh`). **Mobil ≤767 unangetastet.**
+> Spy: Reise `.tl-topbar`/headRef konstant 46px → `headH` stabil → `alaska2026`→Station 1 hält.
 >
-> ⏳ **Ebenfalls auf `main`, committet, noch nicht live (23.06. — war kurz im Branch `nav-safearea-langbanner`,
-> jetzt per FF in main):** (A) **Nav mobil** — `<=860px` Logo zentriert, Zurück-Link links nur auf Detailseiten,
-> Burger rechts; Desktop unverändert; ersetzt mobil die fixen Pillen + den Mininav-Link. (B) **safe-area global**
-> — `viewport-fit=cover` + Insets für Header/Drawer/To-Top/Lightbox/Banner + `--ww-sticky-top`. (C) **Sprach-Banner**
-> — neue CMS-Felder `sprach_banner` in Darstellung; Hinweis für englischsprachige Besucher auf DE-Seiten.
+> **✅ CMS-Haupttext-Editor verständlicher — Option 1 (25.06., `1d4e271`+`7391f11`).** Format-Knöpfe
+> jetzt **Symbol + Wort** (Fett/Kursiv/Überschrift/Zitat/Liste) statt nur `F K H ❝ •`; Story-Haupttext
+> hat eine **Live-Vorschau** (`mdToHtml`-Port wie die echte Seite) → formatierter Text statt rohem
+> Markdown. Speicherformat unverändert Markdown. Dateien `MarkdownToolbar.tsx`, `StoryBodyField.tsx`.
 >
-> ⏳ **Ebenfalls auf `main`, committet, noch nicht live (23.06.):** **Reise-Detail-Kopf** — Desktop:
-> Crossfade-Milchglas-Band (`.tl-topbar`, `--tl-p`). **Mobil (`≤767`) neu:** EIN Titel-Element (die `<h1>`)
-> wandert/schrumpft kontinuierlich von groß/tief nach klein/oben in die deckende Zeile (`--tl-m`, rAF-Lerp,
-> fixierter Titel → `headH` konstant → Spy unberührt, `alaska2026`→Station 1 verifiziert); Zurück-Pille in
-> der Zeile, Nav-Zurück-Link auf Reise-Detail `≤767` aus (kein Doppel); Kicker mobil aus. **Story-Zurück-Pille**
-> Desktop in reservierter Zone (content-gebunden). Safari-Frost (Desktop-Band) noch am Gerät zu prüfen.
+> **✅ 35-Zeichen-Grenze für Titel (`d27972d`).** `ui.validate` an Reise `title`/`title_en` + Story
+> `title_de`/`title_en`. **UI-only → KEIN Re-Index**, nur `tina-lock.json` neu + Deploy. ⚠️ EN-Felder
+> nutzen Komponente ohne `wrapFieldsWithMeta` → Fehlertext dort nicht sichtbar (DE zeigt ihn).
 >
-> **Story-Mobil-Kopf (gelöst, Option A):** gleiches „ein wandernder Titel"-Muster fürs 60vh-Hero; lange
-> Prosa-Titel werden per JS einzeilig auf die Breite skaliert + in der Zeile mit `…` gekürzt → bricht nie.
-> Zurück-Pille in der Zeile, Nav-Zurück-Link auf Story `≤767` aus. **Beide Detail-Köpfe mobil = wandernder Titel.**
+> ⏳ **Offen (nächste Schritte):**
+> - **Option 2 — echtes WYSIWYG** für den Haupttext (kein rohes Markdown mehr im Feld). Davids Wunsch
+>   („2 und 1"), aber **eigenes Branch+Preview-Projekt**: Schema/Speicherformat-Wechsel → Tina-Cloud-
+>   Re-Index, Bild-/Album-/WebP-Port muss mit. Erst Capability-Liste vorlegen (Lock-Verfahren), dann bauen.
+> - **Breakpoint-Bereinigung 768–860** (Band-Pille/Nav-Zurück konsistent, kein Doppel-Zurück).
 >
-> **Feinschliff Mobil-Titel (24.06., `45ee79e`→`fcd6504`):** unter der Titelzeile weicher full-bleed Fade
-> (`.tl-topbar::after`, deckend→transparent) statt harter Kante — über der cremefarbenen Karten-Spalte
-> unsichtbar, Karten-Oberkante scharf.
+> **Offen für David (Reihenfolge):** 1) **`main` pushen** (GitHub Desktop). 2) **Tina-Cloud-Re-Index auf
+> `main`** für die **strukturellen** Altfelder (`sprach_banner`, `titel_vorschau`) — **nicht** für die
+> 35-Zeichen/Editor-Änderungen (UI-only). 3) Deploy abwarten, dann auf `aandd-photography.pages.dev`
+> testen: Desktop Reise + Story (Wander-Titel, Fade, ein Zurück-Button, Andock-Timing/-Höhe), CMS
+> (beschriftete Knöpfe, Story-Live-Vorschau, 35-Zeichen-Limit am DE-Titel), Mobil-Köpfe am Gerät.
 >
-> **Titel-Bewegung jetzt scroll-gekoppelt (Apple-smooth, `fcd6504`):** der wandernde Titel (Reise + Story)
-> hängt nicht mehr an einem JS-geglätteten Wert (driftete gegen den 1:1 scrollenden Inhalt = „unbeholfen"),
-> sondern an **CSS Scroll-Driven Animations** (`animation-timeline: scroll(root)`): treiben `--tl-m`/`--st-m`
-> (Zeile, Pille, `max-width`) **und** den Titel-Transform direkt als `@keyframes` (kompositierbar). Titel
-> klebt 1:1 am Inhalt, kein Drift, frame-raten-egal (60/120 Hz/ProMotion). Easing `cubic-bezier(.42,0,.58,1)`.
-> Story-Keyframes/`animation-range` lesen die per JS gemessenen Vars (`--st-bigY`/`--st-scale-big`/`--st-range`).
-> **Fallback:** ohne `scroll()`-Support (ältere iOS) greift `@supports` nicht → alte JS-Lerp-Lösung bleibt
-> (keine Regression), JS gated den Mobil-Pfad dann aus. Desktop-Crossfade `--tl-p` unangetastet.
-> Angedockter Titel **vertikal mittig** zur Zurück-Pille (Oberkante +13, Mitte auf 46px-Band-Mitte; `630ebc0`).
->
-> **Overscroll-Mitfedern — Endlösung via `position: sticky` (Reise erledigt, `024165f`):** der Reise-Titel
-> ist **nicht mehr `fixed`**, sondern `.tl-herohead { position: sticky; top: var+13 }` → liegt im Fluss,
-> **federt beim iOS-Overscroll NATIV 1:1 mit dem Inhalt** (Compositor, kein JS), dockt nativ an (Containing-
-> Block `.tl-stage` → bleibt unten angedockt). h1 macht nur noch Schrumpfen + Horizontal-Versatz (`--tl-m`,
-> Scroll-Driven). Das `--tl-ov`-Nachjage-JS (und sein Pendeln) ist **weg**. Spy unberührt (headRef = nur
-> `.tl-topbar`). Stellschrauben: `.tl-herohead margin-top` (40, = Wanderstrecke) / `margin-bottom` (18,
-> POSITIV — Abstand zur Beschreibung), `animation-range`/`M_RANGE` (70). h1 hat `width: max-content`
-> (sonst ragt der block-breite, skalierte Titel rechts raus → Horizontal-Scroll; `de0dcf5`).
-> **Story ebenfalls umgebaut (`4b08bbf`):** `.reader-hero-inner` ist jetzt Geschwister des Hero (Kind von
-> `#page-story`, hoch) statt darin → mobil `position: sticky` (nativ mitfedern + andocken-und-bleiben),
-> h1 nur noch Schrumpfen + translateX (`--st-m`); `--st-ov`/`--st-bigY` + Nachjage-JS weg. **Desktop:**
-> `.reader-hero-inner` per `position:absolute` (`top:60vh; translateY(-100%)`) an den Hero-Unterrand
-> zurückgesetzt → Optik unverändert (am Browser gegenprüfen — lokal kein Tina-Netz). `pointer-events:none`
-> am Container (h1 `auto`) hält „← Stories" klickbar. Stellschrauben: `margin-top` (-60), `--st-range`/`h-100`.
-> Großtitel-Skalierung stabil: h1 `width: max-content`, `--st-scale-big` aus **`scrollWidth`** gemessen
-> (nicht offsetWidth) → invariant gegen `--st-m`/iOS-URL-Bar-Resize → kein Überschwingen beim Hochscrollen (`8dc96b6`).
-> Hero-Lücke behoben: `.story-topline { margin-bottom: -46px }` → die sticky Leiste überlagert den Hero
-> (netto 0 Fluss-Platz) statt ihn um die Banner-Höhe nach unten zu schieben (`126a1bf`).
->
-> **Desktop-Kopf Variante B — IN ARBEIT (gestaffelt):** Reise-Desktop (>767) auf den Wander-Titel umgestellt
-> (`ec502b1`+`034fec5`): vollbreite **deckende** `.tl-topbar` (grid-column 1/-1, `--tl-p`-Ramp, weiche
-> `::after`-Unterkante über der Karte) + `.tl-herohead` `position:sticky` mit Schrumpfen via Scroll-Driven
-> (`--tl-p`/`tl-hero-fly`, range 120) bzw. JS-Fallback; adaptive Größe `--tl-bigscale` (scrollWidth, max 2.0,
-> einzeilig); `.trip-back` fadet ab 40%. Alles in `@media (min-width:768px)` → **Mobil ≤767 unverändert**.
-> Spy: `.tl-topbar`=46px konstant. **Offen/als Nächstes (nach Davids Reise-Geräte-Test):** Story-Desktop
-> (gleiche Mechanik, `.reader-hero-inner` `absolute`→`sticky`, Balken-Pille, Foto-Pille scrollt weg) +
-> Breakpoint-Bereinigung 767↔860 + **35-Zeichen-`ui.validate`** (Reise `title`/`title_en`, Story
-> `title_de`/`title_en`; UI-only → kein Re-Index, nur `tina-lock.json` neu + Deploy).
-> Horizontaler Überlauf behoben: `.tl-topbar::after` auf `left/right: 0` statt `-18px` (`e69323a`).
-> ⚠️ **Mobil-Optik (Reise + Story) nur am echten Gerät final prüfbar** — die lokale Preview liefert `innerWidth`
-> ≠ Render-Breite, kann Handy also nicht korrekt zeigen; Bewegung/kein-Überlauf wurde per DOM-Messung bestätigt.
->
-> **Branch-Preview verworfen:** Cloudflare-Branch-Preview baute nicht (Preview-Environment ohne `TINA_TOKEN`,
-> `TINA_BRANCH` defaultet auf `astro-umbau`). Entscheidung: **kein Branch-Ritual** — wie den ganzen Bauzeitraum
-> **direkt auf `main`**, der main-Build hat Token/Branch korrekt. Branch wird gelöscht.
->
-> **Offen für David (Reihenfolge):** 1) **`main` pushen** (GitHub Desktop). 2) **Tina-Cloud-Re-Index auf `main`**
-> (neue Felder `sprach_banner` + `titel_vorschau` (Reise-Titel-Vorschau) + ausstehend aus `7d2c4d9`; sonst
-> bricht der Build ab). 3) Deploy abwarten, dann
-> auf `aandd-photography.pages.dev` am **Handy/iPad** testen (Nav mobil, safe-area an Notch, Banner oben+unten,
-> Sprachwechsel-Ziel, `alaska2026`→Station 1). 4) Branch `nav-safearea-langbanner` löschen (lokal + remote).
+> ⚠️ **Lokale Verifikation:** `npm run dev` (tinacms dev) läuft offline → Desktop-Preview bei beliebiger
+> Breite möglich (Memory `local-tinacms-dev-preview`). Aber: Scroll-Driven-Animation re-engaged in der
+> Headless-Preview nicht nach Reload (Memory `headless-preview-sda-caveat`) und Mobil-`innerWidth` ≠
+> Render-Breite → finale Optik immer am echten Gerät/Deploy gegenchecken.
 
 ---
 
