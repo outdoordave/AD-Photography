@@ -131,6 +131,16 @@ export default function StoryReaderContent(props: Props) {
         root.style.setProperty('--st-fitscale', String(Math.round(fit * 1000) / 1000));
         const fpx = parseFloat(getComputedStyle(titleEl).fontSize) || 60;  // display-Größe
         root.style.setProperty('--st-dock', String(Math.round((22 / fpx) * 1000) / 1000)); // angedockt ~22px
+        // Angedockt EXAKT wie im Reise-Banner: vertikal auf die Pillen-Mitte (Leiste min-height 56 ->
+        // Mitte = nav+28; transform-origin left center -> Box-Mitte = top + fpx*1.05/2), horizontal direkt
+        // NEBEN die Pille (gemessen, breiten-robust).
+        const navH = nav && nav.offsetHeight ? nav.offsetHeight : 88;
+        root.style.setProperty('--st-dock-top', Math.round(navH + 28 - fpx * 0.525) + 'px');
+        const pill = document.querySelector('.story-back-line') as HTMLElement | null;
+        if (pill) {
+          const dx = Math.round(pill.getBoundingClientRect().right + 14 - titleEl.getBoundingClientRect().left);
+          root.style.setProperty('--st-dock-x', dx + 'px');
+        }
       }
       return h;
     };

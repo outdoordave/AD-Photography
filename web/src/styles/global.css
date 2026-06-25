@@ -266,7 +266,7 @@ section { padding: 84px 0; }
    Breite, dann via --st-m auf die Andock-Größe (--st-dock) runterskaliert. Story hat KEINEN Scroll-Spy. ── */
 @keyframes st-title-fly-d {
   from { transform: translateX(0px) scale(var(--st-fitscale, 0.7)); }
-  to   { transform: translateX(96px) scale(var(--st-dock, 0.34)); }
+  to   { transform: translateX(var(--st-dock-x, 96px)) scale(var(--st-dock, 0.34)); }
 }
 @media (min-width: 768px) {
   /* Alte „permanente" Foto-Pille raus (war redundant: scrollte weg, dann kam die Balken-Pille). Wie Reise:
@@ -297,7 +297,7 @@ section { padding: 84px 0; }
     transform: translateY(calc((1 - clamp(0, calc((var(--st-m, 0) - 0.4) / 0.6), 1)) * 8px));
   }
   #page-story .reader-hero-inner {                  /* Titel STICKY: wandert hoch + dockt an (statt absolut) */
-    position: sticky; top: calc(var(--st-nav, 88px) + 12px); z-index: 1096;
+    position: sticky; top: var(--st-dock-top, calc(var(--st-nav, 88px) + 12px)); z-index: 1096;
     transform: none; left: auto; right: auto;
     max-width: 760px; margin: calc(-1 * var(--st-lift, 88px)) auto 0; padding: 0 24px;
     pointer-events: none;                           /* Container blockt die Pille nicht; h1 unten wieder auto */
@@ -309,7 +309,7 @@ section { padding: 84px 0; }
     font-size: var(--fs-display); line-height: 1.05;
     transform-origin: left center; will-change: transform;
     transform:
-      translateX(calc(var(--st-m, 0) * 96px))
+      translateX(calc(var(--st-m, 0) * var(--st-dock-x, 96px)))
       scale(calc(var(--st-fitscale, 0.7) + var(--st-m, 0) * (var(--st-dock, 0.34) - var(--st-fitscale, 0.7))));
   }
   .is-editor #page-story .reader-hero-inner { pointer-events: auto; }
