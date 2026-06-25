@@ -513,7 +513,7 @@ export default function TripTimeline(props: Props) {
   //   (2) der Pro-16.7ms-Faktor wächst stufenlos mit dem Rückstand: langsam -> sanft (smooth),
   //       schnell -> holt nahezu vollständig auf (kein Hinterherhinken). smoothstep glättet den
   //       Übergang zwischen beiden Regimen, damit es nie umschaltet/springt.
-  const CF_START = 0, CF_LEN = 64, CF_BASE = 0.12;  // Desktop-Wanderstrecke (= animation-range 0 64px)
+  const CF_START = 0, CF_LEN = 70, CF_BASE = 0.12;  // Desktop-Wanderstrecke (= animation-range 0 70px)
   const M_RANGE = 70, M_BASE = 0.14, M_LAG_FULL = 0.4;  // ~ native Sticky-Wanderstrecke (.tl-herohead margin-top)
   // Unterstützt der Browser Scroll-Driven Animations, koppeln die CSS-Keyframes Titel/Band direkt an den
   // Scroll (kein JS-Lerp/Drift) — auf Desktop (--tl-p) UND Mobil (--tl-m). Dann treibt JS die Vars NICHT
@@ -669,26 +669,26 @@ export default function TripTimeline(props: Props) {
   // (Der frühere --tl-ov-Overscroll-Effekt entfällt: der Titel liegt jetzt via .tl-herohead { position:
   //  sticky } im Fluss und federt NATIV mit dem Inhalt — kein JS-Nachjagen, kein Pendeln mehr.)
 
-  // Desktop (>767): adaptive Großtitel-Skalierung (--tl-bigscale). Der Titel startet so groß wie möglich,
-  // aber EINZEILIG passend in die linke Spalte: natürliche Breite via scrollWidth (stabil, nicht offsetWidth)
-  // gegen die Spaltenbreite, gedeckelt bei 2.0. Lange Titel starten so automatisch kleiner. (Mobil nutzt
-  // --st-scale-big; --tl-bigscale ist dort ungenutzt.)
+  // Desktop (>767): adaptive Großtitel-Skalierung (--tl-fitscale, ≤1). Die h1 wird bei GROSSER Größe
+  // gerendert (font-size ×2) und passend RUNTERskaliert: natürliche Breite via scrollWidth (stabil) gegen
+  // die Spaltenbreite -> großer Zustand füllt die Spalte einzeilig (lange Titel -> kleinerer Faktor).
+  // Angedockt ist fix 0.5. (Mobil nutzt --st-scale-big; --tl-fitscale ist dort ungenutzt.)
   React.useEffect(() => {
     if (typeof window === 'undefined') return;
     const root = document.documentElement;
-    const measureBig = () => {
+    const measureFit = () => {
       const head = heroheadRef.current; if (!head) return;
       const h1 = head.querySelector('h1') as HTMLElement | null;
       const w = h1 && h1.scrollWidth ? h1.scrollWidth : 1;
       const avail = head.clientWidth || w;
-      const big = Math.max(1, Math.min(2.0, avail / w));
-      root.style.setProperty('--tl-bigscale', String(Math.round(big * 1000) / 1000));
+      const fit = Math.min(1, avail / w);   // ≤1: großen (×2) Titel auf Spaltenbreite herunterskalieren
+      root.style.setProperty('--tl-fitscale', String(Math.round(fit * 1000) / 1000));
     };
-    measureBig();
-    const t = window.setTimeout(measureBig, 350);
-    const fonts = (document as any).fonts; if (fonts && fonts.ready) fonts.ready.then(measureBig).catch(() => {});
-    window.addEventListener('resize', measureBig);
-    return () => { window.clearTimeout(t); window.removeEventListener('resize', measureBig); };
+    measureFit();
+    const t = window.setTimeout(measureFit, 350);
+    const fonts = (document as any).fonts; if (fonts && fonts.ready) fonts.ready.then(measureFit).catch(() => {});
+    window.addEventListener('resize', measureFit);
+    return () => { window.clearTimeout(t); window.removeEventListener('resize', measureFit); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tripIdx, lang]);
 
@@ -734,7 +734,7 @@ export default function TripTimeline(props: Props) {
         <MapStyleWatcher query={props.settingsQuery} variables={props.settingsVariables || {}} data={props.settingsData} onStyle={setLiveMapStyle} />
       ) : null}
 
-      <div className="tl-stage" ref={stageRef}>
+      <div className={'tl-stage' + (inEditor ? ' is-editor' : '')} ref={stageRef}>
         {/* Sticky Kompaktband (headRef -> Spy misst dessen Höhe). Bei Scroll-0 transparent: nur die
             Zurück-Pille (Desktop) sichtbar, Titel ausgeblendet. Beim Scrollen frostet das Band ein
             (--tl-p) und der Titel blendet ein -> Crossfade mit der großen Überschrift darunter.

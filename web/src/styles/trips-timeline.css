@@ -252,13 +252,13 @@
 @keyframes tl-m-drive { from { --tl-m: 0; } to { --tl-m: 1; } }
 /* Desktop-Fortschritt --tl-p (Wander-Titel + Band-Deckkraft + Pille). @property -> interpolierbar für die
    Scroll-Driven Animation; Fallback = JS-Lerp (armCrossfade). tl-hero-fly: nur Schrumpfen + Horizontal-
-   Versatz (vertikale Wanderung = natives Sticky). --tl-bigscale wird per JS adaptiv gemessen (scrollWidth
-   vs. Spaltenbreite), Default 1.8. */
+   Versatz (vertikale Wanderung = natives Sticky). --tl-fitscale (≤1) wird per JS gemessen (scrollWidth
+   vs. Spaltenbreite) -> großer Zustand passt einzeilig in die Spalte; angedockt fix 0.5. */
 @property --tl-p { syntax: "<number>"; inherits: true; initial-value: 0; }
 @keyframes tl-p-drive { from { --tl-p: 0; } to { --tl-p: 1; } }
 @keyframes tl-hero-fly {
-  from { transform: translateX(0px) scale(var(--tl-bigscale, 1.8)); }
-  to   { transform: translateX(110px) scale(1); }
+  from { transform: translateX(0px) scale(var(--tl-fitscale, 1)); }
+  to   { transform: translateX(110px) scale(0.5); }
 }
 /* Nur noch Schrumpfen + Horizontal-Versatz (vertikale Wanderung macht das native Sticky). Die Range muss
    etwa der nativen Wanderstrecke (.tl-herohead margin-top) entsprechen, damit der Titel fertig geschrumpft
@@ -316,24 +316,34 @@
    - Schrumpfen + Horizontal-Versatz = Scroll-Driven (tl-p-drive/tl-hero-fly) bzw. JS-Fallback (--tl-p).
    - .tl-topbar (headRef) bleibt 46px hoch -> Scroll-Spy unberührt; der Titel liegt in .tl-herohead.
    STELLSCHRAUBEN: margin-top (Wanderstrecke ~ +36 Grund), top-Offset (vertikale Mitte im Band),
-   animation-range/CF-Range (Schrumpf-Strecke), translateX (Platz für die Pille), --tl-bigscale (max 2.0). */
+   animation-range/CF-Range (Schrumpf-Strecke), translateX (Platz für die Pille), --tl-fitscale (≤1). */
 @media (min-width: 768px) {
   .tl-topbar-title { display: none; }            /* Crossfade-Span entfällt — die echte h1 wandert */
   .tl-herohead {
-    grid-row: 2; position: sticky; top: calc(var(--ww-sticky-top) + 12px); z-index: 7;
-    margin-top: 30px;                            /* großer Titel startet nur leicht tiefer -> nicht „weit unten" (STELLSCHRAUBE) */
+    grid-row: 2; position: sticky; top: calc(var(--ww-sticky-top) + 1px); z-index: 7;
+    margin: 25px 0 20px;                         /* top: Start leicht tiefer (STELLSCHRAUBE); bottom: Abstand zur Beschreibung (kein „angeklatscht") */
     padding: 0;
   }
   .tl-herohead .tl-meta { display: none; }       /* Kicker im Wander-Kopf aus (wie mobil) */
+  /* SCHARF: die h1 wird bei GROSSER Größe gerendert (font-size ×2) und RUNTERskaliert (Downscale = scharf,
+     statt unscharfem Hochskalieren). --tl-fitscale (≤1, per JS) skaliert den großen Zustand so, dass er
+     EINZEILIG in die Spalte passt; angedockt = 0.5 (-> --fs-title-sm = 20px). Feste font-size -> feste
+     Box-Höhe -> konstante vertikale Mitte; das Visual bleibt IN der Box (kein Bluten in den Text). */
   .tl-herohead h1 {
-    width: max-content; max-width: 100%;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    font-size: var(--fs-title-sm);               /* angedockte Größe (20px); skaliert hoch via --tl-bigscale */
-    transform-origin: left center;               /* KEIN will-change: transform -> angedockt (Scale 1) wird scharf gerastert, nicht als hochskalierte GPU-Textur */
+    width: max-content;
+    white-space: nowrap;
+    font-size: calc(var(--fs-title-sm) * 2);
+    line-height: 1.1;
+    transform-origin: left center;
+    /* Die h1 liegt (z7) über dem Band; ihre breite Hit-Box würde beim Wandern die Zurück-Pille (z6)
+       überdecken -> Pille nur teils klickbar. pointer-events:none behebt das (Titel ist kein Link).
+       Im Tina-Editor (.is-editor) wieder auto -> Klick-zum-Bearbeiten am Titel bleibt. */
+    pointer-events: none;
     transform:
       translateX(calc(var(--tl-p, 0) * 110px))
-      scale(calc(1 + (1 - var(--tl-p, 0)) * (var(--tl-bigscale, 1.8) - 1)));
+      scale(calc(var(--tl-fitscale, 1) + var(--tl-p, 0) * (0.5 - var(--tl-fitscale, 1))));
   }
+  .tl-stage.is-editor .tl-herohead h1 { pointer-events: auto; }
   /* Zurück-Pille fadet in der zweiten Hälfte ein (wie mobil), links im Band. box-shadow: none -> der
      Abwärts-Schatten der Ghost-Pille wird nicht vom deckenden ::after-Fade abgeschnitten. */
   .tl-topbar .trip-back {
@@ -345,11 +355,11 @@
   @supports (animation-timeline: scroll()) {
     .tl-stage {
       animation: tl-p-drive cubic-bezier(.42, 0, .58, 1) both;
-      animation-timeline: scroll(root); animation-range: 0 64px;
+      animation-timeline: scroll(root); animation-range: 0 70px;
     }
     .tl-herohead h1 {
       animation: tl-hero-fly cubic-bezier(.42, 0, .58, 1) both;
-      animation-timeline: scroll(root); animation-range: 0 64px;
+      animation-timeline: scroll(root); animation-range: 0 70px;
     }
   }
 }
