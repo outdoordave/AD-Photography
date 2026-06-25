@@ -7,7 +7,7 @@
   --ww-mininav-h: 46px;        /* mobile schlanke Nav-Zeile */
   --ww-map-h-mobile: 170px;    /* mobile Mini-Karten-Höhe */
   --ww-map-h: min(62vh, 540px); /* Desktop-Karten-Höhe (auch für sticky Editor-Leiste) */
-  --ww-map-gap: 28px;          /* Abstand unter der Leiste: steuert Fade-Höhe (map-gap+8) UND Karten-Position koordiniert */
+  --ww-map-gap: 12px;          /* kleiner, sauberer Spalt: Karte tuckt knapp unter die Leiste (Oberkante NICHT gefadet) — Stellschraube */
 }
 
 /* Zurück zur Übersicht */
@@ -26,13 +26,13 @@
      mit --tl-p. Kein Frost/Border mehr -> weiche Unterkante via ::after (kein harter Strich). */
   background: rgba(244,237,225, var(--tl-p, 0));
 }
-/* Weiche Unterkante (deckend -> transparent), left/right:0 = Leistenbreite (kein Horizontal-Scroll).
-   Liegt über Karte/Inhalt; pointer-events:none -> Karte bleibt bedienbar. (Mobil ≤767 hat eigene ::after.) */
+/* Weiche Unterkante als Timeline-Fade — Details unten. pointer-events:none. (Mobil ≤767 hat eigene ::after.) */
 .tl-topbar::after {
-  /* Höhe = Karten-Spalt (--ww-map-gap) + 8px weicher Schwanz, der ganz sanft über die oberste Foto-/
-     Karten-Kante ausläuft -> fluffiger Übergang statt harter Kante. Nur der dünne, fast transparente
-     Schwanz berührt die Karte (Kern bleibt frei). */
-  content: ''; position: absolute; left: 0; right: 0; top: 100%; height: calc(var(--ww-map-gap) + 8px); pointer-events: none;
+  /* NUR linke Spalte (Timeline): right = Karten-Spalte (420px) + column-gap (36px) -> die Karte rechts
+     bleibt komplett unberührt (kein Fade auf der Karte). Höher (40px) -> die Timeline verschwindet WEICH
+     an einer TIEFEREN Linie. Die Karte tuckt separat knapp unter die Leiste (--ww-map-gap, ohne Fade).
+     STELLSCHRAUBE: height = Timeline-Cut-Tiefe. (Mobil ≤767 hat eigenes ::after.) */
+  content: ''; position: absolute; left: 0; right: calc(420px + 36px); top: 100%; height: 40px; pointer-events: none;
   background: linear-gradient(to bottom, rgba(244,237,225, var(--tl-p, 0)), rgba(244,237,225, 0));
 }
 .tl-topbar-title {
