@@ -959,3 +959,29 @@ Knopf wirkt auf Auswahl/Zeile, 10. Tastatur-Kürzel (Strg/Cmd+B/I) funktionieren
 ☑ **bestätigt (2026-06-25):** David hat die 24-Punkte-Liste als Soll-Vorgabe bestätigt („sieht gut aus,
 kanns losgehen"). Verständigung: Liste ist Leitfaden, spätere Ergänzungen werden gestaffelt nachgezogen.
 Nächster Schritt: lokaler Spike (S1–S6) vor dem echten Bau.
+
+### Spike-Ergebnisse (2026-06-25, lokal/offline, alles zurückgerollt)
+Methode: `body_de` (Story, MD) + `intro.subtext_de` (Startseite, JSON) lokal auf `rich-text` +
+`parser:{type:'markdown',skipEscaping:'html'}` gestellt, `npm run dev` offline, GraphQL-Query +
+Schreib-Mutation, dann `git diff` der Dateien beobachtet. Anschließend per `git checkout`/`git clean` komplett zurück.
+- **S3 ✅ — Query liefert AST:** `body_de` kommt als `JSON`-Scalar = Tina-Rich-Text-AST
+  (`root→h3/p→text` mit `bold/italic`). Bestehendes Markdown wird **fehlerfrei eingelesen**
+  (`###`→h3, `*`→italic, `**`→bold). → Render-Pfad MUSS auf `<TinaMarkdown content components>` umgestellt werden
+  (heute `mdToHtml(string)` crasht: „md.split is not a function").
+- **S2 ✅ — MD-Speicherung bleibt Markdown:** Schreiben legt `body_de` wieder als YAML-Markdown-Block ab
+  (`###`/`*`/`**` erhalten). **Inhalt 1:1** (normalisierter Text identisch, 2724 Zeichen). **Aber:** Tina
+  reformatiert den Block (`|` literal → `>` folded, Zeilen-Umbruch, doppelte Leerzeilen) → **kosmetischer,
+  aber großer Diff** beim ersten Speichern jeder Story.
+- **S1 ✅ — JSON-Speicherung bleibt String:** `intro.subtext_de` wird als **Markdown-String** in die JSON
+  geschrieben (kein AST-Objekt), nur ein `\n` angehängt → **nicht-destruktiv**.
+- **S6 ✅ — keine destruktive Massen-Migration nötig:** Tina liest die vorhandenen Markdown-Strings
+  automatisch als AST; Dateien ändern sich erst beim echten Speichern (dann o. g. Kosmetik). Eine
+  vorgezogene Normalisierung ist optional (um spätere Überraschungs-Diffs zu vermeiden), nicht Pflicht.
+- **⚠️ Lehre — ganze Dokumente schreiben:** Eine `update…`-Mutation mit nur Teil-Params hat im Spike die
+  übrigen Top-Level-Keys gelöscht. Jede (optionale) Migration/jedes Skript schreibt **vollständige Dokumente**.
+- **Noch in Bau-Stufe 1 zu verifizieren:** **S4** rohes HTML (Datenschutz/Impressum) Round-Trip mit
+  `skipEscaping:'html'`; **S5** `[[album]]` als `match`-Shortcode-Template + Inline-Bild-Lightbox über
+  `TinaMarkdown`-`components`; zwei Sprach-Bodies (`body_de`+`body_en`, beide ohne `isBody`) in einer `.md`.
+
+### C — Neubau
+☐ offen — Plan steht (s. „Empfohlener gestaffelter Plan"); Bau beginnt mit Stufe 1 (Render-Pfad + S4/S5-Verifikation).
