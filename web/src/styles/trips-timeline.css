@@ -29,7 +29,7 @@
 /* Weiche Unterkante (deckend -> transparent), left/right:0 = Leistenbreite (kein Horizontal-Scroll).
    Liegt über Karte/Inhalt; pointer-events:none -> Karte bleibt bedienbar. (Mobil ≤767 hat eigene ::after.) */
 .tl-topbar::after {
-  content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 22px; pointer-events: none;
+  content: ''; position: absolute; left: 0; right: 0; top: 100%; height: var(--ww-map-gap); pointer-events: none;
   background: linear-gradient(to bottom, rgba(244,237,225, var(--tl-p, 0)), rgba(244,237,225, 0));
 }
 .tl-topbar-title {
@@ -70,7 +70,9 @@
 
 /* Karte: rechte Spalte, sticky, gedeckelte Höhe */
 .tl-map-col { grid-column: 2; grid-row: 1 / -1; min-width: 0; }
-.tl-map-col .tl-map { position: sticky; top: calc(var(--ww-sticky-top) + var(--ww-map-gap)); height: var(--ww-map-h); width: 100%; z-index: 5; }
+/* Karte klebt jetzt UNTER der vollbreiten Leiste (+ mininav-h), nicht mehr unter ihr durch -> die Leiste
+   liegt über dem Creme-Spalt darüber, nicht über der Karte (kein Fade auf der Live-Karte). */
+.tl-map-col .tl-map { position: sticky; top: calc(var(--ww-sticky-top) + var(--ww-mininav-h) + var(--ww-map-gap)); height: var(--ww-map-h); width: 100%; z-index: 5; }
 .tl-map .maplibregl-map { height: 100%; }
 
 /* ── Timeline (normaler Fluss) ── */
@@ -319,21 +321,23 @@
   .tl-topbar-title { display: none; }            /* Crossfade-Span entfällt — die echte h1 wandert */
   .tl-herohead {
     grid-row: 2; position: sticky; top: calc(var(--ww-sticky-top) + 12px); z-index: 7;
-    margin-top: 84px;                            /* großer Titel startet tiefer -> Wanderstrecke ~120px */
-    padding: 0; will-change: transform;
+    margin-top: 30px;                            /* großer Titel startet nur leicht tiefer -> nicht „weit unten" (STELLSCHRAUBE) */
+    padding: 0;
   }
   .tl-herohead .tl-meta { display: none; }       /* Kicker im Wander-Kopf aus (wie mobil) */
   .tl-herohead h1 {
     width: max-content; max-width: 100%;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     font-size: var(--fs-title-sm);               /* angedockte Größe (20px); skaliert hoch via --tl-bigscale */
-    transform-origin: left center; will-change: transform;
+    transform-origin: left center;               /* KEIN will-change: transform -> angedockt (Scale 1) wird scharf gerastert, nicht als hochskalierte GPU-Textur */
     transform:
       translateX(calc(var(--tl-p, 0) * 110px))
       scale(calc(1 + (1 - var(--tl-p, 0)) * (var(--tl-bigscale, 1.8) - 1)));
   }
-  /* Zurück-Pille fadet in der zweiten Hälfte ein (wie mobil), links im Band. */
+  /* Zurück-Pille fadet in der zweiten Hälfte ein (wie mobil), links im Band. box-shadow: none -> der
+     Abwärts-Schatten der Ghost-Pille wird nicht vom deckenden ::after-Fade abgeschnitten. */
   .tl-topbar .trip-back {
+    box-shadow: none;
     opacity: clamp(0, calc((var(--tl-p, 0) - 0.4) / 0.6), 1);
     transform: translateY(calc((1 - clamp(0, calc((var(--tl-p, 0) - 0.4) / 0.6), 1)) * 8px));
     transition: none;
@@ -341,11 +345,11 @@
   @supports (animation-timeline: scroll()) {
     .tl-stage {
       animation: tl-p-drive cubic-bezier(.42, 0, .58, 1) both;
-      animation-timeline: scroll(root); animation-range: 0 120px;
+      animation-timeline: scroll(root); animation-range: 0 64px;
     }
     .tl-herohead h1 {
       animation: tl-hero-fly cubic-bezier(.42, 0, .58, 1) both;
-      animation-timeline: scroll(root); animation-range: 0 120px;
+      animation-timeline: scroll(root); animation-range: 0 64px;
     }
   }
 }

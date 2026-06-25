@@ -513,7 +513,7 @@ export default function TripTimeline(props: Props) {
   //   (2) der Pro-16.7ms-Faktor wächst stufenlos mit dem Rückstand: langsam -> sanft (smooth),
   //       schnell -> holt nahezu vollständig auf (kein Hinterherhinken). smoothstep glättet den
   //       Übergang zwischen beiden Regimen, damit es nie umschaltet/springt.
-  const CF_START = 0, CF_LEN = 120, CF_BASE = 0.12;  // Desktop-Wanderstrecke (= animation-range 0 120px)
+  const CF_START = 0, CF_LEN = 64, CF_BASE = 0.12;  // Desktop-Wanderstrecke (= animation-range 0 64px)
   const M_RANGE = 70, M_BASE = 0.14, M_LAG_FULL = 0.4;  // ~ native Sticky-Wanderstrecke (.tl-herohead margin-top)
   // Unterstützt der Browser Scroll-Driven Animations, koppeln die CSS-Keyframes Titel/Band direkt an den
   // Scroll (kein JS-Lerp/Drift) — auf Desktop (--tl-p) UND Mobil (--tl-m). Dann treibt JS die Vars NICHT
