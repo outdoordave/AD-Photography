@@ -45,6 +45,10 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   `margin-bottom: 20`; `margin-top: 25`, Range 70. (3) Pille nur teils klickbar → `pointer-events: none`
   an der h1 (z7 überdeckte die Pille z6), im Editor (`.is-editor`) wieder `auto`. Bekannte Kante: sehr
   schmaler Desktop + sehr langer Titel.
+- **Test-Runde 3** (`2ae21c5`): Pillen-Schatten zurück — Ursache war nicht die Fade-Höhe, sondern das
+  `::after`-Pseudo, das über dem Pillen-Inhalt gemalt wird. Statt `box-shadow: none` jetzt `position:
+  relative; z-index: 1` an `.tl-topbar .trip-back` → Pille (samt geerbtem Schatten) liegt über dem Fade,
+  Schatten zeigt sich voll, fällt nur in der linken Spalte (kein Karten-Kontakt). Fade bleibt kurz.
 
 ## 2026-06-25 — Mobil Story: Lücke über dem Titelbild behoben
 - **Bug** (`126a1bf`): bei frisch geöffneter Story saß das Hero-Bild um die Banner-Höhe (~46px) nach unten
