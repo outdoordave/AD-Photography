@@ -344,10 +344,12 @@
       scale(calc(var(--tl-fitscale, 1) + var(--tl-p, 0) * (0.5 - var(--tl-fitscale, 1))));
   }
   .tl-stage.is-editor .tl-herohead h1 { pointer-events: auto; }
-  /* Zurück-Pille fadet in der zweiten Hälfte ein (wie mobil), links im Band. box-shadow: none -> der
-     Abwärts-Schatten der Ghost-Pille wird nicht vom deckenden ::after-Fade abgeschnitten. */
+  /* Zurück-Pille fadet in der zweiten Hälfte ein (wie mobil), links im Band. position:relative + z-index:1
+     hebt die Pille (samt ihrem geerbten Abwärts-Schatten) ÜBER das ::after-Fade (z auto) -> der Schatten
+     wird nicht mehr überdeckt/abgeschnitten und zeigt sich voll auf dem Creme. Er fällt nur in der linken
+     Spalte (Pille ist links) -> berührt die Karte rechts nicht. */
   .tl-topbar .trip-back {
-    box-shadow: none;
+    position: relative; z-index: 1;
     opacity: clamp(0, calc((var(--tl-p, 0) - 0.4) / 0.6), 1);
     transform: translateY(calc((1 - clamp(0, calc((var(--tl-p, 0) - 0.4) / 0.6), 1)) * 8px));
     transition: none;
