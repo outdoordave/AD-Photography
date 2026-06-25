@@ -60,6 +60,8 @@
 > am Container (h1 `auto`) hält „← Stories" klickbar. Stellschrauben: `margin-top` (-60), `--st-range`/`h-100`.
 > Großtitel-Skalierung stabil: h1 `width: max-content`, `--st-scale-big` aus **`scrollWidth`** gemessen
 > (nicht offsetWidth) → invariant gegen `--st-m`/iOS-URL-Bar-Resize → kein Überschwingen beim Hochscrollen (`8dc96b6`).
+> Hero-Lücke behoben: `.story-topline { margin-bottom: -46px }` → die sticky Leiste überlagert den Hero
+> (netto 0 Fluss-Platz) statt ihn um die Banner-Höhe nach unten zu schieben (`126a1bf`).
 > Horizontaler Überlauf behoben: `.tl-topbar::after` auf `left/right: 0` statt `-18px` (`e69323a`).
 > ⚠️ **Mobil-Optik (Reise + Story) nur am echten Gerät final prüfbar** — die lokale Preview liefert `innerWidth`
 > ≠ Render-Breite, kann Handy also nicht korrekt zeigen; Bewegung/kein-Überlauf wurde per DOM-Messung bestätigt.

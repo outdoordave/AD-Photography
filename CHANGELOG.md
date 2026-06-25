@@ -17,6 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-25 — Mobil Story: Lücke über dem Titelbild behoben
+- **Bug** (`126a1bf`): bei frisch geöffneter Story saß das Hero-Bild um die Banner-Höhe (~46px) nach unten
+  versetzt. Ursache: die sticky `.story-topline` reservierte als erstes Kind ihren Fluss-Platz
+  (`min-height: 46px`) **oberhalb** des Heros und schob es nach unten.
+- **Fix:** `.story-topline { margin-bottom: -46px }` → die Leiste belegt netto 0 Fluss-Platz und
+  **überlagert** den Hero nur (oben transparent `--st-m=0` + Link `opacity:0` → Bild voll sichtbar); beim
+  Scrollen wird sie deckend wie gehabt. Nur Mobil, Desktop unberührt (Topline dort `display:none`).
+- Datei: `global.css`. **Nur Mobil, CSS, kein Re-Index.** Commit: `126a1bf`
+
 ## 2026-06-25 — Mobil Story: Titel-Überschwingen beim Hochscrollen gefixt
 - **Bug** (`8dc96b6`): beim Hochscrollen wurde der Titel kurz deutlich größer und ploppte zurück.
   Ursache: `--st-scale-big` wurde aus `offsetWidth` gemessen, und die h1-`max-width` hängt von `--st-m`
