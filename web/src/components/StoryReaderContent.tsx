@@ -110,7 +110,10 @@ export default function StoryReaderContent(props: Props) {
       // Großtitel-Skalierung: so groß wie möglich, aber einzeilig passend (Breite minus Rand). Die h1
       // liegt jetzt in .reader-hero-inner (Geschwister des Hero) -> von dort messen, nicht aus dem Hero.
       const titleEl = innerRef.current ? innerRef.current.querySelector('h1') as HTMLElement | null : null;
-      const w = titleEl && titleEl.offsetWidth ? titleEl.offsetWidth : 1;
+      // scrollWidth (NICHT offsetWidth): die volle, natürliche Textbreite — unabhängig von der
+      // --st-m-abhängigen max-width-Kappung. Sonst läge scale-big bei einem resize mitten im Scrollen
+      // (iOS-URL-Leiste) zu hoch -> Titel würde überschwingen ("erst größer, dann zurück").
+      const w = titleEl && titleEl.scrollWidth ? titleEl.scrollWidth : 1;
       const big = Math.max(1, Math.min(1.85, (window.innerWidth - 32) / w));
       root.style.setProperty('--st-scale-big', String(Math.round(big * 1000) / 1000));
       // Scroll-Strecke = native Sticky-Wanderung (bis der Titel andockt). STELLSCHRAUBE: ~ Hero-Höhe

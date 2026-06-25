@@ -217,6 +217,10 @@ section { padding: 84px 0; }
     margin: 0; pointer-events: auto;
     transform-origin: left center; will-change: transform;
     font-size: 18px; line-height: 1.05; color: var(--c-ink);
+    /* width:max-content -> Box umhüllt nur den Text (nicht block-/cap-breit), damit die gemessene
+       natürliche Breite (JS: scrollWidth) stabil bleibt und der skalierte Titel innerhalb der Breite
+       liegt. max-width kappt lange Titel (Ellipsis) + macht beim Andocken Platz für die Pille. */
+    width: max-content;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     max-width: calc(100vw - 32px - var(--st-m, 0) * 100px);
     text-shadow: 0 1px 10px rgba(244,237,225,0.55);   /* Lesbarkeit über dem Foto während der Wanderung */
