@@ -33,6 +33,11 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 - Dateien: `trips-timeline.css`, `TripTimeline.tsx`. **Nur Desktop, reines CSS/JS, kein Re-Index.**
   **Story + 35-Zeichen-Grenze folgen nach Davids Geräte-Test.**
 - Commits: `ec502b1`, `034fec5`
+- **Feinschliff aus Geräte-Test** (`51c572d`): (1) Titel war zu weit unten → `.tl-herohead margin-top`
+  84→30, Range 64; Pillen-Schatten wurde vom `::after` abgeschnitten → `.trip-back box-shadow: none`.
+  (2) Karte war ausgefadet → Karte klebt jetzt **unter** der Leiste (`top + --ww-mininav-h`), `::after`-Höhe
+  = `--ww-map-gap` endet an der Karten-Oberkante (Fade über Creme-Spalt, nicht über der Karte). (3) Titel
+  verschwommen → `will-change: transform` an der h1 entfernt (angedockt = Scale 1 wird scharf gerastert).
 
 ## 2026-06-25 — Mobil Story: Lücke über dem Titelbild behoben
 - **Bug** (`126a1bf`): bei frisch geöffneter Story saß das Hero-Bild um die Banner-Höhe (~46px) nach unten
