@@ -52,6 +52,10 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 - **Test-Runde 4** (`94f6937`): harte Kante unter der Leiste weicher → `::after`-Höhe
   `calc(--ww-map-gap + 8px)` (statt exakt an der Foto-Kante endend), der fast transparente Verlaufs-
   Schwanz läuft sanft über die oberste Foto-Kante aus (fluffiger), Kartenkern bleibt frei.
+- **Test-Runde 5** (`360a446`): Zurück-Pille war ganz unklickbar — `pointer-events: none` lag nur auf der
+  h1, aber der `.tl-herohead`-**Container** (z7) spannt über die ganze linke Spalte und fing als sticky Box
+  die Pillen-Klicks (z6) ab. Jetzt `pointer-events: none` am Container (h1 erbt es); im Editor
+  (`.is-editor .tl-herohead h1`) wieder `auto`.
 
 ## 2026-06-25 — Mobil Story: Lücke über dem Titelbild behoben
 - **Bug** (`126a1bf`): bei frisch geöffneter Story saß das Hero-Bild um die Banner-Höhe (~46px) nach unten
