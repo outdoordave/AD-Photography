@@ -49,6 +49,9 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   `::after`-Pseudo, das über dem Pillen-Inhalt gemalt wird. Statt `box-shadow: none` jetzt `position:
   relative; z-index: 1` an `.tl-topbar .trip-back` → Pille (samt geerbtem Schatten) liegt über dem Fade,
   Schatten zeigt sich voll, fällt nur in der linken Spalte (kein Karten-Kontakt). Fade bleibt kurz.
+- **Test-Runde 4** (`94f6937`): harte Kante unter der Leiste weicher → `::after`-Höhe
+  `calc(--ww-map-gap + 8px)` (statt exakt an der Foto-Kante endend), der fast transparente Verlaufs-
+  Schwanz läuft sanft über die oberste Foto-Kante aus (fluffiger), Kartenkern bleibt frei.
 
 ## 2026-06-25 — Mobil Story: Lücke über dem Titelbild behoben
 - **Bug** (`126a1bf`): bei frisch geöffneter Story saß das Hero-Bild um die Banner-Höhe (~46px) nach unten
