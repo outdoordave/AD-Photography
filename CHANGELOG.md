@@ -17,6 +17,23 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-25 — Reise DESKTOP: wandernder Titel, Variante B (Schritt 1+2, Mobil unberührt)
+- **Schritt 1 — vollbreite deckende Leiste** (`ec502b1`): `.tl-topbar` `grid-column: 1 → 1/-1` (auch über die
+  Karten-Oberkante), Milchglas/Frost → **deckend** (rampt mit `--tl-p`), Border → weiche `::after`-Unterkante
+  (`left/right:0`, `pointer-events:none`). `min-height: 46px` unverändert → headRef-Höhe konstant.
+- **Schritt 2 — EIN wandernder, schrumpfender Titel** (`034fec5`): Crossfade ersetzt durch die Mobil-Mechanik,
+  in `@media (min-width:768px)` (Mobil ≤767 unberührt): `.tl-herohead` `position: sticky` (top sticky-top+12,
+  margin-top 84 → Wanderstrecke ~120px, hält über den Grid-Container angedockt); h1 `width:max-content`+nowrap,
+  angedockt 20px, skaliert via **`--tl-bigscale`** (adaptiv, `scrollWidth` vs. Spaltenbreite, max 2.0 → lange
+  Titel starten kleiner, immer einzeilig), `translateX 110` macht Platz für die Pille. Schrumpfen via
+  Scroll-Driven (`tl-p-drive`/`tl-hero-fly`, `@property --tl-p`, range 0 120px) + JS-Fallback (CF 0/120).
+  `.trip-back` fadet ab ~40% ein, Crossfade-Span + Kicker im Wander-Kopf aus. `armCrossfade` gated bei
+  SDA komplett aus (CSS treibt Desktop `--tl-p` UND Mobil `--tl-m`).
+- **Spy:** `.tl-topbar` (headRef) unverändert (46px) → `headH` konstant → alaska2026 → Station 1.
+- Dateien: `trips-timeline.css`, `TripTimeline.tsx`. **Nur Desktop, reines CSS/JS, kein Re-Index.**
+  **Story + 35-Zeichen-Grenze folgen nach Davids Geräte-Test.**
+- Commits: `ec502b1`, `034fec5`
+
 ## 2026-06-25 — Mobil Story: Lücke über dem Titelbild behoben
 - **Bug** (`126a1bf`): bei frisch geöffneter Story saß das Hero-Bild um die Banner-Höhe (~46px) nach unten
   versetzt. Ursache: die sticky `.story-topline` reservierte als erstes Kind ihren Fluss-Platz

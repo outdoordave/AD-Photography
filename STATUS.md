@@ -62,6 +62,16 @@
 > (nicht offsetWidth) → invariant gegen `--st-m`/iOS-URL-Bar-Resize → kein Überschwingen beim Hochscrollen (`8dc96b6`).
 > Hero-Lücke behoben: `.story-topline { margin-bottom: -46px }` → die sticky Leiste überlagert den Hero
 > (netto 0 Fluss-Platz) statt ihn um die Banner-Höhe nach unten zu schieben (`126a1bf`).
+>
+> **Desktop-Kopf Variante B — IN ARBEIT (gestaffelt):** Reise-Desktop (>767) auf den Wander-Titel umgestellt
+> (`ec502b1`+`034fec5`): vollbreite **deckende** `.tl-topbar` (grid-column 1/-1, `--tl-p`-Ramp, weiche
+> `::after`-Unterkante über der Karte) + `.tl-herohead` `position:sticky` mit Schrumpfen via Scroll-Driven
+> (`--tl-p`/`tl-hero-fly`, range 120) bzw. JS-Fallback; adaptive Größe `--tl-bigscale` (scrollWidth, max 2.0,
+> einzeilig); `.trip-back` fadet ab 40%. Alles in `@media (min-width:768px)` → **Mobil ≤767 unverändert**.
+> Spy: `.tl-topbar`=46px konstant. **Offen/als Nächstes (nach Davids Reise-Geräte-Test):** Story-Desktop
+> (gleiche Mechanik, `.reader-hero-inner` `absolute`→`sticky`, Balken-Pille, Foto-Pille scrollt weg) +
+> Breakpoint-Bereinigung 767↔860 + **35-Zeichen-`ui.validate`** (Reise `title`/`title_en`, Story
+> `title_de`/`title_en`; UI-only → kein Re-Index, nur `tina-lock.json` neu + Deploy).
 > Horizontaler Überlauf behoben: `.tl-topbar::after` auf `left/right: 0` statt `-18px` (`e69323a`).
 > ⚠️ **Mobil-Optik (Reise + Story) nur am echten Gerät final prüfbar** — die lokale Preview liefert `innerWidth`
 > ≠ Render-Breite, kann Handy also nicht korrekt zeigen; Bewegung/kein-Überlauf wurde per DOM-Messung bestätigt.
