@@ -88,6 +88,7 @@ export default function StoryReaderContent(props: Props) {
   //     werden so skaliert, dass sie EINZEILIG in die Breite passen (--st-scale-big), in der Zeile mit …
   //     gekürzt -> bricht nie. Fortschritt --st-m (0..1) via rAF-Lerp (magnetischer Nachlauf). ---
   const heroRef = React.useRef<HTMLDivElement | null>(null);
+  const innerRef = React.useRef<HTMLDivElement | null>(null);
   const stTargetRef = React.useRef(0);
   const stSmoothRef = React.useRef(0);
   const stRafRef = React.useRef<number | null>(null);
@@ -105,19 +106,22 @@ export default function StoryReaderContent(props: Props) {
     const measure = () => {
       const heroEl = heroRef.current;
       const h = heroEl ? heroEl.offsetHeight : window.innerHeight * 0.6;
-      root.style.setProperty('--st-bigY', Math.max(120, Math.round(h - 110)) + 'px');
-      // Großtitel-Skalierung: so groß wie möglich, aber einzeilig passend (Breite minus Rand).
-      const titleEl = heroEl ? heroEl.querySelector('h1') as HTMLElement | null : null;
+      // (--st-bigY entfällt: die vertikale Wanderung macht jetzt natives Sticky, nicht mehr translateY.)
+      // Großtitel-Skalierung: so groß wie möglich, aber einzeilig passend (Breite minus Rand). Die h1
+      // liegt jetzt in .reader-hero-inner (Geschwister des Hero) -> von dort messen, nicht aus dem Hero.
+      const titleEl = innerRef.current ? innerRef.current.querySelector('h1') as HTMLElement | null : null;
       const w = titleEl && titleEl.offsetWidth ? titleEl.offsetWidth : 1;
       const big = Math.max(1, Math.min(1.85, (window.innerWidth - 32) / w));
       root.style.setProperty('--st-scale-big', String(Math.round(big * 1000) / 1000));
-      // Scroll-Strecke (für die CSS animation-range UND den JS-Fallback): bis der Hero fast durch ist.
-      root.style.setProperty('--st-range', Math.max(140, Math.round(h - 80)) + 'px');
+      // Scroll-Strecke = native Sticky-Wanderung (bis der Titel andockt). STELLSCHRAUBE: ~ Hero-Höhe
+      // minus Andock-/Lift-Offset; muss grob zur margin-top-Anhebung passen, damit der Titel fertig
+      // geschrumpft ist, wenn er oben andockt.
+      root.style.setProperty('--st-range', Math.max(140, Math.round(h - 100)) + 'px');
       return h;
     };
     const target = () => {
       const h = measure();
-      const range = Math.max(140, h - 80); // bis der Hero fast durch ist
+      const range = Math.max(140, h - 100); // = --st-range (native Sticky-Wanderstrecke)
       const r = Math.min(1, Math.max(0, window.scrollY / range));
       return r * r * (3 - 2 * r); // smoothstep
     };
@@ -135,9 +139,9 @@ export default function StoryReaderContent(props: Props) {
       if (n !== t) stRafRef.current = requestAnimationFrame(step);
       else stPrevTRef.current = 0;
     };
-    // Scroll-Driven-Support (Mobil): CSS koppelt den Titel direkt an den Scroll (kein JS-Lerp/Drift).
-    // JS misst dann nur Hero-Höhe/Titelbreite -> --st-bigY/--st-scale-big/--st-range (die Keyframes &
-    // die animation-range lesen diese Vars) und aktualisiert das bei resize. Kein Scroll-Listener.
+    // Scroll-Driven-Support (Mobil): CSS koppelt das Schrumpfen direkt an den Scroll (kein JS-Lerp).
+    // JS misst dann nur Titelbreite/Hero-Höhe -> --st-scale-big/--st-range (Keyframe & animation-range
+    // lesen diese Vars) und aktualisiert das bei resize. Kein Scroll-Listener (vertikal = natives Sticky).
     const sdaSupported = typeof CSS !== 'undefined' && typeof CSS.supports === 'function' && CSS.supports('animation-timeline: scroll()');
     if (sdaSupported && window.matchMedia('(max-width: 767px)').matches) {
       measure();
@@ -160,32 +164,8 @@ export default function StoryReaderContent(props: Props) {
     };
   }, []);
 
-  // Mobil: Titel mit dem iOS-Overscroll (Gummiband oben) mitfedern — scrollY wird dort negativ,
-  // --st-ov = max(0,-scrollY) schiebt den fixierten Titel exakt mit (Regel + Keyframes nutzen
-  // translateY(var(--st-ov))). Desktop: scrollY wird nicht negativ -> no-op.
-  React.useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const root = document.documentElement;
-    let raf: number | null = null;
-    let smooth = 0;
-    let lastT = 0;
-    const read = () => Math.max(0, -(window.scrollY || 0));
-    // Attack/Release-Hüllkurve (s. TripTimeline): schnell folgen beim Ziehen, weich ausregeln beim
-    // Zurückfedern -> dämpft das Hin-und-her, ohne dem Finger hinterherzuhängen.
-    const ATK = 25, REL = 90;  // ms
-    const frame = (now: number) => {
-      const dt = lastT ? Math.min(64, now - lastT) : 16.7; lastT = now;
-      const target = read();
-      smooth += (target - smooth) * (1 - Math.exp(-dt / (target > smooth ? ATK : REL)));
-      if (target === 0 && smooth < 0.4) smooth = 0;
-      root.style.setProperty('--st-ov', smooth > 0.05 ? smooth.toFixed(1) + 'px' : '0px');
-      if (target > 0 || smooth > 0.05) raf = requestAnimationFrame(frame);
-      else { raf = null; lastT = 0; }
-    };
-    const onScroll = () => { if (raf == null) { lastT = 0; raf = requestAnimationFrame(frame); } };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => { window.removeEventListener('scroll', onScroll); if (raf != null) cancelAnimationFrame(raf); };
-  }, []);
+  // (Der frühere --st-ov-Overscroll-Effekt entfällt: der Titel liegt jetzt via .reader-hero-inner
+  //  { position: sticky } im Fluss und federt NATIV mit dem Inhalt — kein JS-Nachjagen, kein Pendeln.)
 
   React.useEffect(() => {
     const root = bodyRef.current;
@@ -217,10 +197,14 @@ export default function StoryReaderContent(props: Props) {
         ) : (
           <div className="ph has-illus" data-ph="PLATZHALTER" data-tina-field={tinaField(story, 'cover')} style={phStyle} />
         )}
-        <div className="reader-hero-inner">
-          <div className="meta" data-tina-field={tinaField(story, fCat)}>{d.cat}</div>
-          <h1 data-tina-field={tinaField(story, fTitle)}>{d.title}</h1>
-        </div>
+      </div>
+      {/* hero-inner ist jetzt GESCHWISTER des Hero (nicht mehr darin) -> Kind von #page-story (hoch).
+          Mobil: position:sticky -> der Titel dockt an-und-bleibt UND federt nativ mit dem Inhalt (wie
+          .tl-herohead in .tl-stage bei Reise). Desktop: per CSS absolut an den Hero-Unterrand
+          zurückgesetzt -> Optik unverändert. */}
+      <div className="reader-hero-inner" ref={innerRef}>
+        <div className="meta" data-tina-field={tinaField(story, fCat)}>{d.cat}</div>
+        <h1 data-tina-field={tinaField(story, fTitle)}>{d.title}</h1>
       </div>
 
       <div className="reader-body">

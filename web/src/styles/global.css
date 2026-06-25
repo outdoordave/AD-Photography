@@ -169,14 +169,18 @@ section { padding: 84px 0; }
 #page-story .reader-hero .ph { position: absolute; inset: 0; }
 #page-story .reader-hero .reader-cover-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
 #page-story .reader-hero::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, var(--c-bg) 1%, rgba(244,237,225,0.1) 45%, transparent); }
-.reader-hero-inner { position: relative; z-index: 2; max-width: 760px; margin: 0 auto; width: 100%; padding: 0 24px 36px; }
+/* .reader-hero-inner ist jetzt GESCHWISTER des Hero (nicht mehr darin, s. JSX) -> auf Desktop absolut an
+   den Hero-Unterrand zurücksetzen, damit die Optik exakt bleibt (Titel unten, über dem Cover). Der Hero
+   ist 60vh hoch und das erste Kind (.story-topline ist desktop display:none) -> top:60vh + translateY(-100%)
+   bottom-bündig zur Hero-Unterkante, höhenunabhängig. (Mobil überschreibt das mit sticky.) */
+.reader-hero-inner { position: absolute; top: 60vh; transform: translateY(-100%); left: 0; right: 0; z-index: 2; max-width: 760px; margin: 0 auto; width: 100%; padding: 0 24px 36px; }
 .reader-hero-inner .meta { font-size: var(--fs-label); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--c-accent); font-weight: var(--fw-bold); margin-bottom: 12px; }
 .reader-hero-inner h1 { font-family: var(--font-display); font-size: var(--fs-display); font-weight: var(--fw-medium); line-height: 1.08; }
 /* Mobile Titel-Zeile (Story): Desktop ausgeblendet (dort: reservierte Pille über dem Hero). */
 .story-topline { display: none; }
-/* ── Story mobil (<=767): EIN Titel wandert von groß/tief (Hero-Unterkante) nach klein/oben in eine
-   sticky Zeile und schrumpft (analog Reise). JS setzt --st-m (0..1), --st-bigY, --st-scale-big.
-   Titel einzeilig + Ellipsis -> bricht/überläuft NIE (lange Prosa-Titel auto-skaliert). ── */
+/* ── Story mobil (<=767): EIN Titel wandert von groß/tief (Hero-Unterkante) nach klein/oben und dockt
+   in der Zeile an (analog Reise, jetzt via natives position:sticky). JS setzt --st-m (0..1),
+   --st-scale-big, --st-range. Titel einzeilig + Ellipsis -> bricht/überläuft NIE (auto-skaliert). ── */
 @media (max-width: 767px) {
   .story-topline {
     display: flex; align-items: center; gap: 14px; min-height: 46px;
@@ -194,34 +198,43 @@ section { padding: 84px 0; }
     opacity: clamp(0, calc((var(--st-m, 0) - 0.4) / 0.6), 1);
     transform: translateY(calc((1 - clamp(0, calc((var(--st-m, 0) - 0.4) / 0.6), 1)) * 10px));
   }
+  /* Titel-Block STICKY im Fluss (Kind von #page-story, hoch) -> dockt an-und-bleibt UND federt beim
+     iOS-Overscroll NATIV mit dem Inhalt (wie .tl-herohead in .tl-stage bei Reise). transform:none hebt
+     die Desktop-Absolut-Positionierung auf; margin-top hebt den großen Titel über den Hero-Unterrand
+     (STELLSCHRAUBE). pointer-events: none am Container -> der „← Stories"-Link der Zeile darunter bleibt
+     klickbar; die h1 selbst fängt Klicks wieder (CMS-Klick-zum-Bearbeiten). */
+  #page-story .reader-hero-inner {
+    position: sticky; top: calc(72px + env(safe-area-inset-top, 0px) + 13px); z-index: 1096;
+    transform: none; left: auto; right: auto;
+    margin: -60px 0 0; padding: 0 16px; max-width: none; width: auto;
+    pointer-events: none;
+  }
   #page-story .reader-hero-inner .meta { display: none; }   /* Kicker mobil aus -> sauberer Hero */
+  /* h1 macht nur noch Schrumpfen + Horizontal-Versatz (vertikale Wanderung = natives Sticky -> kein
+     translateY, kein --st-ov). Einzeilig + Ellipsis + max-width -> bricht/überläuft NIE (lange Titel
+     auto-skaliert via gemessenem --st-scale-big). */
   #page-story .reader-hero-inner h1 {
-    position: fixed; left: 16px; margin: 0; z-index: 1096;
-    top: calc(72px + env(safe-area-inset-top, 0px) + 13px);
+    margin: 0; pointer-events: auto;
     transform-origin: left center; will-change: transform;
     font-size: 18px; line-height: 1.05; color: var(--c-ink);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    /* Breite: bei Scroll 0 fast volle Breite (Hero), in der Zeile Platz für die Pille (rechts gekürzt). */
     max-width: calc(100vw - 32px - var(--st-m, 0) * 100px);
     text-shadow: 0 1px 10px rgba(244,237,225,0.55);   /* Lesbarkeit über dem Foto während der Wanderung */
     transform:
-      translateY(var(--st-ov, 0px))   /* iOS-Overscroll: federt mit dem Inhalt mit (JS setzt --st-ov = max(0,-scrollY)) */
       translateX(calc(var(--st-m, 0) * 100px))
-      translateY(calc((1 - var(--st-m, 0)) * var(--st-bigY, 380px)))
       scale(calc(1 + (1 - var(--st-m, 0)) * (var(--st-scale-big, 1.6) - 1)));
   }
 }
 
-/* ── Apple-smooth: Story-Mobil-Titel direkt an die Scroll-Position koppeln (analog Reise) ──
-   Scroll-Driven Animations -> Titel klebt 1:1 am Inhalt, kein Drift. --st-m vom Scroll getrieben
-   (Zeile + Pille + max-width lesen es weiter), Titel-Transform direkt als Keyframe (kompositierbar).
-   Endpunkte/Range hängen an den per JS gemessenen Werten (--st-bigY/--st-scale-big/--st-range) -> die
-   Keyframes lesen diese Vars. Ohne Support: JS-Fallback. Titel bleibt fixed -> Spy unberührt. */
+/* ── Story-Mobil-Titel: Schrumpfen/Versatz scroll-gekoppelt (Scroll-Driven Animation). Die VERTIKALE
+   Wanderung + das Overscroll-Mitfedern macht jetzt natives Sticky (.reader-hero-inner) -> hier nur noch
+   translateX + scale, kein translateY/--st-ov. --st-m treibt Zeile/Pille/max-width; Range = --st-range
+   (= native Wanderstrecke). Ohne scroll()-Support: JS-Fallback (--st-m-Lerp). */
 @property --st-m { syntax: "<number>"; inherits: true; initial-value: 0; }
 @keyframes st-m-drive { from { --st-m: 0; } to { --st-m: 1; } }
 @keyframes st-title-fly {
-  from { transform: translateY(var(--st-ov, 0px)) translateX(0px) translateY(var(--st-bigY, 380px)) scale(var(--st-scale-big, 1.6)); }
-  to   { transform: translateY(var(--st-ov, 0px)) translateX(100px) translateY(0px) scale(1); }
+  from { transform: translateX(0px) scale(var(--st-scale-big, 1.6)); }
+  to   { transform: translateX(100px) scale(1); }
 }
 @media (max-width: 767px) {
   @supports (animation-timeline: scroll()) {
