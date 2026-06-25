@@ -4,6 +4,7 @@ import { detectEncoder, toOptimized, fmt, type EncoderMode } from './webpEncode'
 import { toLocalMedia, dedupeUploads } from './mediaPath';
 import MarkdownToolbar from './MarkdownToolbar';
 import { useFormState } from 'react-final-form';
+import { mdToHtml } from '../../src/lib/stories';
 
 // Story-Haupttext-Editor — laientauglich, OHNE Markdown-Syntax tippen.
 // Gespeichert wird weiterhin normales Markdown (der mdToHtml-Port bleibt 1:1),
@@ -114,6 +115,16 @@ const StoryBodyFieldInner = wrapFieldsWithMeta(({ input }: any) => {
     ? (linkedAlbum.split('/').pop() || '').replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').trim()
     : '';
 
+  // Live-Vorschau: derselbe mdToHtml-Port wie die echte Seite. Der [[album]]-Marker
+  // wird als sichtbarer Platzhalter gezeigt (die echte Galerie kommt aus dem Album).
+  const previewHtml = React.useMemo(() => {
+    const withAlbum = value.replace(
+      /\[\[album\]\]/g,
+      '<div class="cms-md-album">📸 Album-Galerie erscheint hier</div>',
+    );
+    return mdToHtml(withAlbum);
+  }, [value]);
+
   return (
     <div>
       <MarkdownToolbar textareaRef={ref} value={value} onChange={input.onChange} />
@@ -164,6 +175,13 @@ const StoryBodyFieldInner = wrapFieldsWithMeta(({ input }: any) => {
         und klicken (kein Tippen von Zeichen). · „📷 Bild einfügen" lädt ein neues Foto hoch ·
         „🖼️ Aus Mediathek wählen" nimmt ein vorhandenes · „📸 Album hier einfügen" platziert die
         Bilder-Galerie des unten gewählten Albums. Alles an die Cursor-Stelle.
+      </div>
+
+      <div style={{ marginTop: 12 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: '#6e5e49', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+          So sieht der Text formatiert aus
+        </div>
+        <div className="cms-md-preview" style={previewBox} dangerouslySetInnerHTML={{ __html: previewHtml || '<p style="color:#9b8c74;margin:0">Noch nichts geschrieben …</p>' }} />
       </div>
 
       {pickerOpen ? (
@@ -228,4 +246,30 @@ const miniBtn: React.CSSProperties = {
   padding: '4px 10px', fontSize: 12, fontWeight: 600, cursor: 'pointer',
 };
 
-export default StoryBodyFieldInner;
+const previewBox: React.CSSProperties = {
+  border: '1px solid #e4d8c4', borderRadius: 8, background: '#fbf8f2',
+  padding: '12px 16px', color: '#2e2418', fontSize: 14, lineHeight: 1.6,
+  maxHeight: 320, overflowY: 'auto',
+};
+
+// Formatierung innerhalb der Vorschau (Überschriften, Zitat, Bilder, Album-Marker).
+const PREVIEW_CSS = `
+.cms-md-preview > :first-child { margin-top: 0; }
+.cms-md-preview > :last-child { margin-bottom: 0; }
+.cms-md-preview h2 { font-size: 1.25em; margin: 0.8em 0 0.3em; }
+.cms-md-preview h3 { font-size: 1.1em; margin: 0.8em 0 0.3em; }
+.cms-md-preview p { margin: 0.5em 0; }
+.cms-md-preview ul, .cms-md-preview ol { margin: 0.5em 0; padding-left: 1.4em; }
+.cms-md-preview img { max-width: 100%; height: auto; border-radius: 6px; display: block; margin: 0.6em 0; }
+.cms-md-preview .pullquote { border-left: 3px solid #c9a66b; padding: 4px 0 4px 12px; margin: 0.7em 0; font-style: italic; color: #5a4a33; }
+.cms-md-preview .cms-md-album { background: #f3ece0; border: 1px dashed #c9a66b; border-radius: 6px; padding: 10px 12px; margin: 0.7em 0; font-weight: 600; color: #6e5e49; }
+`;
+
+const StoryBodyField = (props: any) => (
+  <>
+    <style dangerouslySetInnerHTML={{ __html: PREVIEW_CSS }} />
+    <StoryBodyFieldInner {...props} />
+  </>
+);
+
+export default StoryBodyField;
