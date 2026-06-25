@@ -269,6 +269,9 @@ section { padding: 84px 0; }
   to   { transform: translateX(96px) scale(var(--st-dock, 0.34)); }
 }
 @media (min-width: 768px) {
+  /* Alte „permanente" Foto-Pille raus (war redundant: scrollte weg, dann kam die Balken-Pille). Wie Reise:
+     oben auf dem Foto KEIN Button, die Balken-Pille (.story-back-line) fadet in der Leiste ein. */
+  .story-back { display: none; }
   .story-topline {                                  /* vollbreite deckende Leiste unter der globalen Nav */
     display: flex; align-items: center; min-height: 56px;
     position: sticky; top: var(--st-nav, 88px); z-index: 1095;
@@ -276,9 +279,12 @@ section { padding: 84px 0; }
     margin-bottom: -56px;                           /* überlagert -> kein Fluss-Platz, schiebt nichts runter */
     padding: 0 max(24px, calc(50% - 590px + 24px)); /* Inhalt an dieselbe Kante wie .story-back */
   }
-  .story-topline::after {
-    content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 16px; pointer-events: none;
-    background: linear-gradient(to bottom, rgba(244,237,225, var(--st-m, 0)), rgba(244,237,225, 0));
+  .story-topline::after {                           /* weicher, fluffiger Unterkanten-Verlauf (3-Stop) statt harter Kante */
+    content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 34px; pointer-events: none;
+    background: linear-gradient(to bottom,
+      rgba(244,237,225, var(--st-m, 0)) 0%,
+      rgba(244,237,225, calc(var(--st-m, 0) * 0.55)) 45%,
+      rgba(244,237,225, 0) 100%);
   }
   .story-back-line {                                /* Balken-Pille: gleiche Ghost-Optik wie Reise, fadet ab ~40% ein */
     display: inline-flex; align-items: center; gap: 6px; flex: none;
