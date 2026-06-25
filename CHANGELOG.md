@@ -86,6 +86,10 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   bei `top 101`, Foto-Pille weggescrollt). Stellschrauben: `--st-lift`, `animation-range` (42vh/64vh),
   `--st-dock`, `translateX`.
 - Dateien: `global.css`, `StoryReaderContent.tsx`. **Kein Re-Index.** Commit: `6c95e83`
+- **Test-Runde 1** (`1a5f7e8`): (1) harte Kante beim Runterscrollen → `.story-topline::after` 16→34px, weicher
+  3-Stop-Verlauf (fluffiger). (2) zwei Zurück-Buttons (Foto-Pille scrollte weg, dann kam die Balken-Pille =
+  redundant) → alte `.story-back` auf Desktop ausgeblendet; jetzt wie Reise: oben kein Button, Balken-Pille
+  fadet in der Leiste ein.
 
 ## 2026-06-25 — Mobil Story: Lücke über dem Titelbild behoben
 - **Bug** (`126a1bf`): bei frisch geöffneter Story saß das Hero-Bild um die Banner-Höhe (~46px) nach unten
