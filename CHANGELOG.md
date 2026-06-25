@@ -93,6 +93,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 - **Test-Runde 2** (`ed5f57d`): Titel dockte zu spät an (noch am Schrumpfen, während schon Body gescrollt
   wurde) → `animation-range` 42vh/64vh → **34vh/46vh**: fertig angedockt bei ~Scroll 396, deutlich vor dem
   Body (verifiziert: bei Scroll 445/Body sichtbar ist `--st-m` bereits 1). Titel bleibt für ~57 % des Heros groß.
+- **Test-Runde 3** (`2bc81db`): angedockter Titel **auf Pillen-Höhe + neben die Pille** (wie Reise). JS misst
+  breiten-robust `--st-dock-top` (Titel-Mitte = Banner-Mitte `nav+28`, via `origin left center`:
+  `top = nav+28 − fpx*0.525`) + `--st-dock-x` (Titel-links = Pillen-rechts + 14); CSS koppelt `top`/`translateX`
+  daran. Vars verifiziert (1300px): Mitte 117.5 ≈ Pille 117, Titel-links 195 = Pille+14.
+- **35-Zeichen-Grenze** (`d27972d`): `ui.validate` (UI-only → kein Cloud-Re-Index, nur `tina-lock.json` neu +
+  Deploy) an allen 4 Titelfeldern (Reise `title`/`title_en`, Story `title_de`/`title_en`) + `description`-
+  Hinweis. ⚠️ EN-Felder nutzen eine Komponente ohne `wrapFieldsWithMeta` → roter Fehlertext dort nicht
+  sichtbar (DE zeigt ihn; EN still mit-validiert). `tina-lock.json` mit-regeneriert.
+- **Dev-Preview:** lokaler `tinacms dev`-Server läuft offline → Desktop verifizierbar (1300px). Bekannte
+  Limitierung: nach programmatischem Reload engaged die Scroll-Driven-Animation in der Headless-Preview nicht
+  neu (Werte/Math als Verifikation; Live am Deploy prüfen).
+- **Noch offen:** Breakpoint-Bereinigung 768–860 (Band-Pille/Nav-Zurück konsistent, kein Doppel).
 
 ## 2026-06-25 — Mobil Story: Lücke über dem Titelbild behoben
 - **Bug** (`126a1bf`): bei frisch geöffneter Story saß das Hero-Bild um die Banner-Höhe (~46px) nach unten
