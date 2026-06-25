@@ -58,6 +58,8 @@
 > `.reader-hero-inner` per `position:absolute` (`top:60vh; translateY(-100%)`) an den Hero-Unterrand
 > zurückgesetzt → Optik unverändert (am Browser gegenprüfen — lokal kein Tina-Netz). `pointer-events:none`
 > am Container (h1 `auto`) hält „← Stories" klickbar. Stellschrauben: `margin-top` (-60), `--st-range`/`h-100`.
+> Großtitel-Skalierung stabil: h1 `width: max-content`, `--st-scale-big` aus **`scrollWidth`** gemessen
+> (nicht offsetWidth) → invariant gegen `--st-m`/iOS-URL-Bar-Resize → kein Überschwingen beim Hochscrollen (`8dc96b6`).
 > Horizontaler Überlauf behoben: `.tl-topbar::after` auf `left/right: 0` statt `-18px` (`e69323a`).
 > ⚠️ **Mobil-Optik (Reise + Story) nur am echten Gerät final prüfbar** — die lokale Preview liefert `innerWidth`
 > ≠ Render-Breite, kann Handy also nicht korrekt zeigen; Bewegung/kein-Überlauf wurde per DOM-Messung bestätigt.

@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-25 — Mobil Story: Titel-Überschwingen beim Hochscrollen gefixt
+- **Bug** (`8dc96b6`): beim Hochscrollen wurde der Titel kurz deutlich größer und ploppte zurück.
+  Ursache: `--st-scale-big` wurde aus `offsetWidth` gemessen, und die h1-`max-width` hängt von `--st-m`
+  ab. Ein `resize` mitten im Scrollen (iOS-URL-Leiste) maß bei `--st-m>0` eine kleinere Box → zu großes
+  `scale-big` → Überschwingen, dann Korrektur bei `--st-m=0`.
+- **Fix:** natürliche Textbreite **stabil** messen, unabhängig von der Kappung: h1 `width: max-content`
+  (Box umhüllt den Text) + `measure()` nutzt **`scrollWidth`** statt `offsetWidth` (volle Inhaltsbreite,
+  ignoriert die `--st-m`-abhängige max-width). `scale-big` ist damit invariant gegen `--st-m`/Resize.
+- Dateien: `global.css`, `StoryReaderContent.tsx`. **Nur Mobil, kein Re-Index.** Commit: `8dc96b6`
+
 ## 2026-06-25 — Mobil Story: Titel via position:sticky nativ mitfedern (wie Reise)
 - **Umbau** (`4b08bbf`): gleiche Endlösung wie Reise, jetzt für den Story-Reader. Damit Sticky den Titel
   andocken-und-**halten** kann (statt nach dem 60vh-Hero abzulösen — zu kurzer Containing-Block), liegt der
