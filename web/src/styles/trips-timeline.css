@@ -326,6 +326,10 @@
     grid-row: 2; position: sticky; top: calc(var(--ww-sticky-top) + 1px); z-index: 7;
     margin: 25px 0 20px;                         /* top: Start leicht tiefer (STELLSCHRAUBE); bottom: Abstand zur Beschreibung (kein „angeklatscht") */
     padding: 0;
+    /* Der ganze Container (z7) liegt über dem Band und würde die Klicks der Zurück-Pille (z6) abfangen.
+       pointer-events: none am Container (die h1 erbt es; Titel ist kein Link) -> Pille klickbar. Im
+       Tina-Editor wird die h1 unten wieder auf auto gesetzt (Klick-zum-Bearbeiten). */
+    pointer-events: none;
   }
   .tl-herohead .tl-meta { display: none; }       /* Kicker im Wander-Kopf aus (wie mobil) */
   /* SCHARF: die h1 wird bei GROSSER Größe gerendert (font-size ×2) und RUNTERskaliert (Downscale = scharf,
@@ -337,11 +341,7 @@
     white-space: nowrap;
     font-size: calc(var(--fs-title-sm) * 2);
     line-height: 1.1;
-    transform-origin: left center;
-    /* Die h1 liegt (z7) über dem Band; ihre breite Hit-Box würde beim Wandern die Zurück-Pille (z6)
-       überdecken -> Pille nur teils klickbar. pointer-events:none behebt das (Titel ist kein Link).
-       Im Tina-Editor (.is-editor) wieder auto -> Klick-zum-Bearbeiten am Titel bleibt. */
-    pointer-events: none;
+    transform-origin: left center;             /* pointer-events erbt none vom .tl-herohead-Container (s. o.) */
     transform:
       translateX(calc(var(--tl-p, 0) * 110px))
       scale(calc(var(--tl-fitscale, 1) + var(--tl-p, 0) * (0.5 - var(--tl-fitscale, 1))));
