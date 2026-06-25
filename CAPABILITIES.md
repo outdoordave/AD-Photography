@@ -859,3 +859,101 @@ Struktur: `/trips` = Übersichts-Karten (ersetzt Reise-Tabs), `/trips/<slug>` = 
 
 **Abnahme offen:** David vergleicht live (Übersicht + je eine Detailseite, Handy/iPad/Mac-Safari) und gibt frei;
 erst dann gilt „fertig portiert" + Cleanup der verwaisten `TripsContent.tsx`. ⚠️/Ersetzungen sind benannt, nicht verschwiegen.
+
+---
+
+## WYSIWYG-Editor für ALLE Markdown-Felder (Weg B: Tina Rich-Text) — Schritt 0 + A (2026-06-25)
+
+> **Ziel (Davids Wunsch):** Editor wie Word — formatierter Text, **kein rohes Markdown**
+> (`#`, `*`, `>`) mehr im Eingabefeld. Scope: **alles, ganz oder gar nicht** — alle 7
+> Markdown-Felder. **Funktionen:** Fett, Kursiv, Überschrift, Zitat, Liste (Punkte +
+> nummeriert), Link, **Bild (Auto-WebP, ohne Medien-Manager)**, **„🖼️ Aus Mediathek wählen"
+> (bleibt!)**, **Album einfügen**. Direkt auf `main`, gestaffelt, lokal getestet.
+
+### Schritt 0 — Live-Wahrheit (Code-Fundstellen)
+
+**Die 7 Markdown-Felder + Speicherort (heute Markdown-STRINGS):**
+1. **Startseite-Intro** `subtext_de`/`subtext_en` — `web/src/data/home-settings.json` (config.ts:179/180). Voll-Markdown.
+2. **Story-Haupttext** `body_de`/`body_en` — Frontmatter von `web/src/content/stories/*.md` (config.ts:307/325). Voll-Markdown + Bild/Album.
+3. **Reise-Zusammenfassung** `summary_de`/`summary_en` — `web/src/data/trips/*.json` (config.ts:378/379). **INLINE** (nur Fett/Kursiv).
+4. **Reise-Stations-Text** `text_de`/`text_en` (je Station, Objekt-Liste) — `web/src/data/trips/*.json` (config.ts:418/419). Voll-Markdown.
+5. **Über-uns-Bio** `bio_de`/`bio_en` (je Person, Objekt-Liste) — `web/src/data/about.json` (config.ts:646/647). Voll-Markdown.
+6. **Datenschutz** `body_de`/`body_en` — `web/src/data/datenschutz.json` (config.ts:829/830). Markdown ODER rohes HTML.
+7. **Impressum** `body_de`/`body_en` — `web/src/data/impressum.json` (config.ts:847/848). Markdown ODER rohes HTML.
+
+**Editor heute:** Story = `StoryBodyField.tsx` (Textarea + `MarkdownToolbar` + 📷 Bild/jSquash-WebP ohne Medien-Manager
++ 🖼️ Mediathek-Raster aus `uploads-manifest.json` + 📸 `[[album]]` + Album-Status-Badge + (neu) Live-Vorschau).
+Übrige Felder = `MarkdownTextarea` (voll) bzw. `MarkdownTextareaInline` (nur Fett/Kursiv) + EN-Pendants.
+`MarkdownToolbar.tsx`: Auswahl umschließen (Fett/Kursiv), Zeilen-Präfix-Toggle (`### `/`> `/`- `), Cursor/Fokus-Erhalt.
+
+**Rendering heute:** ALLE via `mdToHtml` (`web/src/lib/stories.ts:97`) + `dangerouslySetInnerHTML`, jeweils mit
+`data-tina-field` (**Klick-zum-Feld, P2**). mdToHtml kann: `### →h3`, `## /# →h2`, `**fett**`, `*kursiv*`, `~~durch~~`,
+`[txt](url)→a target=_blank`, `![](src)→img`, `- /* →ul`, `1. →ol`, `> →div.pullquote`, **Block-HTML-Passthrough**
+(p|div|ul|ol|h1-6|img|figure|blockquote|section), Absatz-Split an Leerzeile, Einzel-`\n →<br>`.
+Konsumenten: HomeIntroLive (`.ww-rich`), StoryReaderContent (split an `[[album]]` → Album-Lightbox je Marker +
+Inline-`img`→blätterbare Gruppen-Lightbox + YouTube aus `youtube_url`), TripTimeline (`.tl-summary`, `.tl-text` je Station),
+AboutContent (`.bio` je Person), LegalContent.
+
+**Dokumentierte Alt-Entscheidung (wird bewusst umgekehrt):** config.ts:300ff „BEWUSST kein Tina-Rich-Text
+(würde Speicherformat + Rendering ändern)". Weg B kehrt sie auf Davids Wunsch um.
+
+### Verifizierte Tina-Fakten (installiert: tinacms 2.10.1, aus `node_modules/@tinacms/schema-tools`-Typen)
+- **`rich-text`-Wert = `RichTextAst`** (`{type:'root',children}`): die Query liefert ein **AST-Objekt, keinen String**
+  → Render muss von `mdToHtml(string)` auf **`<TinaMarkdown content={ast} components={…}>`** umgestellt werden (alle 5 Konsumenten).
+- **`parser: { type:'markdown', skipEscaping:'html' }`**: Datei-Inhalt bleibt **Markdown** (kein MDX-AST-Text), HTML wird
+  **nicht escaped** → entscheidend für Datenschutz/Impressum (rohes HTML) und für saubere Diffs.
+- **`isBody`**: nur EIN rich-text-Feld kann MD-Body sein → bei DE+EN nur eins; das andere ins Frontmatter
+  (wir nutzen voraussichtlich **kein** isBody, beide als Frontmatter — Speichershape per Spike zu bestätigen).
+- **`overrides.toolbar`**: exakt einschränkbar (`heading,link,image,quote,ul,ol,bold,italic,embed,raw,…`)
+  → Summary = nur `bold,italic` (Inline-Gefühl bleibt), Bodies = voller Satz.
+- **`templates` + `match:{start,end}`** (Shortcode): sauberer Weg, `[[album]]` als eigenes **Embed** zu erhalten;
+  eigener **Bild-Upload-Knopf** (jSquash-WebP) als custom Template/Toolbar-Aktion statt Tina-Medien-Manager.
+
+### Schritt A — Eingefrorene Soll-Liste (muss 1:1 erhalten bleiben)
+
+**Editor-Bedienung (alle Felder):**
+1. Fett, 2. Kursiv, 3. Überschrift, 4. Zitat (→ Pullquote-Optik), 5. Liste mit Punkten, 6. Nummerierte Liste,
+7. Link (öffnet in neuem Tab), 8. **kein rohes Markdown im Feld sichtbar** (Word-Gefühl), 9. Auswahl markieren +
+Knopf wirkt auf Auswahl/Zeile, 10. Tastatur-Kürzel (Strg/Cmd+B/I) funktionieren, 11. laientauglich/deutsch beschriftet.
+
+**Story-spezifisch (zusätzlich):**
+12. **📷 Bild einfügen** = Datei wählen → **Auto-WebP (jSquash)** → an Cursor-Stelle, **ohne** Tina-Medien-Manager/„?".
+13. **🖼️ Aus Mediathek wählen** = Raster aller `/uploads`-Bilder (`uploads-manifest.json`), Klick fügt ein (kein Re-Upload).
+14. **📸 Album einfügen** = Album-Galerie-Platzhalter frei im Text platzierbar (heute `[[album]]`), Status-Badge zeigt verknüpftes Album.
+15. YouTube bleibt **separates Feld** `youtube_url` (nicht im Editor).
+
+**Rendering/Optik (Besucher-Seite, 1:1):**
+16. Überschrift/Fett/Kursiv/Durchstreichen/Link/Bild/Listen/Pullquote sehen **exakt wie heute** aus (`.ww-rich`-Stile).
+17. **Inline-Bilder im Story-Text → blätterbare Gruppen-Lightbox** (Album-Kacheln ausgenommen).
+18. **`[[album]]`-Stelle → Album-Lightbox-Block** (`AlbumEmbed`), an jeder Marker-Stelle bzw. ans Ende ohne Marker.
+19. **Rohes HTML** (Datenschutz/Impressum, aus Generator eingefügt) wird weiter korrekt dargestellt.
+20. Datenschutz/Impressum-Inhalt **inhaltlich unverändert** (keine Zeichen-/Zeilen-Verluste bei der Migration).
+
+**Übergreifend:**
+21. **DE/EN** je Feld getrennt; EN leer → DE-Fallback (wie `buildStory`/bi).
+22. **Klick-zum-Feld (P2):** Klick auf den gerenderten Text in der CMS-Vorschau springt weiter ins richtige Feld
+    (heute `data-tina-field`) — mit Rich-Text ggf. via Inline-Editing gelöst, darf aber nicht verloren gehen.
+23. **Summary bleibt „inline"** (nur Fett/Kursiv, keine Block-Elemente), wie heute.
+24. **35-Zeichen-Titel-Grenze** + alle anderen Felder/Schalter unberührt.
+
+### Offene Punkte — VOR dem Bau per lokalem Spike zu klären (kein Raten)
+- **S1 — Speichershape in JSON-Collections:** Wird ein `rich-text`-Feld mit `parser:markdown` in JSON als
+  **Markdown-String** oder als AST-Objekt abgelegt? Entscheidet, ob die Migration der JSON-Felder (Intro, Bio,
+  Stationen, Summary, Legal) destruktiv ist und ob Diffs lesbar bleiben.
+- **S2 — Zwei Sprach-Bodies in einer `.md`** (Story `body_de`+`body_en`): Speicherung beider als Frontmatter-Rich-Text,
+  Round-Trip des bestehenden Inhalts ohne Verlust.
+- **S3 — Query-Wert:** Liefert die Tina-Query AST → `<TinaMarkdown>` Pflicht in allen 5 Konsumenten (Annahme: ja).
+- **S4 — Roh-HTML-Round-Trip** (Datenschutz/Impressum) mit `skipEscaping:'html'` ohne Korruption.
+- **S5 — `[[album]]`** als `match`-Shortcode-Template sauber rein/raus; **Inline-Bild-Lightbox** über `TinaMarkdown`-`components`.
+- **S6 — Re-Index-Umfang & Migration:** welche Felder destruktiv migriert werden müssen; Reihenfolge push→Re-Index→Deploy.
+
+### Empfohlener gestaffelter Plan (nach Schritt B + Spike)
+1. **Spike** (lokal, offline, throwaway): EIN Feld (z. B. Story-Body) auf `rich-text`+`parser:markdown` umstellen,
+   `npm run dev`, Speichershape + Query-Wert + Round-Trip beobachten. Ergebnis S1–S6 belegen.
+2. **Render-Pfad** auf `<TinaMarkdown>` + components (Pullquote, Bild-Lightbox, Album-Embed, Link target) bauen — pro Konsument.
+3. **Editor**: rich-text-Felder + `overrides.toolbar` + Album-Shortcode-Template + Bild-Upload-Knopf (jSquash) + Mediathek-Picker.
+4. **Migration** der vorhandenen Inhalte (Skript), lokal verifiziert (Diff je Datei).
+5. `tina-lock.json` neu, lokaler Build grün, **Backup-Tag** gesetzt → David: push → Re-Index → Deploy → Abnahme (Schritt D).
+
+### B — Nutzer-Bestätigung
+☐ **offen** — wartet auf Davids Bestätigung dieser Liste (vollständig? etwas ergänzen/streichen?).
