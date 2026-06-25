@@ -956,4 +956,6 @@ Knopf wirkt auf Auswahl/Zeile, 10. Tastatur-Kürzel (Strg/Cmd+B/I) funktionieren
 5. `tina-lock.json` neu, lokaler Build grün, **Backup-Tag** gesetzt → David: push → Re-Index → Deploy → Abnahme (Schritt D).
 
 ### B — Nutzer-Bestätigung
-☐ **offen** — wartet auf Davids Bestätigung dieser Liste (vollständig? etwas ergänzen/streichen?).
+☑ **bestätigt (2026-06-25):** David hat die 24-Punkte-Liste als Soll-Vorgabe bestätigt („sieht gut aus,
+kanns losgehen"). Verständigung: Liste ist Leitfaden, spätere Ergänzungen werden gestaffelt nachgezogen.
+Nächster Schritt: lokaler Spike (S1–S6) vor dem echten Bau.
