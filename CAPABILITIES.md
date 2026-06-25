@@ -984,4 +984,12 @@ Schreib-Mutation, dann `git diff` der Dateien beobachtet. Anschließend per `git
   `TinaMarkdown`-`components`; zwei Sprach-Bodies (`body_de`+`body_en`, beide ohne `isBody`) in einer `.md`.
 
 ### C — Neubau
-☐ offen — Plan steht (s. „Empfohlener gestaffelter Plan"); Bau beginnt mit Stufe 1 (Render-Pfad + S4/S5-Verifikation).
+- **Stufe 1 ✅ (2026-06-25, `ccbbbab`):** Render-Fundament `web/src/components/RichText.tsx` — rendert
+  Tina-Rich-Text-AST via `<TinaMarkdown>` mit der `.ww-rich`-Optik 1:1 (h1/h2→h2, h3, blockquote→`.pullquote`,
+  Link `target=_blank`, img, html/html_inline für rohes HTML). Dual-Modus (String→mdToHtml / AST→TinaMarkdown),
+  **noch nicht verdrahtet** (kein Schema/Verhalten geändert). **Lokal mit echten ASTs verifiziert** (Wegwerf-
+  Story + Testseite, alles zurückgerollt): H2/H3, fett/kursiv/durchgestrichen, Link, Pullquote, Listen, Bild,
+  **rohes HTML (S4 ✅)** rendern 1:1. **S5 (Listen) ✅**; offen für Stufe 2: `[[album]]`-Embed + Inline-Bild-Lightbox.
+- **Stufe 2 ☐ offen:** Felder auf `rich-text` umstellen, Konsumenten auf `<RichText>`/`<TinaMarkdown>`, Editor
+  (`overrides.toolbar`, Album-Shortcode, jSquash-Bild-Upload + Mediathek-Picker), `[[album]]`-Embed.
+- **Stufe 3 ☐ offen:** Aufräumen (alte Felder/Vorschau-Box), `tina-lock.json`, Backup-Tag → David push/Re-Index/Deploy/Abnahme.
