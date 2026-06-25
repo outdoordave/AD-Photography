@@ -314,13 +314,15 @@ section { padding: 84px 0; }
   }
   .is-editor #page-story .reader-hero-inner { pointer-events: auto; }
   @supports (animation-timeline: scroll()) {
+    /* verzögert (erst Foto genießen), aber fertig ANGEDOCKT bevor der Body lesbar wird (~50vh < 60vh-Hero).
+       STELLSCHRAUBE: Start = wie spät, Ende = wie früh „fertig". */
     #page-story {
       animation: st-m-drive cubic-bezier(.42, 0, .58, 1) both;
-      animation-timeline: scroll(root); animation-range: 42vh 64vh;   /* verzögert: erst Foto genießen */
+      animation-timeline: scroll(root); animation-range: 34vh 46vh;
     }
     #page-story .reader-hero-inner h1 {
       animation: st-title-fly-d cubic-bezier(.42, 0, .58, 1) both;
-      animation-timeline: scroll(root); animation-range: 42vh 64vh;
+      animation-timeline: scroll(root); animation-range: 34vh 46vh;
     }
   }
 }
