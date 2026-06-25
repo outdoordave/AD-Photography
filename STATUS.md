@@ -52,8 +52,12 @@
 > `.tl-topbar`). Stellschrauben: `.tl-herohead margin-top` (40, = Wanderstrecke) / `margin-bottom` (18,
 > POSITIV — Abstand zur Beschreibung), `animation-range`/`M_RANGE` (70). h1 hat `width: max-content`
 > (sonst ragt der block-breite, skalierte Titel rechts raus → Horizontal-Scroll; `de0dcf5`).
-> ⚠️ **Story noch NICHT umgebaut** — nutzt weiter `fixed` + `--st-ov`-Mitfedern (Attack/Release ATK 25/REL 90,
-> `b8a2616`) mit Rest-Pendeln; Sticky-Umbau dort steht aus (60vh-Hero = andere Bauform).
+> **Story ebenfalls umgebaut (`4b08bbf`):** `.reader-hero-inner` ist jetzt Geschwister des Hero (Kind von
+> `#page-story`, hoch) statt darin → mobil `position: sticky` (nativ mitfedern + andocken-und-bleiben),
+> h1 nur noch Schrumpfen + translateX (`--st-m`); `--st-ov`/`--st-bigY` + Nachjage-JS weg. **Desktop:**
+> `.reader-hero-inner` per `position:absolute` (`top:60vh; translateY(-100%)`) an den Hero-Unterrand
+> zurückgesetzt → Optik unverändert (am Browser gegenprüfen — lokal kein Tina-Netz). `pointer-events:none`
+> am Container (h1 `auto`) hält „← Stories" klickbar. Stellschrauben: `margin-top` (-60), `--st-range`/`h-100`.
 > Horizontaler Überlauf behoben: `.tl-topbar::after` auf `left/right: 0` statt `-18px` (`e69323a`).
 > ⚠️ **Mobil-Optik (Reise + Story) nur am echten Gerät final prüfbar** — die lokale Preview liefert `innerWidth`
 > ≠ Render-Breite, kann Handy also nicht korrekt zeigen; Bewegung/kein-Überlauf wurde per DOM-Messung bestätigt.

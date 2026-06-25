@@ -17,6 +17,22 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-25 — Mobil Story: Titel via position:sticky nativ mitfedern (wie Reise)
+- **Umbau** (`4b08bbf`): gleiche Endlösung wie Reise, jetzt für den Story-Reader. Damit Sticky den Titel
+  andocken-und-**halten** kann (statt nach dem 60vh-Hero abzulösen — zu kurzer Containing-Block), liegt der
+  Titel **nicht mehr im Hero**, sondern als Geschwister: `.reader-hero-inner` ist jetzt Kind von
+  `#page-story` (hoch, analog `.tl-herohead` in `.tl-stage`).
+  - **Mobil:** `.reader-hero-inner { position: sticky }` → federt beim iOS-Overscroll **nativ** mit, dockt
+    an-und-bleibt; h1 macht nur noch Schrumpfen + Horizontal-Versatz (`--st-m`), vertikale Wanderung nativ.
+    `--st-ov`/`--st-bigY` + das Nachjage-JS **entfallen**.
+  - **Desktop:** `.reader-hero-inner` per `position: absolute` (`top:60vh; translateY(-100%)`) exakt an den
+    Hero-Unterrand zurückgesetzt → Optik unverändert. (Lokal nicht verifizierbar — Tina-Netz; am Browser prüfen.)
+  - `pointer-events: none` am Container (h1 wieder `auto`) → „← Stories"-Link klickbar, CMS-Klick-zum-
+    Bearbeiten bleibt. Lange Titel weiter via gemessenem `--st-scale-big` einzeilig + Ellipsis.
+- Stellschrauben: `.reader-hero-inner margin-top` (-60 = Anhebung über Hero), `--st-range`/`h-100`.
+- Dateien: `StoryReaderContent.tsx`, `global.css`. **Mobil-Umbau + Desktop-Erhalt, kein Re-Index.**
+- Commit: `4b08bbf`
+
 ## 2026-06-25 — Mobil Reise: zwei Sticky-Umbau-Regressionen gefixt
 - **Titel hing im Beschreibungstext** (`de0dcf5`): `.tl-herohead margin-bottom` war `-40px` (zog den Intro
   unter den großen Titel) → jetzt `+18px`, der skalierte Titel hat eigenen Raum.
