@@ -56,6 +56,10 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   h1, aber der `.tl-herohead`-**Container** (z7) spannt über die ganze linke Spalte und fing als sticky Box
   die Pillen-Klicks (z6) ab. Jetzt `pointer-events: none` am Container (h1 erbt es); im Editor
   (`.is-editor .tl-herohead h1`) wieder `auto`.
+- **Test-Runde 6** (`a701fea`): mehr Luft zwischen Leiste und Timeline → `--ww-map-gap` 16→28 (steuert
+  koordiniert Fade-Höhe `map-gap+8` UND Karten-Position `+map-gap`: Fade zieht tiefer, Karte wandert mit
+  runter, 8px-Schwanz über der Karte konstant). `.tl-editbar` (Editor) um fehlendes `--ww-mininav-h`
+  ergänzt (saß im Editor zu hoch; live unberührt). Mobil/Spy unberührt.
 
 ## 2026-06-25 — Mobil Story: Lücke über dem Titelbild behoben
 - **Bug** (`126a1bf`): bei frisch geöffneter Story saß das Hero-Bild um die Banner-Höhe (~46px) nach unten
