@@ -258,6 +258,66 @@ section { padding: 84px 0; }
     }
   }
 }
+
+/* ── Story DESKTOP (>767): EIN wandernder Titel wie Mobil, aber VERZÖGERT — der Titel bleibt erst groß
+   auf dem Hero-Foto und dockt erst an, wenn das Foto fast durch ist (animation-range 42vh→64vh). Banner
+   erscheint deckend mit dem Andocken; Foto-Pille (.story-back) scrollt mit dem Bild weg, Balken-Pille
+   fadet ein. render-big-scale-down (scharf): font groß (--fs-display), via --st-fitscale einzeilig auf die
+   Breite, dann via --st-m auf die Andock-Größe (--st-dock) runterskaliert. Story hat KEINEN Scroll-Spy. ── */
+@keyframes st-title-fly-d {
+  from { transform: translateX(0px) scale(var(--st-fitscale, 0.7)); }
+  to   { transform: translateX(96px) scale(var(--st-dock, 0.34)); }
+}
+@media (min-width: 768px) {
+  .story-topline {                                  /* vollbreite deckende Leiste unter der globalen Nav */
+    display: flex; align-items: center; min-height: 56px;
+    position: sticky; top: var(--st-nav, 88px); z-index: 1095;
+    background: rgba(244,237,225, var(--st-m, 0));
+    margin-bottom: -56px;                           /* überlagert -> kein Fluss-Platz, schiebt nichts runter */
+    padding: 0 max(24px, calc(50% - 590px + 24px)); /* Inhalt an dieselbe Kante wie .story-back */
+  }
+  .story-topline::after {
+    content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 16px; pointer-events: none;
+    background: linear-gradient(to bottom, rgba(244,237,225, var(--st-m, 0)), rgba(244,237,225, 0));
+  }
+  .story-back-line {                                /* Balken-Pille: gleiche Ghost-Optik wie Reise, fadet ab ~40% ein */
+    display: inline-flex; align-items: center; gap: 6px; flex: none;
+    padding: 9px 18px; border-radius: var(--radius-pill);
+    font-size: var(--fs-label); letter-spacing: var(--tracking-slight); font-weight: var(--fw-bold);
+    color: #f0d9bf; text-decoration: none; white-space: nowrap;
+    background: rgba(28,24,18,0.32); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+    border: 1.5px solid rgba(240,217,191,0.5);
+    opacity: clamp(0, calc((var(--st-m, 0) - 0.4) / 0.6), 1);
+    transform: translateY(calc((1 - clamp(0, calc((var(--st-m, 0) - 0.4) / 0.6), 1)) * 8px));
+  }
+  #page-story .reader-hero-inner {                  /* Titel STICKY: wandert hoch + dockt an (statt absolut) */
+    position: sticky; top: calc(var(--st-nav, 88px) + 12px); z-index: 1096;
+    transform: none; left: auto; right: auto;
+    max-width: 760px; margin: calc(-1 * var(--st-lift, 88px)) auto 0; padding: 0 24px;
+    pointer-events: none;                           /* Container blockt die Pille nicht; h1 unten wieder auto */
+  }
+  #page-story .reader-hero-inner .meta { display: none; }   /* Kicker im Wander-Kopf aus */
+  #page-story .reader-hero-inner h1 {
+    pointer-events: auto;
+    width: max-content; white-space: nowrap;
+    font-size: var(--fs-display); line-height: 1.05;
+    transform-origin: left center; will-change: transform;
+    transform:
+      translateX(calc(var(--st-m, 0) * 96px))
+      scale(calc(var(--st-fitscale, 0.7) + var(--st-m, 0) * (var(--st-dock, 0.34) - var(--st-fitscale, 0.7))));
+  }
+  .is-editor #page-story .reader-hero-inner { pointer-events: auto; }
+  @supports (animation-timeline: scroll()) {
+    #page-story {
+      animation: st-m-drive cubic-bezier(.42, 0, .58, 1) both;
+      animation-timeline: scroll(root); animation-range: 42vh 64vh;   /* verzögert: erst Foto genießen */
+    }
+    #page-story .reader-hero-inner h1 {
+      animation: st-title-fly-d cubic-bezier(.42, 0, .58, 1) both;
+      animation-timeline: scroll(root); animation-range: 42vh 64vh;
+    }
+  }
+}
 .reader-body { max-width: 720px; margin: 0 auto; padding: 40px 24px 30px; }
 .reader-body p { font-size: var(--fs-lead); line-height: 1.85; margin-bottom: 24px; color: #4a3d2c; }
 .reader-body p:first-of-type::first-letter { font-family: var(--font-display); font-size: var(--fs-display); font-weight: var(--fw-semibold); float: left; line-height: 0.8; padding: 6px 12px 0 0; color: var(--c-accent); }

@@ -120,6 +120,18 @@ export default function StoryReaderContent(props: Props) {
       // minus Andock-/Lift-Offset; muss grob zur margin-top-Anhebung passen, damit der Titel fertig
       // geschrumpft ist, wenn er oben andockt.
       root.style.setProperty('--st-range', Math.max(140, Math.round(h - 100)) + 'px');
+      // --- Desktop (>767): Nav-Höhe (Banner-Andockpunkt) + Fit-/Andock-Skalierung für den großen Titel ---
+      const nav = document.querySelector('header') as HTMLElement | null;
+      if (nav && nav.offsetHeight) root.style.setProperty('--st-nav', Math.round(nav.offsetHeight) + 'px');
+      const innerEl = innerRef.current;
+      if (innerEl && titleEl) {
+        // großer Titel EINZEILIG auf die Spaltenbreite (render-big-scale-down, scharf):
+        const avail = Math.max(1, innerEl.clientWidth - 48);          // Spaltenbreite minus h1-Padding (2×24)
+        const fit = Math.max(0.2, Math.min(1, avail / (titleEl.scrollWidth || 1)));
+        root.style.setProperty('--st-fitscale', String(Math.round(fit * 1000) / 1000));
+        const fpx = parseFloat(getComputedStyle(titleEl).fontSize) || 60;  // display-Größe
+        root.style.setProperty('--st-dock', String(Math.round((22 / fpx) * 1000) / 1000)); // angedockt ~22px
+      }
       return h;
     };
     const target = () => {
@@ -145,11 +157,15 @@ export default function StoryReaderContent(props: Props) {
     // Scroll-Driven-Support (Mobil): CSS koppelt das Schrumpfen direkt an den Scroll (kein JS-Lerp).
     // JS misst dann nur Titelbreite/Hero-Höhe -> --st-scale-big/--st-range (Keyframe & animation-range
     // lesen diese Vars) und aktualisiert das bei resize. Kein Scroll-Listener (vertikal = natives Sticky).
+    // Mit Scroll-Driven-Support koppelt CSS --st-m direkt an den Scroll — auf Mobil UND Desktop. JS misst
+    // dann nur (Hero-Höhe, Titelbreite, Nav -> die Vars, die Keyframes/animation-range lesen) und re-misst
+    // bei resize. Kein Scroll-Lerp (der ginge gegen die CSS-Animation). Ohne Support: JS-Lerp unten.
     const sdaSupported = typeof CSS !== 'undefined' && typeof CSS.supports === 'function' && CSS.supports('animation-timeline: scroll()');
-    if (sdaSupported && window.matchMedia('(max-width: 767px)').matches) {
+    if (sdaSupported) {
       measure();
       const onResize = () => measure();
       window.addEventListener('resize', onResize);
+      const fonts = (document as any).fonts; if (fonts && fonts.ready) fonts.ready.then(measure).catch(() => {});
       return () => window.removeEventListener('resize', onResize);
     }
     const onScroll = () => {
