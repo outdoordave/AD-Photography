@@ -90,6 +90,9 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   3-Stop-Verlauf (fluffiger). (2) zwei Zurück-Buttons (Foto-Pille scrollte weg, dann kam die Balken-Pille =
   redundant) → alte `.story-back` auf Desktop ausgeblendet; jetzt wie Reise: oben kein Button, Balken-Pille
   fadet in der Leiste ein.
+- **Test-Runde 2** (`ed5f57d`): Titel dockte zu spät an (noch am Schrumpfen, während schon Body gescrollt
+  wurde) → `animation-range` 42vh/64vh → **34vh/46vh**: fertig angedockt bei ~Scroll 396, deutlich vor dem
+  Body (verifiziert: bei Scroll 445/Body sichtbar ist `--st-m` bereits 1). Titel bleibt für ~57 % des Heros groß.
 
 ## 2026-06-25 — Mobil Story: Lücke über dem Titelbild behoben
 - **Bug** (`126a1bf`): bei frisch geöffneter Story saß das Hero-Bild um die Banner-Höhe (~46px) nach unten
