@@ -38,6 +38,13 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   (2) Karte war ausgefadet → Karte klebt jetzt **unter** der Leiste (`top + --ww-mininav-h`), `::after`-Höhe
   = `--ww-map-gap` endet an der Karten-Oberkante (Fade über Creme-Spalt, nicht über der Karte). (3) Titel
   verschwommen → `will-change: transform` an der h1 entfernt (angedockt = Scale 1 wird scharf gerastert).
+- **Test-Runde 2** (`54cb227`): (1) noch verschwommen → h1 wird jetzt bei **großer** Größe gerendert
+  (`font-size ×2`) und **runterskaliert** (Downscale = scharf); `--tl-bigscale`→`--tl-fitscale` (≤1,
+  scrollWidth vs. Spaltenbreite), angedockt fix Scale 0.5; feste font-size → konstante vertikale Mitte
+  (`top` +1). (2) am Text „angeklatscht" → Render-bei-Großgröße hält das Visual in der Box (kein Bluten) +
+  `margin-bottom: 20`; `margin-top: 25`, Range 70. (3) Pille nur teils klickbar → `pointer-events: none`
+  an der h1 (z7 überdeckte die Pille z6), im Editor (`.is-editor`) wieder `auto`. Bekannte Kante: sehr
+  schmaler Desktop + sehr langer Titel.
 
 ## 2026-06-25 — Mobil Story: Lücke über dem Titelbild behoben
 - **Bug** (`126a1bf`): bei frisch geöffneter Story saß das Hero-Bild um die Banner-Höhe (~46px) nach unten
