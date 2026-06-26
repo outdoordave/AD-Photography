@@ -68,6 +68,12 @@
 >   `data:`-URL im `localStorage` ab; `normalizePath` liefert sie **nur im Editor-iframe** (`self!==top`) —
 >   **Live-Seite + SSG-Build unberührt** (immer `null`). Unit-getestet + Live-Render gegengeprüft (0 `data:`,
 >   0 kaputt). ⚠️ Cloud-Upload→Vorschau von David hands-on prüfen; Bulk/Crop (Album/Hero) nutzen sie noch nicht.
+> - **✅ „Aus Mediathek"-Picker zeigt CMS-Uploads (26.06., `cf16ac1`):** Picker liest `/uploads-manifest.json`;
+>   das Skript scannte nur Repo-Wurzel `/uploads`, CMS-Uploads liegen aber in `web/public/uploads` → fehlten.
+>   Skript scannt jetzt **beide** Ordner (merge+dedupe); committetes Manifest aus root + nur-getrackten
+>   public/uploads (16 → 30). Build-statisch: ganz frische Uploads erst nach Deploy. ⚠️ **Zwei Upload-Ordner
+>   laufen auseinander** (root `/uploads` „tragend" vs. Tina → `web/public/uploads`; lokaler Symlink gebrochen)
+>   → unsauber, aber funktioniert; eigener Aufräum-Task offen.
 > - **⚠️ Offen:** Story-Bausteine (📷 Foto / 📸 Album) via „+"-Menü **hands-on** im echten CMS testen
 >   (einfügen → speichert + rendert?). Die UI-/Vorschau-Fixes sind **kein Schema-Eingriff** (`tina-lock.json`
 >   unverändert) → kein Re-Index, nur Push + Deploy.

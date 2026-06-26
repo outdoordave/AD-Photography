@@ -17,6 +17,25 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-26 17:10 — „Aus Mediathek"-Picker zeigt jetzt auch CMS-Uploads
+- **Befund (belegt):** Der „🖼️ Aus Mediathek"-Picker (`PhotoUploadField`) liest `/uploads-manifest.json`.
+  Das Skript `gen-uploads-manifest.mjs` scannte bisher **nur** den Repo-Wurzel-Ordner `/uploads`. TinaCMS
+  committet frische CMS-Uploads aber nach **`web/public/uploads`** (media `mediaRoot:'uploads'` +
+  `publicFolder:'public'`) — z. B. `IMG_5312/5685/5736.webp`. Beide Ordner liefern unter derselben URL
+  `/uploads/<datei>` aus, lagen im Repo aber getrennt → CMS-Uploads tauchten im Picker nie auf.
+- **Fix** (`cf16ac1`): `gen-uploads-manifest.mjs` scannt jetzt **beide** Ordner, mergt nach Dateiname,
+  dedupet. Committetes Manifest neu erzeugt aus root + **nur git-getrackten** `public/uploads` (= was der
+  Cloudflare-Checkout hat) → keine nur-lokalen Dateien als tote Picker-Einträge. **16 → 30 Bilder**, inkl.
+  der zuletzt per CMS hochgeladenen. **Verifiziert:** Dev-Server liefert 30 (Test-Uploads drin, 5 nur-lokale
+  Cruft-Dateien raus).
+- **Weiterhin Build-statisch:** Ganz frische Uploads erscheinen erst nach dem nächsten Deploy (Manifest wird
+  im Build neu erzeugt). Für Wiederverwendung älterer Uploads genau richtig.
+- **🅿️ Größere Baustelle (nicht hier gelöst):** CMS-Uploads landen in `web/public/uploads`, der „tragende"
+  Bestand in der Repo-Wurzel `/uploads` — zwei Quellen, die auseinanderlaufen (der lokale Symlink-Plan ist
+  aktuell gebrochen, `public/uploads` ist ein realer Ordner mit getrackten Tina-Dateien). Funktioniert
+  (beide deployen), aber unsauber → eigener Aufräum-Task (IDEEN.md-Kandidat).
+- Commit: `cf16ac1`
+
 ## 2026-06-26 16:40 — CMS-Live-Vorschau: frisch hochgeladenes Bild sofort sichtbar
 - **Analyse zuerst (belegt, Live-Render-Pfad ist 🔴):** Per `curl` gegen die Live-Seite geprüft —
   das HTML enthält in den Insel-Props echte `assets.tina.io/<clientId>/…`-URLs; `normalizePath`
