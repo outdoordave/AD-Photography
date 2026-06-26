@@ -160,6 +160,40 @@ export default defineConfig({
           const t = v.trim(); const de = MAP[t];
           if (de && v !== de) node.nodeValue = v.replace(t, de);
         };
+        // Die schwebenden Tooltips der Symbol-Knoepfe (Radix-Popover) tragen den ENGLISCHEN Begriff
+        // PLUS Tastenkuerzel, z. B. „Bold (⌘+B)", „Quote (⌘+⇧+.)", „Headings". Exakt-Treffer scheitern
+        // (Kuerzel variiert, am PC „Ctrl"). Loesung: den fuehrenden Begriff uebersetzen, den Kuerzel-Rest
+        // behalten — und das NUR innerhalb von Tooltip-/Popover-Containern, damit der eigentliche
+        // Editor-Text (der „Bold" enthalten koennte) unangetastet bleibt.
+        const TIP: Record<string, string> = {
+          'Headings': 'Überschriften', 'Heading': 'Überschrift',
+          'Bulleted List': 'Aufzählung', 'Numbered List': 'Nummerierte Liste', 'Ordered List': 'Nummerierte Liste',
+          'Bold': 'Fett', 'Italic': 'Kursiv', 'Underline': 'Unterstrichen', 'Strikethrough': 'Durchgestrichen',
+          'Quote': 'Zitat', 'Link': 'Link einfügen', 'Image': 'Bild', 'Code': 'Code', 'Table': 'Tabelle', 'Embed': 'Einfügen',
+        };
+        const TIP_KEYS = Object.keys(TIP).sort((a, b) => b.length - a.length); // laengste zuerst (Headings vor Heading)
+        const TIP_SEL = '[role="tooltip"], [data-radix-popper-content-wrapper]';
+        const fixTip = (node: any) => {
+          const v = node.nodeValue; if (typeof v !== 'string') return;
+          const t = v.trim(); if (!t) return;
+          for (const k of TIP_KEYS) {
+            if (t === k || t.indexOf(k + ' (') === 0) { // „Bold" oder „Bold (⌘+B)"
+              const de = TIP[k]; const rest = t.slice(k.length); // z. B. " (⌘+B)"
+              if (!t.startsWith(de)) node.nodeValue = v.replace(t, de + rest);
+              return;
+            }
+          }
+        };
+        const inTip = (node: any) => { const p = node && node.parentElement; return !!(p && p.closest && p.closest(TIP_SEL)); };
+        const relabelTips = (root: any) => {
+          try {
+            if (!root || root.nodeType !== 1) return;
+            const scopes: Element[] = [];
+            if (root.matches && root.matches(TIP_SEL)) scopes.push(root);
+            if (root.querySelectorAll) root.querySelectorAll(TIP_SEL).forEach((s: Element) => scopes.push(s));
+            scopes.forEach((s) => { const w = document.createTreeWalker(s, NodeFilter.SHOW_TEXT); let x: any; while ((x = w.nextNode())) fixTip(x); });
+          } catch (e) { /* egal */ }
+        };
         const relabel = (root: Node) => {
           try {
             if (root.nodeType === 3) { fixText(root); return; }
@@ -170,13 +204,13 @@ export default defineConfig({
         };
         const obs = new MutationObserver((muts) => {
           for (const m of muts) {
-            if (m.type === 'characterData') fixText(m.target);
-            else m.addedNodes.forEach((nd) => relabel(nd));
+            if (m.type === 'characterData') { fixText(m.target); if (inTip(m.target)) fixTip(m.target); }
+            else m.addedNodes.forEach((nd) => { relabel(nd); relabelTips(nd); });
           }
         });
         const startI18n = () => {
           if (!document.body) { setTimeout(startI18n, 200); return; }
-          relabel(document.body);
+          relabel(document.body); relabelTips(document.body);
           obs.observe(document.body, { childList: true, subtree: true, characterData: true });
         };
         startI18n();
