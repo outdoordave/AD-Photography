@@ -1,4 +1,5 @@
 import React from 'react';
+import { MdxFieldPlugin } from 'tinacms';
 import { useEnglishOn } from './englishStore';
 import MarkdownToolbar, { type MdKind } from './MarkdownToolbar';
 
@@ -86,6 +87,15 @@ function makeEnglishMarkdown(alwaysShow = false, allow?: MdKind[]) {
   };
   return Comp;
 }
+
+// Weg B (WYSIWYG): EN-Rich-Text-Feld. Bei „Nur Deutsch" (Schalter aus) -> return null
+// (Auto-Ausblenden wie bei den bisherigen EN-Feldern), sonst Tinas NATIVER Rich-Text-Editor
+// (MdxFieldPlugin.Component) -> volles WYSIWYG. Erdton-Wrapper für die gewohnte EN-Optik.
+export const EnglishRichTextField = (props: any) => {
+  const on = useEnglishOn();
+  if (!on) return null;
+  return <div style={wrapStyle}><MdxFieldPlugin.Component {...props} /></div>;
+};
 
 export const EnglishOnlyField = makeEnglishOnly(false);
 export const EnglishOnlyTextField = makeEnglishOnly(true);
