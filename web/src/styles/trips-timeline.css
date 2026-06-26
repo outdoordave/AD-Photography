@@ -355,6 +355,8 @@
      wird nicht mehr überdeckt/abgeschnitten und zeigt sich voll auf dem Creme. Er fällt nur in der linken
      Spalte (Pille ist links) -> berührt die Karte rechts nicht. */
   .tl-topbar .trip-back {
+    display: inline-flex;                      /* überschreibt global.css Z.155 (.trip-back display:none ≤860):
+                                                  ab 768 trägt das Wander-Band die Pille auch im Korridor 768–860 */
     position: relative; z-index: 1;
     opacity: clamp(0, calc((var(--tl-p, 0) - 0.4) / 0.6), 1);
     transform: translateY(calc((1 - clamp(0, calc((var(--tl-p, 0) - 0.4) / 0.6), 1)) * 8px));
