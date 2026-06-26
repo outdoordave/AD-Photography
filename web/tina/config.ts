@@ -304,7 +304,7 @@ export default defineConfig({
           // Textfeld — „📷 Bild einfuegen" (Auto-WebP-Upload an die Cursor-Stelle)
           // + „📸 Album hier einfuegen" (setzt den [[album]]-Platzhalter -> dort
           // erscheint die Lightbox des unten verknuepften Albums).
-          { type: 'string', name: 'body_de', label: 'Haupttext', ui: { component: StoryBodyField } },
+          { type: 'rich-text', name: 'body_de', label: 'Haupttext', parser: { type: 'markdown', skipEscaping: 'html' }, templates: [ { name: 'album', label: '📸 Album-Galerie', fields: [ { name: 'hinweis', type: 'string', label: 'Album-Galerie', description: 'Die Fotos kommen automatisch aus dem unten gewählten „Verknüpften Album" — hier ist nichts auszufüllen.' } ] } ] } as any,
           // --- Verknuepftes Album: per Dropdown ein vorhandenes Album waehlen.
           //     Mit „📸 Album hier einfuegen" im Text frei platzierbar (Lightbox),
           //     ohne die Bilder erneut hochzuladen (sie kommen aus dem Album). ---
@@ -322,7 +322,7 @@ export default defineConfig({
           { type: 'string', name: 'title_en', label: 'Title (EN)', description: 'Max. 35 characters.', ui: { component: EnglishStyledField, validate: validateTitleMax } },
           { type: 'string', name: 'category_en', label: 'Category (EN)', ui: { component: EnglishStyledField } },
           { type: 'string', name: 'excerpt_en', label: 'Excerpt (EN)', ui: { component: EnglishStyledTextField } },
-          { type: 'string', name: 'body_en', label: 'Body (EN)', ui: { component: StoryBodyField } },
+          { type: 'rich-text', name: 'body_en', label: 'Body (EN)', parser: { type: 'markdown', skipEscaping: 'html' }, templates: [ { name: 'album', label: '📸 Album-Galerie', fields: [ { name: 'hinweis', type: 'string', label: 'Album-Galerie', description: 'Photos come from the linked album below — nothing to fill in.' } ] } ] } as any,
         ],
       },
       // --- Stories: Seiten-Einstellungen (Kopf-Texte der Stories-Liste) ---

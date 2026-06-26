@@ -1,7 +1,8 @@
 import React from 'react';
 import { useTina, tinaField } from 'tinacms/dist/react';
-import { buildStory, mdToHtml, wwYouTubeEmbed, normalizePath, type StoryData } from '../lib/stories';
+import { buildStory, wwYouTubeEmbed, normalizePath, type StoryData } from '../lib/stories';
 import { ILLUS } from '../lib/illus';
+import RichText, { richIsEmpty } from './RichText';
 import StoryAlbumBlock from './StoryAlbumBlock';
 import Lightbox, { type LbPhoto } from './Lightbox';
 
@@ -61,21 +62,33 @@ export default function StoryReaderContent(props: Props) {
     />
   ) : null;
 
-  // --- Roh-Markdown (mit DE-Fallback wie buildStory), am [[album]]-Marker teilen ---
+  // --- Body als Rich-Text-AST (DE/EN-Fallback wie buildStory), an Album-Stellen teilen ---
   const hasEN = story.has_english === true;
-  const rawDe = (story.body_de || '').trim();
-  const rawEn = (story.body_en || '').trim();
-  const raw = props.lang === 'en' ? (hasEN ? rawEn || rawDe : rawDe) : rawDe;
-  const segments = raw.split(ALBUM_MARKER);
+  const useEn = props.lang === 'en' && hasEN;
+  const bodyAst: any = useEn ? (richIsEmpty(story.body_en) ? story.body_de : story.body_en) : story.body_de;
+  const blocks: any[] = Array.isArray(bodyAst?.children) ? bodyAst.children : [];
 
-  // Body rendern: Textstuecke (mdToHtml) + Album-Block an jeder Marker-Stelle.
+  // Album-Stelle erkennen: neues „+"-Menue-Template (name 'album') ODER Legacy-Marker [[album]] als Absatz.
+  const isAlbumNode = (n: any) => {
+    if (!n) return false;
+    if (n.name === 'album') return true;
+    if (n.type === 'p' && Array.isArray(n.children) && n.children.length === 1) {
+      const t = n.children[0];
+      if (typeof t?.text === 'string' && t.text.trim() === ALBUM_MARKER) return true;
+    }
+    return false;
+  };
+  const segs: any[][] = [[]];
+  blocks.forEach((n) => { if (isAlbumNode(n)) segs.push([]); else segs[segs.length - 1].push(n); });
+
+  // Body rendern: AST-Textstuecke (RichText -> .ww-rich-Optik) + Album-Block an jeder Marker-Stelle.
   // Ohne Marker, aber mit Album: Block ans Ende anhaengen.
   const bodyChildren: any[] = [];
-  segments.forEach((seg, i) => {
-    bodyChildren.push(<div key={`seg-${i}`} dangerouslySetInnerHTML={{ __html: mdToHtml(seg) }} />);
-    if (i < segments.length - 1 && albumNode) bodyChildren.push(<div key={`alb-${i}`}>{albumNode}</div>);
+  segs.forEach((seg, i) => {
+    bodyChildren.push(<RichText key={`seg-${i}`} value={{ type: 'root', children: seg }} />);
+    if (i < segs.length - 1 && albumNode) bodyChildren.push(<div key={`alb-${i}`}>{albumNode}</div>);
   });
-  if (segments.length === 1 && albumNode) bodyChildren.push(<div key="alb-end">{albumNode}</div>);
+  if (segs.length === 1 && albumNode) bodyChildren.push(<div key="alb-end">{albumNode}</div>);
 
   // --- Inline-Bilder im Beitrag klickbar machen -> Lightbox als Gruppe (wie Live,
   //     index.html ~2883: alle .reader-body img, blaetterbar). Album-Kacheln
@@ -211,7 +224,7 @@ export default function StoryReaderContent(props: Props) {
       cleanups.push(() => im.removeEventListener('click', onClick));
     });
     return () => cleanups.forEach((fn) => fn());
-  }, [raw, props.lang, albumPhotos.length]);
+  }, [bodyAst, props.lang, albumPhotos.length]);
 
   return (
     <>
