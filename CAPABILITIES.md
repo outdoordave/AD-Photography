@@ -990,6 +990,14 @@ Schreib-Mutation, dann `git diff` der Dateien beobachtet. Anschließend per `git
   **noch nicht verdrahtet** (kein Schema/Verhalten geändert). **Lokal mit echten ASTs verifiziert** (Wegwerf-
   Story + Testseite, alles zurückgerollt): H2/H3, fett/kursiv/durchgestrichen, Link, Pullquote, Listen, Bild,
   **rohes HTML (S4 ✅)** rendern 1:1. **S5 (Listen) ✅**; offen für Stufe 2: `[[album]]`-Embed + Inline-Bild-Lightbox.
-- **Stufe 2 ☐ offen:** Felder auf `rich-text` umstellen, Konsumenten auf `<RichText>`/`<TinaMarkdown>`, Editor
+- **Stufe 2 🔧 in Arbeit:** Felder auf `rich-text` umstellen, Konsumenten auf `<RichText>`/`<TinaMarkdown>`, Editor
   (`overrides.toolbar`, Album-Shortcode, jSquash-Bild-Upload + Mediathek-Picker), `[[album]]`-Embed.
+  - **Baustein ✅:** `EnglishRichTextField` (`493fc3c`, Auto-Ausblenden via `MdxFieldPlugin.Component`) +
+    `richIsEmpty`/`pickRich` (DE/EN-Fallback für AST).
+  - **EN-Felder:** David-Entscheid — **Auto-Ausblenden bleibt** (`EnglishRichTextField`).
+  - **⚠️ Parser-Unterschied gefunden (Test-Scheibe Legal):** Tinas CommonMark-Parser rendert die **unsauberen
+    Generator-Pastes** der Rechts-Seiten anders als `mdToHtml` (gemischte `##`/`**`, keine Leerzeilen). Saubere
+    Prosa (Story in Stufe 1 bewiesen, Intro/Bio/Reise) ist NICHT betroffen. **David-Entscheid: „einmal richtig" —
+    Rechts-Seiten ebenfalls umstellen UND den Inhalt einmalig in saubere Struktur aufräumen** (Wortlaut bleibt,
+    nur Struktur; David liest gegen).
 - **Stufe 3 ☐ offen:** Aufräumen (alte Felder/Vorschau-Box), `tina-lock.json`, Backup-Tag → David push/Re-Index/Deploy/Abnahme.
