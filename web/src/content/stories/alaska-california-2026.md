@@ -1,15 +1,13 @@
 ---
-title_de: "Alaska & California – Herbst 2026"
-category_de: "Alaska & Kalifornien"
+title_de: Alaska & California – Herbst 2026
+category_de: Alaska & Kalifornien
 date: '2026-10-01'
-cover: ''
-excerpt_de: "Manche Ziele sammelt man. Für uns ist Alaska seit Jahren so ein Ziel. Groß. Rau. Zu groß für ein Komma. (Vorab-Story — wird nach der Reise fertiggeschrieben.)"
+cover: /uploads/IMG_5618.webp
+excerpt_de: Manche Ziele sammelt man. Für uns ist Alaska seit Jahren so ein Ziel. Groß. Rau. Zu groß für ein Komma. (Vorab-Story — wird nach der Reise fertiggeschrieben.)
 body_de: |
   ### Das Nördlichste: Alaska und die Küste zurück zum Anfang
 
-  *Dresden → San Francisco → Lake Tahoe → Yosemite → Los Angeles → Morro Bay → San Francisco → Anchorage → Homer → Denali → Fairbanks → Arctic Circle → Anchorage → San Francisco → Dresden · Oktober–November 2026*
-
-  *(Diese Story wird nach der Reise fertiggeschrieben. Was hier steht, ist das, was wir uns vorgestellt haben — bevor die Realität, wie immer, schöner wird.)*
+  D*resden → San Francisco → Lake Tahoe → Yosemite → Los Angeles → Morro Bay → San Francisco → Anchorage → Homer → Denali → Fairbanks → Arctic Circle → Anchorage → San Francisco → Dresden · Oktober–November 2026*
 
   Manche Ziele sammelt man. Man kreist darum, schiebt sie vor sich her, hält sie für den richtigen Moment auf. Für uns ist **Alaska** seit Jahren so ein Ziel. Groß. Rau. Zu groß für ein Komma.
 
@@ -28,10 +26,11 @@ body_de: |
   **Fairbanks** und dann — der Polarkreis. Die **Arctic Circle**: eine unsichtbare Linie auf der Erde, die man trotzdem spürt, wenn man davor steht. Kein Trubel. Keine Souvenirläden. Nur Weite und der Gedanke: hier endet Mitteleuropa, nicht geographisch, aber irgendwie existenziell.
 
   Zurück über **Tok** nach Anchorage. Der Rückflug nach San Francisco, dann Dresden. Koffer, Jetlag, das leise Gefühl: Wir haben etwas gesehen, das die meisten nur auf Karten kennen.
+linked_album: ''
 has_english: true
-title_en: "Alaska & California – Fall 2026"
-category_en: "Alaska & California"
-excerpt_en: "Some destinations you collect. For us, Alaska has been that destination for years. Big. Raw. Too big for a comma. (Preview story — to be finished after the trip.)"
+title_en: Alaska & California – Fall 2026
+category_en: Alaska & California
+excerpt_en: 'Some destinations you collect. For us, Alaska has been that destination for years. Big. Raw. Too big for a comma. (Preview story — to be finished after the trip.)'
 body_en: |
   ### The Northernmost: Alaska and the Coast Back to the Beginning
 
@@ -57,3 +56,4 @@ body_en: |
 
   Back via **Tok** to Anchorage. Flight back to San Francisco, then Dresden. Luggage, jet lag, and that quiet feeling: we saw something most people only know from maps.
 ---
+
