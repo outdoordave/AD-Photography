@@ -2,7 +2,7 @@
 title_de: Alaska & California – Herbst 2026
 category_de: Alaska & Kalifornien
 date: '2026-10-01'
-cover: /uploads/IMG_6027.webp
+cover: /uploads/IMG_5703.webp
 excerpt_de: Manche Ziele sammelt man. Für uns ist Alaska seit Jahren so ein Ziel. Groß. Rau. Zu groß für ein Komma. (Vorab-Story — wird nach der Reise fertiggeschrieben.)
 body_de: |
   ### Das Nördlichste: Alaska und die Küste zurück zum Anfang
