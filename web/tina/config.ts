@@ -95,6 +95,51 @@ export default defineConfig({
           }
         }, true);
       }
+
+      // CMS-Editor-Beschriftungen eindeutschen. Tina hat KEINE i18n-Option und die Labels stecken
+      // im gebuendelten Editor -> wir schreiben die wenigen englischen TEXTE per MutationObserver
+      // auf Deutsch um (gleiche DOM-Ebene wie der Logout-Patch oben). Nur exakte Treffer aus der Map
+      // -> alles Unbekannte bleibt unveraendert (graceful). Heilt sich nach React-Re-Renders selbst,
+      // weil der Observer neue/geaenderte Knoten erneut prueft. Die Ueberschrift-Labels bekommen
+      // gleich einen Groessen-Hinweis (Word-artige „Vorschau" in Worten, da Tina keine Hover-Vorschau hat).
+      if (typeof document !== 'undefined' && !(document as any).__wwI18nHook) {
+        (document as any).__wwI18nHook = true;
+        const MAP: Record<string, string> = {
+          'Paragraph': 'Absatz',
+          'Heading 1': 'Überschrift 1 (sehr groß)',
+          'Heading 2': 'Überschrift 2 (groß)',
+          'Heading 3': 'Überschrift 3 (mittel)',
+          'Heading 4': 'Überschrift 4 (klein)',
+          'Heading 5': 'Überschrift 5',
+          'Heading 6': 'Überschrift 6',
+          'Embed': 'Einfügen',
+        };
+        const fixText = (node: any) => {
+          const v = node.nodeValue; if (typeof v !== 'string') return;
+          const t = v.trim(); const de = MAP[t];
+          if (de && v !== de) node.nodeValue = v.replace(t, de);
+        };
+        const relabel = (root: Node) => {
+          try {
+            if (root.nodeType === 3) { fixText(root); return; }
+            if (root.nodeType !== 1) return;
+            const it = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+            let n: any; while ((n = it.nextNode())) fixText(n);
+          } catch (e) { /* egal */ }
+        };
+        const obs = new MutationObserver((muts) => {
+          for (const m of muts) {
+            if (m.type === 'characterData') fixText(m.target);
+            else m.addedNodes.forEach((nd) => relabel(nd));
+          }
+        });
+        const startI18n = () => {
+          if (!document.body) { setTimeout(startI18n, 200); return; }
+          relabel(document.body);
+          obs.observe(document.body, { childList: true, subtree: true, characterData: true });
+        };
+        startI18n();
+      }
     } catch (e) { /* ignore */ }
     return cms;
   },
