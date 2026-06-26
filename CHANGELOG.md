@@ -17,6 +17,34 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-26 15:45 — Editor-Feinschliff aus Davids Live-Test: Bild-„?", Deutsch komplett, Story-EN
+- **Bild-Upload „?" behoben** (`1cdaa75`): Direkt nach dem Hochladen zeigte das Foto-Feld ein „?".
+  Ursache: gespeichert wird ein `/uploads`-Pfad, der erst nach dem **nächsten Deploy** ausgeliefert
+  wird → bis dahin 404. Fix: `PhotoUploadField` **und** `SinglePhotoField` zeigen das gerade gewählte
+  Bild sofort als **`blob:`-URL** (`URL.createObjectURL` vor `persist`), Fallback bleibt `toLocalMedia`.
+  Mediathek-Auswahl + Entfernen geben den `blob:` wieder frei (kein Leck). ⚠️ Headless nicht voll
+  testbar (Datei-Dialog) → Davids Hands-on im echten Cloud-`/admin`. BulkPhoto/CropPhoto (Album/
+  Station/Hero) haben dieselbe Eigenheit — gleicher Einzeiler-Fix bei Bedarf.
+- **„Edit-Möglichkeiten" jetzt durch die Bank Deutsch** (`700ddb7`): Die Symbol-Knöpfe der Rich-Text-
+  Leiste tragen ihre Tooltips als **SVG-`<title>` in Kleinschreibung** (Material-Symbol-Namen wie
+  `format bold`) — die liefen NICHT durch die alte Relabel-Map (dort stand „Bold"). Im `cmsCallback`
+  ergänzt: `format size`→Textgröße, `format bold`→Fett, `format italic`→Kursiv, `insert link`→Link
+  einfügen, `format quote`→Zitat, Listen, `image`→Bild; dazu `Save`→Speichern, `Reset`→Zurücksetzen,
+  `Choose an option...`→Bitte wählen, `Log Out`→Abmelden, `Media Manager`→Medien, `Collections`→Bereiche,
+  `published`→veröffentlicht. Screen-Kategorie `Site`→`Website` (an der Quelle, BackToSite/Logout).
+  **Im lokalen `/admin` verifiziert:** Leiste zeigt Textgröße/Fett/Kursiv/Link einfügen/Zitat.
+- **Story-EN-Felder folgen jetzt `has_english`** (`700ddb7`): Stories haben keinen globalen Sprach-
+  Schalter, sondern das gespeicherte Feld `has_english` („Englische Version anzeigen?"). Bisher waren
+  `title/category/excerpt_en` **immer** sichtbar (`alwaysShow`) und `body_en` hing am globalen Schalter
+  → beim Ausschalten blieben die EN-Felder stehen. Jetzt folgen **alle vier** EN-Felder genau
+  `has_english` (neue `EnglishStory*`-Komponenten via `useFormState`, wie `GearCategoryField`):
+  **aus → unsichtbar, an → sichtbar**, Wert bleibt erhalten (An/Aus löscht nichts). Tote
+  `EnglishStyled*`-Exporte entfernt. **Verifiziert** im `/admin`: Florida-Story, Schalter aus → 0 EN-
+  Felder/1 Editor, an → 3 🌐-Felder + EN-Body mit erhaltenem Inhalt.
+- **Kein Schema-Eingriff:** alles `ui.component`/`cmsCallback` → **`tina-lock.json` unverändert**,
+  **kein Tina-Cloud-Re-Index nötig** (nur Push + Deploy durch David).
+- Commits: `1cdaa75`, `700ddb7`
+
 ## 2026-06-26 — WYSIWYG-Editor (Weg B) — Stufe 1 + 2 (Nicht-Story), IN ARBEIT
 - **Capability-Lock Schritt 0+A+B** (`a663453`, `7cd86b0`) + **Spike S1–S6** (`b0dfbdf`): Tina 2.10.1
   `rich-text` + `parser:markdown` speichert **Markdown** (JSON=String, MD=YAML-Block, Inhalt 1:1),

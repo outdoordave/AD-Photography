@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-25** · Live-Branch `main`. Seite **live**, Cutover durch. SEO-Grundlage steht
+> **Stand: 2026-06-26** · Live-Branch `main`. Seite **live**, Cutover durch. SEO-Grundlage steht
 > (Sitemap, JSON-LD, Google Search Console bestätigt + Sitemap gelesen), Datenschutz **vollständig**
 > (inkl. Web3Forms), Performance ok, A11y-Basics drin, Security-Header + CSP gesetzt. **Keine offenen
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
@@ -46,8 +46,22 @@
 >   768/800/860/861). **✅ erledigt.**
 > - **Editor-Feinschliff (Davids Live-Test):** Deutsch (Menü+Tooltips), eingebauter Bild-Knopf raus, Drop-Cap-
 >   Hinweis am Feld, EN-Haupttext blendet aus — alle **Editor-JS/Config → nur Deploy, kein Re-Index**.
-> - **⚠️ Offen:** (a) CMS-Bild-Upload zeigt live `?` — Media ist im Dashboard aktiv, daher vermutlich Sync-/Rebuild-
->   Timing (David: „Resync Media" + nach Deploy prüfen; sonst Bild-URL liefern). (b) Story-Bausteine (📷/📸) Hands-on.
+> - **✅ Bild-„?" behoben (26.06., `1cdaa75`):** Das Foto-Feld zeigte direkt nach dem Upload ein `?` — der
+>   gespeicherte `/uploads`-Pfad wird erst nach dem **nächsten Deploy** ausgeliefert. Jetzt zeigen
+>   `PhotoUploadField` **und** `SinglePhotoField` das gewählte Bild sofort als **`blob:`-Vorschau**
+>   (Fallback `toLocalMedia`). ⚠️ Datei-Dialog headless nicht testbar → Davids Hands-on im Cloud-`/admin`.
+>   (BulkPhoto/CropPhoto = Album/Station/Hero haben dieselbe Eigenheit; gleicher Einzeiler bei Bedarf.)
+> - **✅ „Edit-Möglichkeiten" durch die Bank Deutsch (26.06., `700ddb7`):** Die Rich-Text-Knöpfe trugen ihre
+>   Tooltips als SVG-`<title>` in Kleinschreibung (`format bold` …) → liefen nicht durch die alte Map. Ergänzt
+>   (Textgröße/Fett/Kursiv/Link einfügen/Zitat/Listen/Bild + Save/Reset/Bitte wählen/Abmelden/Medien/Bereiche/
+>   veröffentlicht); Screen-Kategorie `Site`→`Website`. Im `/admin` verifiziert.
+> - **✅ Story-EN-Felder folgen `has_english` (26.06., `700ddb7`):** Stories haben keinen globalen Sprach-
+>   Schalter, sondern `has_english`. Bisher waren title/category/excerpt_en immer sichtbar + body_en hing am
+>   globalen Schalter. Jetzt folgen **alle vier** EN-Felder `has_english` (neue `EnglishStory*` via `useFormState`):
+>   aus → unsichtbar, an → sichtbar, Wert bleibt erhalten. Verifiziert (Florida). Tote `EnglishStyled*` raus.
+> - **⚠️ Offen:** Story-Bausteine (📷 Foto / 📸 Album) via „+"-Menü **hands-on** im echten CMS testen
+>   (einfügen → speichert + rendert?). Die obigen UI-Fixes sind **kein Schema-Eingriff** (`tina-lock.json`
+>   unverändert) → kein Re-Index, nur Push + Deploy.
 >
 > **⚠️ Wichtig für den Deploy:** Die rich-text-Umstellung ist eine **STRUKTURELLE Schema-Änderung →
 > Tina-Cloud-Re-Index auf `main` nötig**, sonst brechen die betroffenen Seiten/CMS. Außerdem: Commit `0bac071`
@@ -139,7 +153,9 @@
 - **Sichtbarkeits-Schalter** (Stories/Kontakt, 🎨 Darstellung): ist ein Bereich aus, ist er ganz weg
   (Nav/Footer gefiltert + Direktaufruf-Guard leitet auf Startseite). Falle: solange aus, leitet auch
   die CMS-Vorschau um → zum Bearbeiten kurz anschalten.
-- **Bilder online erst nach Save+Deploy** (repo-basierte Git-Medien); lokal sofort.
+- **Bilder online erst nach Save+Deploy** (repo-basierte Git-Medien); lokal sofort. Im Foto-**Feld** zeigt
+  der Editor seit `1cdaa75` direkt nach dem Upload eine **`blob:`-Sofortvorschau** (sonst `?`, weil der
+  `/uploads`-Pfad erst nach dem Deploy ausgeliefert wird).
 - **Cloudflare-Cache:** nach Deploy Hard-Reload (Strg/Cmd+F5).
 
 ## 6. Abschluss-Bilanz & geparkte Kür (KEINE offenen Pflicht-Punkte)
