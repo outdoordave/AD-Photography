@@ -175,9 +175,11 @@ function pickHasEN(d: StoryData): boolean {
 export function buildStory(data: StoryData): StoryView {
   const coverPhoto = data.cover || '';
   const hasEN = pickHasEN(data);
-  const textDe = data.body_de && data.body_de.trim() ? data.body_de : '';
-  const enBody = data.body_en || '';
-  const textEn = enBody && enBody.trim() ? enBody : '';
+  // body_de/_en können jetzt Rich-Text-AST (Objekt) statt String sein. bodyHtml wird nirgends
+  // gerendert (StoryReaderContent rendert direkt aus dem AST) — daher AST-sicher leeren.
+  const textDe = typeof data.body_de === 'string' && data.body_de.trim() ? data.body_de : '';
+  const enBody = typeof data.body_en === 'string' ? data.body_en : '';
+  const textEn = enBody.trim() ? enBody : '';
   return {
     photo: coverPhoto,
     youtube: data.youtube_url || '',

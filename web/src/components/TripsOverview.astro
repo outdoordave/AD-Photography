@@ -3,7 +3,7 @@
 // Reise-Detailseite /trips/<slug> (bzw. /en/trips/<slug>). Ersetzt die alten Reise-Tabs.
 import { tripTitle, bi, tripCover, type RawTrip } from '../lib/trips';
 import { groupByYear } from '../lib/groupByYear';
-import { stripMarkdown } from '../lib/stories';
+import { richToPlain } from './RichText';
 interface Props {
   trips: { slug: string; data: RawTrip }[];
   lang: 'de' | 'en';
@@ -21,7 +21,7 @@ const base = isEn ? '/en/trips/' : '/trips/';
     const cover = tripCover(d);
     const title = tripTitle(d, lang);
     const meta = bi(d, 'meta', lang);
-    const summary = bi(d, 'summary', lang);
+    const summaryText = richToPlain(bi(d, 'summary', lang));
     const n = Array.isArray(d.stops) ? d.stops.length : 0;
     const stopWord = isEn ? (n === 1 ? 'stop' : 'stops') : (n === 1 ? 'Station' : 'Stationen');
     return (
@@ -34,7 +34,7 @@ const base = isEn ? '/en/trips/' : '/trips/';
           {meta ? <div class="trip-card-eyebrow">{meta}</div> : null}
           <h3 class="trip-card-title">{title}</h3>
           <div class="trip-card-count">{n} {stopWord}</div>
-          {summary ? <p class="trip-card-sum">{stripMarkdown(summary)}</p> : null}
+          {summaryText ? <p class="trip-card-sum">{summaryText}</p> : null}
         </div>
       </a>
         );
