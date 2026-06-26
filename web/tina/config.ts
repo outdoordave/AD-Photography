@@ -303,7 +303,7 @@ export default defineConfig({
           // Textfeld — „📷 Bild einfuegen" (Auto-WebP-Upload an die Cursor-Stelle)
           // + „📸 Album hier einfuegen" (setzt den [[album]]-Platzhalter -> dort
           // erscheint die Lightbox des unten verknuepften Albums).
-          { type: 'rich-text', name: 'body_de', label: 'Haupttext', templates: [
+          { type: 'rich-text', name: 'body_de', label: 'Haupttext', overrides: { toolbar: ['heading', 'bold', 'italic', 'link', 'quote', 'ul', 'ol', 'embed'] }, templates: [
             { name: 'foto', label: '📷 Foto', fields: [ { name: 'src', type: 'string', label: 'Bild', ui: { component: PhotoUploadField } }, { name: 'alt', type: 'string', label: 'Alt-Text (optional, für Barrierefreiheit)' } ] },
             { name: 'album', label: '📸 Album-Galerie', fields: [ { name: 'hinweis', type: 'string', label: 'Album-Galerie', description: 'Die Fotos kommen automatisch aus dem unten gewählten „Verknüpften Album" — hier ist nichts auszufüllen.' } ] },
           ] } as any,
@@ -324,7 +324,7 @@ export default defineConfig({
           { type: 'string', name: 'title_en', label: 'Title (EN)', description: 'Max. 35 characters.', ui: { component: EnglishStyledField, validate: validateTitleMax } },
           { type: 'string', name: 'category_en', label: 'Category (EN)', ui: { component: EnglishStyledField } },
           { type: 'string', name: 'excerpt_en', label: 'Excerpt (EN)', ui: { component: EnglishStyledTextField } },
-          { type: 'rich-text', name: 'body_en', label: 'Body (EN)', templates: [
+          { type: 'rich-text', name: 'body_en', label: 'Body (EN)', overrides: { toolbar: ['heading', 'bold', 'italic', 'link', 'quote', 'ul', 'ol', 'embed'] }, templates: [
             { name: 'foto', label: '📷 Photo', fields: [ { name: 'src', type: 'string', label: 'Image', ui: { component: PhotoUploadField } }, { name: 'alt', type: 'string', label: 'Alt text (optional)' } ] },
             { name: 'album', label: '📸 Album-Galerie', fields: [ { name: 'hinweis', type: 'string', label: 'Album-Galerie', description: 'Photos come from the linked album below — nothing to fill in.' } ] },
           ] } as any,
