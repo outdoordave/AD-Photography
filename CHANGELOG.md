@@ -52,7 +52,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   Bausteine via „+"-Menü ist headless nicht voll testbar → Davids Hands-on-Test im echten CMS.**
 - **Cleanup** (`a9eebeb`): `StoryBodyField` (inkl. Option-1-Vorschau-Box) + `MarkdownTextarea` gelöscht, tote
   config-Imports raus. Option-1-Vorschau ist damit aus dem Editor verschwunden.
-- **OFFEN:** Story-Bausteine-Einfügen Hands-on prüfen (David); Breakpoint-Bereinigung 768–860 (separat).
+- **Editor-Feinschliff aus Davids Live-Test** (`2b21d64`, `bcaa54b`, `cfa67b9`): (1) Tinas eingebauten Bild-Knopf
+  aus der Story-Leiste entfernt (`overrides.toolbar`) → kein Tina-Cloud-Medien-Manager mehr, Fotos nur über den
+  eigenen 📷-Baustein. (2) **Editor auf Deutsch** via MutationObserver im `cmsCallback` (Tina hat keine i18n):
+  Absatz, Überschrift 1–6 (+ Größen-Hinweis groß/mittel/klein), Einfügen, und die Hover-Tooltips (Fett, Kursiv,
+  Zitat, Aufzählung, Nummerierte Liste …). Nur exakte Treffer (graceful), heilt sich nach Re-Renders. **Editor-JS
+  only → KEIN Re-Index, nur Deploy.** Verifiziert: Leiste + Dropdown + Test-Knoten deutsch.
+- **OFFEN:** (a) **Tina-Cloud-Media aktivieren** — CMS-Bild-Uploads zeigen live ein `?` (Bild wird nicht serviert),
+  weil Tina-Cloud-Media nicht eingeschaltet ist (Dashboard-Setting, David); betrifft Cover/📷/Galerie. (b) Drop-Cap
+  (großer erster Buchstabe) landet auf der ersten Zeile = Routen-Zeile → ggf. auf den ersten Prosa-Absatz umlenken
+  (offene Entscheidung). (c) Story-Bausteine-Einfügen Hands-on; Breakpoint 768–860.
   **STRUKTURELLE Schema-Änderung → Tina-Cloud-Re-Index auf `main` nötig (David).**
 - Commits: `a663453`, `7cd86b0`, `b0dfbdf`, `ccbbbab`, `493fc3c`, `0bac071`, `6fc323a`, `41c259c`, `2d1189f`,
   `5bffc80`, `f40b1ca`, `a9eebeb`
