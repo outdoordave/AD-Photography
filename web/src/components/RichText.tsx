@@ -30,6 +30,20 @@ const components: any = {
   html_inline: (p: any) => <span dangerouslySetInnerHTML={{ __html: p.value || '' }} />,
 };
 
+// Leer? (für DE/EN-Fallback) — String leer ODER Rich-Text-AST ohne Kinder.
+export function richIsEmpty(v: any): boolean {
+  if (v == null) return true;
+  if (typeof v === 'string') return v.trim() === '';
+  if (typeof v === 'object' && Array.isArray(v.children)) return v.children.length === 0;
+  return false;
+}
+
+// DE/EN wählen wie buildStory/bi: EN nur, wenn vorhanden, sonst DE-Fallback.
+// Funktioniert für Strings (Übergang) UND Rich-Text-ASTs.
+export function pickRich(de: any, en: any, isEn: boolean): any {
+  return isEn ? (richIsEmpty(en) ? de : en) : de;
+}
+
 export default function RichText({ value }: { value: any }) {
   if (value == null || value === '') return null;
   if (typeof value === 'string') {
