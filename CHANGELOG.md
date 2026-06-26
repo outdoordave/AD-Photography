@@ -58,13 +58,21 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   Absatz, Überschrift 1–6 (+ Größen-Hinweis groß/mittel/klein), Einfügen, und die Hover-Tooltips (Fett, Kursiv,
   Zitat, Aufzählung, Nummerierte Liste …). Nur exakte Treffer (graceful), heilt sich nach Re-Renders. **Editor-JS
   only → KEIN Re-Index, nur Deploy.** Verifiziert: Leiste + Dropdown + Test-Knoten deutsch.
-- **OFFEN:** (a) **Tina-Cloud-Media aktivieren** — CMS-Bild-Uploads zeigen live ein `?` (Bild wird nicht serviert),
-  weil Tina-Cloud-Media nicht eingeschaltet ist (Dashboard-Setting, David); betrifft Cover/📷/Galerie. (b) Drop-Cap
-  (großer erster Buchstabe) landet auf der ersten Zeile = Routen-Zeile → ggf. auf den ersten Prosa-Absatz umlenken
-  (offene Entscheidung). (c) Story-Bausteine-Einfügen Hands-on; Breakpoint 768–860.
+- **Drop-Cap-Hinweis** (`da431c3`): bleibt automatisch auf dem ersten Absatz (Davids Wunsch); Haupttext-Feld
+  bekommt eine `description`, die das erklärt (DE+EN).
+- **EN-Haupttext-Ausblenden** (`7a118ef`): Story-`body_en` war als normales rich-text immer sichtbar → bei
+  „Nur Deutsch" blieb „Body (EN)" stehen (Doppel zu den ausblendenden EN-Feldern). Jetzt `EnglishRichTextField`
+  → blendet mit dem Sprach-Schalter aus, erscheint mit vollem Editor bei Englisch an. Verifiziert.
+- **Breakpoint 768–860 bereinigt** (`66e9d0f`): seit dem Desktop-Wander-Titel (≥768) hat der Korridor die
+  Band-Pille → Nav-Zurück dort war Doppel (Story) bzw. Reise-Band-Pille von `global.css` Z.155 versteckt. Fix:
+  Nav-Zurück auf Detail bis 860 aus (statt nur ≤767); Reise-`.tl-topbar .trip-back` im Desktop-Block
+  `display:inline-flex` (überschreibt Z.155). Eine Zurück-Quelle, Story+Reise konsistent. Verifiziert 768/800/860/861.
+- **OFFEN:** (a) **Tina-Cloud-Media** — CMS-Bild-Uploads zeigen live ein `?`; Media IST im Dashboard aktiv
+  (public/uploads/main) → vermutlich Sync-/Rebuild-Timing: „Resync Media" + nach Deploy prüfen; falls `?` bleibt,
+  echte Bild-URL liefern (Pfad-Diagnose). (b) Story-Bausteine-Einfügen (📷/📸) Hands-on im echten CMS.
   **STRUKTURELLE Schema-Änderung → Tina-Cloud-Re-Index auf `main` nötig (David).**
 - Commits: `a663453`, `7cd86b0`, `b0dfbdf`, `ccbbbab`, `493fc3c`, `0bac071`, `6fc323a`, `41c259c`, `2d1189f`,
-  `5bffc80`, `f40b1ca`, `a9eebeb`
+  `5bffc80`, `f40b1ca`, `a9eebeb`, `2b21d64`, `bcaa54b`, `cfa67b9`, `da431c3`, `7a118ef`, `66e9d0f`
 
 ## 2026-06-25 — CMS: Haupttext-Editor verständlicher (Option 1 von „2 und 1")
 - **Format-Knöpfe beschriftet** (`1d4e271`): Die Markdown-Toolbar zeigte nur kryptische Symbole

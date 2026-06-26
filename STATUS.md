@@ -41,7 +41,13 @@
 > rendern + speichern 1:1). Alte Komponenten (StoryBodyField/MarkdownTextarea, Option-1-Vorschau) entfernt.
 > **⚠️ Einziger offener Test:** das **Einfügen NEUER Foto/Album-Bausteine** via „+"-Menü ist headless nicht
 > voll prüfbar → **David testet hands-on im echten CMS** (Foto einfügen → speichert + rendert?).
-> - **Breakpoint-Bereinigung 768–860** (Band-Pille/Nav-Zurück, kein Doppel-Zurück) — weiterhin offen.
+> - **Breakpoint 768–860 bereinigt** (`66e9d0f`): Nav-Zurück auf Detail bis 860 aus + Reise-Band-Pille ab 768
+>   sichtbar (überschreibt die `.trip-back ≤860`-Regel) → eine Zurück-Quelle, Story+Reise konsistent (verifiziert
+>   768/800/860/861). **✅ erledigt.**
+> - **Editor-Feinschliff (Davids Live-Test):** Deutsch (Menü+Tooltips), eingebauter Bild-Knopf raus, Drop-Cap-
+>   Hinweis am Feld, EN-Haupttext blendet aus — alle **Editor-JS/Config → nur Deploy, kein Re-Index**.
+> - **⚠️ Offen:** (a) CMS-Bild-Upload zeigt live `?` — Media ist im Dashboard aktiv, daher vermutlich Sync-/Rebuild-
+>   Timing (David: „Resync Media" + nach Deploy prüfen; sonst Bild-URL liefern). (b) Story-Bausteine (📷/📸) Hands-on.
 >
 > **⚠️ Wichtig für den Deploy:** Die rich-text-Umstellung ist eine **STRUKTURELLE Schema-Änderung →
 > Tina-Cloud-Re-Index auf `main` nötig**, sonst brechen die betroffenen Seiten/CMS. Außerdem: Commit `0bac071`
