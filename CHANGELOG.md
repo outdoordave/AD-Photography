@@ -42,11 +42,20 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   übersehen → wer `0bac071` ohne `2d1189f` deployt, hat kaputte `/trips`-Übersicht.**
 - **Bugfix nebenbei** (`41c259c`): Story-Zurück-Pille (`.story-back-line`) hatte auf Desktop keinen `:hover`
   → ergänzt (gleiche Ghost-Optik wie Reise) + sanfter Übergang.
-- **OFFEN:** **Story-Editor** (body → rich-text; „+"-Menü-Einfügen mit jSquash-Bild-Upload-Feld + Mediathek-
-  Picker + Album-Baustein + Inline-Bild-Lightbox — David-Entscheid: Cursor-Einfügen via „+"-Menü);
-  alte Felder/Komponenten/Option-1-Vorschau-Box entfernen; `tina-lock` kanonisch neu.
-  **STRUKTURELLE Schema-Änderung → Re-Index nötig (David).**
-- Commits: `a663453`, `7cd86b0`, `b0dfbdf`, `ccbbbab`, `493fc3c`, `0bac071`, `6fc323a`, `41c259c`, `2d1189f`
+- **Story-Editor** (`5bffc80` Render + `f40b1ca` Foto-Baustein): body_de/_en → rich-text; Story nutzt den
+  **Standard-MDX-Parser** (statt parser:markdown — round-trippt Templates nativ; bestehender Inhalt bleibt
+  sauberes Markdown, verifiziert). Zwei „+"-Menü-Bausteine: **📷 Foto** (`PhotoUploadField` = jSquash-WebP-
+  Upload + Mediathek-Picker, **OHNE** Tina-Medien-Manager) + **📸 Album**. `StoryReaderContent` rendert den
+  Body aus dem AST via `<RichText>`, teilt an Album-Stellen (Template-Node ODER Legacy-`[[album]]`), Inline-
+  Bild-Lightbox unverändert. **Lokal im `/admin` verifiziert:** WYSIWYG-Editor (kein rohes Markdown), bestehender
+  Inhalt (Text/Drop-Cap/Bild/Pullquote/Album) rendert + speichert 1:1. ⚠️ **Das EINFÜGEN neuer Foto/Album-
+  Bausteine via „+"-Menü ist headless nicht voll testbar → Davids Hands-on-Test im echten CMS.**
+- **Cleanup** (`a9eebeb`): `StoryBodyField` (inkl. Option-1-Vorschau-Box) + `MarkdownTextarea` gelöscht, tote
+  config-Imports raus. Option-1-Vorschau ist damit aus dem Editor verschwunden.
+- **OFFEN:** Story-Bausteine-Einfügen Hands-on prüfen (David); Breakpoint-Bereinigung 768–860 (separat).
+  **STRUKTURELLE Schema-Änderung → Tina-Cloud-Re-Index auf `main` nötig (David).**
+- Commits: `a663453`, `7cd86b0`, `b0dfbdf`, `ccbbbab`, `493fc3c`, `0bac071`, `6fc323a`, `41c259c`, `2d1189f`,
+  `5bffc80`, `f40b1ca`, `a9eebeb`
 
 ## 2026-06-25 — CMS: Haupttext-Editor verständlicher (Option 1 von „2 und 1")
 - **Format-Knöpfe beschriftet** (`1d4e271`): Die Markdown-Toolbar zeigte nur kryptische Symbole

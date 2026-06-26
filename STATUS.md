@@ -28,15 +28,19 @@
 > `title_de`/`title_en`. **UI-only → KEIN Re-Index**, nur `tina-lock.json` neu + Deploy. ⚠️ EN-Felder
 > nutzen Komponente ohne `wrapFieldsWithMeta` → Fehlertext dort nicht sichtbar (DE zeigt ihn).
 >
-> 🔧 **WYSIWYG-Editor (Weg B) — IN ARBEIT, gestaffelt auf `main`** (Detail + Spike-Ergebnisse in
-> `CAPABILITIES.md`). Tina `rich-text` + `parser:markdown` speichert weiter **Markdown** (Inhalt 1:1),
-> Query liefert **AST** → Render via neuer Komponente `web/src/components/RichText.tsx` (`<TinaMarkdown>`,
-> `.ww-rich`-Optik 1:1; Helfer `pickRich`/`richIsEmpty`/`richToPlain`). EN-Felder via `EnglishRichTextField`
-> (Auto-Ausblenden bleibt). **✅ Fertig + lokal verifiziert:** Intro, Bio, Reise-Zusammenfassung+Stations-Text,
-> Datenschutz, Impressum (inkl. Inhalts-Aufräumung der Rechts-Seiten, KEINE Wortänderung). **❌ OFFEN: Story-
-> Haupttext** — body→rich-text + Editor mit „+"-Menü-Einfügen (jSquash-WebP-Upload-Feld + Mediathek-Picker +
-> Album-Baustein + Inline-Bild-Lightbox). Danach: alte Felder/Komponenten/Option-1-Vorschau-Box entfernen,
-> `tina-lock` kanonisch neu.
+> 🔧 **WYSIWYG-Editor (Weg B) — FAST FERTIG, gestaffelt auf `main`** (Detail + Spike-Ergebnisse in
+> `CAPABILITIES.md`). Tina `rich-text` speichert weiter **Markdown** (Inhalt 1:1), Query liefert **AST** →
+> Render via `web/src/components/RichText.tsx` (`<TinaMarkdown>`, `.ww-rich`-Optik 1:1; Helfer
+> `pickRich`/`richIsEmpty`/`richToPlain`). Nicht-Story-Felder = `parser:markdown`; EN-Felder via
+> `EnglishRichTextField` (Auto-Ausblenden bleibt). **Story = Standard-MDX-Parser** (für native Template-
+> Round-Trips) + zwei „+"-Menü-Bausteine **📷 Foto** (`PhotoUploadField`, jSquash-WebP + Mediathek-Picker,
+> OHNE Medien-Manager) + **📸 Album**.
+> **✅ Fertig + lokal verifiziert (Render + bestehender Inhalt 1:1):** Intro, Bio, Reise-Zusammenfassung+
+> Stations-Text, Datenschutz, Impressum (inkl. Inhalts-Aufräumung der Rechts-Seiten, KEINE Wortänderung),
+> **Story-Haupttext** (WYSIWYG-Editor im `/admin` bestätigt — kein rohes Markdown; Text/Bild/Pullquote/Album
+> rendern + speichern 1:1). Alte Komponenten (StoryBodyField/MarkdownTextarea, Option-1-Vorschau) entfernt.
+> **⚠️ Einziger offener Test:** das **Einfügen NEUER Foto/Album-Bausteine** via „+"-Menü ist headless nicht
+> voll prüfbar → **David testet hands-on im echten CMS** (Foto einfügen → speichert + rendert?).
 > - **Breakpoint-Bereinigung 768–860** (Band-Pille/Nav-Zurück, kein Doppel-Zurück) — weiterhin offen.
 >
 > **⚠️ Wichtig für den Deploy:** Die rich-text-Umstellung ist eine **STRUKTURELLE Schema-Änderung →
