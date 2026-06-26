@@ -25,6 +25,8 @@ const components: any = {
   blockquote: (p: any) => <div className="pullquote">{p.children}</div>,
   block_quote: (p: any) => <div className="pullquote">{p.children}</div>,
   img: (p: any) => <img src={normalizePath(p.url)} alt={p.alt || ''} loading="lazy" />,
+  // „📷 Foto"-Baustein (Story-Editor, „+"-Menue) -> wie ein normales Bild gerendert (Lightbox via .reader-body img).
+  foto: (p: any) => (p.src ? <img src={normalizePath(p.src)} alt={p.alt || ''} loading="lazy" /> : null),
   // Rohes HTML aus einem Generator (Rechts-Seiten) unverändert durchreichen.
   html: (p: any) => <div dangerouslySetInnerHTML={{ __html: p.value || '' }} />,
   html_inline: (p: any) => <span dangerouslySetInnerHTML={{ __html: p.value || '' }} />,
