@@ -1,7 +1,7 @@
 import { defineConfig } from 'tinacms';
 import BulkPhotoField from './fields/BulkPhotoField';
 import SinglePhotoField from './fields/SinglePhotoField';
-import { EnglishOnlyField, EnglishOnlyTextField, EnglishStyledField, EnglishStyledTextField, EnglishRichTextField } from './fields/EnglishOnlyField';
+import { EnglishOnlyField, EnglishOnlyTextField, EnglishRichTextField, EnglishStoryField, EnglishStoryTextField, EnglishStoryRichTextField } from './fields/EnglishOnlyField';
 import CropPhotoField from './fields/CropPhotoField';
 import PhotoUploadField from './fields/PhotoUploadField';
 import ImageFrameField from './fields/ImageFrameField';
@@ -127,6 +127,33 @@ export default defineConfig({
           'Code': 'Code',
           'Table': 'Tabelle',
           'Heading': 'Überschrift',
+          // Die Symbol-Knöpfe der Rich-Text-Leiste tragen ihre Tooltips als SVG-<title> in
+          // KLEINSCHREIBUNG (Material-Symbol-Namen, z. B. „format bold"). Diese Texte liefen
+          // bisher durch die obige Map NICHT (dort stand „Bold") -> hier die echten Strings.
+          'format size': 'Textgröße',
+          'format bold': 'Fett',
+          'format italic': 'Kursiv',
+          'format underlined': 'Unterstrichen',
+          'format underline': 'Unterstrichen',
+          'format strikethrough': 'Durchgestrichen',
+          'strikethrough s': 'Durchgestrichen',
+          'insert link': 'Link einfügen',
+          'link off': 'Link entfernen',
+          'format quote': 'Zitat',
+          'format list bulleted': 'Aufzählung',
+          'format list numbered': 'Nummerierte Liste',
+          'format align left': 'Linksbündig',
+          'image': 'Bild',
+          'insert photo': 'Bild',
+          'code blocks': 'Code-Block',
+          // Formular-/Editor-Rahmen (Knöpfe + Auswahl-Platzhalter):
+          'Save': 'Speichern',
+          'Reset': 'Zurücksetzen',
+          'Choose an option...': 'Bitte wählen …',
+          'Log Out': 'Abmelden',
+          'Media Manager': 'Medien',
+          'Collections': 'Bereiche',
+          'published': 'veröffentlicht',
         };
         const fixText = (node: any) => {
           const v = node.nodeValue; if (typeof v !== 'string') return;
@@ -380,10 +407,10 @@ export default defineConfig({
           { type: 'string', name: 'youtube_url', label: 'YouTube-URL (optional)' },
           // --- Englische Version ---
           { type: 'boolean', name: 'has_english', label: 'Englische Version anzeigen?' },
-          { type: 'string', name: 'title_en', label: 'Title (EN)', description: 'Max. 35 characters.', ui: { component: EnglishStyledField, validate: validateTitleMax } },
-          { type: 'string', name: 'category_en', label: 'Category (EN)', ui: { component: EnglishStyledField } },
-          { type: 'string', name: 'excerpt_en', label: 'Excerpt (EN)', ui: { component: EnglishStyledTextField } },
-          { type: 'rich-text', name: 'body_en', label: 'Body (EN)', description: 'The first letter of the first paragraph is automatically shown as a large decorative initial on the page.', ui: { component: EnglishRichTextField }, overrides: { toolbar: ['heading', 'bold', 'italic', 'link', 'quote', 'ul', 'ol', 'embed'] }, templates: [
+          { type: 'string', name: 'title_en', label: 'Title (EN)', description: 'Max. 35 characters.', ui: { component: EnglishStoryField, validate: validateTitleMax } },
+          { type: 'string', name: 'category_en', label: 'Category (EN)', ui: { component: EnglishStoryField } },
+          { type: 'string', name: 'excerpt_en', label: 'Excerpt (EN)', ui: { component: EnglishStoryTextField } },
+          { type: 'rich-text', name: 'body_en', label: 'Body (EN)', description: 'The first letter of the first paragraph is automatically shown as a large decorative initial on the page.', ui: { component: EnglishStoryRichTextField }, overrides: { toolbar: ['heading', 'bold', 'italic', 'link', 'quote', 'ul', 'ol', 'embed'] }, templates: [
             { name: 'foto', label: '📷 Photo', fields: [ { name: 'src', type: 'string', label: 'Image', ui: { component: PhotoUploadField } }, { name: 'alt', type: 'string', label: 'Alt text (optional)' } ] },
             { name: 'album', label: '📸 Album-Galerie', fields: [ { name: 'hinweis', type: 'string', label: 'Album-Galerie', description: 'Photos come from the linked album below — nothing to fill in.' } ] },
           ] } as any,

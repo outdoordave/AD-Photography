@@ -1,5 +1,6 @@
 import React from 'react';
 import { MdxFieldPlugin } from 'tinacms';
+import { useFormState } from 'react-final-form';
 import { useEnglishOn } from './englishStore';
 import MarkdownToolbar, { type MdKind } from './MarkdownToolbar';
 
@@ -97,10 +98,49 @@ export const EnglishRichTextField = (props: any) => {
   return <div style={wrapStyle}><MdxFieldPlugin.Component {...props} /></div>;
 };
 
+// --- Story-Variante: an den per-Beitrag-Schalter `has_english` gekoppelt ---
+// Stories haben KEINEN globalen Sprach-Schalter (englishStore), sondern das gespeicherte
+// Feld `has_english` („Englische Version anzeigen?"). Die EN-Felder sollen GENAU diesem
+// Schalter folgen: AUS -> Feld komplett unsichtbar, AN -> Erdton-EN-Feld. Den Wert liest
+// react-final-form aus dem Formular (eine Instanz im Projekt -> Context passt, wie bei
+// GearCategoryField). Bei „aus" bleibt der gespeicherte EN-Wert im Formular erhalten
+// (nur Anzeige) -> An/Aus löscht nichts.
+function useHasEnglish(): boolean {
+  const { values } = useFormState({ subscription: { values: true } });
+  return !!(values as any)?.has_english;
+}
+
+function makeEnglishGated(multiline: boolean) {
+  const Comp = (props: any) => {
+    const on = useHasEnglish();
+    if (!on) return null;
+    const input = props.input || {};
+    const value: string = typeof input.value === 'string' ? input.value : '';
+    const label = (props.field && props.field.label) || 'English';
+    return (
+      <div style={wrapStyle}>
+        <span style={labelStyle}><span aria-hidden="true">🌐</span>{label}</span>
+        {multiline ? (
+          <AutoTextarea value={value} onChange={(v) => input.onChange(v)} />
+        ) : (
+          <input type="text" value={value} onChange={(e) => input.onChange(e.target.value)} style={fieldStyle} />
+        )}
+      </div>
+    );
+  };
+  return Comp;
+}
+
+export const EnglishStoryField = makeEnglishGated(false);
+export const EnglishStoryTextField = makeEnglishGated(true);
+// Rich-Text-EN für Stories: ebenfalls an `has_english` gekoppelt (sonst wie EnglishRichTextField).
+export const EnglishStoryRichTextField = (props: any) => {
+  const on = useHasEnglish();
+  if (!on) return null;
+  return <div style={wrapStyle}><MdxFieldPlugin.Component {...props} /></div>;
+};
+
 export const EnglishOnlyField = makeEnglishOnly(false);
 export const EnglishOnlyTextField = makeEnglishOnly(true);
 export const EnglishMarkdownTextField = makeEnglishMarkdown(false);
 export const EnglishMarkdownTextFieldInline = makeEnglishMarkdown(false, ['bold', 'italic']);
-// Immer sichtbar + gestylt (für Collections ohne Sprach-Schalter, z. B. Story-Beiträge).
-export const EnglishStyledField = makeEnglishOnly(false, true);
-export const EnglishStyledTextField = makeEnglishOnly(true, true);

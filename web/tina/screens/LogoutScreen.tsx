@@ -49,6 +49,6 @@ export const logoutScreen: any = {
   name: 'Abmelden',
   Icon: LogoutIcon,
   layout: 'popup',
-  navCategory: 'Site',
+  navCategory: 'Website',
   Component: (screenProps: { close: () => void }) => React.createElement(Logout, screenProps),
 };

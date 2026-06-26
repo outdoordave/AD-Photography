@@ -69,6 +69,6 @@ export const backToSiteScreen: any = {
   name: 'Zur Website',
   Icon: WebsiteIcon,
   layout: 'popup',
-  navCategory: 'Site',
+  navCategory: 'Website',
   Component: (screenProps: { close: () => void }) => React.createElement(BackToSite, screenProps),
 };
