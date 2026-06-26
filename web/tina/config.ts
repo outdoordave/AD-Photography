@@ -383,7 +383,7 @@ export default defineConfig({
           { type: 'string', name: 'title_en', label: 'Title (EN)', description: 'Max. 35 characters.', ui: { component: EnglishStyledField, validate: validateTitleMax } },
           { type: 'string', name: 'category_en', label: 'Category (EN)', ui: { component: EnglishStyledField } },
           { type: 'string', name: 'excerpt_en', label: 'Excerpt (EN)', ui: { component: EnglishStyledTextField } },
-          { type: 'rich-text', name: 'body_en', label: 'Body (EN)', description: 'The first letter of the first paragraph is automatically shown as a large decorative initial on the page.', overrides: { toolbar: ['heading', 'bold', 'italic', 'link', 'quote', 'ul', 'ol', 'embed'] }, templates: [
+          { type: 'rich-text', name: 'body_en', label: 'Body (EN)', description: 'The first letter of the first paragraph is automatically shown as a large decorative initial on the page.', ui: { component: EnglishRichTextField }, overrides: { toolbar: ['heading', 'bold', 'italic', 'link', 'quote', 'ul', 'ol', 'embed'] }, templates: [
             { name: 'foto', label: '📷 Photo', fields: [ { name: 'src', type: 'string', label: 'Image', ui: { component: PhotoUploadField } }, { name: 'alt', type: 'string', label: 'Alt text (optional)' } ] },
             { name: 'album', label: '📸 Album-Galerie', fields: [ { name: 'hinweis', type: 'string', label: 'Album-Galerie', description: 'Photos come from the linked album below — nothing to fill in.' } ] },
           ] } as any,
