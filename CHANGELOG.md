@@ -32,10 +32,21 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   `richToPlain`. **Lokal verifiziert:** Intro/Bio/Reise-Summary+Station rendern 1:1, Klick-zum-Feld bleibt.
 - **Entscheide:** EN-Felder behalten Auto-Ausblenden; Rechts-Seiten werden umgestellt UND Inhalt
   einmalig aufgeräumt (David: „einmal richtig").
-- **OFFEN:** Rechts-Seiten-**Inhalt** aufräumen (rendert sonst als Block); **Story-Editor**
-  (Album/Bild-WebP/Mediathek-Picker + `[[album]]`-Embed + Inline-Bild-Lightbox); alte Felder/Vorschau-Box
-  entfernen; `tina-lock` kanonisch neu. **STRUKTURELLE Schema-Änderung → Re-Index nötig (David, Stufe 3).**
-- Commits: `a663453`, `7cd86b0`, `b0dfbdf`, `ccbbbab`, `493fc3c`, `0bac071`
+- **Rechts-Seiten-Inhalt aufgeräumt** (`6fc323a`): e-recht24-Paste (gemischte `**`/`---`, Einzel-`\n`,
+  rendert sonst als Block) → `**N. Titel**`→`## Titel`, `---` raus, jede Zeile eigener Absatz (Adress-Blöcke
+  als Hard-Break). **KEINE Wortänderung** (verifiziert: Wort-Inhalt identisch DE+EN). Rendert nun als
+  8 Überschriften + 102 Absätze. ⚠️ David liest gegen (oben „Datenschutzerklärung" doppelt = Body-Überschrift
+  + Seitentitel, kann raus).
+- **⚠️ Regression behoben** (`2d1189f`): `/trips`-Übersicht crashte (`stripMarkdown` auf rich-text-AST der
+  Summary) → `richToPlain`; `buildStory` typeof-Guard für `body_de/_en` (AST-sicher). **War in `0bac071`
+  übersehen → wer `0bac071` ohne `2d1189f` deployt, hat kaputte `/trips`-Übersicht.**
+- **Bugfix nebenbei** (`41c259c`): Story-Zurück-Pille (`.story-back-line`) hatte auf Desktop keinen `:hover`
+  → ergänzt (gleiche Ghost-Optik wie Reise) + sanfter Übergang.
+- **OFFEN:** **Story-Editor** (body → rich-text; „+"-Menü-Einfügen mit jSquash-Bild-Upload-Feld + Mediathek-
+  Picker + Album-Baustein + Inline-Bild-Lightbox — David-Entscheid: Cursor-Einfügen via „+"-Menü);
+  alte Felder/Komponenten/Option-1-Vorschau-Box entfernen; `tina-lock` kanonisch neu.
+  **STRUKTURELLE Schema-Änderung → Re-Index nötig (David).**
+- Commits: `a663453`, `7cd86b0`, `b0dfbdf`, `ccbbbab`, `493fc3c`, `0bac071`, `6fc323a`, `41c259c`, `2d1189f`
 
 ## 2026-06-25 — CMS: Haupttext-Editor verständlicher (Option 1 von „2 und 1")
 - **Format-Knöpfe beschriftet** (`1d4e271`): Die Markdown-Toolbar zeigte nur kryptische Symbole

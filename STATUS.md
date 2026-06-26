@@ -28,17 +28,26 @@
 > `title_de`/`title_en`. **UI-only → KEIN Re-Index**, nur `tina-lock.json` neu + Deploy. ⚠️ EN-Felder
 > nutzen Komponente ohne `wrapFieldsWithMeta` → Fehlertext dort nicht sichtbar (DE zeigt ihn).
 >
-> ⏳ **Offen (nächste Schritte):**
-> - **Option 2 — echtes WYSIWYG** für den Haupttext (kein rohes Markdown mehr im Feld). Davids Wunsch
->   („2 und 1"), aber **eigenes Branch+Preview-Projekt**: Schema/Speicherformat-Wechsel → Tina-Cloud-
->   Re-Index, Bild-/Album-/WebP-Port muss mit. Erst Capability-Liste vorlegen (Lock-Verfahren), dann bauen.
-> - **Breakpoint-Bereinigung 768–860** (Band-Pille/Nav-Zurück konsistent, kein Doppel-Zurück).
+> 🔧 **WYSIWYG-Editor (Weg B) — IN ARBEIT, gestaffelt auf `main`** (Detail + Spike-Ergebnisse in
+> `CAPABILITIES.md`). Tina `rich-text` + `parser:markdown` speichert weiter **Markdown** (Inhalt 1:1),
+> Query liefert **AST** → Render via neuer Komponente `web/src/components/RichText.tsx` (`<TinaMarkdown>`,
+> `.ww-rich`-Optik 1:1; Helfer `pickRich`/`richIsEmpty`/`richToPlain`). EN-Felder via `EnglishRichTextField`
+> (Auto-Ausblenden bleibt). **✅ Fertig + lokal verifiziert:** Intro, Bio, Reise-Zusammenfassung+Stations-Text,
+> Datenschutz, Impressum (inkl. Inhalts-Aufräumung der Rechts-Seiten, KEINE Wortänderung). **❌ OFFEN: Story-
+> Haupttext** — body→rich-text + Editor mit „+"-Menü-Einfügen (jSquash-WebP-Upload-Feld + Mediathek-Picker +
+> Album-Baustein + Inline-Bild-Lightbox). Danach: alte Felder/Komponenten/Option-1-Vorschau-Box entfernen,
+> `tina-lock` kanonisch neu.
+> - **Breakpoint-Bereinigung 768–860** (Band-Pille/Nav-Zurück, kein Doppel-Zurück) — weiterhin offen.
 >
-> **Offen für David (Reihenfolge):** 1) **`main` pushen** (GitHub Desktop). 2) **Tina-Cloud-Re-Index auf
-> `main`** für die **strukturellen** Altfelder (`sprach_banner`, `titel_vorschau`) — **nicht** für die
-> 35-Zeichen/Editor-Änderungen (UI-only). 3) Deploy abwarten, dann auf `aandd-photography.pages.dev`
-> testen: Desktop Reise + Story (Wander-Titel, Fade, ein Zurück-Button, Andock-Timing/-Höhe), CMS
-> (beschriftete Knöpfe, Story-Live-Vorschau, 35-Zeichen-Limit am DE-Titel), Mobil-Köpfe am Gerät.
+> **⚠️ Wichtig für den Deploy:** Die rich-text-Umstellung ist eine **STRUKTURELLE Schema-Änderung →
+> Tina-Cloud-Re-Index auf `main` nötig**, sonst brechen die betroffenen Seiten/CMS. Außerdem: Commit `0bac071`
+> ohne `2d1189f` = **kaputte `/trips`-Übersicht** (Regression, in `2d1189f` behoben) — also mind. bis `2d1189f`
+> deployen + re-indexen.
+>
+> **Offen für David (Reihenfolge):** 1) **`main` pushen**. 2) **Tina-Cloud-Re-Index auf `main`** (strukturell:
+> rich-text-Felder + Altfelder `sprach_banner`/`titel_vorschau`). 3) Deploy, dann testen: `/about`, `/trips`(+EN),
+> `/datenschutz`, `/impressum`, Reise-Detail rendern 1:1; CMS-Editieren der umgestellten Felder fühlt sich wie
+> WYSIWYG an; Desktop-Wander-Titel + Story-Hover; Mobil-Köpfe am Gerät.
 >
 > ⚠️ **Lokale Verifikation:** `npm run dev` (tinacms dev) läuft offline → Desktop-Preview bei beliebiger
 > Breite möglich (Memory `local-tinacms-dev-preview`). Aber: Scroll-Driven-Animation re-engaged in der
