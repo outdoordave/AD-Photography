@@ -17,6 +17,26 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-26 — WYSIWYG-Editor (Weg B) — Stufe 1 + 2 (Nicht-Story), IN ARBEIT
+- **Capability-Lock Schritt 0+A+B** (`a663453`, `7cd86b0`) + **Spike S1–S6** (`b0dfbdf`): Tina 2.10.1
+  `rich-text` + `parser:markdown` speichert **Markdown** (JSON=String, MD=YAML-Block, Inhalt 1:1),
+  Query liefert **AST** → Render auf `<TinaMarkdown>`. Keine destruktive Migration nötig.
+- **Stufe 1** (`ccbbbab`): `web/src/components/RichText.tsx` — rendert AST in `.ww-rich`-Optik 1:1
+  (h1/h2→h2, h3, blockquote→`.pullquote`, Link target, img, html/html_inline für rohes HTML);
+  Dual-Modus String/AST. Lokal mit echten ASTs verifiziert (inkl. rohes HTML / S4).
+- **Stufe 2 Baustein** (`493fc3c`): `EnglishRichTextField` (Auto-Ausblenden via `MdxFieldPlugin.Component`)
+  + `richIsEmpty`/`pickRich`/`richToPlain`.
+- **Stufe 2 Nicht-Story** (`0bac071`): Schema Intro (subtext), Reise (summary inline / Stations-text),
+  Bio, Datenschutz, Impressum → `rich-text` + `parser:markdown`; EN via `EnglishRichTextField`.
+  Konsumenten HomeIntroLive/AboutContent/TripTimeline/LegalContent → `<RichText>`; Reise-Meta via
+  `richToPlain`. **Lokal verifiziert:** Intro/Bio/Reise-Summary+Station rendern 1:1, Klick-zum-Feld bleibt.
+- **Entscheide:** EN-Felder behalten Auto-Ausblenden; Rechts-Seiten werden umgestellt UND Inhalt
+  einmalig aufgeräumt (David: „einmal richtig").
+- **OFFEN:** Rechts-Seiten-**Inhalt** aufräumen (rendert sonst als Block); **Story-Editor**
+  (Album/Bild-WebP/Mediathek-Picker + `[[album]]`-Embed + Inline-Bild-Lightbox); alte Felder/Vorschau-Box
+  entfernen; `tina-lock` kanonisch neu. **STRUKTURELLE Schema-Änderung → Re-Index nötig (David, Stufe 3).**
+- Commits: `a663453`, `7cd86b0`, `b0dfbdf`, `ccbbbab`, `493fc3c`, `0bac071`
+
 ## 2026-06-25 — CMS: Haupttext-Editor verständlicher (Option 1 von „2 und 1")
 - **Format-Knöpfe beschriftet** (`1d4e271`): Die Markdown-Toolbar zeigte nur kryptische Symbole
   (`F K H ❝ •`). Jetzt jeder Knopf = **Symbol-Chip + Wort** („Fett", „Kursiv", „Überschrift",
