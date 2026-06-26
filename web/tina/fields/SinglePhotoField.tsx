@@ -21,6 +21,15 @@ const SinglePhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
   const [savings, setSavings] = React.useState('');
   const [dragOver, setDragOver] = React.useState(false);
   const [encoder, setEncoder] = React.useState<EncoderMode>('checking');
+  // Lokale Sofort-Vorschau (blob:) des frisch hochgeladenen Bildes — der gespeicherte
+  // /uploads-Pfad wird erst nach dem nächsten Deploy ausgeliefert und zeigt bis dahin „?".
+  const [localPreview, setLocalPreview] = React.useState('');
+  const urlRef = React.useRef('');
+  const setPreview = (url: string) => {
+    if (urlRef.current && urlRef.current !== url) { try { URL.revokeObjectURL(urlRef.current); } catch (e) { /* ignore */ } }
+    urlRef.current = url;
+    setLocalPreview(url);
+  };
 
   React.useEffect(() => {
     let alive = true;
@@ -29,6 +38,7 @@ const SinglePhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
       alive = false;
     };
   }, []);
+  React.useEffect(() => () => { if (urlRef.current) { try { URL.revokeObjectURL(urlRef.current); } catch (e) { /* ignore */ } } }, []);
 
   async function handleFile(fileList: FileList | File[] | null) {
     if (!fileList) return;
@@ -41,6 +51,7 @@ const SinglePhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
     try {
       setProgress('Konvertiere …');
       const { file, format } = await toOptimized(files[0], mode);
+      try { setPreview(URL.createObjectURL(file)); } catch (e) { /* ignore */ }
       setProgress('Lade hoch …');
       const media = await cms.media.persist([{ directory: '', file }]);
       const src = media.map((m: any) => dedupeUploads(m.src)).filter(Boolean)[0];
@@ -64,13 +75,13 @@ const SinglePhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
 
   return (
     <div>
-      {value ? (
+      {value || localPreview ? (
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 10 }}>
           <div style={{ position: 'relative', width: PREVIEW, height: PREVIEW, borderRadius: 8, overflow: 'hidden', border: '1px solid #e1ddd5', background: '#f4ede1', flex: '0 0 auto' }}>
-            <img src={toLocalMedia(value)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            <img src={localPreview || toLocalMedia(value)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             <button
               type="button"
-              onClick={() => input.onChange('')}
+              onClick={() => { input.onChange(''); setPreview(''); }}
               title="Foto entfernen"
               style={{ position: 'absolute', top: 4, right: 4, width: 22, height: 22, borderRadius: '50%', border: 'none', background: 'rgba(28,24,18,0.72)', color: '#fff', cursor: 'pointer', lineHeight: '22px', fontSize: 14, padding: 0 }}
             >
@@ -99,7 +110,7 @@ const SinglePhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
             {value ? 'Foto ersetzen' : '+ Foto wählen'}
             <input type="file" accept="image/*" disabled={busy} onChange={(e) => handleFile(e.target.files)} style={{ display: 'none' }} />
           </label>
-          <MediaPickerButton disabled={busy} onPick={(p) => input.onChange(p)} />
+          <MediaPickerButton disabled={busy} onPick={(p) => { input.onChange(p); setPreview(''); }} />
         </div>
       </div>
 

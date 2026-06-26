@@ -20,12 +20,24 @@ export default function PhotoUploadField({ input, field }: any) {
   const [pickerOpen, setPickerOpen] = React.useState(false);
   const [media, setMedia] = React.useState<string[] | null>(null);
   const [mediaErr, setMediaErr] = React.useState('');
+  // Lokale Sofort-Vorschau (blob:) des frisch hochgeladenen Bildes. Grund: gespeichert wird
+  // ein /uploads-Pfad, der erst nach dem nächsten Deploy ausgeliefert wird — direkt nach dem
+  // Upload zeigt er sonst ein „?" (404). Der blob:-URL des gerade gewählten Files greift sofort.
+  const [localPreview, setLocalPreview] = React.useState('');
+  const urlRef = React.useRef('');
+  const setPreview = (url: string) => {
+    if (urlRef.current && urlRef.current !== url) { try { URL.revokeObjectURL(urlRef.current); } catch (e) { /* ignore */ } }
+    urlRef.current = url;
+    setLocalPreview(url);
+  };
 
   React.useEffect(() => {
     let alive = true;
     detectEncoder().then((m) => alive && setEncoder(m));
     return () => { alive = false; };
   }, []);
+  // Beim Verlassen den blob:-URL freigeben (kein Speicherleck).
+  React.useEffect(() => () => { if (urlRef.current) { try { URL.revokeObjectURL(urlRef.current); } catch (e) { /* ignore */ } } }, []);
 
   async function handleFile(fileList: FileList | File[] | null) {
     if (!fileList) return;
@@ -36,6 +48,8 @@ export default function PhotoUploadField({ input, field }: any) {
     try {
       setProgress('Konvertiere …');
       const { file, format } = await toOptimized(files[0], mode);
+      // Sofort-Vorschau zeigen, bevor der (noch nicht ausgelieferte) /uploads-Pfad greift.
+      try { setPreview(URL.createObjectURL(file)); } catch (e) { /* ignore */ }
       setProgress('Lade hoch …');
       const m = await cms.media.persist([{ directory: '', file }]);
       const src = m.map((x: any) => dedupeUploads(x.src)).filter(Boolean)[0];
@@ -62,6 +76,7 @@ export default function PhotoUploadField({ input, field }: any) {
 
   function pickFromMedia(path: string) {
     input.onChange(path);
+    setPreview(''); // Mediathek-Bilder sind bereits ausgeliefert -> über toLocalMedia anzeigen.
     setPickerOpen(false);
     setNote('✓ Aus der Mediathek übernommen');
   }
@@ -69,9 +84,9 @@ export default function PhotoUploadField({ input, field }: any) {
   return (
     <div style={{ marginBottom: 6 }}>
       {field?.label ? <div style={{ fontSize: 12, fontWeight: 600, color: '#6e5e49', marginBottom: 6 }}>{field.label}</div> : null}
-      {value ? (
+      {value || localPreview ? (
         <div style={{ marginBottom: 8 }}>
-          <img src={toLocalMedia(value)} alt="" style={{ maxWidth: '100%', maxHeight: 180, borderRadius: 8, border: '1px solid #e1ddd5', display: 'block' }} />
+          <img src={localPreview || toLocalMedia(value)} alt="" style={{ maxWidth: '100%', maxHeight: 180, borderRadius: 8, border: '1px solid #e1ddd5', display: 'block' }} />
         </div>
       ) : null}
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -80,7 +95,7 @@ export default function PhotoUploadField({ input, field }: any) {
           <input type="file" accept="image/*" disabled={busy} onChange={(e) => handleFile(e.target.files)} style={{ display: 'none' }} />
         </label>
         <button type="button" disabled={busy} onClick={openPicker} style={btn(busy)}>🖼️ Aus Mediathek</button>
-        {value ? <button type="button" onClick={() => input.onChange('')} style={miniBtn}>entfernen</button> : null}
+        {value ? <button type="button" onClick={() => { input.onChange(''); setPreview(''); }} style={miniBtn}>entfernen</button> : null}
         {busy ? <span style={{ fontSize: 12, color: '#6e5e49' }}>{progress || 'Arbeite …'}</span> : null}
       </div>
       {note ? <div style={{ color: '#2d6a4f', fontSize: 12, marginTop: 6 }}>{note}</div> : null}
