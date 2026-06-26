@@ -38,6 +38,16 @@ export function richIsEmpty(v: any): boolean {
   return false;
 }
 
+// Klartext aus Rich-Text-AST (für SEO-/Meta-Beschreibungen). Akzeptiert auch String.
+export function richToPlain(v: any): string {
+  if (v == null) return '';
+  if (typeof v === 'string') return v;
+  const inline = (n: any): string =>
+    typeof n?.text === 'string' ? n.text : Array.isArray(n?.children) ? n.children.map(inline).join('') : '';
+  const blocks = Array.isArray(v?.children) ? v.children : [];
+  return blocks.map(inline).join(' ').replace(/\s+/g, ' ').trim();
+}
+
 // DE/EN wählen wie buildStory/bi: EN nur, wenn vorhanden, sonst DE-Fallback.
 // Funktioniert für Strings (Übergang) UND Rich-Text-ASTs.
 export function pickRich(de: any, en: any, isEn: boolean): any {

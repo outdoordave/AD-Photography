@@ -1,5 +1,5 @@
 import { useTina, tinaField } from 'tinacms/dist/react';
-import { mdToHtml } from '../lib/stories';
+import RichText, { pickRich } from './RichText';
 
 // Rechtstext-Seiten (Datenschutz / Impressum) als React-Insel — wie ContactContent:
 // useTina = LIVE-Daten, data-tina-field = Klick-ins-Feld. Body ist Markdown (oder rohes
@@ -30,11 +30,9 @@ export default function LegalContent(props: Props) {
           <h1 data-tina-field={tf('title')}>{t('title')}</h1>
           {updated ? <p className="legal-updated">{updated}</p> : null}
         </div>
-        <div
-          className="reader-body legal-body"
-          data-tina-field={tf('body')}
-          dangerouslySetInnerHTML={{ __html: mdToHtml(t('body')) }}
-        />
+        <div className="reader-body legal-body" data-tina-field={tf('body')}>
+          <RichText value={pickRich(d.body_de, d.body_en, lang === 'en')} />
+        </div>
       </div>
     </section>
   );

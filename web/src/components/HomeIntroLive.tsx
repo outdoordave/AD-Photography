@@ -1,7 +1,7 @@
 import { useTina, tinaField } from 'tinacms/dist/react';
 import { bi, type Lang } from '../lib/albums';
 import { socialIcon } from '../lib/socialIcons';
-import { mdToHtml } from '../lib/stories';
+import RichText, { pickRich } from './RichText';
 import contact from '../data/contact.json';
 
 // Intro-Block als LIVE-Insel (useTina startseite) — 1:1-Port von HomeIntro.astro.
@@ -18,7 +18,7 @@ export default function HomeIntroLive(props: Props) {
   const tf = (o: any, base: string) => tinaField(o, (isEn ? base + '_en' : base + '_de') as any);
 
   const subline = bi(intro, 'subline', lang);
-  const subtext = bi(intro, 'subtext', lang);
+  const subtext = pickRich(intro.subtext_de, intro.subtext_en, isEn);
   const socialShow = st.social_show || {};
   // Social-Links kommen ZENTRAL aus der Kontaktseite (contact.json -> channels): nur EINE
   // Pflegestelle, funktioniert auch wenn /contact ausgeblendet ist (Build-Time-Import).
@@ -35,7 +35,7 @@ export default function HomeIntroLive(props: Props) {
         <div className="home-intro">
           <h2 data-tina-field={tf(intro, 'subline')}>{subline}</h2>
           <div className="divider-orn">✦</div>
-          <div className="ww-rich" data-tina-field={tf(intro, 'subtext')} dangerouslySetInnerHTML={{ __html: mdToHtml(subtext) }} />
+          <div className="ww-rich" data-tina-field={tf(intro, 'subtext')}><RichText value={subtext} /></div>
           {links.length > 0 && (
             <div className="insta-row">
               {links.map((c, i) => (

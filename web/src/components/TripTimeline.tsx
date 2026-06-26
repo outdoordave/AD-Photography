@@ -3,7 +3,8 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useTina, tinaField } from 'tinacms/dist/react';
 import Lightbox, { type LbPhoto } from './Lightbox';
-import { normalizePath, wwYouTubeEmbed, mdToHtml } from '../lib/stories';
+import { normalizePath, wwYouTubeEmbed } from '../lib/stories';
+import RichText, { pickRich } from './RichText';
 import { track } from '../lib/track';
 import { viewStops, bi, tripTitle, sortTrips, type RawTrip, type ViewStop, type Lang } from '../lib/trips';
 import { vehicleSvg, PLANE_SVG } from '../lib/vehicles';
@@ -752,7 +753,7 @@ export default function TripTimeline(props: Props) {
         </div>
 
         <div className="tl-intro">
-          <div className="tl-summary ww-rich" data-tina-field={tf(trip, 'summary')} dangerouslySetInnerHTML={{ __html: mdToHtml(bi(trip, 'summary', lang)) }} />
+          <div className="tl-summary ww-rich" data-tina-field={tf(trip, 'summary')}><RichText value={pickRich(trip.summary_de, trip.summary_en, lang === 'en')} /></div>
           {la ? (
             <a className="trip-album-link" href={`${lang === 'en' ? '/en' : ''}/portfolio/${la.slug}`}>
               <span className="lbl">{lang === 'de' ? 'Mehr Fotos im Album' : 'More photos in album'}</span>
@@ -786,7 +787,7 @@ export default function TripTimeline(props: Props) {
                   ) : null}
 
                   <div data-tina-field={rs ? tf(rs, 'text') : undefined}>
-                    <div className={'tl-text ww-rich' + (isMain ? '' : ' tl-text-slim')} dangerouslySetInnerHTML={{ __html: mdToHtml(s.text || '') }} />
+                    <div className={'tl-text ww-rich' + (isMain ? '' : ' tl-text-slim')}><RichText value={pickRich(rs?.text_de, rs?.text_en, lang === 'en')} /></div>
                   </div>
 
                   {isMain && s.photos.length ? (
