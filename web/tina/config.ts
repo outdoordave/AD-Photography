@@ -1,10 +1,8 @@
 import { defineConfig } from 'tinacms';
 import BulkPhotoField from './fields/BulkPhotoField';
 import SinglePhotoField from './fields/SinglePhotoField';
-import { EnglishOnlyField, EnglishOnlyTextField, EnglishStyledField, EnglishStyledTextField, EnglishMarkdownTextField, EnglishMarkdownTextFieldInline, EnglishRichTextField } from './fields/EnglishOnlyField';
-import { MarkdownTextarea, MarkdownTextareaInline } from './fields/MarkdownTextarea';
+import { EnglishOnlyField, EnglishOnlyTextField, EnglishStyledField, EnglishStyledTextField, EnglishRichTextField } from './fields/EnglishOnlyField';
 import CropPhotoField from './fields/CropPhotoField';
-import StoryBodyField from './fields/StoryBodyField';
 import PhotoUploadField from './fields/PhotoUploadField';
 import ImageFrameField from './fields/ImageFrameField';
 import GearStyleField from './fields/GearStyleField';
