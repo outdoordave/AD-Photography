@@ -2,6 +2,7 @@ import React from 'react';
 import { useCMS } from 'tinacms';
 import { detectEncoder, toOptimized, fmt, type EncoderMode } from './webpEncode';
 import { toLocalMedia, dedupeUploads } from './mediaPath';
+import { putFreshMedia } from '../../src/lib/freshMedia';
 
 // Foto-Feld für den „📷 Foto"-Rich-Text-Baustein (Story-Haupttext).
 // Setzt KEINEN Tina-Medien-Manager ein — stattdessen wie der bisherige StoryBodyField:
@@ -55,6 +56,7 @@ export default function PhotoUploadField({ input, field }: any) {
       const src = m.map((x: any) => dedupeUploads(x.src)).filter(Boolean)[0];
       if (!src) throw new Error('Upload ohne Ergebnis');
       input.onChange(src);
+      putFreshMedia(src, file); // Live-Vorschau im CMS sofort versorgen (bis zum Deploy)
       setNote(`✓ ${fmt(files[0].size)} → ${fmt(file.size)} (${format === 'jpeg' ? 'JPEG' : 'WebP'})`);
     } catch (e: any) {
       setError(e?.message || 'Upload fehlgeschlagen');

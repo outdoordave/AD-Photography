@@ -3,6 +3,7 @@ import { useCMS, wrapFieldsWithMeta } from 'tinacms';
 import { fmt, detectEncoder, toOptimized, type EncoderMode } from './webpEncode';
 import { toLocalMedia, dedupeUploads } from './mediaPath';
 import { MediaPickerButton } from './MediaPicker';
+import { putFreshMedia } from '../../src/lib/freshMedia';
 
 // Einzelfoto-Feld mit Auto-WebP (gleiche Logik wie BulkPhotoField, aber EIN Bild):
 //  - Datei waehlen oder hierher ziehen,
@@ -57,6 +58,7 @@ const SinglePhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
       const src = media.map((m: any) => dedupeUploads(m.src)).filter(Boolean)[0];
       if (!src) throw new Error('Upload ohne Ergebnis');
       input.onChange(src);
+      putFreshMedia(src, file); // Live-Vorschau im CMS sofort versorgen (bis zum Deploy)
       const note = format === 'jpeg' ? ' (JPEG)' : ' (WebP)';
       setSavings(`${fmt(files[0].size)} → ${fmt(file.size)}${note}`);
     } catch (e: any) {

@@ -5,6 +5,8 @@
 // normalizePath (1574), formatMonthYear (2492), dateSortKey (2506).
 // ============================================================================
 
+import { getFreshMedia } from './freshMedia';
+
 export interface StoryData {
   title_de?: string;
   category_de?: string;
@@ -44,6 +46,11 @@ export interface StoryViewWithSlug extends StoryView {
 // --- Pfad normalisieren (CMS-Bilder liegen unter /uploads/) ---
 export function normalizePath(p: string): string {
   if (!p) return '';
+  // CMS-Vorschau: gerade hochgeladenes Bild sofort zeigen (data:-URL aus der Frisch-Upload-
+  // Brücke, NUR im Editor-iframe — Live-Seite/Build liefern hier immer null). Sonst zeigt der
+  // noch nicht ausgelieferte /uploads-Pfad bis zum Deploy ein „altes"/404-Bild.
+  const fresh = getFreshMedia(p);
+  if (fresh) return fresh;
   // Tina Cloud schreibt bei image-Feldern den gespeicherten /uploads-Pfad auf seine
   // Media-CDN-URL um (https://assets.tina.io/<projectId>/<datei>). Unsere Bilder liegen
   // aber repo-basiert in /uploads -> diese URLs wieder auf /uploads/<datei> zurueckbiegen.
