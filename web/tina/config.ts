@@ -113,6 +113,20 @@ export default defineConfig({
           'Heading 5': 'Überschrift 5',
           'Heading 6': 'Überschrift 6',
           'Embed': 'Einfügen',
+          // Tooltip-Texte der Symbol-Knöpfe (erscheinen beim Drüberschweben als Radix-Portal):
+          'Bold': 'Fett',
+          'Italic': 'Kursiv',
+          'Strikethrough': 'Durchgestrichen',
+          'Underline': 'Unterstrichen',
+          'Quote': 'Zitat',
+          'Blockquote': 'Zitat',
+          'Bulleted List': 'Aufzählung',
+          'Numbered List': 'Nummerierte Liste',
+          'Ordered List': 'Nummerierte Liste',
+          'Image': 'Bild',
+          'Code': 'Code',
+          'Table': 'Tabelle',
+          'Heading': 'Überschrift',
         };
         const fixText = (node: any) => {
           const v = node.nodeValue; if (typeof v !== 'string') return;
