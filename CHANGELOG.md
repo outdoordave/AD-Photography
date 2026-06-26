@@ -17,6 +17,28 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-26 16:40 — CMS-Live-Vorschau: frisch hochgeladenes Bild sofort sichtbar
+- **Analyse zuerst (belegt, Live-Render-Pfad ist 🔴):** Per `curl` gegen die Live-Seite geprüft —
+  das HTML enthält in den Insel-Props echte `assets.tina.io/<clientId>/…`-URLs; `normalizePath`
+  biegt die zur Laufzeit auf `/uploads` zurück (Kern-Infra, überall genutzt). Gespeichert werden
+  `cover`-Werte aber als `/uploads/…` (nie `assets.tina.io`). Folge: Beim **frischen Upload** schreibt
+  das Feld `/uploads/<neu>` → die Vorschau lädt das (noch nicht deployte) → 404 → „altes" Bild.
+  Ein erster `normalizePath`-Ansatz (assets.tina.io im Editor behalten) traf diesen Wert NICHT →
+  wieder verworfen (`stories.ts` zurückgesetzt).
+- **Frisch-Upload-Brücke** (`72ef29f`, neu `web/src/lib/freshMedia.ts`): Das Upload-Feld legt die
+  Datei als portable `data:`-URL im `localStorage` ab (Schlüssel = gespeicherter Pfad). Die Vorschau
+  läuft als **iframe im selben Origin** → liest denselben `localStorage` → zeigt das frische Bild sofort.
+  Schreiben: `SinglePhotoField` (Cover) + `PhotoUploadField` (📷-Baustein) nach dem Upload. Lesen:
+  `normalizePath` liefert die `data:`-URL **nur im Editor-iframe** (`window.self !== window.top`);
+  **Live-Seite** (top-level; CSP `frame-ancestors 'self'`) **und SSG-Build** (kein `window`) liefern
+  immer `null` → Render-Pfad dort 1:1. Cache gedeckelt (max. 8 Einträge, Quota-Fallback).
+- **Verifiziert:** Unit-Tests (Build/Live=null, Editor-iframe=`data:`-URL, Prune-Cap ≤8); die echte
+  Live-Story-Seite rendert weiter `/uploads` (0 `data:`-URLs, 0 kaputte Bilder, auch mit gesetztem
+  Brücken-Eintrag); Admin lädt mit den neuen Imports. ⚠️ **Cloud-Editor-Flow** (Upload → Vorschau
+  zeigt frisch) **von David hands-on** zu prüfen; headless nicht voll testbar. (Album/Hero via
+  Bulk/Crop-Feld nutzen die Brücke noch nicht — gleicher Einzeiler bei Bedarf.)
+- Commit: `72ef29f`
+
 ## 2026-06-26 16:10 — Nachschlag: die WIRKLICH sichtbaren Knopf-Tooltips eindeutschen
 - **Knopf-Tooltips (Radix-Popover) auf Deutsch** (`5943d6a`): Davids Screenshot zeigte beim Hovern
   „Bold (⌘+B)" — also NICHT die SVG-`<title>` (die ich zuvor übersetzt hatte), sondern eine zweite,

@@ -62,8 +62,14 @@
 >   Schalter, sondern `has_english`. Bisher waren title/category/excerpt_en immer sichtbar + body_en hing am
 >   globalen Schalter. Jetzt folgen **alle vier** EN-Felder `has_english` (neue `EnglishStory*` via `useFormState`):
 >   aus → unsichtbar, an → sichtbar, Wert bleibt erhalten. Verifiziert (Florida). Tote `EnglishStyled*` raus.
+> - **✅ CMS-Vorschau zeigt frisch hochgeladenes Bild sofort (26.06., `72ef29f`):** Problem war, dass ein
+>   frischer Upload `/uploads/<neu>` speichert, das erst nach dem Deploy ausgeliefert wird → Vorschau zeigte
+>   das „alte" Cover. **Frisch-Upload-Brücke** (`web/src/lib/freshMedia.ts`): Upload-Feld legt die Datei als
+>   `data:`-URL im `localStorage` ab; `normalizePath` liefert sie **nur im Editor-iframe** (`self!==top`) —
+>   **Live-Seite + SSG-Build unberührt** (immer `null`). Unit-getestet + Live-Render gegengeprüft (0 `data:`,
+>   0 kaputt). ⚠️ Cloud-Upload→Vorschau von David hands-on prüfen; Bulk/Crop (Album/Hero) nutzen sie noch nicht.
 > - **⚠️ Offen:** Story-Bausteine (📷 Foto / 📸 Album) via „+"-Menü **hands-on** im echten CMS testen
->   (einfügen → speichert + rendert?). Die obigen UI-Fixes sind **kein Schema-Eingriff** (`tina-lock.json`
+>   (einfügen → speichert + rendert?). Die UI-/Vorschau-Fixes sind **kein Schema-Eingriff** (`tina-lock.json`
 >   unverändert) → kein Re-Index, nur Push + Deploy.
 >
 > **⚠️ Wichtig für den Deploy:** Die rich-text-Umstellung ist eine **STRUKTURELLE Schema-Änderung →
@@ -158,7 +164,9 @@
   die CMS-Vorschau um → zum Bearbeiten kurz anschalten.
 - **Bilder online erst nach Save+Deploy** (repo-basierte Git-Medien); lokal sofort. Im Foto-**Feld** zeigt
   der Editor seit `1cdaa75` direkt nach dem Upload eine **`blob:`-Sofortvorschau** (sonst `?`, weil der
-  `/uploads`-Pfad erst nach dem Deploy ausgeliefert wird).
+  `/uploads`-Pfad erst nach dem Deploy ausgeliefert wird). Auch die **Live-Vorschau** zeigt frische Uploads
+  seit `72ef29f` sofort — via `localStorage`-`data:`-Brücke (`freshMedia.ts`), aber **nur im Editor-iframe**
+  (Cover + 📷-Baustein; Bulk/Crop noch nicht). Live-Seite + Build bleiben unberührt.
 - **Cloudflare-Cache:** nach Deploy Hard-Reload (Strg/Cmd+F5).
 
 ## 6. Abschluss-Bilanz & geparkte Kür (KEINE offenen Pflicht-Punkte)
