@@ -51,10 +51,13 @@
 >   `PhotoUploadField` **und** `SinglePhotoField` das gewählte Bild sofort als **`blob:`-Vorschau**
 >   (Fallback `toLocalMedia`). ⚠️ Datei-Dialog headless nicht testbar → Davids Hands-on im Cloud-`/admin`.
 >   (BulkPhoto/CropPhoto = Album/Station/Hero haben dieselbe Eigenheit; gleicher Einzeiler bei Bedarf.)
-> - **✅ „Edit-Möglichkeiten" durch die Bank Deutsch (26.06., `700ddb7`):** Die Rich-Text-Knöpfe trugen ihre
->   Tooltips als SVG-`<title>` in Kleinschreibung (`format bold` …) → liefen nicht durch die alte Map. Ergänzt
->   (Textgröße/Fett/Kursiv/Link einfügen/Zitat/Listen/Bild + Save/Reset/Bitte wählen/Abmelden/Medien/Bereiche/
->   veröffentlicht); Screen-Kategorie `Site`→`Website`. Im `/admin` verifiziert.
+> - **✅ „Edit-Möglichkeiten" durch die Bank Deutsch (26.06., `700ddb7`+`5943d6a`):** Zwei Tooltip-Ebenen!
+>   (1) SVG-`<title>` (`format bold` …) via Exakt-Map. (2) **Die WIRKLICH sichtbaren** schwebenden Tooltips
+>   (Radix) heißen „Bold (⌘+B)"/„Quote (⌘+⇧+.)"/„Headings" — Begriff + Kürzel, am PC „Ctrl". Dafür ein
+>   **Tooltip-Übersetzer** (`5943d6a`), der nur in Tooltip-Containern den führenden Begriff ersetzt und das
+>   Kürzel behält (Fett/Kursiv/Link einfügen/Zitat/Aufzählung/Nummerierte Liste/Überschriften), Editor-Text
+>   bleibt unberührt. Dazu Save/Reset/Bitte wählen/Abmelden/Medien/Bereiche/veröffentlicht; `Site`→`Website`.
+>   **Im `/admin` durch Hovern verifiziert:** „Fett (⌘+B)", „Zitat (⌘+⇧+.)", „Überschriften", „Aufzählung".
 > - **✅ Story-EN-Felder folgen `has_english` (26.06., `700ddb7`):** Stories haben keinen globalen Sprach-
 >   Schalter, sondern `has_english`. Bisher waren title/category/excerpt_en immer sichtbar + body_en hing am
 >   globalen Schalter. Jetzt folgen **alle vier** EN-Felder `has_english` (neue `EnglishStory*` via `useFormState`):

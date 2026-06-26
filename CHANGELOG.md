@@ -17,6 +17,20 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-26 16:10 — Nachschlag: die WIRKLICH sichtbaren Knopf-Tooltips eindeutschen
+- **Knopf-Tooltips (Radix-Popover) auf Deutsch** (`5943d6a`): Davids Screenshot zeigte beim Hovern
+  „Bold (⌘+B)" — also NICHT die SVG-`<title>` (die ich zuvor übersetzt hatte), sondern eine zweite,
+  schwebende Tooltip-Ebene (Radix). Die alte Exakt-Map („Bold") traf das nie: der String hat ein
+  Kürzel-Suffix und heißt am PC „Ctrl" statt „⌘". **Neu:** ein Tooltip-Übersetzer, der **nur innerhalb
+  von Tooltip-/Popover-Containern** den führenden Begriff ersetzt und das Kürzel behält
+  (Bold→Fett, Italic→Kursiv, Link→Link einfügen, Quote→Zitat, Bulleted/Numbered List→Aufzählung/
+  Nummerierte Liste, Headings→Überschriften …) — **plattformunabhängig**, Editor-Text bleibt unberührt.
+  **Im `/admin` verifiziert** (gehovert): „Fett (⌘+B)", „Zitat (⌘+⇧+.)", „Überschriften", „Aufzählung".
+- ⚠️ **Wichtig:** Diese und die Fixes von 15:45 sind **noch nicht live** — der `/admin`-Editor lädt aus
+  dem **gebauten** Build. Erst nach **Push + Cloudflare-Rebuild** sind die deutschen Tooltips UND die
+  Bild-Sofortvorschau im echten CMS da. (Davids Test am alten Build zeigt erwartungsgemäß noch „Bold"/„?".)
+- Commit: `5943d6a`
+
 ## 2026-06-26 15:45 — Editor-Feinschliff aus Davids Live-Test: Bild-„?", Deutsch komplett, Story-EN
 - **Bild-Upload „?" behoben** (`1cdaa75`): Direkt nach dem Hochladen zeigte das Foto-Feld ein „?".
   Ursache: gespeichert wird ein `/uploads`-Pfad, der erst nach dem **nächsten Deploy** ausgeliefert
