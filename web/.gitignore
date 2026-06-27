@@ -14,9 +14,10 @@ public/admin/
 # tina-lock.json MUSS committet werden: Tina Cloud liest daraus das Schema,
 # um den Branch zu indexieren (sonst „No branches found" / Branch not indexed).
 
-# Lokaler Upload-Zugang (Symlink -> ../../uploads) nur fuer die Vorschau.
-# Produktive Upload-Auslieferung wird in Schritt 6 (Deploy) entschieden.
-public/uploads
+# Bilder liegen jetzt EINHEITLICH (getrackt) in web/public/uploads — das ist Tinas
+# Medien-Ziel (mediaRoot 'uploads' + publicFolder 'public') und wird von Astro direkt
+# als /uploads/ ausgeliefert. Früher war das ein gitignorierter Symlink auf die
+# Repo-Wurzel /uploads (jetzt aufgelöst). NICHT mehr ignorieren.
 
 # Logs / OS
 npm-debug.log*

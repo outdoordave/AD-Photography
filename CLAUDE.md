@@ -7,12 +7,14 @@
   jetzt die **Astro+Tina-Version** auf `main`. (Details/Lehren → `FAHRPLAN.md`.)
 - **Stack:** **Astro + React-Inseln** (`client:load`), Quellcode in **`web/`**, statisch
   gebaut (SSG). *(Die alte `index.html` im Repo-Wurzel wird nicht mehr gebaut — Aufräumen
-  separat, s. `IDEEN.md` §4.1; `/uploads` im Wurzel bleibt tragend.)*
+  separat, s. `IDEEN.md` §4.1.)*
 - **CMS:** **TinaCMS** (Tina Cloud, GitHub-Backend) unter `/admin`. Schema in `web/tina/`.
   ⚠️ Strukturelle Schema-Änderungen brauchen einen **Tina-Cloud-Re-Index**; nach jeder
   `tina/config`-Änderung `tina-lock.json` per `npx tinacms dev --no-server` neu erzeugen.
-- **Inhalte:** JSON in `web/src/data/`, Stories als Markdown in `web/src/content/`, Bilder in
-  **`/uploads/`** (Repo-Wurzel, **tragend** — `web/scripts/copy-uploads.mjs` zieht sie in den Build).
+- **Inhalte:** JSON in `web/src/data/`, Stories als Markdown in `web/src/content/`, Bilder
+  **einheitlich** in **`web/public/uploads/`** (Tinas Medien-Ziel, von Astro als `/uploads/`
+  ausgeliefert; getrackt). *(Früher lag der „tragende" Bestand in der Repo-Wurzel `/uploads` +
+  `copy-uploads.mjs` — seit 26.06.2026 zusammengelegt, beides entfernt.)*
 - **Deploy:** **Cloudflare Pages** (Projekt `aandd-photography`) baut von **`main`** →
   `https://aandd-photography.pages.dev`. Root `web`, Build **`npm run build`**, Output `dist`.
 - **Karte:** MapLibre GL (selbst gebündelt), Kartenstile von **OpenFreeMap**.

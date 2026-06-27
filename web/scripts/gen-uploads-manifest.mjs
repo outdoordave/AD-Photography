@@ -3,27 +3,17 @@
 // Läuft im Build UND wird einmal committet, damit der lokale Dev-Server (npm run dev)
 // das Raster auch ohne Build hat.
 //
-// ZWEI Quellen, weil Bilder an zwei Stellen liegen können — beide werden auf der Seite
-// unter derselben URL /uploads/<datei> ausgeliefert (also nach Dateiname mergen + dedupen):
-//   (1) Repo-Wurzel /uploads   — kanonischer, „tragender" Bestand (copy-uploads.mjs zieht ihn in den Build).
-//   (2) web/public/uploads     — DORTHIN committet TinaCMS frische CMS-Uploads
-//                                (media.tina: mediaRoot 'uploads' + publicFolder 'public').
-// Lokal ist (2) oft ein Symlink auf (1) -> beide liefern dieselben Namen, Dedupe greift.
+// EINE Quelle: web/public/uploads — der einzige Bild-Ordner (Tinas Medien-Ziel,
+// media.tina: mediaRoot 'uploads' + publicFolder 'public'; von Astro als /uploads/
+// ausgeliefert). Die frühere Repo-Wurzel /uploads ist aufgelöst (alles hierher gezogen).
 import { existsSync, readdirSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const IMG = /\.(jpe?g|png|webp|gif|avif)$/i;
-const sources = [resolve('..', 'uploads'), resolve('public', 'uploads')];
+const dir = resolve('public', 'uploads');
 
-const names = new Set();
-for (const dir of sources) {
-  if (!existsSync(dir)) continue;
-  for (const f of readdirSync(dir)) {
-    if (IMG.test(f)) names.add(f);
-  }
-}
-
-const list = [...names].sort((a, b) => a.localeCompare(b)).map((f) => '/uploads/' + f);
+const files = existsSync(dir) ? readdirSync(dir).filter((f) => IMG.test(f)) : [];
+const list = files.sort((a, b) => a.localeCompare(b)).map((f) => '/uploads/' + f);
 const outDir = resolve('public');
 const out = resolve(outDir, 'uploads-manifest.json');
 mkdirSync(outDir, { recursive: true });
