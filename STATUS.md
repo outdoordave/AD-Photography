@@ -74,6 +74,11 @@
 >   public/uploads (16 → 30). Build-statisch: ganz frische Uploads erst nach Deploy. ⚠️ **Zwei Upload-Ordner
 >   laufen auseinander** (root `/uploads` „tragend" vs. Tina → `web/public/uploads`; lokaler Symlink gebrochen)
 >   → unsauber, aber funktioniert; eigener Aufräum-Task offen.
+> - **✅ CMS-Formular schneidet rechts nicht mehr ab (26.06., `e303c92`):** Tina setzt auf dem Formular-
+>   Feld-Container `whitespace-nowrap` → nichts brach um → Formular blieb breiter als ein schmales Panel und
+>   wurde rechts abgeschnitten (Texte/Knöpfe im unsichtbaren Bereich). **Eine** Ursache, nicht einzelne Texte.
+>   Fix: `cmsCallback` injiziert `<style>` → genau dieser Container `white-space:normal` (Code-Blöcke bleiben).
+>   Admin-CSS, Live/Schema unberührt. Verifiziert bei 470px: 0 Überhang, alles bricht sauber um.
 > - **⚠️ Offen:** Story-Bausteine (📷 Foto / 📸 Album) via „+"-Menü **hands-on** im echten CMS testen
 >   (einfügen → speichert + rendert?). Die UI-/Vorschau-Fixes sind **kein Schema-Eingriff** (`tina-lock.json`
 >   unverändert) → kein Re-Index, nur Push + Deploy.

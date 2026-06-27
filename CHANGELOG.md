@@ -17,6 +17,22 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-26 17:40 — CMS-Formular: bricht um statt rechts abzuschneiden
+- **Befund (im `/admin` analysiert):** David sah „manche Texte/Buttons im nicht sichtbaren Bereich rechts".
+  Ursache ist **nicht** ein einzelner Text, sondern **eine** Quelle: Tina setzt auf dem Formular-Feld-
+  Container die Tailwind-Klasse `whitespace-nowrap`. Dadurch bricht **kein** Label/keine Beschreibung um →
+  das Formular kann nicht schmaler werden als seine längste Zeile und wird bei **schmalem Bearbeiten-Panel**
+  (z. B. neben der Live-Vorschau) rechts abgeschnitten. Die längeren deutschen Labels machten es sichtbarer.
+  Diagnose: Scan nach Elementen, die ihren Clip-Container überlaufen → Quelle des `nowrap` aufgespürt
+  (`div.whitespace-nowrap.overflow-x-visible`, 14 Kinder, umschließt Breadcrumb + alle Felder).
+- **Fix** (`e303c92`): `cmsCallback` injiziert ein `<style>`, das genau diesen Container auf
+  `white-space: normal` stellt (Klassen-Kombi, spezifischer als die Utility) → alles umbricht, Formular
+  passt sich der Panel-Breite an. Nur der Container → Nachfahren mit eigenem `white-space` (Code-Blöcke)
+  bleiben unberührt. **Admin-/Editor-CSS** → Live-Seite + Schema unberührt, kein Re-Index.
+- **Verifiziert** im `/admin` bei 470px Panel-Breite: Container `white-space=normal`, **0** abgeschnittene
+  Formular-Container (vorher 70px Überhang), Labels/Beschreibungen/Knöpfe brechen sauber um (Screenshot).
+- Commit: `e303c92`
+
 ## 2026-06-26 17:10 — „Aus Mediathek"-Picker zeigt jetzt auch CMS-Uploads
 - **Befund (belegt):** Der „🖼️ Aus Mediathek"-Picker (`PhotoUploadField`) liest `/uploads-manifest.json`.
   Das Skript `gen-uploads-manifest.mjs` scannte bisher **nur** den Repo-Wurzel-Ordner `/uploads`. TinaCMS
