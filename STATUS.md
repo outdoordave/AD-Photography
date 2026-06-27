@@ -28,7 +28,7 @@
 > `title_de`/`title_en`. **UI-only → KEIN Re-Index**, nur `tina-lock.json` neu + Deploy. ⚠️ EN-Felder
 > nutzen Komponente ohne `wrapFieldsWithMeta` → Fehlertext dort nicht sichtbar (DE zeigt ihn).
 >
-> 🔧 **WYSIWYG-Editor (Weg B) — FAST FERTIG, gestaffelt auf `main`** (Detail + Spike-Ergebnisse in
+> ✅ **WYSIWYG-Editor (Weg B) — FERTIG & LIVE auf `main`** (deployt + Tina-Cloud re-indext, läuft; Detail + Spike-Ergebnisse in
 > `CAPABILITIES.md`). Tina `rich-text` speichert weiter **Markdown** (Inhalt 1:1), Query liefert **AST** →
 > Render via `web/src/components/RichText.tsx` (`<TinaMarkdown>`, `.ww-rich`-Optik 1:1; Helfer
 > `pickRich`/`richIsEmpty`/`richToPlain`). Nicht-Story-Felder = `parser:markdown`; EN-Felder via
@@ -39,8 +39,8 @@
 > Stations-Text, Datenschutz, Impressum (inkl. Inhalts-Aufräumung der Rechts-Seiten, KEINE Wortänderung),
 > **Story-Haupttext** (WYSIWYG-Editor im `/admin` bestätigt — kein rohes Markdown; Text/Bild/Pullquote/Album
 > rendern + speichern 1:1). Alte Komponenten (StoryBodyField/MarkdownTextarea, Option-1-Vorschau) entfernt.
-> **⚠️ Einziger offener Test:** das **Einfügen NEUER Foto/Album-Bausteine** via „+"-Menü ist headless nicht
-> voll prüfbar → **David testet hands-on im echten CMS** (Foto einfügen → speichert + rendert?).
+> **✅ Hands-on bestätigt (David, 26.06.):** 📷 Foto-Baustein einfügen funktioniert; Album-Baustein steht
+> noch aus (kein komplettes Album zum Hochladen) — Mechanik identisch, daher unkritisch.
 > - **Breakpoint 768–860 bereinigt** (`66e9d0f`): Nav-Zurück auf Detail bis 860 aus + Reise-Band-Pille ab 768
 >   sichtbar (überschreibt die `.trip-back ≤860`-Regel) → eine Zurück-Quelle, Story+Reise konsistent (verifiziert
 >   768/800/860/861). **✅ erledigt.**
@@ -67,7 +67,8 @@
 >   das „alte" Cover. **Frisch-Upload-Brücke** (`web/src/lib/freshMedia.ts`): Upload-Feld legt die Datei als
 >   `data:`-URL im `localStorage` ab; `normalizePath` liefert sie **nur im Editor-iframe** (`self!==top`) —
 >   **Live-Seite + SSG-Build unberührt** (immer `null`). Unit-getestet + Live-Render gegengeprüft (0 `data:`,
->   0 kaputt). ⚠️ Cloud-Upload→Vorschau von David hands-on prüfen; Bulk/Crop (Album/Hero) nutzen sie noch nicht.
+>   0 kaputt). Seit `5780f3d` für **alle vier** Upload-Felder (Single/Bulk/Crop/Foto-Baustein) — Crop lädt das
+>   frische Original sofort (Zuschnitt-Editor funktioniert vor dem Deploy). ⚠️ Cloud-Flow von David gegenchecken.
 > - **✅ „Aus Mediathek"-Picker zeigt CMS-Uploads (26.06., `cf16ac1`):** Picker liest `/uploads-manifest.json`;
 >   das Skript scannte nur Repo-Wurzel `/uploads`, CMS-Uploads liegen aber in `web/public/uploads` → fehlten.
 >   Skript scannt jetzt **beide** Ordner (merge+dedupe); committetes Manifest aus root + nur-getrackten
@@ -79,19 +80,18 @@
 >   wurde rechts abgeschnitten (Texte/Knöpfe im unsichtbaren Bereich). **Eine** Ursache, nicht einzelne Texte.
 >   Fix: `cmsCallback` injiziert `<style>` → genau dieser Container `white-space:normal` (Code-Blöcke bleiben).
 >   Admin-CSS, Live/Schema unberührt. Verifiziert bei 470px: 0 Überhang, alles bricht sauber um.
-> - **⚠️ Offen:** Story-Bausteine (📷 Foto / 📸 Album) via „+"-Menü **hands-on** im echten CMS testen
->   (einfügen → speichert + rendert?). Die UI-/Vorschau-Fixes sind **kein Schema-Eingriff** (`tina-lock.json`
->   unverändert) → kein Re-Index, nur Push + Deploy.
+> - **✅ Story-Bausteine bestätigt:** 📷 Foto einfügen → speichert + rendert (David, 26.06.). 📸 Album noch
+>   offen (kein komplettes Album zum Hochladen) — Mechanik identisch. Alle Editor-Fixes = **kein Schema-Eingriff**
+>   (`tina-lock.json` unverändert) → kein Re-Index, nur Push + Deploy.
 >
-> **⚠️ Wichtig für den Deploy:** Die rich-text-Umstellung ist eine **STRUKTURELLE Schema-Änderung →
-> Tina-Cloud-Re-Index auf `main` nötig**, sonst brechen die betroffenen Seiten/CMS. Außerdem: Commit `0bac071`
-> ohne `2d1189f` = **kaputte `/trips`-Übersicht** (Regression, in `2d1189f` behoben) — also mind. bis `2d1189f`
-> deployen + re-indexen.
+> **✅ Deploy + Re-Index erledigt:** Die rich-text-Umstellung (strukturell) ist live auf `main`, Tina-Cloud
+> re-indext, Build grün, CMS in Nutzung — der frühere `?`-/Schema-Mismatch ist Geschichte. Seither nur noch
+> UI-/Editor-/Build-Feinschliff (kein Schema-Eingriff, `tina-lock.json` unverändert → kein weiterer Re-Index).
 >
-> **Offen für David (Reihenfolge):** 1) **`main` pushen**. 2) **Tina-Cloud-Re-Index auf `main`** (strukturell:
-> rich-text-Felder + Altfelder `sprach_banner`/`titel_vorschau`). 3) Deploy, dann testen: `/about`, `/trips`(+EN),
-> `/datenschutz`, `/impressum`, Reise-Detail rendern 1:1; CMS-Editieren der umgestellten Felder fühlt sich wie
-> WYSIWYG an; Desktop-Wander-Titel + Story-Hover; Mobil-Köpfe am Gerät.
+> **Aktuell offen (Reihenfolge):** 1) **Letzte Commits pushen** (vorher `git pull` — Tina Cloud committet
+> autonom auf `main`, s. Memory `origin-main-moving-target`). 2) **Bild-Quellen vereinheitlichen** —
+> CMS-Uploads landen in `web/public/uploads`, „tragender" Bestand in der Repo-Wurzel `/uploads`; läuft
+> auseinander → eine einzige Quelle (Empfehlung: `web/public/uploads`, Tinas natives Ziel). 3) Geparkte Kür (§6).
 >
 > ⚠️ **Lokale Verifikation:** `npm run dev` (tinacms dev) läuft offline → Desktop-Preview bei beliebiger
 > Breite möglich (Memory `local-tinacms-dev-preview`). Aber: Scroll-Driven-Animation re-engaged in der
@@ -176,8 +176,9 @@
 - **Bilder online erst nach Save+Deploy** (repo-basierte Git-Medien); lokal sofort. Im Foto-**Feld** zeigt
   der Editor seit `1cdaa75` direkt nach dem Upload eine **`blob:`-Sofortvorschau** (sonst `?`, weil der
   `/uploads`-Pfad erst nach dem Deploy ausgeliefert wird). Auch die **Live-Vorschau** zeigt frische Uploads
-  seit `72ef29f` sofort — via `localStorage`-`data:`-Brücke (`freshMedia.ts`), aber **nur im Editor-iframe**
-  (Cover + 📷-Baustein; Bulk/Crop noch nicht). Live-Seite + Build bleiben unberührt.
+  seit `72ef29f` sofort — via `localStorage`-`data:`-Brücke (`freshMedia.ts`), aber **nur im Editor-iframe**.
+  Gilt seit `5780f3d` für **alle vier** Upload-Felder (Single/Bulk/Crop/Foto-Baustein) — gleiche Logik.
+  Live-Seite + Build bleiben unberührt.
 - **Cloudflare-Cache:** nach Deploy Hard-Reload (Strg/Cmd+F5).
 
 ## 6. Abschluss-Bilanz & geparkte Kür (KEINE offenen Pflicht-Punkte)

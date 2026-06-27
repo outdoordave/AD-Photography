@@ -17,6 +17,20 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-26 18:20 — Frisch-Upload-Logik auf alle Bild-Felder + STATUS-Kopf entstaubt
+- **Brücke jetzt in allen vier Upload-Feldern** (`5780f3d`): `BulkPhotoField` (Galerie/Diashow/Stations-
+  Fotos/Highlights) zeigt frische Kacheln sofort als `blob:` + `putFreshMedia` für die Live-Vorschau;
+  `CropPhotoField` (Stations-/Personen-Foto) lädt das frische Original als `blob:` → der **Zuschnitt-Editor
+  funktioniert sofort** (vorher konnte `loadImage` den noch nicht ausgelieferten `/uploads`-Pfad nicht laden
+  → „Original konnte nicht geladen werden"). Damit haben Single/Bulk/Crop/Foto-Baustein **dieselbe** Logik.
+  Gemeinsame Engine: jSquash-WebP + `cms.media.persist` + `mediaPath` + `freshMedia`-Brücke. Verifiziert:
+  esbuild grün, Album-Editor rendert (5 Kacheln), keine Laufzeitfehler.
+- **STATUS-Kopf aktualisiert (Doku-Hygiene):** Die veraltete „WYSIWYG fast fertig / Tina-Cloud-Re-Index
+  nötig / Offen für David: push + re-index"-Formulierung stammte von **vor** dem Deploy. WYSIWYG ist live
+  + re-indext + in Nutzung → auf **✅ FERTIG & LIVE** gesetzt; offene Punkte auf den aktuellen Stand
+  (Push, Bild-Quellen vereinheitlichen, Kür) umgeschrieben. 📷-Baustein von David hands-on bestätigt.
+- Commit: `5780f3d` (+ STATUS/CHANGELOG)
+
 ## 2026-06-26 17:40 — CMS-Formular: bricht um statt rechts abzuschneiden
 - **Befund (im `/admin` analysiert):** David sah „manche Texte/Buttons im nicht sichtbaren Bereich rechts".
   Ursache ist **nicht** ein einzelner Text, sondern **eine** Quelle: Tina setzt auf dem Formular-Feld-
