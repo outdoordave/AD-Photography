@@ -17,6 +17,24 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-26 19:00 — Bild-Quellen vereinheitlicht (eine Quelle: web/public/uploads)
+- **Problem:** Bilder lagen an **zwei** Stellen, die auseinanderliefen — Repo-Wurzel `/uploads` („tragend",
+  via `copy-uploads.mjs` in den Build) **und** `web/public/uploads` (Tinas Upload-Ziel). Unsauber, Quelle
+  von Verwirrung (z. B. Mediathek-Picker, der nur eine Seite sah).
+- **Fix** (`ad0c574`): **alles nach `web/public/uploads`** (Tinas natives Ziel, von Astro direkt als
+  `/uploads/` ausgeliefert). Im Detail: 17 Wurzel-Bilder per `git mv` rüber (inhaltsgleich = Renames);
+  Repo-Wurzel `/uploads` entfernt; `.gitignore`-Regel `public/uploads` raus (jetzt getrackt); `copy-uploads.mjs`
+  gelöscht + aus `npm run build` genommen; `gen-uploads-manifest.mjs` scannt nur noch einen Ordner (Manifest
+  neu: 31 getrackte Bilder); Logo entspaced `Logo Website.webp`→`logo-website.webp` (einzige Referenz in
+  `appearance-settings.json` angepasst); CLAUDE.md aktualisiert.
+- **Deploy-neutral im Inhalt:** `dist/uploads` bleibt gleich bestückt (Bilder waren vorher per copy-uploads
+  dort, jetzt direkt) — nur das Logo lädt unter neuem Namen. Kein Schema-Eingriff, kein Re-Index.
+  ⚠️ Nach Deploy **hart neu laden** + Logo/Bilder gegenchecken.
+- **Hinweis lokal:** In `web/public/uploads` liegen noch ein paar **nur-lokale, ungetrackte** Bilder
+  (alte Test-Uploads, u. a. die alte gespacte Logo-Kopie) — sie sind **nicht** im Commit und deployen nie.
+  Aufräumen optional via `git clean -fd web/public/uploads` (Vorsicht: löscht alle ungetrackten dort).
+- Commit: `ad0c574`
+
 ## 2026-06-26 18:20 — Frisch-Upload-Logik auf alle Bild-Felder + STATUS-Kopf entstaubt
 - **Brücke jetzt in allen vier Upload-Feldern** (`5780f3d`): `BulkPhotoField` (Galerie/Diashow/Stations-
   Fotos/Highlights) zeigt frische Kacheln sofort als `blob:` + `putFreshMedia` für die Live-Vorschau;

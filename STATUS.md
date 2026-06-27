@@ -72,9 +72,8 @@
 > - **✅ „Aus Mediathek"-Picker zeigt CMS-Uploads (26.06., `cf16ac1`):** Picker liest `/uploads-manifest.json`;
 >   das Skript scannte nur Repo-Wurzel `/uploads`, CMS-Uploads liegen aber in `web/public/uploads` → fehlten.
 >   Skript scannt jetzt **beide** Ordner (merge+dedupe); committetes Manifest aus root + nur-getrackten
->   public/uploads (16 → 30). Build-statisch: ganz frische Uploads erst nach Deploy. ⚠️ **Zwei Upload-Ordner
->   laufen auseinander** (root `/uploads` „tragend" vs. Tina → `web/public/uploads`; lokaler Symlink gebrochen)
->   → unsauber, aber funktioniert; eigener Aufräum-Task offen.
+>   public/uploads (16 → 30). Build-statisch: ganz frische Uploads erst nach Deploy. **✅ Seit `ad0c574` nur
+>   noch EIN Ordner** (`web/public/uploads`) — Manifest scannt entsprechend nur noch eine Quelle.
 > - **✅ CMS-Formular schneidet rechts nicht mehr ab (26.06., `e303c92`):** Tina setzt auf dem Formular-
 >   Feld-Container `whitespace-nowrap` → nichts brach um → Formular blieb breiter als ein schmales Panel und
 >   wurde rechts abgeschnitten (Texte/Knöpfe im unsichtbaren Bereich). **Eine** Ursache, nicht einzelne Texte.
@@ -89,9 +88,10 @@
 > UI-/Editor-/Build-Feinschliff (kein Schema-Eingriff, `tina-lock.json` unverändert → kein weiterer Re-Index).
 >
 > **Aktuell offen (Reihenfolge):** 1) **Letzte Commits pushen** (vorher `git pull` — Tina Cloud committet
-> autonom auf `main`, s. Memory `origin-main-moving-target`). 2) **Bild-Quellen vereinheitlichen** —
-> CMS-Uploads landen in `web/public/uploads`, „tragender" Bestand in der Repo-Wurzel `/uploads`; läuft
-> auseinander → eine einzige Quelle (Empfehlung: `web/public/uploads`, Tinas natives Ziel). 3) Geparkte Kür (§6).
+> autonom auf `main`, s. Memory `origin-main-moving-target`); nach Deploy hart neu laden + Logo/Bilder prüfen.
+> 2) Geparkte Kür (§6). — **✅ Bild-Quellen vereinheitlicht** (26.06., `ad0c574`): alles in `web/public/uploads`,
+> Repo-Wurzel `/uploads` + `copy-uploads.mjs` raus, Logo entspaced. (Lokal noch ein paar ungetrackte Test-Reste
+> in `web/public/uploads` — deployen nie; optional `git clean -fd web/public/uploads`.)
 >
 > ⚠️ **Lokale Verifikation:** `npm run dev` (tinacms dev) läuft offline → Desktop-Preview bei beliebiger
 > Breite möglich (Memory `local-tinacms-dev-preview`). Aber: Scroll-Driven-Animation re-engaged in der
@@ -112,9 +112,10 @@
 - **Vorschau:** ⏸️ **stillgelegt (17.06.2026)** — das Projekt **`aandd-photography-astro`** (baute von
   `astro-umbau`, noindex) ist **von GitHub getrennt**, kein Auto-Build mehr. Branch `astro-umbau` bleibt im Repo.
   *(Merke fürs Live-Projekt: `PUBLIC_PREVIEW_NOINDEX` gehört ausschließlich in die Vorschau — die Live-Seite bekommt diese Variable **niemals**.)*
-- **Build-Pipeline** (`web/package.json`): `copy-uploads.mjs` (zieht Wurzel-`/uploads` in den
-  Build — **tragend**) → `gen-uploads-manifest.mjs` → `tinacms build -c "astro build"` →
-  `optimize-uploads.mjs` (Sharp, optimiert `dist/uploads`, Repo-Originale bleiben).
+- **Build-Pipeline** (`web/package.json`): `gen-uploads-manifest.mjs` (Mediathek-Liste aus
+  `web/public/uploads`) → `tinacms build -c "astro build"` → `optimize-uploads.mjs` (Sharp,
+  optimiert `dist/uploads`, Repo-Originale bleiben). *(`copy-uploads.mjs` entfiel mit der
+  Bild-Quellen-Zusammenlegung, 26.06. — alles liegt jetzt in `web/public/uploads`.)*
 - **Karte:** MapLibre GL (selbst gebündelt), Kartenstile von **OpenFreeMap**.
 - **Fonts:** lokal (Fontsource Variable) — Fraunces + Mulish, **kein Google**.
 - **SEO:** `404.astro` (echtes HTTP-404), `robots.txt`-Endpoint + Sitemap (`@astrojs/sitemap`,
@@ -129,8 +130,9 @@
   `gallery-settings.json`, `trips-settings.json`, `about.json`, `contact.json`,
   `datenschutz.json`, `impressum.json`, `statistik.json`, …).
 - **Stories:** Markdown in `web/src/content/` (Frontmatter + Body, DE/EN-Felder).
-- **Bilder:** **`/uploads/`** in der Repo-Wurzel (tragend, s. o.). Tina speichert Originale 1:1;
-  Verkleinern/WebP via eigenes Bulk-/Crop-Feld (jSquash) bzw. Build-Sharp-Schritt.
+- **Bilder:** einheitlich in **`web/public/uploads/`** (getrackt; Tinas Medien-Ziel, von Astro als
+  `/uploads/` ausgeliefert). Tina speichert Originale 1:1; Verkleinern/WebP via eigenes Bulk-/Crop-Feld
+  (jSquash) bzw. Build-Sharp-Schritt.
 
 ## 3. Funktions-Inventur — alle portiert ✅ (live)
 - **Startseite:** Hero (Bild/Slideshow/Video), Intro + Social-Row, Momentaufnahmen
