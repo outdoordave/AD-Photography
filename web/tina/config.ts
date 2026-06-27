@@ -59,6 +59,22 @@ export default defineConfig({
   cmsCallback: (cms: any) => {
     try { cms.plugins.add(backToSiteScreen); } catch (e) { /* ignore */ }
     try { cms.plugins.add(logoutScreen); } catch (e) { /* ignore */ }
+    // CSS-Korrektur: Tina setzt auf dem Formular-Feld-Container `white-space: nowrap`
+    // (Tailwind-Klasse `whitespace-nowrap`). Folge: KEIN Feld-Label/keine Beschreibung
+    // bricht um -> das Formular kann nicht schmaler werden als seine laengste Zeile und
+    // wird bei schmalem Bearbeiten-Panel (z. B. neben der Live-Vorschau) rechts in den
+    // nicht sichtbaren Bereich abgeschnitten. Hier nur diesen Container (Klassen-Kombi,
+    // spezifischer als die Utility) auf `normal` -> alles umbrechbar, Formular passt sich an.
+    // Nur der Container -> Nachfahren mit eigenem white-space (z. B. Code) bleiben unberuehrt.
+    if (typeof document !== 'undefined' && !(document as any).__wwCssHook) {
+      (document as any).__wwCssHook = true;
+      try {
+        const st = document.createElement('style');
+        st.setAttribute('data-ww', 'cms-css');
+        st.textContent = '.whitespace-nowrap.overflow-x-visible{white-space:normal;}';
+        (document.head || document.documentElement).appendChild(st);
+      } catch (e) { /* ignore */ }
+    }
     // Auch Tinas EINGEBAUTEN Logout sauber zur Startseite führen (statt auf dem /admin-Login-
     // Screen festzuhängen). Zwei abgesicherte Wege:
     try {
