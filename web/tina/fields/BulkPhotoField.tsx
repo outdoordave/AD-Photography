@@ -18,6 +18,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { fmt, detectEncoder, toOptimized, type EncoderMode } from './webpEncode';
 import { toLocalMedia, dedupeUploads } from './mediaPath';
+import { putFreshMedia } from '../../src/lib/freshMedia';
 
 // Eigenes Galerie-Feld fuer AD-Photography:
 //  - mehrere Fotos auf einmal: Button, Drag-&-Drop-Ablage ODER ganzer Ordner,
@@ -36,14 +37,14 @@ const tileBase: React.CSSProperties = {
   border: '1px solid #e1ddd5', background: '#f4ede1', cursor: 'grab', touchAction: 'none',
 };
 
-function SortableTile({ src, onRemove }: { src: string; onRemove: () => void }) {
+function SortableTile({ src, previewSrc, onRemove }: { src: string; previewSrc: string; onRemove: () => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: src });
   const style: React.CSSProperties = {
     ...tileBase, transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.35 : 1,
   };
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners} title="Zum Sortieren ziehen">
-      <img src={toLocalMedia(src)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none' }} />
+      <img src={previewSrc} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none' }} />
       <button
         type="button"
         onPointerDown={(e) => e.stopPropagation()}
@@ -72,6 +73,13 @@ const BulkPhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
   const [activeId, setActiveId] = React.useState<string | null>(null);
   const [encoder, setEncoder] = React.useState<EncoderMode>('checking');
   const folderRef = React.useRef<HTMLInputElement | null>(null);
+  // Frisch hochgeladene Bilder im Feld sofort als blob: zeigen (gespeicherter /uploads-Pfad
+  // wird erst nach dem Deploy ausgeliefert -> sonst „?" in den Kacheln). Pfad -> blob:-URL.
+  const [fresh, setFresh] = React.useState<Record<string, string>>({});
+  const freshRef = React.useRef<Record<string, string>>({});
+  freshRef.current = fresh;
+  React.useEffect(() => () => { Object.values(freshRef.current).forEach((u) => { try { URL.revokeObjectURL(u); } catch (e) { /* ignore */ } }); }, []);
+  const previewOf = (src: string) => fresh[src] || toLocalMedia(src);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
@@ -110,7 +118,15 @@ const BulkPhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
       }
       setProgress(`Lade ${converted.length} Bild(er) hoch …`);
       const media = await cms.media.persist(converted.map((file) => ({ directory: '', file })));
-      const newSrcs = media.map((m: any) => dedupeUploads(m.src)).filter(Boolean);
+      // src je Datei (index-treu zu `converted`) -> Frisch-Vorschau (Feld-blob: + Live-Vorschau-Brücke).
+      const pairs = media.map((m: any, i: number) => ({ src: dedupeUploads(m.src), file: converted[i] })).filter((p: any) => p.src);
+      const addFresh: Record<string, string> = {};
+      pairs.forEach((p: any) => {
+        try { addFresh[p.src] = URL.createObjectURL(p.file); } catch (e) { /* ignore */ }
+        putFreshMedia(p.src, p.file); // Live-Vorschau im CMS sofort versorgen (bis zum Deploy)
+      });
+      if (Object.keys(addFresh).length) setFresh((prev) => ({ ...prev, ...addFresh }));
+      const newSrcs = pairs.map((p: any) => p.src);
       input.onChange([...value, ...newSrcs]);
       const note = anyJpeg ? ' (JPEG)' : ' (WebP)';
       setSavings(`${converted.length} Foto(s): ${fmt(origBytes)} → ${fmt(newBytes)}${note}`);
@@ -154,14 +170,14 @@ const BulkPhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
           <SortableContext items={value} strategy={rectSortingStrategy}>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
               {value.map((src) => (
-                <SortableTile key={src} src={src} onRemove={() => removeOne(src)} />
+                <SortableTile key={src} src={src} previewSrc={previewOf(src)} onRemove={() => removeOne(src)} />
               ))}
             </div>
           </SortableContext>
           <DragOverlay>
             {activeId ? (
               <div style={{ ...tileBase, cursor: 'grabbing', boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
-                <img src={toLocalMedia(activeId)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                <img src={previewOf(activeId)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
               </div>
             ) : null}
           </DragOverlay>

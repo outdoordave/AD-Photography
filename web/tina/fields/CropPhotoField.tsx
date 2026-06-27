@@ -3,6 +3,7 @@ import { useCMS, wrapFieldsWithMeta } from 'tinacms';
 import { detectEncoder, toOptimized, loadImage, type EncoderMode } from './webpEncode';
 import { toLocalMedia, dedupeUploads } from './mediaPath';
 import { MediaPickerButton } from './MediaPicker';
+import { putFreshMedia } from '../../src/lib/freshMedia';
 
 // Zuschnitt-Foto-Feld: EIN gerahmtes Bild mit Zoom + Verschieben. Wert = String-JSON
 // { original, crop }:
@@ -51,6 +52,15 @@ const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
   const [progress, setProgress] = React.useState('');
   const [error, setError] = React.useState('');
   const [encoder, setEncoder] = React.useState<EncoderMode>('checking');
+  // Frisch hochgeladenes Original sofort als blob: nutzen — der gespeicherte /uploads-Pfad
+  // wird erst nach dem Deploy ausgeliefert; ohne das könnte der Zuschnitt-Editor das Bild nicht
+  // laden (loadImage 404). blob: bedient sowohl Anzeige als auch Maße. Mediathek/Entfernen löschen ihn.
+  const [freshUrl, setFreshUrl] = React.useState('');
+  const freshRef = React.useRef('');
+  const setFresh = (u: string) => { if (freshRef.current && freshRef.current !== u) { try { URL.revokeObjectURL(freshRef.current); } catch (e) { /* ignore */ } } freshRef.current = u; setFreshUrl(u); };
+  React.useEffect(() => () => { if (freshRef.current) { try { URL.revokeObjectURL(freshRef.current); } catch (e) { /* ignore */ } } }, []);
+  // Quelle für Anzeige + Maße: frischer blob: (falls vorhanden), sonst der gespeicherte Pfad.
+  const srcUrl = val.original ? (freshUrl || toLocalMedia(val.original)) : '';
 
   // Editor-Transform: scale (relativ zu „cover", >=1), Pan tx/ty (px, <=0).
   const [scale, setScale] = React.useState(1);
@@ -80,7 +90,7 @@ const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
 
   // Original laden -> Naturmaße. Dann Transform aus gespeichertem Crop (oder cover) setzen.
   React.useEffect(() => {
-    const src = val.original ? toLocalMedia(val.original) : '';
+    const src = srcUrl;
     if (!src) { setNat(null); return; }
     let alive = true;
     loadImage(src).then((img) => {
@@ -90,7 +100,7 @@ const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
       setNat({ w, h });
     }).catch(() => alive && setError('Original konnte nicht geladen werden'));
     return () => { alive = false; };
-  }, [val.original]);
+  }, [srcUrl]);
 
   const baseScale = nat ? Math.max(frameW / nat.w, fh / nat.h) : 1; // cover
 
@@ -190,6 +200,8 @@ const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
       const media = await cms.media.persist([{ directory: '', file }]);
       const src = media.map((m: any) => dedupeUploads(m.src)).filter(Boolean)[0];
       if (!src) throw new Error('Upload ohne Ergebnis');
+      setFresh(URL.createObjectURL(file)); // Zuschnitt-Editor + Live-Vorschau sofort versorgen
+      putFreshMedia(src, file);
       input.onChange(serialize({ original: src, display: src, crop: null })); // erstmal unbeschnitten
     } catch (e: any) { setError(e?.message || 'Upload fehlgeschlagen'); }
     finally { setBusy(false); setProgress(''); }
@@ -205,7 +217,9 @@ const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
   }
 
   function resetCrop() { input.onChange(serialize({ original: val.original, display: val.original, crop: null })); }
-  function remove() { input.onChange(''); }
+  function remove() { setFresh(''); input.onChange(''); }
+  // Mediathek-Auswahl: bereits ausgeliefertes Bild -> blob: verwerfen, über toLocalMedia anzeigen.
+  function pickExisting(p: string) { setFresh(''); input.onChange(serialize({ original: p, display: p, crop: null })); }
 
   const hasCrop = !!val.crop;
 
@@ -221,7 +235,7 @@ const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
           >
             {nat ? (
               <img
-                src={toLocalMedia(val.original)} alt="" draggable={false}
+                src={srcUrl} alt="" draggable={false}
                 onError={() => setError('Bild lädt nicht (Pfad/Original prüfen)')}
                 style={{ position: 'absolute', left: 0, top: 0, width: nat.w * baseScale * scale, height: nat.h * baseScale * scale, maxWidth: 'none', maxHeight: 'none', transform: `translate(${tx}px, ${ty}px)`, transformOrigin: '0 0', pointerEvents: 'none' }}
               />
@@ -241,7 +255,7 @@ const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
             <button type="button" onClick={applyCrop} disabled={busy} style={btnStyle(busy, true)}>Zuschnitt übernehmen</button>
             {hasCrop ? <button type="button" onClick={resetCrop} disabled={busy} style={btnStyle(busy)}>Zuschnitt zurücksetzen</button> : null}
             <label style={btnStyle(busy)}>Bild ersetzen<input type="file" accept="image/*" disabled={busy} onChange={(e) => uploadOriginal(e.target.files)} style={{ display: 'none' }} /></label>
-            <MediaPickerButton disabled={busy} onPick={(p) => input.onChange(serialize({ original: p, display: p, crop: null }))} />
+            <MediaPickerButton disabled={busy} onPick={pickExisting} />
             <button type="button" onClick={remove} disabled={busy} style={btnStyle(busy)}>Entfernen</button>
           </div>
           <div style={{ fontSize: 12, color: '#6e5e49', marginTop: 6 }}>
@@ -255,7 +269,7 @@ const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
             <input type="file" accept="image/*" disabled={busy} onChange={(e) => uploadOriginal(e.target.files)} style={{ display: 'none' }} />
           </label>
           <div style={{ marginTop: 8 }}>
-            <MediaPickerButton disabled={busy} onPick={(p) => input.onChange(serialize({ original: p, display: p, crop: null }))} />
+            <MediaPickerButton disabled={busy} onPick={pickExisting} />
           </div>
         </div>
       )}
