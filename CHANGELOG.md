@@ -17,6 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-26 20:10 — Fix: Foto-Tausch-Knöpfe brechen bei schmaler Vorschau um (klickbar)
+- **Befund (David):** Bei sehr schmalem Vorschau-Panel (¼-Bildschirm-Fenster) wirkten die beiden Overlay-
+  Knöpfe „zusammen" und ließen sich nicht klicken. Ursache: nebeneinander in einer Flex-Zeile liefen sie
+  bei schmaler Breite über den linken Cover-Rand hinaus → der Teil war abgeschnitten/nicht klickbar.
+- **Fix** (`global.css` `.ww-swap-overlay`): `flex-wrap: wrap` + `justify-content: flex-end` +
+  `max-width: calc(100% - 28px)` → die Knöpfe **brechen im Cover um** statt überzulaufen, bleiben immer
+  innerhalb + klickbar. Desktop unverändert (nebeneinander). **Verifiziert** bei 280px: 2 Zeilen, kein
+  Überlauf links/rechts, „Aus Mediathek"-Klick öffnet den Picker.
+
 ## 2026-06-26 19:40 — „Foto tauschen" direkt auf dem Cover in der CMS-Vorschau
 - **Feature** (`97abe0d`, Branch `foto-tausch-overlay` → ff-Merge auf `main`, Branch gelöscht): Dezente Knöpfe
   **📷 Foto ersetzen** + **🖼️ Aus Mediathek** liegen jetzt **direkt auf dem Cover** in der Live-Vorschau —
