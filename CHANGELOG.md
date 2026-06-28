@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-28 — Stories-Raster konsistent zu Reisen (auto-fit statt hartem Umbruch)
+- **Befund (gemessen):** Bei gleicher Breite (800px) zeigte `/trips` **2 Spalten**, `/stories` nur **1**.
+  Ursache: `.trips-overview` nutzt `repeat(auto-fill, minmax(300px,1fr))` (passt Spaltenzahl automatisch an),
+  `.stories-grid` dagegen feste `repeat(3,1fr)` + harten `@media (max-width:860px) → 1fr`. Daher wirkte Stories
+  bei schmaler Breite „mobil", Reisen „desktop".
+- **Fix:** `.stories-grid` auf dieselbe Auto-Fit-Technik wie `.trips-overview` umgestellt
+  (`repeat(auto-fill, minmax(300px,1fr))`), den harten 860er-1-Spalten-Umbruch entfernt. **Verifiziert:**
+  1280px → 3 Spalten (unverändert), 800px → 2 Spalten (vorher 1, jetzt wie Reisen). Kein Nav-/Breakpoint-Eingriff,
+  echte Mobil-Ansicht (<~620px) bleibt 1-spaltig. Datei: `web/src/styles/global.css`.
+
 ## 2026-06-26 20:10 — Fix: Foto-Tausch-Knöpfe brechen bei schmaler Vorschau um (klickbar)
 - **Befund (David):** Bei sehr schmalem Vorschau-Panel (¼-Bildschirm-Fenster) wirkten die beiden Overlay-
   Knöpfe „zusammen" und ließen sich nicht klicken. Ursache: nebeneinander in einer Flex-Zeile liefen sie

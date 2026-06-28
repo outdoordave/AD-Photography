@@ -118,7 +118,10 @@ section { padding: 84px 0; }
 .btn:hover { background: var(--c-accent-dk); transform: translateY(-2px); }
 
 /* ---------- Story-Liste (Karten) ---------- */
-.stories-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+/* Auto-anpassendes Raster (wie .trips-overview): so viele ~300px-Spalten wie passen, statt
+   feste 3 Spalten + harter 1-Spalten-Umbruch. So verhält sich Stories konsistent zu Reisen
+   (bei schmaler Breite/CMS-Vorschau bleiben mehrere Spalten, statt sofort „mobil" zu stapeln). */
+.stories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 28px; }
 /* Jahreskapitel (Stories- + Reisen-Übersicht): große Fraunces-Überschrift je Jahr */
 .year-chapter + .year-chapter { margin-top: 52px; }
 .year-head { font-family: var(--font-display); font-size: 38px; font-weight: 300; letter-spacing: -0.02em; color: var(--c-ink); border-bottom: 1px solid var(--c-line); padding-bottom: 12px; margin: 0 0 26px; }
@@ -528,7 +531,7 @@ section { padding: 84px 0; }
 
 /* ---------- Responsive (aus index.html) ---------- */
 @media (max-width: 860px) {
-  .stories-grid { grid-template-columns: 1fr; gap: 20px; }
+  /* .stories-grid braucht hier KEINEN Umbruch mehr — sie passt sich via auto-fill selbst an (s. o.). */
   .about-grid { grid-template-columns: 1fr; }
   .contact-grid { grid-template-columns: 1fr; gap: 30px; }
   .map-layout { grid-template-columns: 1fr; }
