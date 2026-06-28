@@ -17,6 +17,23 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-26 19:40 — „Foto tauschen" direkt auf dem Cover in der CMS-Vorschau
+- **Feature** (`97abe0d`, Branch `foto-tausch-overlay` → ff-Merge auf `main`, Branch gelöscht): Dezente Knöpfe
+  **📷 Foto ersetzen** + **🖼️ Aus Mediathek** liegen jetzt **direkt auf dem Cover** in der Live-Vorschau —
+  kein Umweg mehr ins Formular. Neu: `web/src/components/PhotoSwapOverlay.tsx`.
+- **Mechanik (ohne Tina-Internas-Hack):** Die Vorschau ist ein iframe (gleicher Origin); das Upload-Feld lebt
+  im Admin. Das Overlay reicht nur das **Ergebnis** per `CustomEvent('ww:swap-media')` an `window.parent`:
+  „Ersetzen" öffnet den Datei-Dialog **im iframe** (User-Geste da) → File ans Feld; „Mediathek" nutzt den
+  bestehenden `MediaPickerButton` → Pfad ans Feld. `SinglePhotoField` (Cover) hört zu und handelt **nur**,
+  wenn `detail.value === input.value` (eindeutige Zuordnung) → File ⇒ bestehender `handleFile`; Pfad ⇒
+  `input.onChange`. Sichtbar **nur im Editor-iframe** (`window.self !== window.top`) → **live nie gerendert**.
+- **Verifiziert (lokal):** live (top-level) kein Overlay (0 Treffer, 0 kaputte Bilder); im iframe-Kontext
+  rendert es mit beiden Knöpfen; Cross-Frame-Event iframe→parent kommt an. ⚠️ **Headless nicht testbar:** der
+  finale Datei-Dialog→Upload im echten Tina-Formular → **David testet hands-on** (lokal oder nach Deploy).
+- **Scope bewusst nur Cover** (nicht Text-Fotos — technisch nicht sauber; Stationen könnten mit gleicher
+  Mechanik folgen). Kein Schema-Eingriff, kein Re-Index. Isoliert + live-gated → leicht erweiter- oder rückbaubar.
+- Commit: `97abe0d`
+
 ## 2026-06-26 19:00 — Bild-Quellen vereinheitlicht (eine Quelle: web/public/uploads)
 - **Problem:** Bilder lagen an **zwei** Stellen, die auseinanderliefen — Repo-Wurzel `/uploads` („tragend",
   via `copy-uploads.mjs` in den Build) **und** `web/public/uploads` (Tinas Upload-Ziel). Unsauber, Quelle
