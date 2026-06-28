@@ -69,6 +69,20 @@ const SinglePhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
     }
   }
 
+  // „Foto tauschen"-Overlay aus der Live-Vorschau (PhotoSwapOverlay, im iframe): reicht per
+  // Custom-Event entweder eine Datei (hochladen) ODER einen Mediathek-Pfad hierher. Wir handeln
+  // NUR, wenn der Event-Wert exakt unserem Feldwert entspricht (eindeutige Zuordnung Bild↔Feld).
+  React.useEffect(() => {
+    const onSwap = (e: any) => {
+      const d = e && e.detail; if (!d || d.value !== value) return;
+      if (d.file) handleFile([d.file as File]);
+      else if (typeof d.pickedPath === 'string') { input.onChange(d.pickedPath); setPreview(''); }
+    };
+    window.addEventListener('ww:swap-media', onSwap as EventListener);
+    return () => window.removeEventListener('ww:swap-media', onSwap as EventListener);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
   const encoderLabel =
     encoder === 'checking' ? 'WebP-Encoder wird geprüft …'
     : encoder === 'jsquash' ? '✓ WebP-Encoder bereit (jSquash — auch Safari)'

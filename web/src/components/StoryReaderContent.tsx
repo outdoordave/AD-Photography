@@ -5,6 +5,7 @@ import { ILLUS } from '../lib/illus';
 import RichText, { richIsEmpty } from './RichText';
 import StoryAlbumBlock from './StoryAlbumBlock';
 import Lightbox, { type LbPhoto } from './Lightbox';
+import PhotoSwapOverlay from './PhotoSwapOverlay';
 
 // Kleine React-Insel: NUR die editierbaren Reader-Felder (Hero-Cover/Kategorie/
 // Titel, Body, ggf. Album-Lightbox, YouTube). useTina liefert LIVE-Daten
@@ -239,6 +240,7 @@ export default function StoryReaderContent(props: Props) {
         ) : (
           <div className="ph has-illus" data-ph="PLATZHALTER" data-tina-field={tinaField(story, 'cover')} style={phStyle} />
         )}
+        <PhotoSwapOverlay value={typeof story.cover === 'string' ? story.cover : ''} label="Titelbild" />
       </div>
       {/* hero-inner ist jetzt GESCHWISTER des Hero (nicht mehr darin) -> Kind von #page-story (hoch).
           Mobil: position:sticky -> der Titel dockt an-und-bleibt UND federt nativ mit dem Inhalt (wie

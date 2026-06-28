@@ -169,6 +169,12 @@ section { padding: 84px 0; }
 #page-story .reader-hero .ph { position: absolute; inset: 0; }
 #page-story .reader-hero .reader-cover-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
 #page-story .reader-hero::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, var(--c-bg) 1%, rgba(244,237,225,0.1) 45%, transparent); }
+/* „Foto tauschen"-Overlay — NUR in der CMS-Vorschau (PhotoSwapOverlay rendert live null). Dezente
+   Knöpfe oben rechts auf dem Cover; beim Hovern des Hero voll sichtbar. */
+#page-story .reader-hero .ww-swap-overlay { position: absolute; top: 14px; right: 14px; z-index: 4; display: flex; gap: 8px; opacity: 0.6; transition: opacity .15s ease; }
+#page-story .reader-hero:hover .ww-swap-overlay { opacity: 1; }
+.ww-swap-overlay .ww-swap-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 6px; background: #7a674e; color: #fff; border: none; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+.ww-swap-overlay .ww-swap-btn:hover { background: #6a583f; }
 /* .reader-hero-inner ist jetzt GESCHWISTER des Hero (nicht mehr darin, s. JSX) -> auf Desktop absolut an
    den Hero-Unterrand zurücksetzen, damit die Optik exakt bleibt (Titel unten, über dem Cover). Der Hero
    ist 60vh hoch und das erste Kind (.story-topline ist desktop display:none) -> top:60vh + translateY(-100%)
