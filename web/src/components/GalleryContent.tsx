@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTina, tinaField } from 'tinacms/dist/react';
-import { selectActiveFormId } from '../lib/tinaForm';
 import Lightbox, { type LbPhoto } from './Lightbox';
 import { normalizePath } from '../lib/stories';
 import { ILLUS } from '../lib/illus';
@@ -129,11 +128,11 @@ const MODE_LABELS: Record<GalleryMode, { de: string; en: string }> = {
 
 export default function GalleryContent(props: Props) {
   const { lang } = props;
-  const { data } = useTina({
-    query: props.query, variables: props.variables, data: props.data,
-    // Vorschau-Navigation: Sidebar links automatisch auf das Dokument dieser Seite schalten.
-    experimental___selectFormByFormId: () => selectActiveFormId(props.data),
-  });
+  // KEIN experimental___selectFormByFormId hier: GalleryContent fragt `albenConnection` ab (alle
+  // Alben, KEIN einzelnes aktives Dokument) -> der Selektor lieferte undefined, und Tina postet das
+  // auch -> es löscht die saubere Auswahl der SettingsHeader-Insel (galerie_settings) wieder -> die
+  // Sidebar zeigt die ganze Dokumentliste. Auf /portfolio wählt SettingsHeader das Formular.
+  const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
   const hrefPrefix = lang === 'en' ? '/en' : '';
 
   const albums = React.useMemo(() => {
