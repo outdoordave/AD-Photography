@@ -98,6 +98,15 @@
 >   im echten CMS von David hands-on zu prüfen** — besonders ob die CDN-Kanonisierung auf der echten Tina Cloud
 >   greift (lokal nicht reproduzierbar; Logik per Node-Test + iframe-Sim belegt). Isoliert/live-gated.
 >
+> **✅ Sidebar folgt der Vorschau-Navigation (29.06., `bd0e385`):** Forward-Kopplung (Vorschau-Seite öffnen →
+> Tina-Formular links zeigt dies Dokument) lief bisher erst bei Klick auf ein Feld. Ursache (Tina-Doku +
+> `@tinacms/app`-Quelle): bei mehreren `useTina`-Formularen pro Seite gewinnt standardmäßig „das erste Query" —
+> hier das globale Logo (`LogoLink` in SiteNav+SiteFooter). Fix: Tinas `experimental___selectFormByFormId()` in
+> jeder Inhalts-Insel, das die echte Form-ID (`_sys.path` = `_internalSys.path`) meldet; zentraler Helfer
+> `src/lib/tinaForm.ts` (Einzeldoc + Connection-mit-Slug). Reverse-Kopplung (Liste→Vorschau) lief schon via
+> `ui.router`. Verifiziert: genau ein `user-select-form` mit korrekter ID (Story/Reise). ⚠️ Sichtbarer
+> Sidebar-Wechsel im echten `/admin` von David zu bestätigen.
+>
 > **✅ Deploy + Re-Index erledigt:** Die rich-text-Umstellung (strukturell) ist live auf `main`, Tina-Cloud
 > re-indext, Build grün, CMS in Nutzung — der frühere `?`-/Schema-Mismatch ist Geschichte. Seither nur noch
 > UI-/Editor-/Build-Feinschliff (kein Schema-Eingriff, `tina-lock.json` unverändert → kein weiterer Re-Index).

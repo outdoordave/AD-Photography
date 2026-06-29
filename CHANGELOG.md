@@ -17,6 +17,29 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-29 — CMS: Sidebar folgt der Vorschau-Navigation automatisch
+- **Wunsch (David):** Beim Öffnen/Navigieren einer Seite in der Live-Vorschau soll das Tina-Formular
+  links automatisch das passende Dokument zeigen (und umgekehrt). **Reverse (Liste→Vorschau)** lief
+  bereits über `ui.router` (pro Collection gesetzt). **Forward (Vorschau→Sidebar)** schaltete aber erst
+  bei Klick auf ein `data-tina-field`-Feld um, nicht beim bloßen Navigieren.
+- **Ursache (belegt: Tina-Doku + Quellcode `@tinacms/app/graphql-reducer.ts`):** Bei MEHREREN
+  `useTina`-Formularen pro Seite nimmt Tina standardmäßig „das **erste** angeforderte Query". Hier ist
+  das das **globale Logo** (`LogoLink` in SiteNav **und** SiteFooter, je `client:load`) — nicht der
+  Seiteninhalt. Erst Click-to-Edit setzt das aktive Formular aufs geklickte Dokument.
+- **Fix (Tina-offiziell):** `experimental___selectFormByFormId()` im `useTina` jeder **Inhalts-Insel**.
+  Postet `{type:'user-select-form', formId}` → `forms:set-active-form-id`. Die echte Form-ID ist der
+  Dokument-Pfad `_internalSys.path` (= `_sys.path` in den Query-Daten). Zentraler Helfer
+  `web/src/lib/tinaForm.ts` (`selectActiveFormId`): Einzeldokument → `<doc>._sys.path`; Connection
+  (Reisen: aktive per `initialSlug`) → passender Knoten; ohne Slug bewusst `undefined`.
+- **Eingesetzt:** StoryReaderContent, TripTimeline (aktive Reise), AlbumContent, AboutContent,
+  GearContent, ContactContent, StatsContent, LegalContent, SettingsHeader, HomeHeroLive. GalleryContent
+  (Übersicht/Connection) → kein Zwang. **LogoLink bewusst OHNE Selector** (soll nicht gewinnen).
+- **Verifiziert** (lokaler Dev + iframe): genau **ein** `user-select-form` mit korrekter ID — Story
+  `src/content/stories/alaska-california-2026.md`, Reise `/trips/florida` → `src/data/trips/florida.json`.
+  UI/Editor-only, **kein Schema → kein Re-Index**. ⚠️ Sichtbarer Sidebar-Wechsel im echten `/admin` von
+  David zu bestätigen (lokal kein echter Editor-iframe).
+- Commit: `bd0e385`
+
 ## 2026-06-29 — Fix: Vorschau-Upload nutzbar (Live-Cover aktualisiert, Info am Bild, frische Uploads in Mediathek)
 - Drei zusammenhängende Korrekturen am „Foto tauschen"-Overlay (von David gemeldet — Upload ging,
   aber: keine Rückmeldung, Live-Vorschau zeigte das alte Bild, Upload in der Mediathek nicht auffindbar):
