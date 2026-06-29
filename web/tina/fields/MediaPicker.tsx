@@ -1,6 +1,7 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { toLocalMedia } from './mediaPath';
+import { listFreshMedia } from '../../src/lib/freshMedia';
 
 // Gemeinsamer „Aus Mediathek wählen"-Picker für die Foto-Felder. Zeigt ein Raster ALLER
 // vorhandenen /uploads-Bilder (public/uploads-manifest.json, beim Build erzeugt) -> Klick
@@ -20,10 +21,14 @@ export function MediaPickerButton({
 }) {
   const [open, setOpen] = React.useState(false);
   const [media, setMedia] = React.useState<string[] | null>(null);
+  const [fresh, setFresh] = React.useState<Array<{ path: string; dataUrl: string }>>([]);
   const [err, setErr] = React.useState('');
 
   function openPicker() {
     setOpen(true);
+    // Gerade hochgeladene (noch nicht deployte) Bilder oben anzeigen — stehen noch nicht im
+    // Build-Manifest, sind aber über die Frisch-Upload-Brücke (localStorage) sofort verfügbar.
+    setFresh(listFreshMedia());
     if (media == null && !err) {
       fetch('/uploads-manifest.json', { cache: 'no-store' })
         .then((r) => { if (!r.ok) throw new Error('Manifest ' + r.status); return r.json(); })
@@ -44,26 +49,32 @@ export function MediaPickerButton({
               <button type="button" onClick={() => setOpen(false)} style={{ border: 'none', background: '#efe7d9', borderRadius: 6, padding: '6px 10px', cursor: 'pointer', fontWeight: 600 }}>{multi ? 'Fertig' : 'Schließen'} ✕</button>
             </div>
             <div style={{ padding: 14, overflowY: 'auto' }}>
-              {err ? (
-                <div style={{ color: '#b00', fontSize: 13 }}>Mediathek nicht ladbar: {err}</div>
-              ) : media == null ? (
-                <div style={{ color: '#6e5e49', fontSize: 13 }}>Lade Bilder …</div>
-              ) : media.length === 0 ? (
-                <div style={{ color: '#6e5e49', fontSize: 13 }}>Noch keine Bilder in /uploads.</div>
-              ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 10 }}>
-                  {media.map((p) => {
-                    const picked = already.indexOf(p) !== -1;
-                    return (
-                      <button key={p} type="button" onClick={() => pick(p)} title={p.replace('/uploads/', '')}
-                        style={{ position: 'relative', padding: 0, border: picked ? '2px solid #a7672f' : '1px solid #e1ddd5', borderRadius: 8, overflow: 'hidden', background: '#f4ede1', cursor: 'pointer', aspectRatio: '4 / 3' }}>
-                        <img src={toLocalMedia(p)} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', opacity: picked ? 0.55 : 1 }} />
-                        {picked ? <span style={{ position: 'absolute', top: 4, right: 4, background: '#a7672f', color: '#fff', borderRadius: '50%', width: 20, height: 20, lineHeight: '20px', fontSize: 13, textAlign: 'center' }}>✓</span> : null}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
+              {(() => {
+                const freshPaths = new Set(fresh.map((f) => f.path));
+                // Frische Uploads (data:-URL) zuerst, dann das Build-Manifest ohne Dubletten.
+                const items: Array<{ key: string; path: string; src: string; isFresh: boolean }> = [
+                  ...fresh.map((f) => ({ key: 'f:' + f.path, path: f.path, src: f.dataUrl, isFresh: true })),
+                  ...(media || []).filter((p) => !freshPaths.has(p)).map((p) => ({ key: p, path: p, src: toLocalMedia(p), isFresh: false })),
+                ];
+                if (err && !items.length) return <div style={{ color: '#b00', fontSize: 13 }}>Mediathek nicht ladbar: {err}</div>;
+                if (media == null && !items.length) return <div style={{ color: '#6e5e49', fontSize: 13 }}>Lade Bilder …</div>;
+                if (!items.length) return <div style={{ color: '#6e5e49', fontSize: 13 }}>Noch keine Bilder in /uploads.</div>;
+                return (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 10 }}>
+                    {items.map((it) => {
+                      const picked = already.indexOf(it.path) !== -1;
+                      return (
+                        <button key={it.key} type="button" onClick={() => pick(it.path)} title={(it.isFresh ? 'Gerade hochgeladen — ' : '') + it.path.replace('/uploads/', '')}
+                          style={{ position: 'relative', padding: 0, border: picked ? '2px solid #a7672f' : it.isFresh ? '2px solid #2d6a4f' : '1px solid #e1ddd5', borderRadius: 8, overflow: 'hidden', background: '#f4ede1', cursor: 'pointer', aspectRatio: '4 / 3' }}>
+                          <img src={it.src} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', opacity: picked ? 0.55 : 1 }} />
+                          {picked ? <span style={{ position: 'absolute', top: 4, right: 4, background: '#a7672f', color: '#fff', borderRadius: '50%', width: 20, height: 20, lineHeight: '20px', fontSize: 13, textAlign: 'center' }}>✓</span> : null}
+                          {it.isFresh && !picked ? <span style={{ position: 'absolute', top: 4, left: 4, background: '#2d6a4f', color: '#fff', borderRadius: 4, padding: '1px 6px', fontSize: 10, fontWeight: 700 }}>NEU</span> : null}
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>

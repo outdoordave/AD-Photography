@@ -178,6 +178,12 @@ section { padding: 84px 0; }
 #page-story .reader-hero:hover .ww-swap-overlay { opacity: 1; }
 .ww-swap-overlay .ww-swap-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 6px; background: #7a674e; color: #fff; border: none; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
 .ww-swap-overlay .ww-swap-btn:hover { background: #6a583f; }
+/* Rückmeldung des Upload-Felds direkt am Bild (Erfolg + Größe / Fehler / läuft). Volle Breite
+   unter den Knöpfen (flex-basis: 100%), opacity der Overlay umgehen -> immer gut lesbar. */
+.ww-swap-overlay .ww-swap-info { flex-basis: 100%; text-align: right; font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+.ww-swap-overlay .ww-swap-info--busy { background: rgba(28,24,18,0.82); color: #fff; }
+.ww-swap-overlay .ww-swap-info--ok { background: #2d6a4f; color: #fff; }
+.ww-swap-overlay .ww-swap-info--err { background: #b00020; color: #fff; }
 /* Die Wander-Titel-Leiste (.story-topline, z-index 1095) überlagert oben das Cover und fing die
    Klicks auf den Foto-Tausch-Knöpfen ab (per Diagnose bestätigt). NUR im CMS-Editor (ww-cms-preview,
    = wo das Overlay überhaupt erscheint) die Leiste klick-durchlässig machen -> Klicks erreichen die

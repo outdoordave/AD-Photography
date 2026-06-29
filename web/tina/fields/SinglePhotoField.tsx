@@ -3,7 +3,7 @@ import { useCMS, wrapFieldsWithMeta } from 'tinacms';
 import { fmt, detectEncoder, toOptimized, type EncoderMode } from './webpEncode';
 import { toLocalMedia, dedupeUploads } from './mediaPath';
 import { MediaPickerButton } from './MediaPicker';
-import { putFreshMedia } from '../../src/lib/freshMedia';
+import { putFreshMedia, putSwapInfo } from '../../src/lib/freshMedia';
 
 // Einzelfoto-Feld mit Auto-WebP (gleiche Logik wie BulkPhotoField, aber EIN Bild):
 //  - Datei waehlen oder hierher ziehen,
@@ -41,7 +41,9 @@ const SinglePhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
   }, []);
   React.useEffect(() => () => { if (urlRef.current) { try { URL.revokeObjectURL(urlRef.current); } catch (e) { /* ignore */ } } }, []);
 
-  async function handleFile(fileList: FileList | File[] | null) {
+  // swapKey: gesetzt, wenn der Upload aus dem „Foto tauschen"-Overlay der Live-Vorschau kam —
+  // dann melden wir Erfolg/Fehler + Größen-Info per Brücke an die Overlay zurück (Info im Bild).
+  async function handleFile(fileList: FileList | File[] | null, swapKey?: string) {
     if (!fileList) return;
     const files = Array.from(fileList).filter((f) => f.type.startsWith('image/'));
     if (!files.length) return;
@@ -60,9 +62,13 @@ const SinglePhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
       input.onChange(src);
       putFreshMedia(src, file); // Live-Vorschau im CMS sofort versorgen (bis zum Deploy)
       const note = format === 'jpeg' ? ' (JPEG)' : ' (WebP)';
-      setSavings(`${fmt(files[0].size)} → ${fmt(file.size)}${note}`);
+      const text = `${fmt(files[0].size)} → ${fmt(file.size)}${note}`;
+      setSavings(text);
+      if (swapKey != null) putSwapInfo(swapKey, true, text, Date.now());
     } catch (e: any) {
-      setError(e?.message || 'Upload fehlgeschlagen');
+      const msg = e?.message || 'Upload fehlgeschlagen';
+      setError(msg);
+      if (swapKey != null) putSwapInfo(swapKey, false, msg, Date.now());
     } finally {
       setBusy(false);
       setProgress('');
@@ -75,7 +81,7 @@ const SinglePhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
   React.useEffect(() => {
     const onSwap = (e: any) => {
       const d = e && e.detail; if (!d || d.value !== value) return;
-      if (d.file) handleFile([d.file as File]);
+      if (d.file) handleFile([d.file as File], value);
       else if (typeof d.pickedPath === 'string') { input.onChange(d.pickedPath); setPreview(''); }
     };
     window.addEventListener('ww:swap-media', onSwap as EventListener);

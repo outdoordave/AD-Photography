@@ -32,6 +32,22 @@ export default function StoryReaderContent(props: Props) {
   const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
   const story = (data.story ?? {}) as StoryData & Record<string, any>;
 
+  // CMS-Vorschau: Nach einem Frisch-Upload (Brücke via localStorage, s. freshMedia.ts) neu
+  // rendern, damit das Cover sofort das frische Bild zeigt — auch wenn die data:-URL erst nach
+  // Tinas Re-Render geschrieben wird. Das `storage`-Event feuert in der iframe (schreibt das
+  // Admin-Fenster); `ww:fresh-media` deckt Gleiches-Fenster ab. Nur im Editor-iframe aktiv.
+  const [, bumpFresh] = React.useReducer((x) => x + 1, 0);
+  React.useEffect(() => {
+    if (typeof window === 'undefined' || window.self === window.top) return;
+    const onFresh = () => bumpFresh();
+    window.addEventListener('storage', onFresh);
+    window.addEventListener('ww:fresh-media', onFresh as EventListener);
+    return () => {
+      window.removeEventListener('storage', onFresh);
+      window.removeEventListener('ww:fresh-media', onFresh as EventListener);
+    };
+  }, []);
+
   const view = buildStory(story);
   const d = props.lang === 'en' ? view.en : view.de;
   const fTitle = props.lang === 'en' ? 'title_en' : 'title_de';
