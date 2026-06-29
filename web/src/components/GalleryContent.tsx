@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTina, tinaField } from 'tinacms/dist/react';
+import { selectActiveFormId } from '../lib/tinaForm';
 import Lightbox, { type LbPhoto } from './Lightbox';
 import { normalizePath } from '../lib/stories';
 import { ILLUS } from '../lib/illus';
@@ -128,7 +129,11 @@ const MODE_LABELS: Record<GalleryMode, { de: string; en: string }> = {
 
 export default function GalleryContent(props: Props) {
   const { lang } = props;
-  const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
+  const { data } = useTina({
+    query: props.query, variables: props.variables, data: props.data,
+    // Vorschau-Navigation: Sidebar links automatisch auf das Dokument dieser Seite schalten.
+    experimental___selectFormByFormId: () => selectActiveFormId(props.data),
+  });
   const hrefPrefix = lang === 'en' ? '/en' : '';
 
   const albums = React.useMemo(() => {

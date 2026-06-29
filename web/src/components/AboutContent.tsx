@@ -1,4 +1,5 @@
 import { useTina, tinaField } from 'tinacms/dist/react';
+import { selectActiveFormId } from '../lib/tinaForm';
 import { photoFrame } from '../lib/trips';
 import { ILLUS } from '../lib/illus';
 import RichText, { pickRich } from './RichText';
@@ -24,7 +25,11 @@ const PERSON_STYLE = [
 ] as const;
 
 export default function AboutContent(props: Props) {
-  const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
+  const { data } = useTina({
+    query: props.query, variables: props.variables, data: props.data,
+    // Vorschau-Navigation: Sidebar links automatisch auf das Dokument dieser Seite schalten.
+    experimental___selectFormByFormId: () => selectActiveFormId(props.data),
+  });
   const about = (data.ueber_uns ?? {}) as Record<string, any>;
   const lang = props.lang;
   // Flache Felder (base_de/base_en): EN fällt auf DE zurück.

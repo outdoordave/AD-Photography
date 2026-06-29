@@ -1,4 +1,5 @@
 import { useTina, tinaField } from 'tinacms/dist/react';
+import { selectActiveFormId } from '../lib/tinaForm';
 
 // Wiederverwendbarer Seiten-Kopf (Kicker / Titel / Intro) für die „… – Einstellungen"-
 // Collections (Galerie, Stories, Reisen). Als kleine React-Insel mit useTina:
@@ -21,7 +22,11 @@ type Props = {
 // FLACHE Felder (kicker_de/kicker_en …): Klick in der Vorschau springt direkt
 // ins jeweilige Freitextfeld (kein DE/EN-Untermenü). EN fällt auf DE zurück.
 export default function SettingsHeader(props: Props) {
-  const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
+  const { data } = useTina({
+    query: props.query, variables: props.variables, data: props.data,
+    // Vorschau-Navigation: Sidebar links automatisch auf das Dokument dieser Seite schalten.
+    experimental___selectFormByFormId: () => selectActiveFormId(props.data),
+  });
   const doc = (data?.[props.docKey] ?? {}) as Record<string, any>;
   const lang = props.lang;
   const t = (de: any, en: any) => (lang === 'en' ? en || de || '' : de || '');

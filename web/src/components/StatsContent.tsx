@@ -1,4 +1,5 @@
 import { useTina, tinaField } from 'tinacms/dist/react';
+import { selectActiveFormId } from '../lib/tinaForm';
 
 // Statistik-Seite (/statistik) als React-Insel — useTina = LIVE-Daten, data-tina-field =
 // Klick-ins-Feld. Bettet das öffentliche Dashboard des gewählten (cookielosen) Analyse-
@@ -13,7 +14,11 @@ type Props = {
 };
 
 export default function StatsContent(props: Props) {
-  const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
+  const { data } = useTina({
+    query: props.query, variables: props.variables, data: props.data,
+    // Vorschau-Navigation: Sidebar links automatisch auf das Dokument dieser Seite schalten.
+    experimental___selectFormByFormId: () => selectActiveFormId(props.data),
+  });
   const s = (data.statistik ?? {}) as Record<string, any>;
   const lang = props.lang;
   const t = (base: string) => { const de = s[base + '_de'], en = s[base + '_en']; return lang === 'en' ? (en || de || '') : (de || ''); };

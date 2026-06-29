@@ -4,6 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { useTina, tinaField } from 'tinacms/dist/react';
 import Lightbox, { type LbPhoto } from './Lightbox';
 import { normalizePath, wwYouTubeEmbed } from '../lib/stories';
+import { selectActiveFormId } from '../lib/tinaForm';
 import RichText, { pickRich } from './RichText';
 import { track } from '../lib/track';
 import { viewStops, bi, tripTitle, sortTrips, type RawTrip, type ViewStop, type Lang } from '../lib/trips';
@@ -154,7 +155,11 @@ export default function TripTimeline(props: Props) {
   const revealMs = props.revealMs ?? 800;
   const snap = props.snap ?? false;
   const tf = (o: any, base: string) => tinaField(o, (lang === 'en' ? base + '_en' : base + '_de') as any);
-  const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
+  const { data } = useTina({
+    query: props.query, variables: props.variables, data: props.data,
+    // Vorschau-Navigation: Sidebar auf die AKTIVE Reise (per initialSlug aus der Connection) schalten.
+    experimental___selectFormByFormId: () => selectActiveFormId(props.data, props.initialSlug),
+  });
 
   // Reisen ableiten (live, sortiert) und die aktive Reise per initialSlug wählen.
   const trips = React.useMemo(() => {

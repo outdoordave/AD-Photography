@@ -6,6 +6,7 @@ import RichText, { richIsEmpty } from './RichText';
 import StoryAlbumBlock from './StoryAlbumBlock';
 import Lightbox, { type LbPhoto } from './Lightbox';
 import PhotoSwapOverlay from './PhotoSwapOverlay';
+import { selectActiveFormId } from '../lib/tinaForm';
 
 // Kleine React-Insel: NUR die editierbaren Reader-Felder (Hero-Cover/Kategorie/
 // Titel, Body, ggf. Album-Lightbox, YouTube). useTina liefert LIVE-Daten
@@ -29,7 +30,11 @@ type Props = {
 const ALBUM_MARKER = '[[album]]';
 
 export default function StoryReaderContent(props: Props) {
-  const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
+  const { data } = useTina({
+    query: props.query, variables: props.variables, data: props.data,
+    // Vorschau-Navigation: Sidebar links automatisch auf dieses Story-Dokument schalten.
+    experimental___selectFormByFormId: () => selectActiveFormId(props.data),
+  });
   const story = (data.story ?? {}) as StoryData & Record<string, any>;
 
   // CMS-Vorschau: Nach einem Frisch-Upload (Brücke via localStorage, s. freshMedia.ts) neu

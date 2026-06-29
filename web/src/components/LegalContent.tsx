@@ -1,4 +1,5 @@
 import { useTina, tinaField } from 'tinacms/dist/react';
+import { selectActiveFormId } from '../lib/tinaForm';
 import RichText, { pickRich } from './RichText';
 
 // Rechtstext-Seiten (Datenschutz / Impressum) als React-Insel — wie ContactContent:
@@ -15,7 +16,11 @@ type Props = {
 };
 
 export default function LegalContent(props: Props) {
-  const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
+  const { data } = useTina({
+    query: props.query, variables: props.variables, data: props.data,
+    // Vorschau-Navigation: Sidebar links automatisch auf das Dokument dieser Seite schalten.
+    experimental___selectFormByFormId: () => selectActiveFormId(props.data),
+  });
   const d = (data[props.docKey] ?? {}) as Record<string, any>;
   const lang = props.lang;
   const t = (base: string) => { const de = d[base + '_de'], en = d[base + '_en']; return lang === 'en' ? (en || de || '') : (de || ''); };

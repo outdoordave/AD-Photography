@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTina, tinaField } from 'tinacms/dist/react';
+import { selectActiveFormId } from '../lib/tinaForm';
 import { bi, type Lang } from '../lib/albums';
 import { normalizePath } from '../lib/stories';
 import { socialIcon, socialUrl } from '../lib/socialIcons';
@@ -18,7 +19,11 @@ type Props = {
 };
 
 export default function HomeHeroLive(props: Props) {
-  const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
+  const { data } = useTina({
+    query: props.query, variables: props.variables, data: props.data,
+    // Vorschau-Navigation: Sidebar links automatisch auf das Dokument dieser Seite schalten.
+    experimental___selectFormByFormId: () => selectActiveFormId(props.data),
+  });
   const st = (data?.startseite ?? {}) as Record<string, any>;
   const hero = (st.hero ?? {}) as Record<string, any>;
   const lang = props.lang;

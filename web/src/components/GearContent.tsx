@@ -1,4 +1,5 @@
 import { useTina, tinaField } from 'tinacms/dist/react';
+import { selectActiveFormId } from '../lib/tinaForm';
 import { groupGear, safeUrl, type GearItem } from '../lib/gear';
 
 // Gear als kleine React-Insel (wie StoryReaderContent): useTina liefert LIVE-Daten
@@ -15,7 +16,11 @@ type Props = {
 };
 
 export default function GearContent(props: Props) {
-  const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
+  const { data } = useTina({
+    query: props.query, variables: props.variables, data: props.data,
+    // Vorschau-Navigation: Sidebar links automatisch auf das Dokument dieser Seite schalten.
+    experimental___selectFormByFormId: () => selectActiveFormId(props.data),
+  });
   const gear = (data.gear ?? {}) as Record<string, any>;
   const lang = props.lang;
   // Flache Felder (base_de/base_en): EN fällt auf DE zurück.

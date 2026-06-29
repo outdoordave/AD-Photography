@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTina, tinaField } from 'tinacms/dist/react';
+import { selectActiveFormId } from '../lib/tinaForm';
 import { socialIcon } from '../lib/socialIcons';
 
 // Kontakt als React-Insel (wie Stories/Gear/About): useTina = LIVE-Daten, data-tina-
@@ -19,7 +20,11 @@ type Props = {
 };
 
 export default function ContactContent(props: Props) {
-  const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
+  const { data } = useTina({
+    query: props.query, variables: props.variables, data: props.data,
+    // Vorschau-Navigation: Sidebar links automatisch auf das Dokument dieser Seite schalten.
+    experimental___selectFormByFormId: () => selectActiveFormId(props.data),
+  });
   const c = (data.kontakt ?? {}) as Record<string, any>;
   const lang = props.lang;
   // Flache Felder (base_de/base_en): EN fällt auf DE zurück.

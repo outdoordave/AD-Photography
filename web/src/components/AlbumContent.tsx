@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTina, tinaField } from 'tinacms/dist/react';
+import { selectActiveFormId } from '../lib/tinaForm';
 import Lightbox, { type LbPhoto } from './Lightbox';
 import { Tile } from './GalleryContent';
 import { normalizePath } from '../lib/stories';
@@ -13,7 +14,11 @@ type Props = { query: string; variables: object; data: any; lang: Lang };
 
 export default function AlbumContent(props: Props) {
   const { lang } = props;
-  const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
+  const { data } = useTina({
+    query: props.query, variables: props.variables, data: props.data,
+    // Vorschau-Navigation: Sidebar links automatisch auf das Dokument dieser Seite schalten.
+    experimental___selectFormByFormId: () => selectActiveFormId(props.data),
+  });
   // Absicherung: Falls die Live-Daten (Hydration) leer/unvollständig zurückkommen, auf die
   // serverseitig gerenderten Daten zurückfallen -> Galerie verschwindet nicht (leere Seite).
   const alb = ((data as any)?.alben || (props.data as any)?.alben || {}) as RawAlbum;
