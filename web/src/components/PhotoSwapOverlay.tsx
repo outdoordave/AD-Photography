@@ -37,7 +37,7 @@ export default function PhotoSwapOverlay({ value, label = 'Foto' }: { value: str
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); fileRef.current?.click(); }}>
         📷 Foto ersetzen
       </button>
-      <MediaPickerButton label="🖼️ Aus Mediathek" onPick={(p) => send({ pickedPath: p })} />
+      <MediaPickerButton label="🖼️ Aus Mediathek" className="ww-swap-btn" onPick={(p) => send({ pickedPath: p })} />
       <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }}
         onChange={(e) => { const f = e.target.files && e.target.files[0]; if (f) send({ file: f }); (e.target as HTMLInputElement).value = ''; }} />
     </div>

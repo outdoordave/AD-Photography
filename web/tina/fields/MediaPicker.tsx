@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { toLocalMedia } from './mediaPath';
 
 // Gemeinsamer „Aus Mediathek wählen"-Picker für die Foto-Felder. Zeigt ein Raster ALLER
@@ -8,13 +9,14 @@ import { toLocalMedia } from './mediaPath';
 //   multi=false   -> schließt nach der Wahl; multi=true -> bleibt offen (mehrere wählen).
 //   already       -> bereits gewählte Pfade (werden im Raster markiert).
 export function MediaPickerButton({
-  onPick, multi = false, label = '🖼️ Aus Mediathek', disabled = false, already = [],
+  onPick, multi = false, label = '🖼️ Aus Mediathek', disabled = false, already = [], className,
 }: {
   onPick: (path: string) => void;
   multi?: boolean;
   label?: string;
   disabled?: boolean;
   already?: string[];
+  className?: string;
 }) {
   const [open, setOpen] = React.useState(false);
   const [media, setMedia] = React.useState<string[] | null>(null);
@@ -31,11 +33,11 @@ export function MediaPickerButton({
   }
   function pick(p: string) { onPick(p); if (!multi) setOpen(false); }
 
-  return (
-    <>
-      <button type="button" disabled={disabled} onClick={openPicker} style={btn(disabled)}>{label}</button>
-      {open ? (
-        <div onClick={() => setOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(28,24,18,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+  // Modal an document.body portalen, damit es nicht im Stacking-Context der aufrufenden
+  // Komponente gefangen ist (z. B. die `.ww-swap-overlay` auf z-index 4 in der CMS-Vorschau —
+  // sonst läge das Modal UNTER der Wander-Titel-Leiste und die weiße Box wäre unsichtbar).
+  const modal = open ? (
+    <div onClick={() => setOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 99999, background: 'rgba(28,24,18,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
           <div onClick={(e) => e.stopPropagation()} style={{ background: '#fff', borderRadius: 12, width: 'min(880px, 96vw)', maxHeight: '86vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 18px 60px rgba(0,0,0,0.35)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: '1px solid #ece5d9' }}>
               <strong style={{ fontSize: 15, color: '#2a2218' }}>Mediathek — vorhandenes Bild wählen{multi ? ' (mehrere möglich)' : ''}</strong>
@@ -65,7 +67,13 @@ export function MediaPickerButton({
             </div>
           </div>
         </div>
-      ) : null}
+  ) : null;
+
+  return (
+    <>
+      <button type="button" disabled={disabled} onClick={openPicker}
+        className={className} style={className ? undefined : btn(disabled)}>{label}</button>
+      {modal && typeof document !== 'undefined' ? createPortal(modal, document.body) : null}
     </>
   );
 }
