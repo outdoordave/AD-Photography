@@ -17,6 +17,20 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-28 — Fix: Foto-Tausch-Knöpfe im Bild waren nicht klickbar (Wander-Titel-Leiste)
+- **Diagnose statt Raten:** Ein temporärer Diagnose-Streifen (`70e8fd1`) zeigte das echte Klick-Ziel —
+  **`.story-topline`**. Die Wander-Titel-Leiste (`position: sticky; z-index: 1095`) überlagert per
+  negativem `margin` die obere Hero-Kante und fing die Klicks auf den Overlay-Knöpfen (`top: 14px`) ab.
+  **Kein Tina-/iframe-Problem** — eigenes CSS-Stacking. (Tinas Klick-Handler, per Quellcode geprüft, war
+  unbeteiligt; die Knöpfe liegen in keiner `data-tina-field`-Region.)
+- **Fix** (`f371651`): **Nur im CMS-Editor** (`html.ww-cms-preview` — genau dort erscheint das Overlay)
+  ist `.story-topline` jetzt **klick-durchlässig** (`pointer-events: none`); die Zurück-Pille bleibt
+  klickbar (`auto`). Damit erreichen die Klicks die Knöpfe darunter. **Live-Seite unberührt** (dort kein
+  Overlay + Regel greift nicht). Diagnose-Code wieder entfernt. **Verifiziert** (iframe + ww-cms-preview):
+  `elementFromPoint` am Knopf = `BUTTON.ww-swap-btn` (vorher `.story-topline`); „Aus Mediathek" öffnet
+  das Bild-Raster. ⚠️ Ob „Foto ersetzen" den **Finder** im iframe öffnet, prüft David hands-on.
+- Commits: `70e8fd1` (Diagnose, entfernt), `f371651` (Fix)
+
 ## 2026-06-28 — Stories-Raster konsistent zu Reisen (auto-fit statt hartem Umbruch)
 - **Befund (gemessen):** Bei gleicher Breite (800px) zeigte `/trips` **2 Spalten**, `/stories` nur **1**.
   Ursache: `.trips-overview` nutzt `repeat(auto-fill, minmax(300px,1fr))` (passt Spaltenzahl automatisch an),
