@@ -17,6 +17,26 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-29 — Fix: Portfolio-Sidebar zeigte ganze Dokumentliste (undefined user-select-form)
+- **Nachtrag zu `bd0e385`** (von David gemeldet + Screenshot): Auf der **Portfolio-Übersicht** lud die
+  Sidebar links „etwas Unzuordenbares" — die **ganze Dokumentliste** statt eines Formulars.
+- **Ursache:** `GalleryContent` (Portfolio-Übersicht) fragt `albenConnection` ab (alle Alben, **kein**
+  einzelnes aktives Dokument) → mein `selectActiveFormId` lieferte dort `undefined`. Tina postet
+  `experimental___selectFormByFormId` aber **immer** (auch `undefined`) → `forms:set-active-form-id`
+  wurde auf `undefined` gesetzt und **löschte** die saubere Auswahl der `SettingsHeader`-Insel
+  (`galerie_settings`) → Sidebar fiel auf die Gesamtliste zurück.
+- **Fix:** Selector aus `GalleryContent` entfernt (Connection-ohne-Slug darf nicht posten). Auf
+  `/portfolio` wählt jetzt allein `SettingsHeader` → `galerie_settings`. Einzige betroffene Insel:
+  `GalleryContent` läuft nur auf der Übersicht; `TripTimeline` hat immer `initialSlug`, `/trips` +
+  `/stories` haben nur `SettingsHeader` (Einzeldokument).
+- **Verifiziert** (iframe-Sim): `/portfolio` postet genau **ein** `user-select-form` =
+  `src/data/gallery-settings.json` (kein `undefined`); `/trips`→`trips-settings.json`,
+  `/stories`→`stories-settings.json`, `/about`→`about.json`. ⚠️ Restlicher kurzer Übergang beim
+  Navigieren (altes→neues Formular während des iframe-Reloads) ist Tina-eigenes MPA-Verhalten; ein
+  eigener Lade-Spinner in Tinas Sidebar ist von unserer Seite nicht steuerbar — die „ganze Liste"
+  erscheint aber nicht mehr.
+- Commit: `183a279`
+
 ## 2026-06-29 — CMS: Sidebar folgt der Vorschau-Navigation automatisch
 - **Wunsch (David):** Beim Öffnen/Navigieren einer Seite in der Live-Vorschau soll das Tina-Formular
   links automatisch das passende Dokument zeigen (und umgekehrt). **Reverse (Liste→Vorschau)** lief

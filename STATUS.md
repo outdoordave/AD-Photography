@@ -104,8 +104,11 @@
 > hier das globale Logo (`LogoLink` in SiteNav+SiteFooter). Fix: Tinas `experimental___selectFormByFormId()` in
 > jeder Inhalts-Insel, das die echte Form-ID (`_sys.path` = `_internalSys.path`) meldet; zentraler Helfer
 > `src/lib/tinaForm.ts` (Einzeldoc + Connection-mit-Slug). Reverse-Kopplung (Liste→Vorschau) lief schon via
-> `ui.router`. Verifiziert: genau ein `user-select-form` mit korrekter ID (Story/Reise). ⚠️ Sichtbarer
-> Sidebar-Wechsel im echten `/admin` von David zu bestätigen.
+> `ui.router`. Verifiziert: genau ein `user-select-form` mit korrekter ID (Story/Reise). **Nachtrag `183a279`:**
+> Selector aus `GalleryContent` (Portfolio-Übersicht, `albenConnection` ohne Slug) wieder entfernt — er postete
+> `undefined` und löschte die `SettingsHeader`-Auswahl → Sidebar zeigte die ganze Liste. Jetzt postet jede Seite
+> genau eine valide Form-ID. ⚠️ Sichtbarer Sidebar-Wechsel im echten `/admin` zu bestätigen; kurzer Navigations-
+> Übergang ist Tina-MPA-intern (kein eigener Spinner steuerbar), aber keine „ganze Liste" mehr.
 >
 > **✅ Deploy + Re-Index erledigt:** Die rich-text-Umstellung (strukturell) ist live auf `main`, Tina-Cloud
 > re-indext, Build grün, CMS in Nutzung — der frühere `?`-/Schema-Mismatch ist Geschichte. Seither nur noch
