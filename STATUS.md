@@ -1,6 +1,6 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-26** · Live-Branch `main`. Seite **live**, Cutover durch. SEO-Grundlage steht
+> **Stand: 2026-06-29** · Live-Branch `main`. Seite **live**, Cutover durch. SEO-Grundlage steht
 > (Sitemap, JSON-LD, Google Search Console bestätigt + Sitemap gelesen), Datenschutz **vollständig**
 > (inkl. Web3Forms), Performance ok, A11y-Basics drin, Security-Header + CSP gesetzt. **Keine offenen
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
@@ -82,11 +82,15 @@
 > - **✅ Story-Bausteine bestätigt:** 📷 Foto einfügen → speichert + rendert (David, 26.06.). 📸 Album noch
 >   offen (kein komplettes Album zum Hochladen) — Mechanik identisch. Alle Editor-Fixes = **kein Schema-Eingriff**
 >   (`tina-lock.json` unverändert) → kein Re-Index, nur Push + Deploy.
-> - **✅ „Foto tauschen"-Overlay auf dem Cover (26.06., `97abe0d`):** Dezente Knöpfe „📷 Foto ersetzen / 🖼️ Aus
->   Mediathek" **direkt auf dem Cover** in der Live-Vorschau (`PhotoSwapOverlay.tsx`). iframe→parent via
->   `CustomEvent('ww:swap-media')` → `SinglePhotoField` handelt bei Wert-Match. **Nur im Editor-iframe** sichtbar,
->   live nie gerendert (verifiziert: 0 Overlay live). ⚠️ **Finaler Upload im echten CMS von David hands-on zu
->   prüfen.** Scope nur Cover (Stationen könnten folgen; Text-Fotos technisch nicht sauber). Isoliert/live-gated.
+> - **✅ „Foto tauschen"-Overlay auf dem Cover (26.06. `97abe0d`; Folge-Fixes 28.+29.06.):** Dezente Knöpfe
+>   „📷 Foto ersetzen / 🖼️ Aus Mediathek" **direkt auf dem Cover** in der Live-Vorschau (`PhotoSwapOverlay.tsx`).
+>   iframe→parent via `CustomEvent('ww:swap-media')` → `SinglePhotoField` handelt bei Wert-Match. **Nur im
+>   Editor-iframe** sichtbar, live nie gerendert (verifiziert: 0 Overlay live). Scope nur Cover. Drei Folge-Fixes:
+>   **(a)** Klicks gingen nicht — `.story-topline` (z-1095) fing sie ab → im Editor `pointer-events:none` (`f371651`).
+>   **(b)** „Aus Mediathek" ohne Hover → `MediaPickerButton` bekam `className`-Prop, Overlay reicht `ww-swap-btn`
+>   durch (`6482d35`). **(c)** Mediathek-Modal lag UNTER der Titel-Leiste (steckte im z-4-Käfig der Overlay) →
+>   per `createPortal` an `document.body` (`6482d35`); jetzt sauberes Fenster mit sichtbarem „Schließen ✕".
+>   ⚠️ **Finaler Upload (Finder-Dialog im iframe) im echten CMS von David hands-on zu prüfen.** Isoliert/live-gated.
 >
 > **✅ Deploy + Re-Index erledigt:** Die rich-text-Umstellung (strukturell) ist live auf `main`, Tina-Cloud
 > re-indext, Build grün, CMS in Nutzung — der frühere `?`-/Schema-Mismatch ist Geschichte. Seither nur noch

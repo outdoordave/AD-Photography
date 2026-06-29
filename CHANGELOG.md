@@ -17,6 +17,26 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-29 — Fix: Mediathek-Modal sichtbar machen (Portal) + Hover für „Aus Mediathek"
+- Drei Korrekturen am Foto-Tausch-Overlay der CMS-Vorschau (von David gemeldet):
+  1. **Hover:** „Aus Mediathek" bekam keinen Hover wie „Foto ersetzen". `MediaPickerButton` erhielt
+     eine optionale `className`-Prop; das Overlay reicht `ww-swap-btn` durch → identischer Hover.
+     Andere Konsumenten (SinglePhotoField/BulkPhotoField/CropPhotoField) ohne `className` behalten
+     den bisherigen Inline-Style (unverändert).
+  2. **Überschrift schwebte im Bild** + 3. **Modal-Box/„Schließen ✕" unsichtbar:** gleiche Ursache —
+     das Modal (z-9999) war ein Kind der `.ww-swap-overlay`, die in der Vorschau auf `z-index: 4`
+     einen eigenen Stacking-Context bildet. Damit lag das gesamte Modal **unter** der Wander-Titel-
+     Leiste (`.story-topline`, z-1095): nur das Bild-Raster schien durch, Story-Titel davor, weiße
+     Box samt Schließen-Knopf verdeckt. **Fix:** Modal per `createPortal` an `document.body` hängen →
+     entkommt dem z-4-Käfig, liegt über allem.
+- **Verifiziert** (lokaler Dev + iframe mit `ww-cms-preview`): beide Knöpfe haben Klasse `ww-swap-btn`;
+  Modal-Elternknoten = `BODY` (nicht mehr in `.ww-swap-overlay`); bei 80px von oben liegt jetzt die
+  Modal-Überschrift oben statt `.story-topline`; „Schließen ✕" sichtbar, Hit-Target `BUTTON`, Klick
+  schließt (Modal `true`→`false`).
+- Dateien: `web/tina/fields/MediaPicker.tsx`, `web/src/components/PhotoSwapOverlay.tsx`
+  (UI-only, **kein** Tina-Schema → kein Re-Index)
+- Commit: `6482d35`
+
 ## 2026-06-28 — Fix: Foto-Tausch-Knöpfe im Bild waren nicht klickbar (Wander-Titel-Leiste)
 - **Diagnose statt Raten:** Ein temporärer Diagnose-Streifen (`70e8fd1`) zeigte das echte Klick-Ziel —
   **`.story-topline`**. Die Wander-Titel-Leiste (`position: sticky; z-index: 1095`) überlagert per
