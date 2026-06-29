@@ -233,29 +233,87 @@ export default defineConfig({
       }
     } catch (e) { /* ignore */ }
 
-    // Sidebar-Ladekreis bei Navigation — statt der kurz aufblitzenden Dokument-LISTE.
-    // Tina hat einen eingebauten Lade-Platzhalter (Sidebar), der erscheint, wenn der interne
-    // Zustand `isLoadingContent` true ist. Bei Navigation schaltet Tina ihn aber NICHT ein:
-    // der eigene Auslöser ist in @tinacms/app (graphql-reducer.ts) auskommentiert
-    // („TODO: webpack HMR"). In der Lücke (neue Seite registriert mehrere Formulare, noch kein
-    // aktives) zeigt Tina stattdessen die Formular-Liste (`FormLists`, index.js:47275).
-    // Die Vorschau-Inseln senden beim Seitenwechsel `url-changed` (useTina). Wir setzen darauf
-    // den Lade-Zustand und räumen ihn nach kurzer Ruhephase (Debounce 700 ms, keine weitere
-    // Insel mehr) wieder ab — dann steht der aktive (selectFormByFormId) fest und Tina zeigt das
-    // Formular. So erscheint Tinas EIGENER Ladekreis statt der Liste. `cms.dispatch` wird erst zur
-    // Laufzeit (nach App-Mount) gelesen. Editor-only; bricht bei Tina-Update nicht hart (try/catch).
+    // Sidebar-Ladekreis bei Navigation — eigenes Overlay über der Sidebar mit animierter
+    // Kamera-Blende (Iris, 8 Lamellen), STATT der kurz aufblitzenden Dokument-Liste.
+    // Hintergrund: Tina zeigt die Formular-Liste (`FormLists`, index.js:47275), wenn mehrere
+    // Formulare registriert sind und noch kein aktives passt — die Lücke beim Seitenwechsel.
+    // Tinas eingebauter Lade-Platzhalter wird bei Navigation nicht ausgelöst (in @tinacms/app
+    // auskommentiert) und hat zudem ~1 s Mindestanzeige. Daher ein EIGENES Overlay, das wir
+    // exakt timen: einblenden bei `url-changed` (senden die Vorschau-Inseln beim Wechsel),
+    // ausblenden ~180 ms nach der Ruhephase (Debounce) → Dauer ≈ echte Ladezeit; danach steht
+    // die neue Seite + der aktive Form (selectFormByFormId) fest und das Formular erscheint.
+    // Hartes 3-s-Cap als Fangnetz. Overlay deckt NUR die Sidebar (links der Vorschau-iframe,
+    // Breite aus deren linker Kante). Die Iris ist aus Geometrie berechnet (keine Fremddatei).
+    // Editor-only; greift nie auf der Live-Seite; bricht bei Tina-Update nicht hart (try/catch).
     try {
-      if (typeof window !== 'undefined' && !(window as any).__wwNavLoadingHook) {
-        (window as any).__wwNavLoadingHook = true;
-        let navTimer: any = null;
-        const setLoading = (v: boolean) => {
-          try { if (typeof cms.dispatch === 'function') cms.dispatch({ type: 'sidebar:set-loading-state', value: v }); } catch (e) { /* ignore */ }
+      if (typeof window !== 'undefined' && typeof document !== 'undefined' && !(window as any).__wwIrisLoader) {
+        (window as any).__wwIrisLoader = true;
+        const cxx = 60, cyy = 60, RR = 35, NN = 8, DARK = '#3b3024', RINGC = '#cdbfa6', PANEL = '#f6f4ef';
+        const sec = (2 * Math.PI) / NN, phi = 0.5, sw = sec * 0.45;
+        const pol = (r: number, a: number): [number, number] => [cxx + r * Math.cos(a), cyy + r * Math.sin(a)];
+        const blades = (ri: number) => {
+          const rp = ri / Math.cos(sec / 2); let s = '';
+          for (let k = 0; k < NN; k++) {
+            const A = pol(RR, phi + (k - 0.6) * sec), B = pol(RR, phi + (k + 0.6) * sec);
+            const Vb = pol(rp, phi + (k + 0.5) * sec + sw), Va = pol(rp, phi + (k - 0.5) * sec + sw);
+            s += '<path d="M' + A[0].toFixed(1) + ' ' + A[1].toFixed(1) + ' A35 35 0 0 1 ' + B[0].toFixed(1) + ' ' + B[1].toFixed(1)
+              + ' L' + Vb[0].toFixed(1) + ' ' + Vb[1].toFixed(1) + ' L' + Va[0].toFixed(1) + ' ' + Va[1].toFixed(1)
+              + ' Z" fill="' + DARK + '" stroke="' + PANEL + '" stroke-width="2" stroke-linejoin="round"/>';
+          }
+          return s;
+        };
+        let ov: any = null, bg: any = null, raf: any = null, settle: any = null, cap: any = null, shown = false, t0 = 0;
+        const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+        const ensure = () => {
+          if (ov) return;
+          ov = document.createElement('div');
+          ov.setAttribute('data-ww', 'iris-loader');
+          ov.style.cssText = 'position:fixed;top:0;left:0;height:100vh;width:360px;z-index:2147483000;display:none;align-items:center;justify-content:center;background:' + PANEL + ';';
+          ov.innerHTML = '<svg width="84" height="84" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">'
+            + '<defs><clipPath id="wwIrisClip"><circle cx="60" cy="60" r="35"/></clipPath></defs>'
+            + '<circle cx="60" cy="60" r="37.5" fill="none" stroke="' + RINGC + '" stroke-width="3"/>'
+            + '<g clip-path="url(#wwIrisClip)" data-ww="blades"></g></svg>';
+          (document.body || document.documentElement).appendChild(ov);
+          bg = ov.querySelector('[data-ww="blades"]');
+        };
+        const position = () => {
+          let w = 360;
+          try {
+            const list = ([] as any[]).slice.call(document.querySelectorAll('iframe'))
+              .map((f: any) => f.getBoundingClientRect())
+              .filter((r: any) => r.width > 0 && r.height > 0)
+              .sort((a: any, b: any) => b.width * b.height - a.width * a.height);
+            if (list[0] && list[0].left > 200) w = list[0].left;
+          } catch (e) { /* ignore */ }
+          ov.style.width = w + 'px';
+        };
+        const loop = () => {
+          const u = (1 - Math.cos(((now() - t0) / 1600) * Math.PI)) / 2; // 1,6 s je Halbzyklus
+          if (bg) bg.innerHTML = blades(3 + u * 14);
+          raf = requestAnimationFrame(loop);
+        };
+        const hide = () => {
+          shown = false;
+          if (ov) ov.style.display = 'none';
+          if (raf) { cancelAnimationFrame(raf); raf = null; }
+          if (cap) { clearTimeout(cap); cap = null; }
+        };
+        const show = () => {
+          ensure(); position();
+          ov.style.display = 'flex';
+          if (!shown) {
+            shown = true; t0 = now();
+            if (raf) cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(loop);
+            if (cap) clearTimeout(cap);
+            cap = setTimeout(hide, 3000);
+          }
         };
         window.addEventListener('message', (e: any) => {
           if (!e || !e.data || e.data.type !== 'url-changed') return;
-          setLoading(true);
-          if (navTimer) clearTimeout(navTimer);
-          navTimer = setTimeout(() => setLoading(false), 700);
+          show();
+          if (settle) clearTimeout(settle);
+          settle = setTimeout(hide, 180);
         });
       }
     } catch (e) { /* ignore */ }
