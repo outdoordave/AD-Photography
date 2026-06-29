@@ -178,6 +178,12 @@ section { padding: 84px 0; }
 #page-story .reader-hero:hover .ww-swap-overlay { opacity: 1; }
 .ww-swap-overlay .ww-swap-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 6px; background: #7a674e; color: #fff; border: none; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
 .ww-swap-overlay .ww-swap-btn:hover { background: #6a583f; }
+/* Die Wander-Titel-Leiste (.story-topline, z-index 1095) überlagert oben das Cover und fing die
+   Klicks auf den Foto-Tausch-Knöpfen ab (per Diagnose bestätigt). NUR im CMS-Editor (ww-cms-preview,
+   = wo das Overlay überhaupt erscheint) die Leiste klick-durchlässig machen -> Klicks erreichen die
+   Knöpfe darunter; die Zurück-Pille bleibt klickbar. Live-Seite unberührt (dort kein Overlay). */
+html.ww-cms-preview #page-story .story-topline { pointer-events: none; }
+html.ww-cms-preview #page-story .story-topline .story-back-line { pointer-events: auto; }
 /* .reader-hero-inner ist jetzt GESCHWISTER des Hero (nicht mehr darin, s. JSX) -> auf Desktop absolut an
    den Hero-Unterrand zurücksetzen, damit die Optik exakt bleibt (Titel unten, über dem Cover). Der Hero
    ist 60vh hoch und das erste Kind (.story-topline ist desktop display:none) -> top:60vh + translateY(-100%)
