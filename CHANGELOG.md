@@ -17,6 +17,25 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-29 — CMS: Ladekreis bei Navigation statt aufblitzender Dokumentliste
+- **Wunsch (David):** Beim Navigieren in der Vorschau blitzte links kurz Tinas **Dokumentliste**
+  (`.json`-Einträge) auf, bis das passende Formular feststand — gewünscht: ein Apple-artiger Ladekreis.
+- **Ursache (Tina-Quelle):** Die Sidebar zeigt `FormLists`, wenn mehrere Formulare registriert sind und
+  noch **kein aktives passt** (`tinacms/dist/index.js:47275`) — genau die Lücke beim Seitenwechsel. Tina
+  **hat** einen eingebauten Lade-Platzhalter (`isLoadingContent` → `SidebarLoadingPlaceholder`), schaltet
+  ihn bei Navigation aber **nicht** ein: der eigene Auslöser ist in `@tinacms/app/graphql-reducer.ts:566`
+  auskommentiert („TODO webpack HMR").
+- **Fix (`cmsCallback`, Editor-only):** Listener auf das `url-changed`-Signal der Vorschau-Inseln (sendet
+  `useTina` beim Seitenwechsel) → `cms.dispatch({type:'sidebar:set-loading-state', value:true})`, nach
+  **700 ms Ruhephase (Debounce)** wieder `false`. So erscheint Tinas **eigener** Ladekreis statt der Liste,
+  bis die neue Seite ihre Formulare registriert + der aktive (`selectFormByFormId`) feststeht. `cms.dispatch`
+  wird erst zur Laufzeit gelesen; `try/catch` → bricht bei Tina-Update nicht hart.
+- **Kein Schema-Eingriff → `tina-lock` unverändert, KEIN Re-Index.** Verifiziert (iframe-Sim mit echten
+  `url-changed`-Nachrichten + Mock-`dispatch`): Burst→`true`, ~700 ms nach der letzten→`false`, kein
+  Hängenbleiben, sauberer Re-Trigger bei Folge-Navigation. ⚠️ Sichtbarer Spinner nur im echten `/admin`
+  (lokal kein Admin-`cms`) → von David zu bestätigen. Hinweis: Tinas Spinner hat ~1 s Mindestanzeige.
+- Commit: `5893eae`
+
 ## 2026-06-29 — Fix: Portfolio-Sidebar zeigte ganze Dokumentliste (undefined user-select-form)
 - **Nachtrag zu `bd0e385`** (von David gemeldet + Screenshot): Auf der **Portfolio-Übersicht** lud die
   Sidebar links „etwas Unzuordenbares" — die **ganze Dokumentliste** statt eines Formulars.

@@ -107,8 +107,11 @@
 > `ui.router`. Verifiziert: genau ein `user-select-form` mit korrekter ID (Story/Reise). **Nachtrag `183a279`:**
 > Selector aus `GalleryContent` (Portfolio-Übersicht, `albenConnection` ohne Slug) wieder entfernt — er postete
 > `undefined` und löschte die `SettingsHeader`-Auswahl → Sidebar zeigte die ganze Liste. Jetzt postet jede Seite
-> genau eine valide Form-ID. ⚠️ Sichtbarer Sidebar-Wechsel im echten `/admin` zu bestätigen; kurzer Navigations-
-> Übergang ist Tina-MPA-intern (kein eigener Spinner steuerbar), aber keine „ganze Liste" mehr.
+> genau eine valide Form-ID. **Ladekreis (`5893eae`):** Der kurze Navigations-Übergang zeigte weiterhin Tinas
+> Dokumentliste; Fix im `cmsCallback` — Listener auf `url-changed` (Vorschau-Inseln) → Tinas eingebauten
+> Lade-Zustand (`sidebar:set-loading-state`) an, nach 700 ms Debounce aus → Tinas **eigener Ladekreis** statt
+> Liste. Tinas eigener Auslöser ist in `@tinacms/app` auskommentiert; wir reaktivieren ihn. Kein Schema → kein
+> Re-Index. ⚠️ Sichtbarer Spinner + Sidebar-Wechsel im echten `/admin` zu bestätigen (lokal kein Admin-`cms`).
 >
 > **✅ Deploy + Re-Index erledigt:** Die rich-text-Umstellung (strukturell) ist live auf `main`, Tina-Cloud
 > re-indext, Build grün, CMS in Nutzung — der frühere `?`-/Schema-Mismatch ist Geschichte. Seither nur noch
