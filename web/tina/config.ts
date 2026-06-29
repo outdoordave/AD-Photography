@@ -232,6 +232,34 @@ export default defineConfig({
         startI18n();
       }
     } catch (e) { /* ignore */ }
+
+    // Sidebar-Ladekreis bei Navigation — statt der kurz aufblitzenden Dokument-LISTE.
+    // Tina hat einen eingebauten Lade-Platzhalter (Sidebar), der erscheint, wenn der interne
+    // Zustand `isLoadingContent` true ist. Bei Navigation schaltet Tina ihn aber NICHT ein:
+    // der eigene Auslöser ist in @tinacms/app (graphql-reducer.ts) auskommentiert
+    // („TODO: webpack HMR"). In der Lücke (neue Seite registriert mehrere Formulare, noch kein
+    // aktives) zeigt Tina stattdessen die Formular-Liste (`FormLists`, index.js:47275).
+    // Die Vorschau-Inseln senden beim Seitenwechsel `url-changed` (useTina). Wir setzen darauf
+    // den Lade-Zustand und räumen ihn nach kurzer Ruhephase (Debounce 700 ms, keine weitere
+    // Insel mehr) wieder ab — dann steht der aktive (selectFormByFormId) fest und Tina zeigt das
+    // Formular. So erscheint Tinas EIGENER Ladekreis statt der Liste. `cms.dispatch` wird erst zur
+    // Laufzeit (nach App-Mount) gelesen. Editor-only; bricht bei Tina-Update nicht hart (try/catch).
+    try {
+      if (typeof window !== 'undefined' && !(window as any).__wwNavLoadingHook) {
+        (window as any).__wwNavLoadingHook = true;
+        let navTimer: any = null;
+        const setLoading = (v: boolean) => {
+          try { if (typeof cms.dispatch === 'function') cms.dispatch({ type: 'sidebar:set-loading-state', value: v }); } catch (e) { /* ignore */ }
+        };
+        window.addEventListener('message', (e: any) => {
+          if (!e || !e.data || e.data.type !== 'url-changed') return;
+          setLoading(true);
+          if (navTimer) clearTimeout(navTimer);
+          navTimer = setTimeout(() => setLoading(false), 700);
+        });
+      }
+    } catch (e) { /* ignore */ }
+
     return cms;
   },
   build: {
