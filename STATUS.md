@@ -90,7 +90,13 @@
 >   **(b)** „Aus Mediathek" ohne Hover → `MediaPickerButton` bekam `className`-Prop, Overlay reicht `ww-swap-btn`
 >   durch (`6482d35`). **(c)** Mediathek-Modal lag UNTER der Titel-Leiste (steckte im z-4-Käfig der Overlay) →
 >   per `createPortal` an `document.body` (`6482d35`); jetzt sauberes Fenster mit sichtbarem „Schließen ✕".
->   ⚠️ **Finaler Upload (Finder-Dialog im iframe) im echten CMS von David hands-on zu prüfen.** Isoliert/live-gated.
+>   **(d)** Upload aus der Vorschau ging, aber: Live-Cover blieb alt, keine Info, Upload fehlte in der Mediathek
+>   (`0d657b2`). Ursachen/Fix: **Schlüssel-Mismatch** der Frisch-Brücke (Cover=`type:'image'` → Tina-CDN-URL ≠
+>   `/uploads`-Schreibschlüssel) → `canonUpload` kanonisiert put+get; `StoryReaderContent` rendert bei
+>   `storage`/`ww:fresh-media` neu. **Info am Bild** via `putSwapInfo`/`getSwapInfo` (⏳→✓/✗-Pille). **Mediathek**
+>   zeigt frische Uploads (`listFreshMedia`) oben mit „NEU"-Badge. ⚠️ **Finaler Upload (Finder-Dialog im iframe)
+>   im echten CMS von David hands-on zu prüfen** — besonders ob die CDN-Kanonisierung auf der echten Tina Cloud
+>   greift (lokal nicht reproduzierbar; Logik per Node-Test + iframe-Sim belegt). Isoliert/live-gated.
 >
 > **✅ Deploy + Re-Index erledigt:** Die rich-text-Umstellung (strukturell) ist live auf `main`, Tina-Cloud
 > re-indext, Build grün, CMS in Nutzung — der frühere `?`-/Schema-Mismatch ist Geschichte. Seither nur noch

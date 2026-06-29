@@ -17,6 +17,28 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-06-29 — Fix: Vorschau-Upload nutzbar (Live-Cover aktualisiert, Info am Bild, frische Uploads in Mediathek)
+- Drei zusammenhängende Korrekturen am „Foto tauschen"-Overlay (von David gemeldet — Upload ging,
+  aber: keine Rückmeldung, Live-Vorschau zeigte das alte Bild, Upload in der Mediathek nicht auffindbar):
+  1. **Live-Cover aktualisierte nicht** — **Schlüssel-Mismatch** der Frisch-Upload-Brücke. Das Cover ist
+     `type:'image'`; Tina liefert dessen Anzeige-URL oft als `assets.tina.io`-CDN-Pfad, der Blob wird aber
+     unter `/uploads/<datei>` abgelegt → `getFreshMedia` fand nichts → 404 → altes Bild. **Fix:** Schlüssel
+     in `putFreshMedia` UND `getFreshMedia` **kanonisieren** (`canonUpload`: CDN→`/uploads` + Dedupe) →
+     matcht unabhängig von der Form. Dazu rendert `StoryReaderContent` bei `storage`/`ww:fresh-media` neu
+     (deckt den Timing-Race ab, falls die `data:`-URL erst nach Tinas Re-Render geschrieben wird).
+  2. **Keine Rückmeldung in der Vorschau** — das Feld meldet Erfolg/Fehler + Größen-Info jetzt per
+     localStorage-Brücke (`putSwapInfo`/`getSwapInfo`) zurück; die Overlay zeigt „⏳ … wird hochgeladen",
+     dann „✓ ersetzt · alt→neu (WebP)" bzw. „✗ Fehler" **direkt am Bild** (`.ww-swap-info`).
+  3. **Frischer Upload nicht in der Mediathek** — der Picker liest nur das Build-Manifest. Jetzt stellt er
+     frische Uploads (aus der Brücke, `listFreshMedia`) **oben voran**, mit grünem **„NEU"-Badge** + `data:`-Vorschau.
+- **Verifiziert** (lokaler Dev + iframe `ww-cms-preview`): Cover schaltet bei `storage`-Event auf die
+  `data:`-URL; `canonUpload` matcht `/uploads` ↔ CDN (Node-Logiktest); Mediathek zeigt NEU-Kachel zuerst;
+  Overlay zeigt ⏳→✓-Pille (synthetischer Datei-`change`). UI-only, **kein** Schema → kein Re-Index.
+- Dateien: `web/src/lib/freshMedia.ts`, `web/src/components/StoryReaderContent.tsx`,
+  `web/src/components/PhotoSwapOverlay.tsx`, `web/src/styles/global.css`,
+  `web/tina/fields/SinglePhotoField.tsx`, `web/tina/fields/MediaPicker.tsx`
+- Commit: `0d657b2`
+
 ## 2026-06-29 — Fix: Mediathek-Modal sichtbar machen (Portal) + Hover für „Aus Mediathek"
 - Drei Korrekturen am Foto-Tausch-Overlay der CMS-Vorschau (von David gemeldet):
   1. **Hover:** „Aus Mediathek" bekam keinen Hover wie „Foto ersetzen". `MediaPickerButton` erhielt
