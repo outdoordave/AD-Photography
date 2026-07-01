@@ -133,6 +133,32 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
 - **Aufwand:** sehr niedrig (CSS) · **Capability-Lock:** **bewusste Abweichung von Live** —
   daher (B); nicht vorab im Prototyp ändern, erst im echten Reisen-Layout im Kontext entscheiden.
 
+### W7 · „Journal"-Reiter (aktuelles, neueste zuerst; mit Insta/Video/Foto-Karten) — (B, neue Sektion)
+- **Status:** offen · **Zugeordnet:** eigener Bauschritt (David gibt frei) · **Idee von David (01.07.2026)**
+- **Was:** Ein neuer Reiter **„Journal"** (o. ä.) — kurze, datierte Einträge wie ein Tagebuch/Blog,
+  **automatisch „neueste zuerst"** sortiert. Pro Eintrag: Datum, kurzer Text, optional angehängte
+  Medien — **Foto(s), Video (YouTube wie bisher), und ein Instagram-Beitrag als Karte**.
+- **Umsetzung (Skizze, Tina-nah):** eigene Collection `journal` (Markdown/JSON pro Eintrag,
+  Dateiname mit Datum → Sortierung neueste zuerst; gleiche Bausteine wie Stories: 📷 Foto / 📸 Album /
+  YouTube). Reader-Seite `/journal` (+ `/en/journal`), Karten-Liste. Reiter in die Navigation.
+  **Kein Schema-Bruch an Bestehendem**, aber **neue Collection = eigener Tina-Cloud-Re-Index**.
+- **⚠️ Instagram-Realität (wichtig, keine Illusion):**
+  - **„Ein Link, der IMMER automatisch den neuesten Beitrag zeigt" geht NICHT sauber** ohne
+    Instagram **Graph API** (Business/Creator-Konto + Meta-App + Access-Token mit Refresh) **oder**
+    ein **Fremd-Widget** (Elfsight/LightWidget/EmbedSocial = externes Tracking-Script). Beides passt
+    schlecht zur **statischen, datensparsamen** Seite (Datenschutz/Consent) und ist wartungslastig.
+  - **Was aber genau Davids Fall abdeckt:** beim **Erstellen** des Journal-Eintrags den **damals
+    neuesten Beitrag** fest **anpinnen** — d. h. die **konkrete Beitrags-URL** (`instagram.com/p/…`)
+    ins Feld setzen. Das ist statisch, stabil, kein Live-API nötig.
+  - **Darstellung als Karte — zwei Wege:**
+    (a) **Offizielles Insta-Embed** (`blockquote` + `embed.js`): reiche Karte, aber **lädt Instagrams
+    Script** → braucht **Consent-Gate wie bei YouTube** + externe Requests.
+    (b) **Eigene, datensparsame Karte (empfohlen):** beim Anlegen **Vorschaubild + Titel/Caption**
+    einmal hinterlegen (manuell oder via **oEmbed** zum Erstellzeitpunkt) → **statische Karte**, die
+    zu Instagram **verlinkt**. Schnell, kein Fremd-Script, kein Consent-Problem, passt zum Seiten-Ethos.
+- **Aufwand:** mittel (neue Collection + Reader + Nav + Karten-Komponente) · **Capability-Lock:**
+  neue Sektion = (B); nichts Bestehendes wird verändert.
+
 ---
 
 ## 3. Bewusst weggelassen (Stand jetzt)
