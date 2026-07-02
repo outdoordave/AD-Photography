@@ -125,16 +125,28 @@ export function resolveLinkedContent(d: JournalData, lang: 'de' | 'en'): LinkedC
 }
 
 export interface SocialCardData { platform: string; url: string; caption: string; thumbnail: string }
+// TikTok-Video-ID aus der Beitrags-URL (…/video/<id>).
+export function tiktokVideoId(url?: string): string {
+  const m = String(url || '').match(/\/video\/(\d+)/);
+  return m ? m[1] : '';
+}
 // Social-Beitrag zu Karten-Daten (Caption sprachabhängig, Thumbnail normalisiert).
+// Thumbnail: manuell gesetztes Bild hat Vorrang; für TikTok sonst der beim Build lokal
+// gehostete Pfad, allein aus der Video-ID abgeleitet (s. scripts/fetch-social-thumbs.mjs).
 export function resolveSocial(d: JournalData, lang: 'de' | 'en'): SocialCardData | null {
   const s = d.social;
   if (!s || !s.url || !s.platform) return null;
   const en = hasEN(d) && lang === 'en';
+  let thumbnail = normalizePath(s.thumbnail || '');
+  if (!thumbnail && s.platform === 'tiktok') {
+    const id = tiktokVideoId(s.url);
+    if (id) thumbnail = '/uploads/social/tiktok-' + id + '.webp';
+  }
   return {
     platform: s.platform,
     url: s.url,
     caption: pickStr(s.caption_de, s.caption_en, en),
-    thumbnail: normalizePath(s.thumbnail || ''),
+    thumbnail,
   };
 }
 

@@ -83,7 +83,7 @@ export default function JournalEntryContent(props: Props) {
 
       {social ? (
         <a className={`journal-social journal-social--${social.platform}`} href={social.url} target="_blank" rel="noopener noreferrer" data-tina-field={tinaField(j, 'social')}>
-          {social.thumbnail ? <span className="js-thumb"><img src={social.thumbnail} alt="" loading="lazy" /></span> : null}
+          {social.thumbnail ? <span className="js-thumb"><img src={social.thumbnail} alt="" loading="lazy" onError={(e) => { const s = e.currentTarget.closest('.js-thumb') as HTMLElement | null; if (s) s.style.display = 'none'; }} /></span> : null}
           <span className="js-body">
             <span className="js-plat"><span className="js-icon" aria-hidden="true" dangerouslySetInnerHTML={{ __html: socialIcon(social.platform) }} />{social.platform === 'tiktok' ? 'TikTok' : 'Instagram'}</span>
             {social.caption ? <span className="js-cap">{social.caption}</span> : null}
