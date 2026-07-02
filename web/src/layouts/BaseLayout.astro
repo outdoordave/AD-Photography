@@ -48,6 +48,7 @@ const logo = ap.logo || '';
 // Appearance-Werte kommen weiter aus dem statischen Import oben.
 const apRes = await client.queries.darstellung({ relativePath: 'appearance-settings.json' });
 const showStories = ap.show_stories === true;
+const showJournal = ap.show_journal === true;
 const showContact = ap.show_contact !== false;
 const showAdminBar = ap.show_admin_bar === true;
 // TEIL 6: globaler Bild-Rahmen & Schatten (none|soft|strong), Standard soft.
@@ -156,11 +157,11 @@ const jsonLdString = JSON.stringify({ '@context': 'https://schema.org', '@graph'
   </head>
   <body class={`ww-frame-${imageFrame}${frameControls ? ' ww-frame-controls' : ''}${albumHover ? ' ww-album-hover' : ''}${personHover ? ' ww-person-hover' : ''}`}>
     {showAdminBar && <SiteAdminBar />}
-    <SiteNav lang={lang} pathname={pathname} logo={logo} showStories={showStories} showContact={showContact} logoQuery={apRes.query} logoVariables={apRes.variables} logoData={apRes.data} />
+    <SiteNav lang={lang} pathname={pathname} logo={logo} showStories={showStories} showJournal={showJournal} showContact={showContact} logoQuery={apRes.query} logoVariables={apRes.variables} logoData={apRes.data} />
     <main id="main">
       <slot />
     </main>
-    <SiteFooter lang={lang} logo={logo} showStories={showStories} showContact={showContact} social={footerSocial} showSocial={showFooterSocial} logoQuery={apRes.query} logoVariables={apRes.variables} logoData={apRes.data} />
+    <SiteFooter lang={lang} logo={logo} showStories={showStories} showJournal={showJournal} showContact={showContact} social={footerSocial} showSocial={showFooterSocial} logoQuery={apRes.query} logoVariables={apRes.variables} logoData={apRes.data} />
     {/* Nach-oben-Button (global). Erscheint erst nach Scrollen; sanftes Hochscrollen, respektiert reduced-motion. */}
     <button id="wwToTop" class="ww-totop" type="button" aria-label="Nach oben scrollen" title="Nach oben">
       <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14 L12 8 L18 14" /></svg>

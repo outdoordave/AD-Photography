@@ -7,6 +7,7 @@ import { client } from '../../../tina/__generated__/client';
 import { sortJournalNodes, journalHeading, journalFirstPhoto, resolveSocial, type JournalData } from '../../lib/journal';
 import { normalizePath } from '../../lib/stories';
 import { richToPlain } from '../../components/RichText';
+import appearance from '../../data/appearance-settings.json';
 import '../../styles/journal.css';
 
 export async function getStaticPaths() {
@@ -26,6 +27,7 @@ export async function getStaticPaths() {
   });
 }
 
+if ((appearance as any).show_journal !== true) return Astro.redirect('/');
 const { slug } = Astro.params;
 const { prev, next } = Astro.props as {
   prev: { slug: string; title: string } | null;

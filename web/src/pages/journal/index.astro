@@ -10,7 +10,11 @@ import {
   sortJournalNodes, journalHeading, journalHasTitle, formatFullDate, journalText,
   journalFirstPhoto, parseGeoPoint, resolveLinkedContent, resolveSocial, journalLink,
 } from '../../lib/journal';
+import appearance from '../../data/appearance-settings.json';
 import '../../styles/journal.css';
+
+// Journal komplett abschaltbar (🎨 Darstellung → „Journal zeigen?"). Aus = auch Direktaufruf sperren.
+if ((appearance as any).show_journal !== true) return Astro.redirect('/');
 
 const conn = await client.queries.journalConnection();
 const nodes = sortJournalNodes((conn.data.journalConnection?.edges ?? []).map((e: any) => e?.node).filter(Boolean) as any[]);

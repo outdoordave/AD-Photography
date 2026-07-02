@@ -68,3 +68,18 @@
   .journal-linkcard .jl-cover, .journal-social .js-thumb { flex-basis: 92px; }
   .journal-head h1 { font-size: 32px; }
 }
+
+/* ---------- Startseiten-Teaser ---------- */
+.home-journal .home-journal-list { list-style: none; margin: 0 auto; padding: 0; max-width: 680px; }
+.home-journal .hj-item { padding: 16px 0; border-bottom: 1px solid var(--c-line); }
+.home-journal .hj-item:first-child { padding-top: 0; }
+.home-journal .hj-head { display: inline-flex; align-items: baseline; gap: 10px; text-decoration: none; }
+.home-journal .hj-head .hj-title { font-family: var(--font-display); font-size: 20px; color: var(--c-ink); }
+.home-journal .hj-head:hover .hj-title { color: var(--c-accent); }
+.home-journal .hj-head .hj-date { font-size: var(--fs-label); color: var(--c-ink-soft); text-transform: uppercase; letter-spacing: var(--tracking-wide); }
+.home-journal .hj-text { margin-top: 5px; color: var(--c-ink-soft); font-size: var(--fs-ui); }
+.home-journal .hj-text.ww-rich :is(p) { margin: 0; }
+.home-journal .hj-all { display: inline-block; margin: 20px auto 0; color: var(--c-accent); font-weight: var(--fw-bold); text-decoration: none; }
+.home-journal .hj-all:hover { text-decoration: underline; }
+.home-journal .wrap { text-align: center; }
+.home-journal .home-journal-list { text-align: left; }

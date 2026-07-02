@@ -8,6 +8,7 @@ interface Props {
   lang: 'de' | 'en';
   logo?: string;
   showStories?: boolean;
+  showJournal?: boolean;
   showContact?: boolean;
   social?: { platform?: string; username?: string }[];
   showSocial?: boolean;
@@ -15,7 +16,7 @@ interface Props {
   logoVariables?: object;
   logoData?: any;
 }
-const { lang, logo = '', showStories = false, showContact = true, social = [], showSocial = false, logoQuery, logoVariables, logoData } = Astro.props;
+const { lang, logo = '', showStories = false, showJournal = false, showContact = true, social = [], showSocial = false, logoQuery, logoVariables, logoData } = Astro.props;
 const isEn = lang === 'en';
 const prefix = isEn ? '/en' : '';
 const socialLinks = showSocial ? (social || []).filter((s) => s && s.username) : [];
@@ -24,6 +25,7 @@ const NAV = [
   { de: 'Start', en: 'Home', href: '/' },
   { de: 'Portfolio', en: 'Portfolio', href: '/portfolio' },
   { de: 'Stories', en: 'Stories', href: '/stories', storiesOnly: true },
+  { de: 'Journal', en: 'Journal', href: '/journal', journalOnly: true },
   { de: 'Reisen', en: 'Trips', href: '/trips' },
   { de: 'Equipment', en: 'Gear', href: '/gear' },
   { de: 'Über uns', en: 'About', href: '/about' },
@@ -38,7 +40,7 @@ const logoSrc = logo && logo.charAt(0) !== '/' && !/^https?:/.test(logo) ? '/' +
     <LogoLink client:load variant="footer" query={logoQuery} variables={logoVariables} data={logoData} href={linkHref('/')} ariaLabel={isEn ? 'Home' : 'Zur Startseite'} />
   ) : (logoSrc ? <div class="footer-logo"><a href={linkHref('/')} aria-label={isEn ? 'Home' : 'Zur Startseite'}><img src={logoSrc} alt="Wide & Wild" loading="lazy" /></a></div> : null)}
   <div class="footer-nav">
-    {NAV.filter((i) => (!i.storiesOnly || showStories) && (!i.contactOnly || showContact)).map((i) => (
+    {NAV.filter((i) => (!i.storiesOnly || showStories) && (!i.journalOnly || showJournal) && (!i.contactOnly || showContact)).map((i) => (
       <a href={linkHref(i.href)}>{isEn ? i.en : i.de}</a>
     ))}
   </div>

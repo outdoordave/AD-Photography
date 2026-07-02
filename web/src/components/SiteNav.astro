@@ -8,17 +8,19 @@ interface Props {
   pathname: string;
   logo?: string;
   showStories?: boolean;
+  showJournal?: boolean;
   showContact?: boolean;
   logoQuery?: string;
   logoVariables?: object;
   logoData?: any;
 }
-const { lang, pathname, logo = '', showStories = false, showContact = true, logoQuery, logoVariables, logoData } = Astro.props;
+const { lang, pathname, logo = '', showStories = false, showJournal = false, showContact = true, logoQuery, logoVariables, logoData } = Astro.props;
 
 const NAV = [
   { key: 'home', de: 'Start', en: 'Home', href: '/' },
   { key: 'portfolio', de: 'Portfolio', en: 'Portfolio', href: '/portfolio' },
   { key: 'stories', de: 'Stories', en: 'Stories', href: '/stories', storiesOnly: true },
+  { key: 'journal', de: 'Journal', en: 'Journal', href: '/journal', journalOnly: true },
   { key: 'trips', de: 'Reisen', en: 'Trips', href: '/trips' },
   { key: 'gear', de: 'Equipment', en: 'Gear', href: '/gear' },
   { key: 'about', de: 'Über uns', en: 'About', href: '/about' },
@@ -63,7 +65,7 @@ const navBack =
       </a>
     )}
     <div class="nav-links" id="navLinks">
-      {NAV.filter((i) => (!i.storiesOnly || showStories) && (!i.contactOnly || showContact)).map((i) => (
+      {NAV.filter((i) => (!i.storiesOnly || showStories) && (!i.journalOnly || showJournal) && (!i.contactOnly || showContact)).map((i) => (
         <a href={linkHref(i.href)} class={isActive(i) ? 'active' : ''}>{isEn ? i.en : i.de}</a>
       ))}
       <a href={linkHref('/statistik')} class={`ww-admin-only${section === '/statistik' ? ' active' : ''}`} hidden>📊 Statistik</a>

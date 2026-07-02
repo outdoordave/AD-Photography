@@ -1083,6 +1083,7 @@ export default defineConfig({
           { type: 'boolean', name: 'show_hero_logo', label: 'Logo im Hero zeigen?' },
           { type: 'boolean', name: 'show_discover', label: '„Entdecken"-Bereich auf der Startseite zeigen?' },
           { type: 'boolean', name: 'show_stories', label: 'Stories zeigen? (Nav-Link, Footer, Startseiten-Teaser)' },
+          { type: 'boolean', name: 'show_journal', label: 'Journal zeigen? (Nav-Link DE+EN, Footer, Startseiten-Teaser; aus = komplettes Journal verborgen inkl. Direktaufruf)' },
           { type: 'boolean', name: 'show_contact', label: 'Kontakt zeigen? (Nav-Link + Footer-Link)' },
           { type: 'boolean', name: 'show_admin_bar', label: 'Admin-Leiste auf der Website zeigen? (nur sichtbar, wenn im CMS angemeldet)' },
           {
