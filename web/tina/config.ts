@@ -552,6 +552,30 @@ export default defineConfig({
           ] } as any,
         ],
       },
+      // --- Stories: Seiten-Einstellungen (Kopf-Texte der Stories-Liste) ---
+      {
+        name: 'stories_settings',
+        label: '📖 Stories – Einstellungen',
+        path: 'src/data',
+        format: 'json',
+        match: { include: 'stories-settings' },
+        // Router -> Vorschau + Bearbeiten auf /stories (useTina-Insel <SettingsHeader>).
+        ui: { allowedActions: { create: false, delete: false }, router: () => '/stories' },
+        fields: [
+          { type: 'string', name: 'ww_here', label: '📖 Stories – Einstellungen', ui: { component: SectionBanner } },
+          {
+            type: 'string', name: 'editor_language', label: 'Sprache',
+            description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
+            ui: { component: EnglishToggle },
+          },
+          { type: 'string', name: 'kicker_de', label: 'Mini-Titel (Kicker)' },
+          { type: 'string', name: 'kicker_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'title_de', label: 'Seiten-Titel' },
+          { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'intro_de', label: 'Einleitung', ui: { component: 'textarea' } },
+          { type: 'string', name: 'intro_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+        ],
+      },
       // --- Journal: Tagebuch — kurze, datierte Eintraege (neueste zuerst) ---
       {
         name: 'journal',
@@ -616,30 +640,6 @@ export default defineConfig({
           { type: 'boolean', name: 'has_english', label: 'Englische Version anzeigen?' },
           { type: 'string', name: 'title_en', label: 'Title (EN)', ui: { component: EnglishStoryField } },
           { type: 'rich-text', name: 'text_en', label: 'Text (EN)', parser: { type: 'markdown', skipEscaping: 'html' }, overrides: { toolbar: ['bold', 'italic', 'link'] }, ui: { component: EnglishStoryRichTextField } } as any,
-        ],
-      },
-      // --- Stories: Seiten-Einstellungen (Kopf-Texte der Stories-Liste) ---
-      {
-        name: 'stories_settings',
-        label: '📖 Stories – Einstellungen',
-        path: 'src/data',
-        format: 'json',
-        match: { include: 'stories-settings' },
-        // Router -> Vorschau + Bearbeiten auf /stories (useTina-Insel <SettingsHeader>).
-        ui: { allowedActions: { create: false, delete: false }, router: () => '/stories' },
-        fields: [
-          { type: 'string', name: 'ww_here', label: '📖 Stories – Einstellungen', ui: { component: SectionBanner } },
-          {
-            type: 'string', name: 'editor_language', label: 'Sprache',
-            description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
-            ui: { component: EnglishToggle },
-          },
-          { type: 'string', name: 'kicker_de', label: 'Mini-Titel (Kicker)' },
-          { type: 'string', name: 'kicker_en', label: '↳ English', ui: { component: EnglishOnlyField } },
-          { type: 'string', name: 'title_de', label: 'Seiten-Titel' },
-          { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
-          { type: 'string', name: 'intro_de', label: 'Einleitung', ui: { component: 'textarea' } },
-          { type: 'string', name: 'intro_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
         ],
       },
       // --- Reisen: jede Reise ein Eintrag (Mehrfach-Collection wie Stories) ---
