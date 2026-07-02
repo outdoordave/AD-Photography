@@ -44,10 +44,10 @@ export default function JournalEntryContent(props: Props) {
 
   return (
     <article className="journal-entry">
-      <header className="journal-head">
+      <div className="journal-head">
         <h1 data-tina-field={tinaField(j, fTitle)}>{heading}</h1>
         {hasTitle ? <div className="journal-date" data-tina-field={tinaField(j, 'date')}>{dateLabel}</div> : null}
-      </header>
+      </div>
 
       {textAst && !richIsEmpty(textAst) ? (
         <div className="journal-text ww-rich" data-tina-field={tinaField(j, fText)}><RichText value={textAst} /></div>

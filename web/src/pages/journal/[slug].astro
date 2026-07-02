@@ -1,0 +1,76 @@
+---
+// Journal-Eintrag DE ('/journal/<slug>'). Editierbare Felder als kleine React-Insel
+// (Tina-Live-Vorschau); reader-nav bleibt Astro. Muster wie stories/[slug].astro.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import JournalEntryContent from '../../components/JournalEntryContent.tsx';
+import { client } from '../../../tina/__generated__/client';
+import { sortJournalNodes, journalHeading, journalFirstPhoto, resolveSocial, type JournalData } from '../../lib/journal';
+import { normalizePath } from '../../lib/stories';
+import { richToPlain } from '../../components/RichText';
+import '../../styles/journal.css';
+
+export async function getStaticPaths() {
+  const conn = await client.queries.journalConnection();
+  const nodes = (conn.data.journalConnection?.edges ?? []).map((e: any) => e?.node).filter(Boolean);
+  const sorted = sortJournalNodes(nodes as any[]);
+  return sorted.map((node: any, i: number) => {
+    const prevNode = sorted[i - 1] ?? null;
+    const nextNode = sorted[i + 1] ?? null;
+    return {
+      params: { slug: node._sys.filename },
+      props: {
+        prev: prevNode ? { slug: prevNode._sys.filename, title: journalHeading(prevNode, 'de') } : null,
+        next: nextNode ? { slug: nextNode._sys.filename, title: journalHeading(nextNode, 'de') } : null,
+      },
+    };
+  });
+}
+
+const { slug } = Astro.params;
+const { prev, next } = Astro.props as {
+  prev: { slug: string; title: string } | null;
+  next: { slug: string; title: string } | null;
+};
+const res = await client.queries.journal({ relativePath: `${slug}.md` });
+const j = res.data.journal as JournalData;
+const heading = journalHeading(j, 'de');
+const firstPhoto = journalFirstPhoto(j);
+const social = resolveSocial(j, 'de');
+const ogImg = firstPhoto || (social ? social.thumbnail : '') || '';
+const metaDesc = (richToPlain(j.text_de) || `Journal-Eintrag von Wide & Wild.`).replace(/\s+/g, ' ').trim().slice(0, 200);
+
+const site = Astro.site;
+const abs = (p: string) => (site ? new URL(p, site).href : p);
+const canonical = abs(`/journal/${slug}/`);
+const orgRef = { '@id': abs('/') + '#org' };
+const articleLd: Record<string, any> = {
+  '@type': 'Article',
+  headline: heading,
+  ...(metaDesc ? { description: metaDesc } : {}),
+  ...(j.date ? { datePublished: j.date } : {}),
+  ...(ogImg ? { image: abs(normalizePath(ogImg)) } : {}),
+  inLanguage: 'de',
+  mainEntityOfPage: canonical,
+  author: orgRef,
+  publisher: orgRef,
+};
+---
+<BaseLayout title={`${heading} — Wide & Wild`} lang="de" description={metaDesc} ogType="article" image={ogImg || undefined} jsonld={articleLd}>
+  <div id="page-journal">
+    <a class="story-back" href="/journal">← Journal</a>
+    <JournalEntryContent client:load query={res.query} variables={res.variables} data={res.data} lang="de" />
+
+    <div class="reader-nav">
+      {prev ? (
+        <a href={`/journal/${prev.slug}`}><span class="dir">← Vorherige</span>{prev.title}</a>
+      ) : (
+        <button disabled><span class="dir">← Vorherige</span>—</button>
+      )}
+      {next ? (
+        <a class="next" href={`/journal/${next.slug}`}><span class="dir">Nächste →</span>{next.title}</a>
+      ) : (
+        <button class="next" disabled><span class="dir">Nächste →</span>—</button>
+      )}
+    </div>
+  </div>
+</BaseLayout>

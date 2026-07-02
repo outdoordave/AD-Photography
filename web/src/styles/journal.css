@@ -1,0 +1,70 @@
+/* Journal (Tagebuch) — Archiv-Stream + Detail. Nutzt die echten Design-Tokens (--c-*). */
+
+/* ---------- Archiv (/journal) ---------- */
+.journal-archive { max-width: 760px; }
+.journal-archive-head { margin-bottom: 30px; }
+.journal-archive-head h1 { font-family: var(--font-display); font-size: 44px; font-weight: 400; color: var(--c-ink); margin: 0 0 6px; }
+.journal-archive-sub { color: var(--c-ink-soft); font-size: var(--fs-lead); margin: 0; }
+.journal-empty { color: var(--c-ink-soft); }
+
+.journal-list { list-style: none; margin: 0; padding: 0; }
+.journal-item { padding: 22px 0; border-bottom: 1px solid var(--c-line); }
+.journal-item:first-child { padding-top: 0; }
+.journal-item-head { display: inline-flex; align-items: baseline; gap: 12px; text-decoration: none; }
+.journal-item-head .ji-title { font-family: var(--font-display); font-size: 24px; font-weight: 400; color: var(--c-ink); }
+.journal-item-head:hover .ji-title { color: var(--c-accent); }
+.journal-item-head .ji-date { font-size: var(--fs-label); color: var(--c-ink-soft); text-transform: uppercase; letter-spacing: var(--tracking-wide); }
+.journal-item-text { margin: 8px 0 0; color: var(--c-ink); }
+.journal-item-text.ww-rich :is(p) { margin: 0 0 0.4em; }
+
+/* Kleine Medien-Hinweise in der Liste (volle Größe erst im Detail) */
+.journal-item-media { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.jm-thumb { display: block; width: 52px; height: 52px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--c-line); }
+.jm-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.jm-badge { display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 9px; border-radius: 999px; border: 1px solid var(--c-line); background: var(--c-bg-alt); color: var(--c-ink-soft); font-size: 12px; font-weight: var(--fw-bold); }
+.jm-badge.jm-linked { color: var(--c-accent); }
+.jm-badge.jm-social svg { width: 15px; height: 15px; }
+
+/* ---------- Detail (/journal/<slug>) ---------- */
+#page-journal { max-width: 760px; margin: 0 auto; padding: 84px 22px; }
+#page-journal .story-back { display: inline-block; margin-bottom: 22px; color: var(--c-accent); font-weight: var(--fw-bold); font-size: var(--fs-label); text-decoration: none; }
+.journal-entry { }
+.journal-head h1 { font-family: var(--font-display); font-size: 40px; font-weight: 400; line-height: 1.1; color: var(--c-ink); margin: 0; }
+.journal-head .journal-date { margin-top: 8px; font-size: var(--fs-label); color: var(--c-ink-soft); text-transform: uppercase; letter-spacing: var(--tracking-wide); }
+.journal-text { margin-top: 18px; font-size: var(--fs-lead); color: var(--c-ink); }
+
+.journal-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-top: 24px; }
+.journal-photo { padding: 0; border: 1px solid var(--c-line); border-radius: var(--radius-sm); overflow: hidden; background: var(--c-bg-alt); cursor: pointer; aspect-ratio: 4 / 3; }
+.journal-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.journal-map-wrap { margin-top: 24px; }
+.ww-journal-map { width: 100%; height: 340px; border-radius: 12px; overflow: hidden; border: 1px solid var(--c-line); }
+.journal-yt { margin-top: 24px; }
+
+/* Verknüpfter Inhalt — reiche Karte (Cover + Titel + Typ automatisch) */
+.journal-linkcard { display: flex; align-items: stretch; gap: 14px; margin-top: 24px; text-decoration: none; border: 1px solid var(--c-line); border-radius: 12px; overflow: hidden; background: var(--c-bg-alt); transition: transform .15s ease, box-shadow .15s ease; }
+.journal-linkcard:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(28,24,18,0.12); }
+.journal-linkcard .jl-cover { flex: 0 0 118px; }
+.journal-linkcard .jl-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.journal-linkcard .jl-body { display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 14px 16px; }
+.journal-linkcard .jl-type { font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--c-accent); font-weight: var(--fw-bold); }
+.journal-linkcard .jl-title { font-family: var(--font-display); font-size: 20px; color: var(--c-ink); }
+
+/* Social-Karte — selbst gehostetes Vorschaubild, kein Fremd-Skript */
+.journal-social { display: flex; align-items: stretch; gap: 14px; margin-top: 18px; text-decoration: none; border: 1px solid var(--c-line); border-radius: 12px; overflow: hidden; background: var(--c-bg-alt); transition: transform .15s ease, box-shadow .15s ease; }
+.journal-social:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(28,24,18,0.12); }
+.journal-social .js-thumb { flex: 0 0 118px; }
+.journal-social .js-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.journal-social .js-body { display: flex; flex-direction: column; justify-content: center; gap: 5px; padding: 14px 16px; }
+.journal-social .js-plat { display: inline-flex; align-items: center; gap: 7px; font-weight: var(--fw-bold); color: var(--c-ink); }
+.journal-social .js-plat .js-icon svg { width: 18px; height: 18px; }
+.journal-social .js-cap { color: var(--c-ink-soft); font-size: var(--fs-ui); }
+.journal-social .js-open { color: var(--c-accent); font-weight: var(--fw-bold); font-size: var(--fs-label); }
+
+.journal-extlink { display: inline-block; margin-top: 18px; color: var(--c-accent); font-weight: var(--fw-bold); text-decoration: none; }
+.journal-extlink:hover { text-decoration: underline; }
+
+@media (max-width: 560px) {
+  .journal-linkcard .jl-cover, .journal-social .js-thumb { flex-basis: 92px; }
+  .journal-head h1 { font-size: 32px; }
+}
