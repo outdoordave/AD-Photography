@@ -1,10 +1,21 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-06-29** · Live-Branch `main`. Seite **live**, Cutover durch. SEO-Grundlage steht
+> **Stand: 2026-07-02** · Live-Branch `main`. Seite **live**, Cutover durch. SEO-Grundlage steht
 > (Sitemap, JSON-LD, Google Search Console bestätigt + Sitemap gelesen), Datenschutz **vollständig**
 > (inkl. Web3Forms), Performance ok, A11y-Basics drin, Security-Header + CSP gesetzt. **Keine offenen
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
 > Session überschrieben). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
+>
+> **🆕 Journal-Bereich (02.07.2026) — fertig & lokal verifiziert, standardmäßig VERBORGEN.** Neue
+> `journal`-Collection (Tagebuch: kurze datierte Einträge, neueste zuerst; Datum+Text reichen, kein
+> Zwang-Bild/-Titel). Seiten `/journal` + `/journal/<slug>` + `/en`-Pendants (Archiv = Text inline +
+> kleine Medien-Symbole; Detail = Foto-Lightbox, echte MapLibre-Standortkarte, YouTube-nocookie,
+> Verknüpfungskarte Album/Story/Reise, Social-Karte, externer Link). Startseiten-Teaser unter dem Hero
+> (vor dem Intro). **Schalter `show_journal` (Darstellung, Default AUS)** schaltet ALLES ab (Nav DE+EN,
+> Footer, Teaser, Direktaufruf→Redirect). TikTok-Vorschaubild via oEmbed beim Build lokal gehostet
+> (`scripts/fetch-social-thumbs.mjs`, robust); Instagram-Thumb manuell. Datenschutz-Absatz ergänzt.
+> Reiner Zusatz — Wander-Titel/Trip-Timeline/Lightbox/MapLibre/Scroll-Spy unberührt.
+> ⚠️ **Struktureller Schema-Eingriff (journal + show_journal) → Tina-Cloud-RE-INDEX nötig (David, nach Deploy).**
 >
 > **✅ Detail-Köpfe „wandernder Titel" — Mobil UND Desktop fertig (von David abgenommen, 25.06.).**
 > Reise + Story, beide Breakpoints. Architektur (für künftige Header wiederverwendbar, s. Memory

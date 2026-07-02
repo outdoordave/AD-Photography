@@ -134,7 +134,10 @@ Gesammelte Ideen für den Umbau (Astro + TinaCMS). **Vorschläge, kein Automatis
   daher (B); nicht vorab im Prototyp ändern, erst im echten Reisen-Layout im Kontext entscheiden.
 
 ### W7 · „Journal"-Reiter (aktuelles, neueste zuerst; mit Insta/Video/Foto-Karten) — (B, neue Sektion)
-- **Status:** offen · **Zugeordnet:** eigener Bauschritt (David gibt frei) · **Idee von David (01.07.2026)**
+- **Status:** ✅ **umgesetzt (02.07.2026)** — `journal`-Collection + Seiten (DE/EN) + Startseiten-Teaser +
+  Nav/Footer-Reiter + Schalter `show_journal` (komplett abschaltbar) + Standort-Karte (LocationSearchField/
+  MapLibre) + interne Verknüpfungskarte (linked_content) + Social-Karte + TikTok-oEmbed-Build-Skript +
+  Datenschutz-Absatz. Details/Commits → CHANGELOG (2026-07-02). ⚠️ Re-Index nötig. · **Idee von David (01.07.2026)**
 - **Was:** Ein neuer Reiter **„Journal"** (o. ä.) — kurze, datierte Einträge wie ein Tagebuch/Blog,
   **automatisch „neueste zuerst"** sortiert. Pro Eintrag: Datum, kurzer Text, optional angehängte
   Medien — **Foto(s), Video (YouTube wie bisher), und ein Instagram-Beitrag als Karte**.

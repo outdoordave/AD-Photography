@@ -1001,3 +1001,33 @@ Schreib-Mutation, dann `git diff` der Dateien beobachtet. Anschließend per `git
     Rechts-Seiten ebenfalls umstellen UND den Inhalt einmalig in saubere Struktur aufräumen** (Wortlaut bleibt,
     nur Struktur; David liest gegen).
 - **Stufe 3 ☐ offen:** Aufräumen (alte Felder/Vorschau-Box), `tina-lock.json`, Backup-Tag → David push/Re-Index/Deploy/Abnahme.
+
+---
+
+## Journal (Tagebuch) — NEUES Feature (02.07.2026, reiner Zusatz)
+
+**Kein Port aus Live** (Live hatte kein Journal) → keine Alt-Fähigkeiten zu spiegeln; Capability-Lock
+greift hier als **Additions-Schutz**: nichts Bestehendes darf sich ändern.
+
+**Soll-Fähigkeiten (von David freigegeben, 02.07.2026):**
+1. ✅ Eigene `journal`-Collection (Markdown, `src/content/journal`), Router `/journal/<slug>`.
+2. ✅ Felder: date (Pflicht), title_de/en (optional), text_de/en (rich-text bold/italic/link), photos (Liste),
+   location (LocationSearchField/GeoJSON), youtube_url, link {label_de/en,url}, linked_content (reference
+   alben/story/reisen), social {platform,url,caption_de/en,thumbnail}. EN via `has_english`.
+3. ✅ Slug = Datum (+ optional Kurz-Titel; Zähler bei Mehrfach am selben Tag); sichtbar immer nur reines Datum.
+4. ✅ Archiv `/journal` (+ `/en`): Stream neueste zuerst, Text **inline**, Medien nur als kleines Symbol/Miniatur.
+5. ✅ Detail `/journal/<slug>` (+ `/en`): Titel(oder Datum), Rich-Text, Foto-**Lightbox** (wiederverwendet),
+   echte **MapLibre**-Standortkarte (liberty, ein Marker, cooperativeGestures), **YouTube-nocookie**,
+   **Verknüpfungskarte** (Cover+Titel+Typ automatisch), **Social-Karte** (selbst gehostetes Thumb, kein Fremd-Skript),
+   externer Link. Keine erzwungene Bildfläche.
+6. ✅ Startseiten-Teaser (letzte 4) unter dem Hero, **vor** dem Intro (DE+EN).
+7. ✅ Schalter `show_journal` (Darstellung, Default AUS): schaltet Nav (DE+EN), Footer, Teaser UND Direktaufruf
+   (Redirect) — komplettes Journal abwählbar.
+8. ✅ TikTok-Vorschaubild automatisch beim Build via oEmbed (kein Token), lokal gehostet (WebP), robust gegen
+   TikTok-Ausfall (Build bricht nie ab). Instagram-Thumb manuell.
+9. ✅ OG-/Twitter-Bild pro Journal-Eintrag (BaseLayout `image`-Prop); JSON-LD Article.
+10. ✅ Datenschutz-Absatz (Instagram/TikTok-Vorschaubilder).
+
+**Abhak-Vergleich (D):** lokal verifiziert (npm run dev, Test-Eintrag) — DE+EN Archiv/Detail 200; alle Bausteine
+gerendert; Teaser+Nav bei `show_journal=true`; header-Sticky-Falle (globale `header{sticky}`) durch `<div>` behoben.
+**⚠️ Sichtbare Abnahme im echten `/admin` + Live nach Deploy + RE-INDEX steht bei David aus** (er entscheidet „fertig").

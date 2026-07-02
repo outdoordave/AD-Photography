@@ -17,6 +17,34 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-02 — Journal-Bereich (Tagebuch) — neues Feature, komplett abschaltbar
+- **Neu:** Ein „Journal"-Reiter — kurze, datierte Einträge (neueste zuerst) zwischen Reisen/Stories.
+  Kein Zwang zu Titel oder Bild: Datum + Text reichen. Reiner Zusatz, nichts Bestehendes verändert
+  (Wander-Titel/Trip-Timeline/Lightbox/MapLibre/Scroll-Spy unberührt).
+- **Schema (`journal`-Collection, `1c6616a`):** date (Pflicht), title_de (optional), text_de (rich-text,
+  Bold/Italic/Link), photos (BulkPhotoField), location (LocationSearchField/GeoJSON wie Reisen), youtube_url,
+  link {label,url}, linked_content (reference alben/story/reisen → reiche Karte), social {platform,url,
+  caption,thumbnail}, EN via has_english. Slug = Datum (+ optional Kurz-Titel; Zähler bei Mehrfach).
+- **Lib + Seiten (`85b7507`,`7bca530`,`a668145`):** `src/lib/journal.ts`; Reader-Insel `JournalEntryContent`
+  (+ `JournalMap` = schlanke MapLibre-Einzelpunkt-Karte, liberty); `/journal` + `/journal/<slug>` + `/en`-
+  Pendants (Archiv-Stream: Text inline, Medien nur als kleines Symbol; Detail: Foto-Lightbox, echte Karte,
+  YouTube-nocookie, Album/Story/Reise-Verknüpfungskarte, Social-Karte, externer Link). `journal.css` mit
+  echten Tokens. Fix: `.journal-head` als `<div>` (globale `header{sticky}`-Regel).
+- **OG-Bild (`7e5b117`):** BaseLayout optionales `image`-Prop (Journal-Detail: erstes Foto/Social-Thumb);
+  überschreibt die globale Fallback-Kette, sonst unverändert.
+- **Sichtbarkeit (`20e085e`):** Schalter **`show_journal`** (Darstellung, Default AUS) schaltet das
+  **komplette** Journal — Nav-Link DE+EN, Footer, Startseiten-Teaser (unter dem Hero, VOR dem Intro) **und**
+  Direktaufruf der Seiten (Redirect wie bei Stories).
+- **TikTok-Vorschaubild (`cba5c09`):** `scripts/fetch-social-thumbs.mjs` holt beim Build via öffentlichem
+  oEmbed (kein Token) das Bild, re-encodiert per sharp zu WebP, hostet lokal (`/uploads/social/tiktok-<id>.webp`);
+  robust (TikTok down → nur Log, Build läuft weiter). Instagram-Thumbnail manuell.
+- **Datenschutz (`3a37f21`):** Absatz Instagram/TikTok-Vorschaubilder (selbst gehostet, kein Fremd-Skript).
+- **Verifiziert** (npm run dev, offline, Test-Eintrag): DE+EN Archiv/Detail = 200; Detail rendert Rich-Text,
+  Foto-Lightbox, echte Karte, YouTube, Verknüpfungs-/Social-Karte; Archiv Text inline + Symbole; Teaser +
+  Nav-Reiter DE+EN erscheinen bei `show_journal=true`. Test-Eintrag entfernt.
+- ⚠️ **Struktureller Schema-Eingriff (journal + show_journal) → Tina-Cloud-RE-INDEX nötig** (nach Deploy, David).
+- Commits: `1c6616a`, `85b7507`, `7bca530`, `a668145`, `7e5b117`, `20e085e`, `cba5c09`, `3a37f21` (+ diese Doku)
+
 ## 2026-06-29 — CMS: Ladekreis bei Navigation statt aufblitzender Dokumentliste
 - **Wunsch (David):** Beim Navigieren in der Vorschau blitzte links kurz Tinas **Dokumentliste**
   (`.json`-Einträge) auf, bis das passende Formular feststand — gewünscht: ein Apple-artiger Ladekreis.
