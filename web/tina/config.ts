@@ -624,6 +624,11 @@ export default defineConfig({
             type: 'reference', name: 'linked_content', label: 'Verknüpfter Inhalt (optional)',
             description: 'Album, Story oder Reise wählen — Cover-Bild und Titel erscheinen automatisch als Karte (kein Upload nötig).',
             collections: ['alben', 'story', 'reisen'],
+            // Auswahlliste als KLARTEXT (Album-Name / Story- bzw. Reise-Titel) statt Dateipfad.
+            ui: {
+              optionComponent: (values: any, sys: any) =>
+                (values && (values.name || values.title_de || values.title)) || (sys && sys.filename) || 'Eintrag',
+            },
           },
           // Social-Beitrag als Karte (selbst gehostetes Vorschaubild, kein Fremd-Skript).
           {
