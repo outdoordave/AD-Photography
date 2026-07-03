@@ -1,21 +1,35 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-07-02** · Live-Branch `main`. Seite **live**, Cutover durch. SEO-Grundlage steht
+> **Stand: 2026-07-03** · Live-Branch `main`. Seite **live**, Cutover durch. SEO-Grundlage steht
 > (Sitemap, JSON-LD, Google Search Console bestätigt + Sitemap gelesen), Datenschutz **vollständig**
 > (inkl. Web3Forms), Performance ok, A11y-Basics drin, Security-Header + CSP gesetzt. **Keine offenen
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
 > Session überschrieben). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
 >
-> **🆕 Journal-Bereich (02.07.2026) — fertig & lokal verifiziert, standardmäßig VERBORGEN.** Neue
-> `journal`-Collection (Tagebuch: kurze datierte Einträge, neueste zuerst; Datum+Text reichen, kein
-> Zwang-Bild/-Titel). Seiten `/journal` + `/journal/<slug>` + `/en`-Pendants (Archiv = Text inline +
-> kleine Medien-Symbole; Detail = Foto-Lightbox, echte MapLibre-Standortkarte, YouTube-nocookie,
-> Verknüpfungskarte Album/Story/Reise, Social-Karte, externer Link). Startseiten-Teaser unter dem Hero
-> (vor dem Intro). **Schalter `show_journal` (Darstellung, Default AUS)** schaltet ALLES ab (Nav DE+EN,
-> Footer, Teaser, Direktaufruf→Redirect). TikTok-Vorschaubild via oEmbed beim Build lokal gehostet
-> (`scripts/fetch-social-thumbs.mjs`, robust); Instagram-Thumb manuell. Datenschutz-Absatz ergänzt.
+> **🆕 Journal-Bereich (03.07.2026) — ausgebaut, lokal verifiziert, aktuell SICHTBAR (`show_journal`=true).**
+> `journal`-Collection (Tagebuch: kurze datierte Einträge, neueste zuerst; Datum+Text reichen). Seiten
+> `/journal` + `/journal/<slug>` + `/en`-Pendants (Detail = Foto-Lightbox, echte MapLibre-Standortkarte,
+> YouTube-nocookie, Verknüpfungskarte Album/Story/Reise, Social-Karte, externer Link).
+> **Kopf editierbar** (`journal_settings`: Kicker/Titel/Intro DE/EN), **Listen-Stil umschaltbar**
+> (`journal_style`: stream/plain/card/notes, CMS-Vorschau), **„Neuer Beitrag"-Button** (nur eingeloggt).
+> Startseite: Journal als **Kärtchen im Entdecken-Stil** (kein separater „Aktuell"-Teaser mehr).
+> **NEU (03.07., `d210c5b`):**
+> • **Hero-Kachel** — Schalter `hero_journal` (Darstellung, getrennt, nur wenn Journal AN) zeigt den
+>   **neuesten** Eintrag als schwebende **Ghost-Kachel** statt der Hero-Tagline (Schalter aus → Tagline
+>   unverändert); nur Text + Linien-Glyphen für Anhänge (`src/lib/journalGlyphs.ts`). DE+EN.
+> • **Archiv nach Alter** — Feld `pin` („oben anheften/nicht archivieren") + Einstellung
+>   `archive_after_months` (Standard 12, 0 = nie); ältere, nicht angepinnte Einträge in aufklappbarem
+>   „Archiv (N)"-Bereich. Logik `partitionJournal` in `src/lib/journal.ts`.
+> • **Kombinierte Insel `JournalArchive`** — Kopf + Button + Liste + Archiv in EINER Insel; Kopf/Stil/
+>   Archiv-Schwelle jetzt **live** aus `journal_settings` → **CMS-Vorschau reagiert sofort** auf den
+>   Stil-Umschalter (vorher erst nach Rebuild). `SettingsHeader`/`JournalNewButton` auf `/journal` abgelöst.
+> **Schalter `show_journal`** (Default-Verhalten: aus = ALLES weg — Nav DE+EN, Footer, Kärtchen, Hero-Kachel,
+> Direktaufruf→Redirect). TikTok-Vorschaubild via oEmbed beim Build lokal gehostet
+> (`scripts/fetch-social-thumbs.mjs`, robust); Instagram-Thumb manuell. Datenschutz-Absatz vorhanden.
 > Reiner Zusatz — Wander-Titel/Trip-Timeline/Lightbox/MapLibre/Scroll-Spy unberührt.
-> ⚠️ **Struktureller Schema-Eingriff (journal + show_journal) → Tina-Cloud-RE-INDEX nötig (David, nach Deploy).**
+> ⚠️ **Struktureller Schema-Eingriff (`pin`, `archive_after_months`, `hero_journal`) → Tina-Cloud-RE-INDEX
+> nötig (David, nach Push+Deploy).** Belegt: Live `/journal/` liefert schon korrekt `journal-style-notes`
+> (curl) — „Stil wirkt nicht" lag an Vorschau (Build-Wert)/Browser-Cache, nicht am Code.
 >
 > **✅ Detail-Köpfe „wandernder Titel" — Mobil UND Desktop fertig (von David abgenommen, 25.06.).**
 > Reise + Story, beide Breakpoints. Architektur (für künftige Header wiederverwendbar, s. Memory
@@ -176,8 +190,10 @@
   (jSquash) bzw. Build-Sharp-Schritt.
 
 ## 3. Funktions-Inventur — alle portiert ✅ (live)
-- **Startseite:** Hero (Bild/Slideshow/Video), Intro + Social-Row, Momentaufnahmen
-  (Lightbox), Aktuell, Entdecken.
+- **Startseite:** Hero (Bild/Slideshow/Video; optional neueste Journal-Kachel statt Tagline via
+  `hero_journal`), Intro + Social-Row, Momentaufnahmen (Lightbox), Aktuell, Entdecken, Journal-Kärtchen.
+- **Journal:** `/journal` (Archiv: Kopf editierbar, Stil umschaltbar, Archiv nach Alter + Anpinnen) +
+  `/journal/<slug>` (Foto-Lightbox, MapLibre-Karte, YouTube, Verknüpfungs-/Social-Karte) — an-/abschaltbar.
 - **Portfolio/Alben:** Galerie + Album-Unterseiten, Auto-Diashow, 3 Sortiermodi, Lightbox.
 - **Reisen:** `/trips` (Übersicht) + `/trips/<slug>` (vertikale Timeline mit MapLibre-Karte,
   Stationen, Fokus-Dimming, Fortschrittslinie, Video/YouTube, verknüpftes Album).

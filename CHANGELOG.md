@@ -17,6 +17,26 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-03 18:25 — Journal: Hero-Kachel + Archiv nach Alter + Live-Stil in der Vorschau
+- **Hero-Kachel (`d210c5b`):** neuer Darstellungs-Schalter `hero_journal` („Neuesten Journal-Eintrag im
+  Hero zeigen?", getrennt vom Journal-An/Aus, nur aktiv wenn Journal AN). Zeigt den **neuesten** Eintrag als
+  schwebende **Ghost-Kachel** (Optik wie `.btn.ghost`) **statt der Hero-Tagline**; Schalter aus → Tagline
+  unverändert. Nur Text (Datum/Titel/Kurzvorschau) + dezente **Linien-Glyphen** für Anhänge
+  (Foto/Standort/Video/Social/verknüpft/Link) statt Emojis. DE+EN. Neu: `src/lib/journalGlyphs.ts`.
+- **Archiv nach Alter (`d210c5b`):** neues Feld **„Oben anheften (nicht archivieren)"** (`pin`) pro Eintrag +
+  Einstellung **„Archivieren nach … Monaten"** (`archive_after_months`, Standard 12, 0 = nie). Ältere,
+  nicht angepinnte Einträge wandern in einen aufklappbaren **„Archiv (N)"**-Bereich; angepinnte bleiben oben.
+  Logik in `src/lib/journal.ts` (`partitionJournal`/`journalIsPinned`).
+- **Vorschau-Fix / kombinierte Insel (`d210c5b`):** `JournalArchive` rendert Kopf + „Neuer Beitrag" +
+  Haupt-Liste + Archiv in **einer** Insel — Kopf-Texte, Listen-Stil UND Archiv-Schwelle kommen jetzt **live**
+  aus `journal_settings` (useTina) → CMS-Vorschau reagiert **sofort** auf den Stil-Umschalter (vorher erst
+  nach Rebuild). `SettingsHeader`/`JournalNewButton` auf `/journal` abgelöst (Button jetzt in der Insel).
+- **Belegte Diagnose:** Live `/journal/` lieferte bereits korrekt `journal-style-notes` (curl) — der „Stil
+  ändert sich nicht"-Effekt lag an der Vorschau (Build-Wert) bzw. Browser-Cache, nicht am Code.
+- **Lokal geprüft:** Astro-Build grün (57 Seiten); Hero-Panel + 4 Glyphen + Archiv-Aufklapper per Dev-Server
+  verifiziert (Test-Einträge angelegt/geprüft/entfernt).
+- ⚠️ Schema-Änderung (`pin`, `archive_after_months`, `hero_journal`) → **ein Tina-Re-Index** nötig (David, nach Deploy).
+
 ## 2026-07-03 — Journal-Ausbau: editierbarer Kopf, Stil-Umschalter, „Neuer Beitrag", Startseite entdoppelt
 - **Sidebar-Reorder (`d137253`):** Journal + Journal-Einstellungen direkt hinter die Startseite (CMS).
 - **Editierbarer Kopf (`d137253`,`26b8b08`):** neue `journal_settings`-Collection (Kicker/Titel/Intro DE/EN)
