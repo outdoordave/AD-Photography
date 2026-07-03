@@ -75,16 +75,18 @@
 
 /* ---------- Hero-Kachel (neuester Eintrag statt Tagline) ---------- */
 /* Ghost-Optik exakt wie .btn.ghost (Fill 0.32 + Blur), als schwebende Karte. */
+/* Einblenden auf dem Wrapper, damit das Hover-„Anheben" (transform) nicht von der
+   forwards-Animation überschrieben wird (wie bei .hero-cta die Buttons). */
+.hero-journal-wrap { position: relative; z-index: 2; opacity: 0; animation: fadeUp 0.9s 0.45s forwards; }
 .hero-journal {
-  position: relative; z-index: 2; display: block; text-decoration: none;
+  display: block; text-decoration: none;
   max-width: 520px; margin: 0 auto; text-align: left;
   background: rgba(28,24,18,0.32); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
   border: 1.5px solid rgba(240,217,191,0.5); border-radius: 16px; padding: 16px 22px 15px;
   color: #f0d9bf; box-shadow: 0 12px 32px -14px rgba(0,0,0,0.55);
-  opacity: 0; animation: fadeUp 0.9s 0.45s forwards;
-  transition: border-color var(--dur-base) var(--ease), background var(--dur-base) var(--ease);
+  transition: transform var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease), background var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease);
 }
-.hero-journal:hover { background: rgba(28,24,18,0.5); border-color: #f0d9bf; }
+.hero-journal:hover { background: rgba(28,24,18,0.5); border-color: #f0d9bf; transform: translateY(-3px); box-shadow: 0 18px 40px -14px rgba(0,0,0,0.6); }
 .hero-journal .hj-kicker { display: flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.85; margin-bottom: 11px; }
 .hero-journal .hj-rule { flex: 1; height: 1px; background: rgba(240,217,191,0.35); }
 .hero-journal .hj-more { opacity: 0.85; white-space: nowrap; }
@@ -115,10 +117,31 @@
 .journal-list.journal-style-card { display: grid; gap: 16px; }
 .journal-list.journal-style-card .journal-item { border-bottom: none; padding: 20px 22px; background: var(--c-bg-alt); border: 1px solid var(--c-line); border-radius: 12px; box-shadow: 0 12px 26px -18px rgba(46,36,24,0.5); }
 .journal-list.journal-style-card .journal-item:first-child { padding-top: 20px; }
-/* Field-Notes: gestrichelte Trenner + linker Akzentstrich. */
-.journal-list.journal-style-notes { position: relative; padding-left: 18px; }
-.journal-list.journal-style-notes::before { content: ""; position: absolute; top: 6px; bottom: 6px; left: 0; width: 2px; background: rgba(167,103,47,0.4); border-radius: 2px; }
-.journal-list.journal-style-notes .journal-item { border-bottom: 1px dashed rgba(46,36,24,0.24); }
+/* Field-Notes / Notizbuch: die ganze Liste als Kraftpapier-Bogen mit Rand-Linie
+   (Papierfläche + Schatten wie Equipments „notes", gestrichelte Zeilen dazwischen). */
+.journal-list.journal-style-notes {
+  position: relative; background: #ede1ca; border-radius: 3px;
+  padding: 24px 30px 10px 48px;
+  box-shadow: 0 1px 2px rgba(46,36,24,0.15), 0 16px 34px -16px rgba(46,36,24,0.5);
+}
+.journal-list.journal-style-notes::before {
+  content: ""; position: absolute; top: 16px; bottom: 16px; left: 30px; width: 1.5px; background: rgba(167,103,47,0.5);
+}
+.journal-list.journal-style-notes .journal-item { border-bottom: 1px dashed rgba(46,36,24,0.22); padding: 18px 0; }
+.journal-list.journal-style-notes .journal-item:first-child { padding-top: 0; }
+.journal-list.journal-style-notes .journal-item:last-child { border-bottom: none; }
+
+/* Klickbare Listen-Symbole (nur live): Album/Story/Reise, Standort→Karte, Link, Social, Video. */
+a.jm-badge, button.jm-badge { cursor: pointer; text-decoration: none; font: inherit; transition: border-color .15s ease, color .15s ease, transform .15s ease; }
+a.jm-badge:hover, button.jm-badge:hover { border-color: var(--c-accent); color: var(--c-accent); transform: translateY(-1px); }
+button.jm-badge.jm-linked, a.jm-badge.jm-linked { color: var(--c-accent); }
+
+/* Standort-Karte als Lightbox (OpenFreeMap) */
+.journal-map-lb { position: fixed; inset: 0; z-index: 4000; display: flex; align-items: center; justify-content: center; background: rgba(20,16,10,0.72); padding: 24px; }
+.journal-map-lb .jmlb-inner { position: relative; width: min(920px, 96vw); height: min(70vh, 620px); background: var(--c-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 30px 80px -20px rgba(0,0,0,0.6); }
+.journal-map-lb .jmlb-inner .ww-journal-map { width: 100%; height: 100%; border: none; border-radius: 0; }
+.journal-map-lb .jmlb-close { position: absolute; top: 10px; left: 10px; z-index: 5; width: 38px; height: 38px; border-radius: 999px; border: none; background: rgba(28,24,18,0.6); color: #fff; font-size: 20px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.journal-map-lb .jmlb-close:hover { background: rgba(28,24,18,0.85); }
 
 /* ---------- Startseiten-Teaser ---------- */
 .home-journal .home-journal-list { list-style: none; margin: 0 auto; padding: 0; max-width: 680px; }

@@ -111,23 +111,25 @@ export default function HomeHeroLive(props: Props) {
       ) : null}
 
       {jHero ? (
-        <a className="hero-journal" href={`${prefix}/journal`}>
-          <div className="hj-kicker">
-            <span>{isEn ? 'From the journal' : 'Aus dem Journal'}</span>
-            <span className="hj-rule" aria-hidden="true"></span>
-            <span className="hj-more">{isEn ? 'Latest' : 'Neu'} →</span>
-          </div>
-          <div className="hj-date">{formatFullDate(jl.date, lang)}</div>
-          {journalHasTitle(jl, lang) ? <div className="hj-title">{journalHeading(jl, lang)}</div> : null}
-          {jSnippet ? <div className="hj-text">{jSnippet}</div> : null}
-          {jGlyphs.length > 0 ? (
-            <div className="hj-glyphs" aria-hidden="true">
-              {jGlyphs.map((k) => (
-                <span className="hj-glyph" key={k} title={glyphLabel(k, lang)} dangerouslySetInnerHTML={{ __html: glyphSvg(k) }} />
-              ))}
+        <div className="hero-journal-wrap">
+          <a className="hero-journal" href={`${prefix}/journal`}>
+            <div className="hj-kicker">
+              <span>{isEn ? 'From the journal' : 'Aus dem Journal'}</span>
+              <span className="hj-rule" aria-hidden="true"></span>
+              <span className="hj-more">{isEn ? 'Latest' : 'Neu'} →</span>
             </div>
-          ) : null}
-        </a>
+            <div className="hj-date">{formatFullDate(jl.date, lang)}</div>
+            {journalHasTitle(jl, lang) ? <div className="hj-title">{journalHeading(jl, lang)}</div> : null}
+            {jSnippet ? <div className="hj-text">{jSnippet}</div> : null}
+            {jGlyphs.length > 0 ? (
+              <div className="hj-glyphs" aria-hidden="true">
+                {jGlyphs.map((k) => (
+                  <span className="hj-glyph" key={k} title={glyphLabel(k, lang)} dangerouslySetInnerHTML={{ __html: glyphSvg(k) }} />
+                ))}
+              </div>
+            ) : null}
+          </a>
+        </div>
       ) : (
         <h1 className="hero-tag" data-tina-field={tf(hero, 'headline')}>{headline}</h1>
       )}
