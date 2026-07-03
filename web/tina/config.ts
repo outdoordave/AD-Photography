@@ -1049,7 +1049,7 @@ export default defineConfig({
         format: 'json',
         match: { include: 'highlights' },
         // Router -> Startseiten-Vorschau (Highlights erscheinen dort) -> auffindbar + Live-Vorschau.
-        ui: { allowedActions: { create: false, delete: false }, router: () => '/' },
+        ui: { allowedActions: { create: false, delete: false } },
         fields: [
           { type: 'string', name: 'ww_here', label: '⭐ Highlights', ui: { component: SectionBanner } },
           { type: 'image', name: 'images', label: 'Highlight-Fotos (Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
@@ -1063,7 +1063,7 @@ export default defineConfig({
         format: 'json',
         match: { include: 'appearance-settings' },
         // Router -> Startseiten-Vorschau, damit „Darstellung" (inkl. Logo) auffindbar ist + Live-Vorschau hat.
-        ui: { allowedActions: { create: false, delete: false }, router: () => '/' },
+        ui: { allowedActions: { create: false, delete: false } },
         fields: [
           { type: 'string', name: 'ww_here', label: '🎨 Darstellung', ui: { component: SectionBanner } },
           { type: 'image', name: 'logo', label: 'Logo (Nav / Hero / Footer)', ui: { component: SinglePhotoField } },
