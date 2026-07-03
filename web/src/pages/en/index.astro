@@ -5,7 +5,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import HomeHeroLive from '../../components/HomeHeroLive.tsx';
 import HomeIntroLive from '../../components/HomeIntroLive.tsx';
-import HomeJournal from '../../components/HomeJournal.astro';
+import HomeJournalCards from '../../components/HomeJournalCards.astro';
 import '../../styles/journal.css';
 import HomeSectionHead from '../../components/HomeSectionHead.tsx';
 import HomeMoments from '../../components/HomeMoments.tsx';
@@ -52,8 +52,6 @@ const heroPreload = heroFirst ? normalizePath(heroFirst) : undefined;
 <BaseLayout title="Wide & Wild — Travel & Outdoor Photography" lang="en" preloadImage={heroPreload} description="Travel & outdoor photography by Alexandra & David — road trips through wild landscapes, with maps, photo albums and stories from the road.">
   <HomeHeroLive client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="en" logo={ap.logo} showHeroLogo={ap.show_hero_logo !== false} showStories={showStories} logoQuery={apRes.query} logoVariables={apRes.variables} logoData={apRes.data} />
 
-  {showJournal && <HomeJournal lang="en" prefix="/en" />}
-
   <HomeIntroLive client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="en" />
 
   {moments.length > 0 && (
@@ -82,4 +80,6 @@ const heroPreload = heroFirst ? normalizePath(heroFirst) : undefined;
       </div>
     </section>
   )}
+
+  {showJournal && <HomeJournalCards lang="en" prefix="/en" />}
 </BaseLayout>

@@ -1,0 +1,42 @@
+---
+// Journal auf der Startseite als Kärtchen im vorhandenen „Entdecken"-Stil (teaser-grid) —
+// statt eines eigenen „Aktuell"-Teasers (vermeidet die Dopplung). Letzte 3 Einträge:
+// Mini-Foto (oder Farbplatzhalter), Datum, Titel; Link auf den Eintrag. Statisch.
+// Kopf (Kicker/Titel) aus journal-settings.json (im CMS editierbar).
+import { MediaBox } from './GalleryContent';
+import { client } from '../../tina/__generated__/client';
+import { sortJournalNodes, journalHeading, journalHasTitle, formatFullDate, journalFirstPhoto } from '../lib/journal';
+import settings from '../data/journal-settings.json';
+
+interface Props { lang: 'de' | 'en'; prefix?: string }
+const { lang, prefix = '' } = Astro.props;
+
+const conn = await client.queries.journalConnection();
+const nodes = sortJournalNodes((conn.data.journalConnection?.edges ?? []).map((e: any) => e?.node).filter(Boolean) as any[]).slice(0, 3);
+const s = settings as any;
+const kicker = (lang === 'en' ? s.kicker_en : s.kicker_de) || 'Journal';
+const title = (lang === 'en' ? s.title_en : s.title_de) || 'Journal';
+const allLabel = lang === 'en' ? 'To the journal →' : 'Zum Journal →';
+---
+{nodes.length > 0 && (
+  <section style="padding-top:0;">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">{kicker}</div>
+        <h2>{title}</h2>
+      </div>
+      <div class="teaser-grid">
+        {nodes.map((j: any, i: number) => (
+          <a class="teaser" href={`${prefix}/journal/${j._sys.filename}`}>
+            <MediaBox ph={{ image: journalFirstPhoto(j), c1: '#8a7a5e', c2: '#3a2e1d', img: '' } as any} />
+            <div class="ov">
+              <div class="cat">{formatFullDate(j.date || '', lang)}</div>
+              {journalHasTitle(j, lang) ? <div class="ttl">{journalHeading(j, lang)}</div> : null}
+            </div>
+          </a>
+        ))}
+      </div>
+      <div style="text-align:center;margin-top:22px;"><a class="hj-all" href={`${prefix}/journal`}>{allLabel}</a></div>
+    </div>
+  </section>
+)}
