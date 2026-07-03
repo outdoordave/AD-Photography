@@ -6,6 +6,7 @@ import CropPhotoField from './fields/CropPhotoField';
 import PhotoUploadField from './fields/PhotoUploadField';
 import ImageFrameField from './fields/ImageFrameField';
 import GearStyleField from './fields/GearStyleField';
+import JournalStyleField from './fields/JournalStyleField';
 import GearCategoryField from './fields/GearCategoryField';
 import TripDesignsEditor from './fields/TripDesignsEditor';
 import SectionBanner from './fields/SectionBanner';
@@ -432,6 +433,111 @@ export default defineConfig({
           },
         ],
       },
+      // --- Journal: Tagebuch — kurze, datierte Eintraege (neueste zuerst) ---
+      {
+        name: 'journal',
+        label: '📔 Journal',
+        path: 'src/content/journal',
+        format: 'md',
+        ui: {
+          // Live-Vorschau je Eintrag (/journal/<slug>) — useTina-Insel wie bei Stories.
+          router: ({ document }: any) => `/journal/${document._sys.filename}`,
+          // Dateiname/Slug = Datum (+ optionaler Kurz-Titel). Bei mehreren Eintraegen am
+          // selben Tag haengt Tina automatisch -1/-2 an -> eindeutige URL; im sichtbaren
+          // Text erscheint immer nur das reine Datum (nie der Zaehler).
+          filename: {
+            slugify: (values: any) => {
+              const d = String(values?.date || '').slice(0, 10) || 'eintrag';
+              const t = String(values?.title_de || '')
+                .toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '')
+                .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').slice(0, 40);
+              return t ? `${d}-${t}` : d;
+            },
+          },
+        },
+        fields: [
+          { type: 'string', name: 'ww_here', label: '📔 Journal – Eintrag', ui: { component: SectionBanner } },
+          { type: 'string', name: 'date', label: 'Datum (YYYY-MM-DD)', required: true, description: 'Bestimmt die Sortierung (neueste zuerst) und die sichtbare Überschrift, wenn kein Titel gesetzt ist.' },
+          { type: 'string', name: 'title_de', label: 'Titel (optional)', description: 'Wenn leer, erscheint das Datum als Überschrift.' },
+          // Kurzer Tagebuch-Text — rich-text mit Mini-Leiste (fett/kursiv/Link), wie Stories „summary".
+          { type: 'rich-text', name: 'text_de', label: 'Text', parser: { type: 'markdown', skipEscaping: 'html' }, overrides: { toolbar: ['bold', 'italic', 'link'] } } as any,
+          // Foto(s) — meist eins, gelegentlich kleine Galerie (gleiches Feld wie Reisen-Stationen).
+          { type: 'image', name: 'photos', label: 'Fotos (optional, Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
+          // Standort — gleiches GeoJSON-Point-Format + LocationSearchField wie Reisen-Stationen.
+          { type: 'string', name: 'location', label: '📍 Ort auf der Karte (optional)', description: 'Suchen & auf der Karte feinjustieren. Detailseite zeigt eine echte Karte, die Liste nur ein Symbol.', ui: { component: LocationSearchField } },
+          // Video — YouTube wie bei Stories (youtube-nocookie, kein Consent-Gate noetig).
+          { type: 'string', name: 'youtube_url', label: 'YouTube-URL (optional)' },
+          // Generischer externer Link (unabhaengig von „Verknüpfter Inhalt" unten).
+          {
+            type: 'object', name: 'link', label: 'Externer Link (optional)',
+            fields: [
+              { type: 'string', name: 'label_de', label: 'Link-Text' },
+              { type: 'string', name: 'label_en', label: '↳ English', ui: { component: EnglishStoryField } },
+              { type: 'string', name: 'url', label: 'URL (https://…)' },
+            ],
+          },
+          // Interne Verknüpfung -> reiche Karte (Cover + Titel + Typ kommen automatisch vom Ziel).
+          {
+            type: 'reference', name: 'linked_content', label: 'Verknüpfter Inhalt (optional)',
+            description: 'Album, Story oder Reise wählen — Cover-Bild und Titel erscheinen automatisch als Karte (kein Upload nötig).',
+            collections: ['alben', 'story', 'reisen'],
+            // Auswahlliste als KLARTEXT (Album-Name / Story- bzw. Reise-Titel) statt Dateipfad.
+            ui: {
+              optionComponent: (values: any, sys: any) =>
+                (values && (values.name || values.title_de || values.title)) || (sys && sys.filename) || 'Eintrag',
+            },
+          },
+          // Social-Beitrag als Karte (selbst gehostetes Vorschaubild, kein Fremd-Skript).
+          {
+            type: 'object', name: 'social', label: 'Social-Beitrag (optional)',
+            fields: [
+              { type: 'string', name: 'platform', label: 'Plattform', options: [{ value: 'instagram', label: 'Instagram' }, { value: 'tiktok', label: 'TikTok' }] },
+              { type: 'string', name: 'url', label: 'Beitrags-URL (instagram.com/p/… oder tiktok.com/@…/video/…)' },
+              { type: 'string', name: 'caption_de', label: 'Bildunterschrift (optional)' },
+              { type: 'string', name: 'caption_en', label: '↳ English', ui: { component: EnglishStoryField } },
+              { type: 'image', name: 'thumbnail', label: 'Vorschaubild (Instagram: manuell hochladen; TikTok: wird automatisch geholt)', ui: { component: SinglePhotoField } },
+            ],
+          },
+          // --- Englische Version (pro Eintrag ueberspringbar, wie bei Stories) ---
+          { type: 'boolean', name: 'has_english', label: 'Englische Version anzeigen?' },
+          { type: 'string', name: 'title_en', label: 'Title (EN)', ui: { component: EnglishStoryField } },
+          { type: 'rich-text', name: 'text_en', label: 'Text (EN)', parser: { type: 'markdown', skipEscaping: 'html' }, overrides: { toolbar: ['bold', 'italic', 'link'] }, ui: { component: EnglishStoryRichTextField } } as any,
+        ],
+      },
+      // --- Journal: Seiten-Einstellungen (Kopf-Texte + Listen-Stil) ---
+      {
+        name: 'journal_settings',
+        label: '📔 Journal – Einstellungen',
+        path: 'src/data',
+        format: 'json',
+        match: { include: 'journal-settings' },
+        ui: { allowedActions: { create: false, delete: false }, router: () => '/journal' },
+        fields: [
+          { type: 'string', name: 'ww_here', label: '📔 Journal – Einstellungen', ui: { component: SectionBanner } },
+          {
+            type: 'string', name: 'editor_language', label: 'Sprache',
+            description: 'Nur Deutsch — oder Deutsch + Englisch. (Nur Anzeige im Editor.)',
+            ui: { component: EnglishToggle },
+          },
+          { type: 'string', name: 'kicker_de', label: 'Mini-Titel (Kicker)' },
+          { type: 'string', name: 'kicker_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'title_de', label: 'Seiten-Titel' },
+          { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+          { type: 'string', name: 'intro_de', label: 'Einleitung', ui: { component: 'textarea' } },
+          { type: 'string', name: 'intro_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+          {
+            type: 'string', name: 'journal_style', label: 'Listen-Stil',
+            description: 'Aussehen der Journal-Einträge. Vorschau unten — einen Stil anklicken.',
+            ui: { component: JournalStyleField },
+            options: [
+              { value: 'stream', label: 'Stream (wie jetzt)' },
+              { value: 'plain', label: 'Schlicht' },
+              { value: 'card', label: 'Karte' },
+              { value: 'notes', label: 'Field-Notes' },
+            ],
+          },
+        ],
+      },
       // --- Alben: jedes Album ein Eintrag (Mehrfach-Collection wie Reisen) ---
       {
         name: 'alben',
@@ -574,77 +680,6 @@ export default defineConfig({
           { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
           { type: 'string', name: 'intro_de', label: 'Einleitung', ui: { component: 'textarea' } },
           { type: 'string', name: 'intro_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
-        ],
-      },
-      // --- Journal: Tagebuch — kurze, datierte Eintraege (neueste zuerst) ---
-      {
-        name: 'journal',
-        label: '📔 Journal',
-        path: 'src/content/journal',
-        format: 'md',
-        ui: {
-          // Live-Vorschau je Eintrag (/journal/<slug>) — useTina-Insel wie bei Stories.
-          router: ({ document }: any) => `/journal/${document._sys.filename}`,
-          // Dateiname/Slug = Datum (+ optionaler Kurz-Titel). Bei mehreren Eintraegen am
-          // selben Tag haengt Tina automatisch -1/-2 an -> eindeutige URL; im sichtbaren
-          // Text erscheint immer nur das reine Datum (nie der Zaehler).
-          filename: {
-            slugify: (values: any) => {
-              const d = String(values?.date || '').slice(0, 10) || 'eintrag';
-              const t = String(values?.title_de || '')
-                .toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '')
-                .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').slice(0, 40);
-              return t ? `${d}-${t}` : d;
-            },
-          },
-        },
-        fields: [
-          { type: 'string', name: 'ww_here', label: '📔 Journal – Eintrag', ui: { component: SectionBanner } },
-          { type: 'string', name: 'date', label: 'Datum (YYYY-MM-DD)', required: true, description: 'Bestimmt die Sortierung (neueste zuerst) und die sichtbare Überschrift, wenn kein Titel gesetzt ist.' },
-          { type: 'string', name: 'title_de', label: 'Titel (optional)', description: 'Wenn leer, erscheint das Datum als Überschrift.' },
-          // Kurzer Tagebuch-Text — rich-text mit Mini-Leiste (fett/kursiv/Link), wie Stories „summary".
-          { type: 'rich-text', name: 'text_de', label: 'Text', parser: { type: 'markdown', skipEscaping: 'html' }, overrides: { toolbar: ['bold', 'italic', 'link'] } } as any,
-          // Foto(s) — meist eins, gelegentlich kleine Galerie (gleiches Feld wie Reisen-Stationen).
-          { type: 'image', name: 'photos', label: 'Fotos (optional, Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
-          // Standort — gleiches GeoJSON-Point-Format + LocationSearchField wie Reisen-Stationen.
-          { type: 'string', name: 'location', label: '📍 Ort auf der Karte (optional)', description: 'Suchen & auf der Karte feinjustieren. Detailseite zeigt eine echte Karte, die Liste nur ein Symbol.', ui: { component: LocationSearchField } },
-          // Video — YouTube wie bei Stories (youtube-nocookie, kein Consent-Gate noetig).
-          { type: 'string', name: 'youtube_url', label: 'YouTube-URL (optional)' },
-          // Generischer externer Link (unabhaengig von „Verknüpfter Inhalt" unten).
-          {
-            type: 'object', name: 'link', label: 'Externer Link (optional)',
-            fields: [
-              { type: 'string', name: 'label_de', label: 'Link-Text' },
-              { type: 'string', name: 'label_en', label: '↳ English', ui: { component: EnglishStoryField } },
-              { type: 'string', name: 'url', label: 'URL (https://…)' },
-            ],
-          },
-          // Interne Verknüpfung -> reiche Karte (Cover + Titel + Typ kommen automatisch vom Ziel).
-          {
-            type: 'reference', name: 'linked_content', label: 'Verknüpfter Inhalt (optional)',
-            description: 'Album, Story oder Reise wählen — Cover-Bild und Titel erscheinen automatisch als Karte (kein Upload nötig).',
-            collections: ['alben', 'story', 'reisen'],
-            // Auswahlliste als KLARTEXT (Album-Name / Story- bzw. Reise-Titel) statt Dateipfad.
-            ui: {
-              optionComponent: (values: any, sys: any) =>
-                (values && (values.name || values.title_de || values.title)) || (sys && sys.filename) || 'Eintrag',
-            },
-          },
-          // Social-Beitrag als Karte (selbst gehostetes Vorschaubild, kein Fremd-Skript).
-          {
-            type: 'object', name: 'social', label: 'Social-Beitrag (optional)',
-            fields: [
-              { type: 'string', name: 'platform', label: 'Plattform', options: [{ value: 'instagram', label: 'Instagram' }, { value: 'tiktok', label: 'TikTok' }] },
-              { type: 'string', name: 'url', label: 'Beitrags-URL (instagram.com/p/… oder tiktok.com/@…/video/…)' },
-              { type: 'string', name: 'caption_de', label: 'Bildunterschrift (optional)' },
-              { type: 'string', name: 'caption_en', label: '↳ English', ui: { component: EnglishStoryField } },
-              { type: 'image', name: 'thumbnail', label: 'Vorschaubild (Instagram: manuell hochladen; TikTok: wird automatisch geholt)', ui: { component: SinglePhotoField } },
-            ],
-          },
-          // --- Englische Version (pro Eintrag ueberspringbar, wie bei Stories) ---
-          { type: 'boolean', name: 'has_english', label: 'Englische Version anzeigen?' },
-          { type: 'string', name: 'title_en', label: 'Title (EN)', ui: { component: EnglishStoryField } },
-          { type: 'rich-text', name: 'text_en', label: 'Text (EN)', parser: { type: 'markdown', skipEscaping: 'html' }, overrides: { toolbar: ['bold', 'italic', 'link'] }, ui: { component: EnglishStoryRichTextField } } as any,
         ],
       },
       // --- Reisen: jede Reise ein Eintrag (Mehrfach-Collection wie Stories) ---
