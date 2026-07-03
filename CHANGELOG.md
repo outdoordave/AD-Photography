@@ -17,6 +17,20 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-03 — Journal-Ausbau: editierbarer Kopf, Stil-Umschalter, „Neuer Beitrag", Startseite entdoppelt
+- **Sidebar-Reorder (`d137253`):** Journal + Journal-Einstellungen direkt hinter die Startseite (CMS).
+- **Editierbarer Kopf (`d137253`,`26b8b08`):** neue `journal_settings`-Collection (Kicker/Titel/Intro DE/EN)
+  → `/journal`-Kopf im CMS editierbar (SettingsHeader, Klick-zum-Feld) statt fest im Code.
+- **Listen-Stil-Umschalter (`d137253`,`26b8b08`):** `journal_style` mit CMS-Vorschau (`JournalStyleField`) —
+  4 Stile **Stream (wie bisher) / Schlicht / Karte / Field-Notes**; Medien (Foto/Karte/Social) bleiben
+  eingebettet. Lokal geprüft (stream + card).
+- **„Neuer Beitrag"-Button (`26b8b08`):** auf `/journal`, **nur eingeloggt** (`ww-admin-only`) → Tinas
+  Neuanlage-Route der `journal`-Collection.
+- **Startseite entdoppelt (`86203f2`):** der separate „Aktuell"-Journal-Teaser (Dopplung) ist raus; Journal
+  erscheint jetzt als **Kärtchen im Entdecken-Stil** (Mini-Foto/Datum/Titel/Link) unter „Entdecken".
+- **Referenz-Klartext (`2b69495`, vom Vortag):** Album-Name/Titel statt `.json`-Pfad im `linked_content`-Dropdown.
+- ⚠️ Schema-Änderungen (journal_settings + journal_style + Reorder) → **ein Tina-Re-Index** nötig (David, nach Deploy).
+
 ## 2026-07-02 — Journal + CMS-Feinschliff (Klartext-Referenz, editierbares Archiv, Router-Fix)
 - **Beispiel-Einträge (`ee85747`)** + Journal im CMS nach „Stories – Einstellungen" einsortiert +
   `show_journal` an (`39b8761`).
