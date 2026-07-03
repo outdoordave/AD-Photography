@@ -1,24 +1,17 @@
 ---
-// Journal-Archiv DE ('/journal'). Stream, neueste zuerst; Text jedes Eintrags vollständig
-// inline (statisch via RichText), angehängte Medien nur als kleines Symbol/Miniatur.
-// Volle Größe/Interaktivität erst auf der Detailseite.
+// Journal-Archiv DE ('/journal'). Liste als useTina-Insel (bearbeitbar in der CMS-Vorschau:
+// Klick auf einen Eintrag -> dessen Feld; links die Eintrags-Auswahl). Text vollständig inline,
+// Medien nur als kleines Symbol; volle Größe/Interaktivität erst auf der Detailseite.
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import RichText from '../../components/RichText';
+import JournalArchive from '../../components/JournalArchive.tsx';
 import { client } from '../../../tina/__generated__/client';
-import { socialIcon } from '../../lib/socialIcons';
-import {
-  sortJournalNodes, journalHeading, journalHasTitle, formatFullDate, journalText,
-  journalFirstPhoto, parseGeoPoint, resolveLinkedContent, resolveSocial, journalLink,
-} from '../../lib/journal';
 import appearance from '../../data/appearance-settings.json';
 import '../../styles/journal.css';
 
 // Journal komplett abschaltbar (🎨 Darstellung → „Journal zeigen?"). Aus = auch Direktaufruf sperren.
 if ((appearance as any).show_journal !== true) return Astro.redirect('/');
 
-const conn = await client.queries.journalConnection();
-const nodes = sortJournalNodes((conn.data.journalConnection?.edges ?? []).map((e: any) => e?.node).filter(Boolean) as any[]);
-const lang = 'de' as const;
+const res = await client.queries.journalConnection();
 ---
 <BaseLayout title="Journal — Wide & Wild" lang="de" description="Journal — kurze Notizen zwischen den Reisen von Alexandra & David.">
   <section>
@@ -27,43 +20,7 @@ const lang = 'de' as const;
         <h1>Journal</h1>
         <p class="journal-archive-sub">Kurze Notizen zwischen den großen Reisen.</p>
       </div>
-      {nodes.length === 0 ? (
-        <p class="journal-empty">Noch keine Einträge.</p>
-      ) : (
-        <ol class="journal-list">
-          {nodes.map((j: any) => {
-            const slug = j._sys.filename;
-            const heading = journalHeading(j, lang);
-            const hasTitle = journalHasTitle(j, lang);
-            const dateLabel = formatFullDate(j.date || '', lang);
-            const text = journalText(j, lang);
-            const photo = journalFirstPhoto(j);
-            const point = parseGeoPoint(j.location);
-            const linked = resolveLinkedContent(j, lang);
-            const social = resolveSocial(j, lang);
-            const extLink = journalLink(j, lang);
-            return (
-              <li class="journal-item">
-                <a class="journal-item-head" href={`/journal/${slug}`}>
-                  <span class="ji-title">{heading}</span>
-                  {hasTitle ? <span class="ji-date">{dateLabel}</span> : null}
-                </a>
-                {text ? <div class="journal-item-text ww-rich"><RichText value={text} /></div> : null}
-                {(photo || point || social || linked || j.youtube_url || extLink) ? (
-                  <div class="journal-item-media">
-                    {photo ? <a class="jm-thumb" href={`/journal/${slug}`}><img src={photo} alt="" loading="lazy" /></a> : null}
-                    {point ? <span class="jm-badge" title="Standort" aria-label="Standort">📍</span> : null}
-                    {social ? <span class="jm-badge jm-social" title={social.platform} aria-label={social.platform} set:html={socialIcon(social.platform)} /> : null}
-                    {linked ? <span class="jm-badge jm-linked">{linked.typeLabel}</span> : null}
-                    {j.youtube_url ? <span class="jm-badge" title="Video" aria-label="Video">▶</span> : null}
-                    {extLink ? <span class="jm-badge" title="Link" aria-label="Link">↗</span> : null}
-                  </div>
-                ) : null}
-              </li>
-            );
-          })}
-        </ol>
-      )}
+      <JournalArchive client:load query={res.query} variables={res.variables} data={res.data} lang="de" prefix="" />
     </div>
   </section>
 </BaseLayout>
