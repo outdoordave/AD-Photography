@@ -12,18 +12,21 @@ import {
 // eine CONNECTION-Query ist, registriert sich pro Eintrag ein Formular -> Tina zeigt links die
 // „Auswahl der aktuellen Journals". BEWUSST OHNE experimental___selectFormByFormId (Connection ->
 // würde undefined posten und die Auswahl löschen; s. GalleryContent-Lehre).
-type Props = { query: string; variables: object; data: any; lang: 'de' | 'en'; prefix?: string };
+type Props = { query: string; variables: object; data: any; lang: 'de' | 'en'; prefix?: string; styleName?: string };
+
+const STYLES = ['stream', 'plain', 'card', 'notes'];
 
 export default function JournalArchive(props: Props) {
   const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
   const lang = props.lang;
   const prefix = props.prefix || '';
+  const style = STYLES.includes(props.styleName || '') ? props.styleName : 'stream';
   const nodes = sortJournalNodes(((data as any).journalConnection?.edges ?? []).map((e: any) => e?.node).filter(Boolean));
 
   if (!nodes.length) return <p className="journal-empty">{lang === 'en' ? 'No entries yet.' : 'Noch keine Einträge.'}</p>;
 
   return (
-    <ol className="journal-list">
+    <ol className={`journal-list journal-style-${style}`}>
       {nodes.map((j: any) => {
         const slug = j._sys.filename;
         const text = journalText(j, lang);

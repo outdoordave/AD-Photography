@@ -1,23 +1,27 @@
 ---
-// Journal archive EN ('/en/journal'). Mirror of the DE archive — list as a useTina island.
+// Journal archive EN ('/en/journal'). Editable header (SettingsHeader) + list island + style.
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SettingsHeader from '../../../components/SettingsHeader.tsx';
 import JournalArchive from '../../../components/JournalArchive.tsx';
+import JournalNewButton from '../../../components/JournalNewButton.astro';
 import { client } from '../../../../tina/__generated__/client';
 import appearance from '../../../data/appearance-settings.json';
+import settings from '../../../data/journal-settings.json';
 import '../../../styles/journal.css';
 
 if ((appearance as any).show_journal !== true) return Astro.redirect('/en/');
 
 const res = await client.queries.journalConnection();
+const setRes = await client.queries.journal_settings({ relativePath: 'journal-settings.json' });
+const s = settings as any;
+const style = s.journal_style || 'stream';
 ---
-<BaseLayout title="Journal — Wide & Wild" lang="en" description="Journal — short notes between the trips by Alexandra & David.">
+<BaseLayout title={`${s.title_en || s.title_de || 'Journal'} — Wide & Wild`} lang="en" description={s.intro_en || 'Journal — short notes between the trips by Alexandra & David.'}>
   <section>
     <div class="wrap journal-archive">
-      <div class="journal-archive-head">
-        <h1>Journal</h1>
-        <p class="journal-archive-sub">Short notes between the big trips.</p>
-      </div>
-      <JournalArchive client:load query={res.query} variables={res.variables} data={res.data} lang="en" prefix="/en" />
+      <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="journal_settings" lang="en" />
+      <JournalNewButton lang="en" />
+      <JournalArchive client:load query={res.query} variables={res.variables} data={res.data} lang="en" prefix="/en" styleName={style} />
     </div>
   </section>
 </BaseLayout>

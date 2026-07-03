@@ -1,26 +1,29 @@
 ---
-// Journal-Archiv DE ('/journal'). Liste als useTina-Insel (bearbeitbar in der CMS-Vorschau:
-// Klick auf einen Eintrag -> dessen Feld; links die Eintrags-Auswahl). Text vollständig inline,
-// Medien nur als kleines Symbol; volle Größe/Interaktivität erst auf der Detailseite.
+// Journal-Archiv DE ('/journal'). Kopf (Kicker/Titel/Intro) editierbar via SettingsHeader;
+// Liste als useTina-Insel (bearbeitbar in der CMS-Vorschau). Listen-Stil aus journal_settings.
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import SettingsHeader from '../../components/SettingsHeader.tsx';
 import JournalArchive from '../../components/JournalArchive.tsx';
+import JournalNewButton from '../../components/JournalNewButton.astro';
 import { client } from '../../../tina/__generated__/client';
 import appearance from '../../data/appearance-settings.json';
+import settings from '../../data/journal-settings.json';
 import '../../styles/journal.css';
 
 // Journal komplett abschaltbar (🎨 Darstellung → „Journal zeigen?"). Aus = auch Direktaufruf sperren.
 if ((appearance as any).show_journal !== true) return Astro.redirect('/');
 
 const res = await client.queries.journalConnection();
+const setRes = await client.queries.journal_settings({ relativePath: 'journal-settings.json' });
+const s = settings as any;
+const style = s.journal_style || 'stream';
 ---
-<BaseLayout title="Journal — Wide & Wild" lang="de" description="Journal — kurze Notizen zwischen den Reisen von Alexandra & David.">
+<BaseLayout title={`${s.title_de || 'Journal'} — Wide & Wild`} lang="de" description={s.intro_de || 'Journal — kurze Notizen zwischen den Reisen von Alexandra & David.'}>
   <section>
     <div class="wrap journal-archive">
-      <div class="journal-archive-head">
-        <h1>Journal</h1>
-        <p class="journal-archive-sub">Kurze Notizen zwischen den großen Reisen.</p>
-      </div>
-      <JournalArchive client:load query={res.query} variables={res.variables} data={res.data} lang="de" prefix="" />
+      <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="journal_settings" lang="de" />
+      <JournalNewButton lang="de" />
+      <JournalArchive client:load query={res.query} variables={res.variables} data={res.data} lang="de" prefix="" styleName={style} />
     </div>
   </section>
 </BaseLayout>

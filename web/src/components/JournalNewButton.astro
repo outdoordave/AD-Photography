@@ -1,0 +1,10 @@
+---
+// „Neuer Beitrag"-Button auf /journal — NUR sichtbar, wenn im Tina-CMS angemeldet
+// (class ww-admin-only + hidden; das Skript in SiteNav blendet ein). Führt zu Tinas
+// Neuanlage-Route der journal-Collection -> neuer Eintrag mit Live-Vorschau, links die
+// Bearbeitungsliste. Besucher sehen den Button nie.
+interface Props { lang: 'de' | 'en' }
+const { lang } = Astro.props;
+const label = lang === 'en' ? '+ New entry' : '+ Neuer Beitrag';
+---
+<a class="ww-admin-only journal-new-btn" hidden href="/admin/index.html#/collections/new/journal">{label}</a>

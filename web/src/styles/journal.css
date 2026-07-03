@@ -69,6 +69,23 @@
   .journal-head h1 { font-size: 32px; }
 }
 
+/* „Neuer Beitrag"-Button (nur sichtbar, wenn im CMS angemeldet — ww-admin-only) */
+.journal-new-btn { display: inline-block; margin: 0 0 22px; padding: 9px 18px; border-radius: var(--radius-pill); background: var(--c-accent); color: #fff; font-weight: var(--fw-bold); font-size: var(--fs-label); letter-spacing: var(--tracking-slight); text-decoration: none; }
+.journal-new-btn:hover { background: var(--c-accent-dk); }
+
+/* ---------- Listen-Stile (umschaltbar über journal_settings.journal_style) ---------- */
+/* stream (Standard) = Haarlinien; das ist bereits die Basis von .journal-item oben. */
+/* Schlicht: ohne Trennlinie, etwas kompakter. */
+.journal-list.journal-style-plain .journal-item { border-bottom: none; padding: 14px 0; }
+/* Karte: jeder Eintrag ein erhabener Block. */
+.journal-list.journal-style-card { display: grid; gap: 16px; }
+.journal-list.journal-style-card .journal-item { border-bottom: none; padding: 20px 22px; background: var(--c-bg-alt); border: 1px solid var(--c-line); border-radius: 12px; box-shadow: 0 12px 26px -18px rgba(46,36,24,0.5); }
+.journal-list.journal-style-card .journal-item:first-child { padding-top: 20px; }
+/* Field-Notes: gestrichelte Trenner + linker Akzentstrich. */
+.journal-list.journal-style-notes { position: relative; padding-left: 18px; }
+.journal-list.journal-style-notes::before { content: ""; position: absolute; top: 6px; bottom: 6px; left: 0; width: 2px; background: rgba(167,103,47,0.4); border-radius: 2px; }
+.journal-list.journal-style-notes .journal-item { border-bottom: 1px dashed rgba(46,36,24,0.24); }
+
 /* ---------- Startseiten-Teaser ---------- */
 .home-journal .home-journal-list { list-style: none; margin: 0 auto; padding: 0; max-width: 680px; }
 .home-journal .hj-item { padding: 16px 0; border-bottom: 1px solid var(--c-line); }
