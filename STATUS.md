@@ -16,7 +16,14 @@
 > **NEU (03.07., `d210c5b`):**
 > • **Hero-Kachel** — Schalter `hero_journal` (Darstellung, getrennt, nur wenn Journal AN) zeigt den
 >   **neuesten** Eintrag als schwebende **Ghost-Kachel** statt der Hero-Tagline (Schalter aus → Tagline
->   unverändert); nur Text + Linien-Glyphen für Anhänge (`src/lib/journalGlyphs.ts`). DE+EN.
+>   unverändert); nur Text + Linien-Glyphen für Anhänge (`src/lib/journalGlyphs.ts`). **Hover-Lift** wie
+>   die Buttons (Animation auf Wrapper `.hero-journal-wrap`, damit Hover-`transform` nicht überschrieben
+>   wird). DE+EN.
+> • **Listen-Stile aufgewertet (`c154613`):** `notes` = echtes **Kraftpapier/Notizbuch** (Fläche `#ede1ca`
+>   + Schatten + Rand-Linie + gestrichelte Zeilen, wie Equipments „notes"); card = erhabene Blöcke.
+> • **Klickbare Symbole (`c154613`, nur live):** Album/Story/Reise → Zielseite, **Pin → OpenFreeMap-Karte
+>   in Lightbox** (MapLibre `React.lazy`), Pfeil/Social/Video → Link. Im CMS-Editor (self≠top) bleiben
+>   Spans mit `data-tina-field` (Klick = zum Feld).
 > • **Archiv nach Alter** — Feld `pin` („oben anheften/nicht archivieren") + Einstellung
 >   `archive_after_months` (Standard 12, 0 = nie); ältere, nicht angepinnte Einträge in aufklappbarem
 >   „Archiv (N)"-Bereich. Logik `partitionJournal` in `src/lib/journal.ts`.

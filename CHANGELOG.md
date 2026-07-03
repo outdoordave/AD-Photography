@@ -17,6 +17,21 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-03 19:00 — Journal: Hero-Kachel-Hover + Notizbuch-Stil + klickbare Symbole
+- **Hero-Kachel hebt an (`c154613`):** Hover-Lift (transform −3px + Schatten) wie die Hero-Buttons.
+  Einblend-Animation auf Wrapper `.hero-journal-wrap` verschoben, damit der `forwards`-Fill das
+  Hover-`transform` nicht überschreibt (gleiches Muster wie `.hero-cta`).
+- **„Notizbuch"-Stil (`c154613`):** `journal_style=notes` ist jetzt echtes **Kraftpapier** (Fläche `#ede1ca`
+  + Schatten + terrakotta Rand-Linie + gestrichelte Zeilen) — dieselbe Papier-Optik wie Equipments
+  „notes". Vorher nur dünne Randlinie auf Seitenhintergrund (wirkte wie die alte Liste → Davids „keine
+  Notizbuchoptik").
+- **Klickbare Listen-Symbole (`c154613`):** live öffnen die Badges ihr Ziel — Album/Story/Reise →
+  Zielseite, **Standort-Pin → OpenFreeMap-Karte in Lightbox** (MapLibre per `React.lazy`, Schließen
+  X/Backdrop/Esc), Pfeil → externer Link, Social → Beitrag, Video → YouTube (neuer Tab). **Im CMS-Editor**
+  (self≠top) bleiben es Spans mit `data-tina-field` (Klick = zum Feld springen).
+- **Lokal geprüft:** Astro-Build grün; Kraftpapier-Stil, alle Badge-Typen (a/button) + Karten-Lightbox
+  (Dresden-Marker, Zoom, Attribution) per Dev-Server verifiziert. **Keine Schema-Änderung → kein Re-Index.**
+
 ## 2026-07-03 18:25 — Journal: Hero-Kachel + Archiv nach Alter + Live-Stil in der Vorschau
 - **Hero-Kachel (`d210c5b`):** neuer Darstellungs-Schalter `hero_journal` („Neuesten Journal-Eintrag im
   Hero zeigen?", getrennt vom Journal-An/Aus, nur aktiv wenn Journal AN). Zeigt den **neuesten** Eintrag als
