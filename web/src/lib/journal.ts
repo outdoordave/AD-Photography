@@ -12,6 +12,7 @@ export interface JournalSocial {
 }
 export interface JournalData {
   date?: string;
+  pin?: boolean;          // oben anheften + nie archivieren
   title_de?: string;
   text_de?: any;          // Rich-Text-AST
   photos?: string[];
@@ -162,4 +163,62 @@ export function sortJournalNodes<T extends { _sys?: { filename?: string }; date?
     const d = dateSortKey(b.date || '') - dateSortKey(a.date || '');
     return d !== 0 ? d : (b._sys?.filename || '').localeCompare(a._sys?.filename || '');
   });
+}
+
+// Ist der Eintrag angepinnt? (bleibt oben, wandert nie ins Archiv)
+export function journalIsPinned(d: { pin?: boolean }): boolean { return d?.pin === true; }
+
+// Datums-Sortierschlüssel (YYYYMMDD) für „vor N Monaten". months<=0 -> nie archivieren.
+function monthsAgoKey(months: number): number {
+  if (!months || months <= 0) return Number.NEGATIVE_INFINITY;
+  const d = new Date();
+  d.setMonth(d.getMonth() - months);
+  return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+}
+
+// Einträge in Haupt-Liste + Archiv aufteilen: angepinnt ODER neuer als die Schwelle -> Haupt;
+// sonst Archiv. Im Hauptbereich stehen angepinnte oben, danach nach Datum absteigend.
+export function partitionJournal<T extends { pin?: boolean; date?: string; _sys?: { filename?: string } }>(
+  nodes: T[], months: number,
+): { main: T[]; archive: T[] } {
+  const cutoff = monthsAgoKey(months);
+  const main: T[] = []; const archive: T[] = [];
+  for (const n of nodes) {
+    if (n.pin === true || dateSortKey(n.date || '') >= cutoff) main.push(n); else archive.push(n);
+  }
+  main.sort((a, b) => {
+    const p = (b.pin === true ? 1 : 0) - (a.pin === true ? 1 : 0);
+    if (p !== 0) return p;
+    const d = dateSortKey(b.date || '') - dateSortKey(a.date || '');
+    return d !== 0 ? d : (b._sys?.filename || '').localeCompare(a._sys?.filename || '');
+  });
+  return { main, archive };
+}
+
+// Rich-Text-AST -> reiner Text (rekursiv), für Hero-Teaser/Kurzvorschau.
+function astToPlain(node: any): string {
+  if (!node) return '';
+  if (typeof node === 'string') return node;
+  if (Array.isArray(node)) return node.map(astToPlain).join('');
+  let s = typeof node.text === 'string' ? node.text : '';
+  if (Array.isArray(node.children)) s += node.children.map(astToPlain).join('');
+  return s;
+}
+export function journalPlainText(d: JournalData, lang: 'de' | 'en', maxLen = 150): string {
+  let s = astToPlain(journalText(d, lang)).replace(/\s+/g, ' ').trim();
+  if (maxLen && s.length > maxLen) s = s.slice(0, maxLen - 1).trimEnd() + '…';
+  return s;
+}
+
+// Welche Anhänge hat der Eintrag? -> Reihenfolge der kleinen Symbol-Glyphen (Hero).
+export type JournalAttachment = 'photo' | 'location' | 'video' | 'social' | 'linked' | 'link';
+export function journalAttachments(d: JournalData): JournalAttachment[] {
+  const out: JournalAttachment[] = [];
+  if (journalFirstPhoto(d)) out.push('photo');
+  if (parseGeoPoint(d.location)) out.push('location');
+  if (d.youtube_url) out.push('video');
+  if (d.social && d.social.url) out.push('social');
+  if (d.linked_content && d.linked_content.__typename) out.push('linked');
+  if (d.link && d.link.url) out.push('link');
+  return out;
 }

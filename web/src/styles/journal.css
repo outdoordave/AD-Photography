@@ -73,6 +73,40 @@
 .journal-new-btn { display: inline-block; margin: 0 0 22px; padding: 9px 18px; border-radius: var(--radius-pill); background: var(--c-accent); color: #fff; font-weight: var(--fw-bold); font-size: var(--fs-label); letter-spacing: var(--tracking-slight); text-decoration: none; }
 .journal-new-btn:hover { background: var(--c-accent-dk); }
 
+/* ---------- Hero-Kachel (neuester Eintrag statt Tagline) ---------- */
+/* Ghost-Optik exakt wie .btn.ghost (Fill 0.32 + Blur), als schwebende Karte. */
+.hero-journal {
+  position: relative; z-index: 2; display: block; text-decoration: none;
+  max-width: 520px; margin: 0 auto; text-align: left;
+  background: rgba(28,24,18,0.32); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  border: 1.5px solid rgba(240,217,191,0.5); border-radius: 16px; padding: 16px 22px 15px;
+  color: #f0d9bf; box-shadow: 0 12px 32px -14px rgba(0,0,0,0.55);
+  opacity: 0; animation: fadeUp 0.9s 0.45s forwards;
+  transition: border-color var(--dur-base) var(--ease), background var(--dur-base) var(--ease);
+}
+.hero-journal:hover { background: rgba(28,24,18,0.5); border-color: #f0d9bf; }
+.hero-journal .hj-kicker { display: flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.85; margin-bottom: 11px; }
+.hero-journal .hj-rule { flex: 1; height: 1px; background: rgba(240,217,191,0.35); }
+.hero-journal .hj-more { opacity: 0.85; white-space: nowrap; }
+.hero-journal .hj-date { font-family: var(--font-display); font-size: 17px; color: #f4e7d4; }
+.hero-journal .hj-title { font-family: var(--font-display); font-size: 19px; line-height: 1.2; color: #f4e7d4; margin-top: 1px; }
+.hero-journal .hj-text { font-size: 14px; line-height: 1.5; color: #f0d9bf; opacity: 0.92; margin-top: 4px; }
+.hero-journal .hj-glyphs { display: flex; align-items: center; gap: 10px; margin-top: 12px; opacity: 0.8; }
+.hero-journal .hj-glyph { display: inline-flex; }
+@media (max-width: 560px) {
+  .hero-journal { max-width: 92vw; padding: 14px 18px; }
+  .hero-journal .hj-text { font-size: 13px; }
+}
+
+/* ---------- Archiv-Aufklapper (ältere Einträge) ---------- */
+.journal-arch-fold { margin-top: 10px; }
+.journal-arch-fold > summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; padding: 12px 2px; color: var(--c-ink-soft); font-size: var(--fs-label); font-weight: var(--fw-bold); text-transform: uppercase; letter-spacing: var(--tracking-wide); }
+.journal-arch-fold > summary::-webkit-details-marker { display: none; }
+.journal-arch-fold > summary::before { content: "▸"; display: inline-block; transition: transform var(--dur-base) var(--ease); color: var(--c-accent); }
+.journal-arch-fold[open] > summary::before { transform: rotate(90deg); }
+.journal-arch-fold > summary:hover { color: var(--c-accent); }
+.journal-arch-fold .journal-list { margin-top: 6px; }
+
 /* ---------- Listen-Stile (umschaltbar über journal_settings.journal_style) ---------- */
 /* stream (Standard) = Haarlinien; das ist bereits die Basis von .journal-item oben. */
 /* Schlicht: ohne Trennlinie, etwas kompakter. */

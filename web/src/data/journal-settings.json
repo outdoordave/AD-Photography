@@ -6,5 +6,6 @@
   "title_en": "Journal",
   "intro_de": "Kurze Notizen zwischen den großen Reisen.",
   "intro_en": "Short notes between the big trips.",
-  "journal_style": "notes"
+  "journal_style": "notes",
+  "archive_after_months": 12
 }

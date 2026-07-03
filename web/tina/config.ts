@@ -458,6 +458,7 @@ export default defineConfig({
         fields: [
           { type: 'string', name: 'ww_here', label: '📔 Journal – Eintrag', ui: { component: SectionBanner } },
           { type: 'string', name: 'date', label: 'Datum (YYYY-MM-DD)', required: true, description: 'Bestimmt die Sortierung (neueste zuerst) und die sichtbare Überschrift, wenn kein Titel gesetzt ist.' },
+          { type: 'boolean', name: 'pin', label: 'Oben anheften (nicht archivieren)', description: 'Bleibt oben im Journal und wandert nie ins Archiv — egal wie alt.' },
           { type: 'string', name: 'title_de', label: 'Titel (optional)', description: 'Wenn leer, erscheint das Datum als Überschrift.' },
           // Kurzer Tagebuch-Text — rich-text mit Mini-Leiste (fett/kursiv/Link), wie Stories „summary".
           { type: 'rich-text', name: 'text_de', label: 'Text', parser: { type: 'markdown', skipEscaping: 'html' }, overrides: { toolbar: ['bold', 'italic', 'link'] } } as any,
@@ -535,6 +536,10 @@ export default defineConfig({
               { value: 'card', label: 'Karte' },
               { value: 'notes', label: 'Field-Notes' },
             ],
+          },
+          {
+            type: 'number', name: 'archive_after_months', label: 'Ältere Einträge archivieren nach … Monaten',
+            description: '0 = nie archivieren. Einträge, die älter sind, rutschen in einen aufklappbaren „Archiv"-Bereich unten. Angepinnte Einträge bleiben immer oben.',
           },
         ],
       },
@@ -1124,6 +1129,7 @@ export default defineConfig({
           { type: 'boolean', name: 'show_discover', label: '„Entdecken"-Bereich auf der Startseite zeigen?' },
           { type: 'boolean', name: 'show_stories', label: 'Stories zeigen? (Nav-Link, Footer, Startseiten-Teaser)' },
           { type: 'boolean', name: 'show_journal', label: 'Journal zeigen? (Nav-Link DE+EN, Footer, Startseiten-Teaser; aus = komplettes Journal verborgen inkl. Direktaufruf)' },
+          { type: 'boolean', name: 'hero_journal', label: 'Neuesten Journal-Eintrag im Hero zeigen? (schwebende Kachel statt des Hero-Textes; nur wenn Journal an)' },
           { type: 'boolean', name: 'show_contact', label: 'Kontakt zeigen? (Nav-Link + Footer-Link)' },
           { type: 'boolean', name: 'show_admin_bar', label: 'Admin-Leiste auf der Website zeigen? (nur sichtbar, wenn im CMS angemeldet)' },
           {

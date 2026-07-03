@@ -13,6 +13,7 @@ import HomeLatest from '../../components/HomeLatest.astro';
 import HomeDiscover from '../../components/HomeDiscover.tsx';
 import { buildMoments, buildLatest, buildDiscover } from '../../lib/home';
 import { normalizePath } from '../../lib/stories';
+import { sortJournalNodes } from '../../lib/journal';
 import home from '../../data/home-settings.json';
 import appearance from '../../data/appearance-settings.json';
 import highlights from '../../data/highlights.json';
@@ -48,9 +49,18 @@ const heroFirst = heroData.mode === 'image' ? heroData.image
     ? (typeof heroData.slideshow[0] === 'string' ? heroData.slideshow[0] : heroData.slideshow[0]?.img)
     : '';
 const heroPreload = heroFirst ? normalizePath(heroFirst) : undefined;
+
+// Neuester Journal-Eintrag für die Hero-Kachel (nur wenn Journal + Hero-Schalter an).
+const heroJournal = showJournal && ap.hero_journal === true;
+let journalLatest: any = null;
+if (heroJournal) {
+  const jc = await client.queries.journalConnection();
+  const jn = sortJournalNodes(((jc.data.journalConnection?.edges ?? []).map((e: any) => e?.node).filter(Boolean)) as any[]);
+  journalLatest = jn[0] ?? null;
+}
 ---
 <BaseLayout title="Wide & Wild — Travel & Outdoor Photography" lang="en" preloadImage={heroPreload} description="Travel & outdoor photography by Alexandra & David — road trips through wild landscapes, with maps, photo albums and stories from the road.">
-  <HomeHeroLive client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="en" logo={ap.logo} showHeroLogo={ap.show_hero_logo !== false} showStories={showStories} logoQuery={apRes.query} logoVariables={apRes.variables} logoData={apRes.data} />
+  <HomeHeroLive client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="en" logo={ap.logo} showHeroLogo={ap.show_hero_logo !== false} showStories={showStories} logoQuery={apRes.query} logoVariables={apRes.variables} logoData={apRes.data} heroJournal={heroJournal} journalLatest={journalLatest} />
 
   <HomeIntroLive client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="en" />
 

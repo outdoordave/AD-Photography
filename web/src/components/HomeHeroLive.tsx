@@ -4,6 +4,8 @@ import { selectActiveFormId } from '../lib/tinaForm';
 import { bi, type Lang } from '../lib/albums';
 import { normalizePath } from '../lib/stories';
 import { socialIcon, socialUrl } from '../lib/socialIcons';
+import { formatFullDate, journalHeading, journalHasTitle, journalPlainText, journalAttachments } from '../lib/journal';
+import { glyphSvg, glyphLabel } from '../lib/journalGlyphs';
 import LogoLink from './LogoLink';
 import PaperRip from './PaperRip';
 
@@ -16,6 +18,8 @@ type Props = {
   query: string; variables: object; data: any; lang: Lang;
   logo?: string; showHeroLogo?: boolean; showStories?: boolean;
   logoQuery?: string; logoVariables?: object; logoData?: any;
+  // Neuester Journal-Eintrag statt der Hero-Tagline (nur wenn Journal + Schalter an).
+  heroJournal?: boolean; journalLatest?: any;
 };
 
 export default function HomeHeroLive(props: Props) {
@@ -56,6 +60,12 @@ export default function HomeHeroLive(props: Props) {
   const scrollStyle = pol.scroll_style || (pol.scroll_indicator === false ? 'arrow' : 'line');
   const heroClass = ['hero', hasMedia ? 'has-media' : '', pKen ? 'polish-kenburns' : '', pScrim ? 'polish-scrim' : '', pBig ? 'polish-bigtag' : '']
     .filter(Boolean).join(' ');
+
+  // Hero-Journal-Kachel (statt Tagline): neuester Eintrag, nur wenn Schalter an + Eintrag vorhanden.
+  const jl = props.journalLatest;
+  const jHero = props.heroJournal === true && !!jl && !!jl.date;
+  const jSnippet = jHero ? journalPlainText(jl, lang, 150) : '';
+  const jGlyphs = jHero ? journalAttachments(jl) : [];
 
   // Social-Links (Hero-Platzierung, wie HomeHero: social_show.hero === true).
   const socialShow = st.social_show || {};
@@ -100,7 +110,27 @@ export default function HomeHeroLive(props: Props) {
         ) : (logoSrc ? <div className="hero-logo"><img src={logoSrc} alt="Wide & Wild" /></div> : null)
       ) : null}
 
-      <h1 className="hero-tag" data-tina-field={tf(hero, 'headline')}>{headline}</h1>
+      {jHero ? (
+        <a className="hero-journal" href={`${prefix}/journal`}>
+          <div className="hj-kicker">
+            <span>{isEn ? 'From the journal' : 'Aus dem Journal'}</span>
+            <span className="hj-rule" aria-hidden="true"></span>
+            <span className="hj-more">{isEn ? 'Latest' : 'Neu'} →</span>
+          </div>
+          <div className="hj-date">{formatFullDate(jl.date, lang)}</div>
+          {journalHasTitle(jl, lang) ? <div className="hj-title">{journalHeading(jl, lang)}</div> : null}
+          {jSnippet ? <div className="hj-text">{jSnippet}</div> : null}
+          {jGlyphs.length > 0 ? (
+            <div className="hj-glyphs" aria-hidden="true">
+              {jGlyphs.map((k) => (
+                <span className="hj-glyph" key={k} title={glyphLabel(k, lang)} dangerouslySetInnerHTML={{ __html: glyphSvg(k) }} />
+              ))}
+            </div>
+          ) : null}
+        </a>
+      ) : (
+        <h1 className="hero-tag" data-tina-field={tf(hero, 'headline')}>{headline}</h1>
+      )}
 
       <div className="hero-cta">
         <a className="btn" href={`${prefix}/portfolio`} data-tina-field={tf(hero, 'cta_portfolio')}>{ctaP}</a>
