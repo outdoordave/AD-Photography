@@ -17,6 +17,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-02 — Journal + CMS-Feinschliff (Klartext-Referenz, editierbares Archiv, Router-Fix)
+- **Beispiel-Einträge (`ee85747`)** + Journal im CMS nach „Stories – Einstellungen" einsortiert +
+  `show_journal` an (`39b8761`).
+- **Verknüpfungs-Auswahl als Klartext (`2b69495`):** `optionComponent` am `linked_content`-Feld → Liste zeigt
+  Album-Name / Story- bzw. Reise-Titel statt `.json`-Pfad. UI-only, kein Re-Index.
+- **Archivseite editierbar (`565bd28`):** `/journal` (+ `/en`) rendert den Stream jetzt als `useTina`-Insel
+  `JournalArchive` (data-tina-field pro Eintrag) → in der Vorschau ist die echte Besucherseite bearbeitbar,
+  Tina zeigt links die Eintrags-Liste (Connection-Query, **ohne** selectFormByFormId — Lehre aus GalleryContent).
+- **CMS-Router-Fix (`77ffe04`):** `router: () => '/'` an **Darstellung** + **Highlights** entfernt — führte beim
+  Anklicken immer zur Startseite. Jetzt öffnet der Klick direkt das Formular (wie früher). Alle übrigen 14
+  Collection-Router geprüft: korrekt verlinkt. UI-only, kein Re-Index.
+
 ## 2026-07-02 — Journal-Bereich (Tagebuch) — neues Feature, komplett abschaltbar
 - **Neu:** Ein „Journal"-Reiter — kurze, datierte Einträge (neueste zuerst) zwischen Reisen/Stories.
   Kein Zwang zu Titel oder Bild: Datum + Text reichen. Reiner Zusatz, nichts Bestehendes verändert
