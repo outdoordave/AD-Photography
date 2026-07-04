@@ -26,6 +26,10 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   Reverse-Geocoding (Build-Fetch) oder ein manuelles Kurz-Label (offene Entscheidung, s. STATUS).
 - Chips einzeilig mit Ellipsis; live wie im Editor (dort weiter `data-tina-field`). Kein Schema/Re-Index.
 - Demonstriert mit Beispiel-Einträgen (YouTube-Homepage, Instagram `david.bastisch`) — nur temporär.
+- **Ortsname gelöst (`7a88ec9`):** neues optionales Feld **„Ortsname (kurz)" (`place`)** — gesetzt zeigt das
+  Standort-Symbol den Namen (z. B. „Dresden"), leer „Auf der Karte"; Detailseite zeigt ihn über der Karte.
+  Davids Wahl: **Link bleibt Kurzlink** (keine OG-Vorschau). ⚠️ `place` ist Schema → **Re-Index**, bündelt
+  mit dem ausstehenden (pin/archive_after_months/hero_journal), kein zusätzlicher.
 
 ## 2026-07-03 19:30 — Journal: Einzel-Kärtchen + ganzes Kärtchen klickbar + Foto-Lightbox + Karten-Rahmen
 - **Einzel-Kärtchen (`fe331f7`):** `journal_style=notes` rendert jetzt JEDEN Eintrag als eigenes
