@@ -2,7 +2,9 @@ import React from 'react';
 import { useTina, tinaField } from 'tinacms/dist/react';
 import { selectActiveFormId } from '../lib/tinaForm';
 import RichText from './RichText';
+import Lightbox, { type LbPhoto } from './Lightbox';
 import { socialIcon } from '../lib/socialIcons';
+import { normalizePath } from '../lib/stories';
 import {
   sortJournalNodes, partitionJournal, journalHeading, journalHasTitle, formatFullDate, journalText,
   journalFirstPhoto, parseGeoPoint, resolveLinkedContent, resolveSocial, journalLink,
@@ -51,6 +53,19 @@ export default function JournalArchive(props: Props) {
     return () => window.removeEventListener('keydown', onKey);
   }, [mapPoint]);
 
+  // Foto-Lightbox (Mini-Bild anklicken) — gleiche Lightbox wie auf der Detailseite.
+  const [photoLb, setPhotoLb] = React.useState<{ photos: LbPhoto[]; name: string } | null>(null);
+
+  // Ganzes Kärtchen anklickbar (nur live): navigiert zum Eintrag, außer man klickt einen echten
+  // Link/Button (Symbole, Text-Links) oder markiert Text.
+  const cardClick = (href: string) => (e: React.MouseEvent) => {
+    if (isEditor) return;
+    const t = e.target as HTMLElement;
+    if (t.closest('a, button')) return;
+    if (window.getSelection && String(window.getSelection())) return;
+    window.location.href = href;
+  };
+
   const s = (sdata as any)?.journal_settings ?? {};
   const style = STYLES.includes(s.journal_style) ? s.journal_style : 'stream';
   const months = Number(s.archive_after_months) || 0;
@@ -70,16 +85,23 @@ export default function JournalArchive(props: Props) {
     const extLink = journalLink(j, lang);
     const fTitle = isEn ? 'title_en' : 'title_de';
     const fText = isEn ? 'text_en' : 'text_de';
+    const detail = `${prefix}/journal/${slug}`;
+    const heading = journalHeading(j, lang);
+    const allPhotos = (Array.isArray(j.photos) ? j.photos.filter(Boolean) : []) as string[];
+    const openPhotos = () => setPhotoLb({ photos: allPhotos.map((x) => ({ photo: normalizePath(x) })), name: heading });
     return (
-      <li className="journal-item" key={slug}>
-        <a className="journal-item-head" href={`${prefix}/journal/${slug}`}>
-          <span className="ji-title" data-tina-field={tinaField(j, fTitle)}>{journalHeading(j, lang)}</span>
+      <li className={`journal-item${isEditor ? '' : ' is-clickable'}`} key={slug} onClick={cardClick(detail)}>
+        <a className="journal-item-head" href={detail}>
+          <span className="ji-title" data-tina-field={tinaField(j, fTitle)}>{heading}</span>
           {journalHasTitle(j, lang) ? <span className="ji-date" data-tina-field={tinaField(j, 'date')}>{formatFullDate(j.date || '', lang)}</span> : null}
         </a>
         {text ? <div className="journal-item-text ww-rich" data-tina-field={tinaField(j, fText)}><RichText value={text} /></div> : null}
         {(photo || point || social || linked || j.youtube_url || extLink) ? (
           <div className="journal-item-media">
-            {photo ? <a className="jm-thumb" href={`${prefix}/journal/${slug}`} data-tina-field={tinaField(j, 'photos')}><img src={photo} alt="" loading="lazy" /></a> : null}
+            {photo ? (isEditor
+              ? <a className="jm-thumb" href={detail} data-tina-field={tinaField(j, 'photos')}><img src={photo} alt="" loading="lazy" /></a>
+              : <button type="button" className="jm-thumb" onClick={openPhotos} aria-label={isEn ? 'Enlarge photo' : 'Foto vergrößern'}><img src={photo} alt="" loading="lazy" /></button>
+            ) : null}
 
             {point ? (isEditor
               ? <span className="jm-badge" title={isEn ? 'Location' : 'Standort'} aria-label={isEn ? 'Location' : 'Standort'} data-tina-field={tinaField(j, 'location')}>📍</span>
@@ -144,6 +166,10 @@ export default function JournalArchive(props: Props) {
             </React.Suspense>
           </div>
         </div>
+      ) : null}
+
+      {photoLb && photoLb.photos.length ? (
+        <Lightbox photos={photoLb.photos} startIndex={0} albumName={photoLb.name} onClose={() => setPhotoLb(null)} />
       ) : null}
     </>
   );

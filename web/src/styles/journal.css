@@ -19,7 +19,8 @@
 
 /* Kleine Medien-Hinweise in der Liste (volle Größe erst im Detail) */
 .journal-item-media { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-.jm-thumb { display: block; width: 52px; height: 52px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--c-line); }
+.jm-thumb { display: block; width: 52px; height: 52px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--c-line); padding: 0; background: none; cursor: pointer; }
+.jm-thumb:hover { border-color: var(--c-accent); }
 .jm-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .jm-badge { display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 9px; border-radius: 999px; border: 1px solid var(--c-line); background: var(--c-bg-alt); color: var(--c-ink-soft); font-size: 12px; font-weight: var(--fw-bold); }
 .jm-badge.jm-linked { color: var(--c-accent); }
@@ -117,19 +118,27 @@
 .journal-list.journal-style-card { display: grid; gap: 16px; }
 .journal-list.journal-style-card .journal-item { border-bottom: none; padding: 20px 22px; background: var(--c-bg-alt); border: 1px solid var(--c-line); border-radius: 12px; box-shadow: 0 12px 26px -18px rgba(46,36,24,0.5); }
 .journal-list.journal-style-card .journal-item:first-child { padding-top: 20px; }
-/* Field-Notes / Notizbuch: die ganze Liste als Kraftpapier-Bogen mit Rand-Linie
-   (Papierfläche + Schatten wie Equipments „notes", gestrichelte Zeilen dazwischen). */
-.journal-list.journal-style-notes {
-  position: relative; background: #ede1ca; border-radius: 3px;
-  padding: 24px 30px 10px 48px;
-  box-shadow: 0 1px 2px rgba(46,36,24,0.15), 0 16px 34px -16px rgba(46,36,24,0.5);
+/* Field-Notes / Notizbuch: JEDER Eintrag ein eigenes Kraftpapier-Kärtchen (Papierfläche +
+   Schatten + terrakotta Rand-Linie wie Equipments „notes") — kein großer Block. */
+.journal-list.journal-style-notes { display: grid; gap: 18px; }
+.journal-list.journal-style-notes .journal-item {
+  position: relative; background: #ede1ca; border-radius: 3px; border-bottom: none;
+  padding: 20px 26px 16px 46px;
+  box-shadow: 0 1px 2px rgba(46,36,24,0.15), 0 14px 30px -18px rgba(46,36,24,0.5);
 }
-.journal-list.journal-style-notes::before {
-  content: ""; position: absolute; top: 16px; bottom: 16px; left: 30px; width: 1.5px; background: rgba(167,103,47,0.5);
+.journal-list.journal-style-notes .journal-item:first-child { padding-top: 20px; }
+.journal-list.journal-style-notes .journal-item::before {
+  content: ""; position: absolute; top: 14px; bottom: 14px; left: 28px; width: 1.5px; background: rgba(167,103,47,0.5);
 }
-.journal-list.journal-style-notes .journal-item { border-bottom: 1px dashed rgba(46,36,24,0.22); padding: 18px 0; }
-.journal-list.journal-style-notes .journal-item:first-child { padding-top: 0; }
-.journal-list.journal-style-notes .journal-item:last-child { border-bottom: none; }
+
+/* Ganzes Kärtchen anklickbar (nur live): Cursor + dezentes Anheben; echte Links/Buttons darin
+   (Symbole, Text-Links) behalten ihre eigene Aktion (JS prüft closest('a,button')). */
+.journal-item.is-clickable { cursor: pointer; }
+.journal-item.is-clickable:hover .ji-title { color: var(--c-accent); }
+.journal-list.journal-style-card .journal-item.is-clickable,
+.journal-list.journal-style-notes .journal-item.is-clickable { transition: transform .15s ease, box-shadow .15s ease; }
+.journal-list.journal-style-card .journal-item.is-clickable:hover { transform: translateY(-2px); box-shadow: 0 18px 34px -16px rgba(46,36,24,0.55); }
+.journal-list.journal-style-notes .journal-item.is-clickable:hover { transform: translateY(-2px); box-shadow: 0 1px 2px rgba(46,36,24,0.15), 0 20px 36px -16px rgba(46,36,24,0.55); }
 
 /* Klickbare Listen-Symbole (nur live): Album/Story/Reise, Standort→Karte, Link, Social, Video. */
 a.jm-badge, button.jm-badge { cursor: pointer; text-decoration: none; font: inherit; transition: border-color .15s ease, color .15s ease, transform .15s ease; }
@@ -138,8 +147,8 @@ button.jm-badge.jm-linked, a.jm-badge.jm-linked { color: var(--c-accent); }
 
 /* Standort-Karte als Lightbox (OpenFreeMap) */
 .journal-map-lb { position: fixed; inset: 0; z-index: 4000; display: flex; align-items: center; justify-content: center; background: rgba(20,16,10,0.72); padding: 24px; }
-.journal-map-lb .jmlb-inner { position: relative; width: min(920px, 96vw); height: min(70vh, 620px); background: var(--c-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 30px 80px -20px rgba(0,0,0,0.6); }
-.journal-map-lb .jmlb-inner .ww-journal-map { width: 100%; height: 100%; border: none; border-radius: 0; }
+.journal-map-lb .jmlb-inner { position: relative; width: min(920px, 96vw); height: min(70vh, 620px); background: var(--c-bg); border: 1px solid var(--c-line); border-radius: 14px; padding: 6px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 30px 80px -20px rgba(0,0,0,0.6); }
+.journal-map-lb .jmlb-inner .ww-journal-map { width: 100%; height: 100%; border: none; border-radius: 9px; overflow: hidden; }
 .journal-map-lb .jmlb-close { position: absolute; top: 10px; left: 10px; z-index: 5; width: 38px; height: 38px; border-radius: 999px; border: none; background: rgba(28,24,18,0.6); color: #fff; font-size: 20px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .journal-map-lb .jmlb-close:hover { background: rgba(28,24,18,0.85); }
 
