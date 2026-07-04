@@ -77,12 +77,28 @@ export function journalText(d: JournalData, lang: 'de' | 'en'): any {
   const en = hasEN(d) && lang === 'en';
   return (en ? (d.text_en || d.text_de) : d.text_de) || null;
 }
-// Externer Link (Label sprachabhängig).
+// Kurz-Label aus einer URL (wenn der Nutzer keinen eigenen Link-Text gesetzt hat):
+// bekannte Plattformen als „@handle · Plattform", sonst die Domain ohne „www.".
+export function shortUrlLabel(url: string): string {
+  try {
+    const u = new URL(url);
+    const host = u.hostname.replace(/^www\./, '');
+    const seg = u.pathname.split('/').filter(Boolean)[0] || '';
+    if (/(^|\.)instagram\.com$/.test(host)) return seg ? `@${seg} · Instagram` : 'Instagram';
+    if (/(^|\.)tiktok\.com$/.test(host)) return seg ? `${seg.startsWith('@') ? seg : '@' + seg} · TikTok` : 'TikTok';
+    if (/(^|\.)(youtube\.com|youtu\.be)$/.test(host)) return 'YouTube';
+    if (/(^|\.)(twitter\.com|x\.com)$/.test(host)) return seg ? `@${seg} · X` : 'X';
+    if (/(^|\.)facebook\.com$/.test(host)) return seg ? `${seg} · Facebook` : 'Facebook';
+    return host;
+  } catch (e) { return url; }
+}
+
+// Externer Link (Label sprachabhängig). Ohne eigenen Link-Text -> lesbarer Kurzlink (shortUrlLabel).
 export function journalLink(d: JournalData, lang: 'de' | 'en'): { label: string; url: string } | null {
   const l = d.link;
   if (!l || !l.url) return null;
   const en = hasEN(d) && lang === 'en';
-  return { label: pickStr(l.label_de, l.label_en, en) || l.url, url: l.url };
+  return { label: pickStr(l.label_de, l.label_en, en) || shortUrlLabel(l.url), url: l.url };
 }
 
 export interface LinkedCard { kind: 'album' | 'story' | 'trip'; typeLabel: string; title: string; cover: string; href: string }

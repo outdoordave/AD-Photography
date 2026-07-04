@@ -104,8 +104,8 @@ export default function JournalArchive(props: Props) {
             ) : null}
 
             {point ? (isEditor
-              ? <span className="jm-badge" title={isEn ? 'Location' : 'Standort'} aria-label={isEn ? 'Location' : 'Standort'} data-tina-field={tinaField(j, 'location')}>📍</span>
-              : <button type="button" className="jm-badge" title={isEn ? 'Open map' : 'Karte öffnen'} aria-label={isEn ? 'Open map' : 'Karte öffnen'} onClick={() => setMapPoint(point)}>📍</button>
+              ? <span className="jm-badge" title={isEn ? 'Location' : 'Standort'} data-tina-field={tinaField(j, 'location')}>📍<span className="jm-txt">{isEn ? 'On the map' : 'Auf der Karte'}</span></span>
+              : <button type="button" className="jm-badge" title={isEn ? 'Open map' : 'Karte öffnen'} onClick={() => setMapPoint(point)}>📍<span className="jm-txt">{isEn ? 'On the map' : 'Auf der Karte'}</span></button>
             ) : null}
 
             {social ? (isEditor
@@ -124,8 +124,8 @@ export default function JournalArchive(props: Props) {
             ) : null}
 
             {extLink ? (isEditor
-              ? <span className="jm-badge" title="Link" aria-label="Link" data-tina-field={tinaField(j, 'link')}>↗</span>
-              : <a className="jm-badge" href={extLink.url} target="_blank" rel="noopener" title={extLink.label || 'Link'} aria-label="Link">↗</a>
+              ? <span className="jm-badge" title={extLink.label || 'Link'} data-tina-field={tinaField(j, 'link')}>↗<span className="jm-txt">{extLink.label}</span></span>
+              : <a className="jm-badge" href={extLink.url} target="_blank" rel="noopener" title={extLink.url}>↗<span className="jm-txt">{extLink.label}</span></a>
             ) : null}
           </div>
         ) : null}
