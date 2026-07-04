@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-04 — Journal: Kurz-Textvorschau an Link- und Standort-Symbol
+- **Link-Vorschau (`b63d3b0`):** das Link-Symbol in der Liste zeigt jetzt einen Kurztext — eigener
+  Link-Text falls gesetzt, sonst ein lesbarer Kurzlink aus der URL (`shortUrlLabel` in `journal.ts`):
+  Instagram → „@handle · Instagram", TikTok/X analog, YouTube → „YouTube", sonst Domain ohne `www.`.
+- **Standort-Vorschau (`b63d3b0`):** das Pin-Symbol zeigt „Auf der Karte" (öffnet weiter die Karten-Lightbox).
+  ⚠️ Das Standort-Feld speichert **nur Koordinaten, keinen Ortsnamen** — echter Ortsname bräuchte
+  Reverse-Geocoding (Build-Fetch) oder ein manuelles Kurz-Label (offene Entscheidung, s. STATUS).
+- Chips einzeilig mit Ellipsis; live wie im Editor (dort weiter `data-tina-field`). Kein Schema/Re-Index.
+- Demonstriert mit Beispiel-Einträgen (YouTube-Homepage, Instagram `david.bastisch`) — nur temporär.
+
 ## 2026-07-03 19:30 — Journal: Einzel-Kärtchen + ganzes Kärtchen klickbar + Foto-Lightbox + Karten-Rahmen
 - **Einzel-Kärtchen (`fe331f7`):** `journal_style=notes` rendert jetzt JEDEN Eintrag als eigenes
   Kraftpapier-Kärtchen (Fläche + Schatten + Rand-Linie, mit Abstand) statt eines großen Blocks.

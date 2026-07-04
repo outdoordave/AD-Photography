@@ -28,6 +28,11 @@
 >   OpenFreeMap-Karte in Lightbox** (MapLibre `React.lazy`, dezenter Rahmen), **Mini-Bild → Foto-Lightbox**
 >   (dieselbe wie im Detail), Pfeil/Social/Video → Link. Im CMS-Editor (self≠top) bleiben Spans mit
 >   `data-tina-field` (Klick = zum Feld).
+> • **Kurz-Textvorschau (`b63d3b0`):** Link-Symbol zeigt Kurzlink (`shortUrlLabel`: „@handle · Instagram",
+>   „YouTube", sonst Domain) bzw. eigenen Link-Text; Pin-Symbol zeigt „Auf der Karte". ⚠️ **Offen:**
+>   echter **Ortsname** braucht Reverse-Geocoding (Build-Fetch) ODER ein manuelles Kurz-Label — Feld
+>   speichert nur Koordinaten. Ebenso offen: **reiche Link-Vorschau** (Seitentitel via OG-Fetch) statt
+>   Kurzlink. Beides mit David abzustimmen.
 > • **Archiv nach Alter** — Feld `pin` („oben anheften/nicht archivieren") + Einstellung
 >   `archive_after_months` (Standard 12, 0 = nie); ältere, nicht angepinnte Einträge in aufklappbarem
 >   „Archiv (N)"-Bereich. Logik `partitionJournal` in `src/lib/journal.ts`.
