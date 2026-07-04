@@ -17,6 +17,19 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-03 19:30 — Journal: Einzel-Kärtchen + ganzes Kärtchen klickbar + Foto-Lightbox + Karten-Rahmen
+- **Einzel-Kärtchen (`fe331f7`):** `journal_style=notes` rendert jetzt JEDEN Eintrag als eigenes
+  Kraftpapier-Kärtchen (Fläche + Schatten + Rand-Linie, mit Abstand) statt eines großen Blocks.
+- **Ganzes Kärtchen klickbar (`fe331f7`, nur live):** Klick irgendwo aufs Kärtchen öffnet den Eintrag —
+  außer man klickt ein echtes Symbol/Link (`closest('a,button')`) oder markiert Text; Cursor + dezentes
+  Anheben als Signal. Im CMS-Editor unverändert (kein Karten-Klick; Feld-Sprung bleibt).
+- **Foto-Lightbox (`fe331f7`):** Klick aufs Mini-Bild öffnet die Foto-Lightbox (dieselbe wie im Detail —
+  Filmstreifen/Zähler/Schließen). Live → Button; im Editor → Link mit `data-tina-field`.
+- **Karten-Rahmen (`fe331f7`):** die Standort-Lightbox bekommt einen dezenten Rahmen (cremefarbene
+  Fassung 6px + Rand + abgerundete Ecken um die Karte).
+- **Lokal geprüft:** Astro-Build grün; Einzel-Kärtchen, 4× `is-clickable`, Foto-Lightbox (Filmstreifen),
+  Karten-Rahmen per Dev-Server verifiziert. **Keine Schema-Änderung → kein Re-Index.**
+
 ## 2026-07-03 19:00 — Journal: Hero-Kachel-Hover + Notizbuch-Stil + klickbare Symbole
 - **Hero-Kachel hebt an (`c154613`):** Hover-Lift (transform −3px + Schatten) wie die Hero-Buttons.
   Einblend-Animation auf Wrapper `.hero-journal-wrap` verschoben, damit der `forwards`-Fill das
