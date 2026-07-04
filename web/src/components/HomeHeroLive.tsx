@@ -66,6 +66,10 @@ export default function HomeHeroLive(props: Props) {
   const jHero = props.heroJournal === true && !!jl && !!jl.date;
   const jSnippet = jHero ? journalPlainText(jl, lang, 150) : '';
   const jGlyphs = jHero ? journalAttachments(jl) : [];
+  // Kachel führt direkt zum neuesten Eintrag (dort sind Foto-Lightbox/Karte/Link nutzbar);
+  // Fallback auf die Übersicht, falls kein Slug vorliegt.
+  const jSlug = jHero && jl._sys ? jl._sys.filename : '';
+  const jHref = jSlug ? `${prefix}/journal/${jSlug}` : `${prefix}/journal`;
 
   // Social-Links (Hero-Platzierung, wie HomeHero: social_show.hero === true).
   const socialShow = st.social_show || {};
@@ -112,7 +116,7 @@ export default function HomeHeroLive(props: Props) {
 
       {jHero ? (
         <div className="hero-journal-wrap">
-          <a className="hero-journal" href={`${prefix}/journal`}>
+          <a className="hero-journal" href={jHref}>
             <div className="hj-kicker">
               <span>{isEn ? 'From the journal' : 'Aus dem Journal'}</span>
               <span className="hj-rule" aria-hidden="true"></span>
