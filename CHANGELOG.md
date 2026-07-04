@@ -17,6 +17,13 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-04 — Journal: Hero-Kachel verlinkt direkt auf den neuesten Eintrag
+- **Hero-Klickziel (`0b619b0`):** die Hero-Journal-Kachel führt jetzt auf den konkreten Beitrag
+  (`/journal/<slug>`) statt auf die Übersicht — dort sind Foto-Lightbox, Karte und Link voll nutzbar.
+  Fallback `/journal`, falls kein Slug. Antwort auf Davids Frage: Symbole auf dem Hero selbst bleiben
+  reine Hinweise (keine einzelnen Lightboxen dort — bewusst, gegen Bundle-Ballast/Mini-Tap-Ziele).
+  Kein Schema, kein Re-Index.
+
 ## 2026-07-04 — Journal: Kurz-Textvorschau an Link- und Standort-Symbol
 - **Link-Vorschau (`b63d3b0`):** das Link-Symbol in der Liste zeigt jetzt einen Kurztext — eigener
   Link-Text falls gesetzt, sonst ein lesbarer Kurzlink aus der URL (`shortUrlLabel` in `journal.ts`):

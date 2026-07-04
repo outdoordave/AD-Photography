@@ -18,7 +18,8 @@
 >   **neuesten** Eintrag als schwebende **Ghost-Kachel** statt der Hero-Tagline (Schalter aus → Tagline
 >   unverändert); nur Text + Linien-Glyphen für Anhänge (`src/lib/journalGlyphs.ts`). **Hover-Lift** wie
 >   die Buttons (Animation auf Wrapper `.hero-journal-wrap`, damit Hover-`transform` nicht überschrieben
->   wird). DE+EN.
+>   wird). **Klick führt direkt zum Eintrag** (`/journal/<slug>`, `0b619b0`) — Symbole dort sind reine
+>   Hinweise (keine einzelnen Lightboxen auf dem Hero, bewusst). DE+EN.
 > • **Listen-Stile aufgewertet (`c154613`,`fe331f7`):** `notes` = **Kraftpapier/Notizbuch**, dabei ist
 >   JEDER Eintrag ein **eigenes Kärtchen** (Fläche `#ede1ca` + Schatten + Rand-Linie, mit Abstand — kein
 >   großer Block); card = erhabene Blöcke.
