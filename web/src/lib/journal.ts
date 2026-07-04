@@ -17,6 +17,7 @@ export interface JournalData {
   text_de?: any;          // Rich-Text-AST
   photos?: string[];
   location?: string;      // GeoJSON-Point-String {"type":"Point","coordinates":[lon,lat]}
+  place?: string;         // optionaler Kurz-Ortsname (Text neben dem Standort-Symbol)
   youtube_url?: string;
   link?: JournalLink | null;
   linked_content?: any;   // expandierte Referenz (Alben|Story|Reisen) inkl. _sys

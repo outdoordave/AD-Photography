@@ -86,6 +86,7 @@ export default function JournalArchive(props: Props) {
     const fTitle = isEn ? 'title_en' : 'title_de';
     const fText = isEn ? 'text_en' : 'text_de';
     const detail = `${prefix}/journal/${slug}`;
+    const placeLabel = (typeof j.place === 'string' && j.place.trim()) ? j.place.trim() : (isEn ? 'On the map' : 'Auf der Karte');
     const heading = journalHeading(j, lang);
     const allPhotos = (Array.isArray(j.photos) ? j.photos.filter(Boolean) : []) as string[];
     const openPhotos = () => setPhotoLb({ photos: allPhotos.map((x) => ({ photo: normalizePath(x) })), name: heading });
@@ -104,8 +105,8 @@ export default function JournalArchive(props: Props) {
             ) : null}
 
             {point ? (isEditor
-              ? <span className="jm-badge" title={isEn ? 'Location' : 'Standort'} data-tina-field={tinaField(j, 'location')}>📍<span className="jm-txt">{isEn ? 'On the map' : 'Auf der Karte'}</span></span>
-              : <button type="button" className="jm-badge" title={isEn ? 'Open map' : 'Karte öffnen'} onClick={() => setMapPoint(point)}>📍<span className="jm-txt">{isEn ? 'On the map' : 'Auf der Karte'}</span></button>
+              ? <span className="jm-badge" title={isEn ? 'Location' : 'Standort'} data-tina-field={tinaField(j, j.place ? 'place' : 'location')}>📍<span className="jm-txt">{placeLabel}</span></span>
+              : <button type="button" className="jm-badge" title={isEn ? 'Open map' : 'Karte öffnen'} onClick={() => setMapPoint(point)}>📍<span className="jm-txt">{placeLabel}</span></button>
             ) : null}
 
             {social ? (isEditor

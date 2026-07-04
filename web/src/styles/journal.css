@@ -42,6 +42,7 @@
 .journal-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 .journal-map-wrap { margin-top: 24px; }
+.journal-map-place { margin-bottom: 8px; font-size: var(--fs-label); color: var(--c-ink-soft); font-weight: var(--fw-bold); letter-spacing: var(--tracking-slight); }
 .ww-journal-map { width: 100%; height: 340px; border-radius: 12px; overflow: hidden; border: 1px solid var(--c-line); }
 .journal-yt { margin-top: 24px; }
 

@@ -466,6 +466,7 @@ export default defineConfig({
           { type: 'image', name: 'photos', label: 'Fotos (optional, Auto-WebP)', list: true, ui: { component: BulkPhotoField } },
           // Standort — gleiches GeoJSON-Point-Format + LocationSearchField wie Reisen-Stationen.
           { type: 'string', name: 'location', label: '📍 Ort auf der Karte (optional)', description: 'Suchen & auf der Karte feinjustieren. Detailseite zeigt eine echte Karte, die Liste nur ein Symbol.', ui: { component: LocationSearchField } },
+          { type: 'string', name: 'place', label: '📍 Ortsname (kurz, optional)', description: 'Text neben dem Standort-Symbol (z. B. „Dresden"). Leer = „Auf der Karte". Gilt DE + EN.' },
           // Video — YouTube wie bei Stories (youtube-nocookie, kein Consent-Gate noetig).
           { type: 'string', name: 'youtube_url', label: 'YouTube-URL (optional)' },
           // Generischer externer Link (unabhaengig von „Verknüpfter Inhalt" unten).

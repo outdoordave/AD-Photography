@@ -65,6 +65,7 @@ export default function JournalEntryContent(props: Props) {
 
       {point ? (
         <div className="journal-map-wrap" data-tina-field={tinaField(j, 'location')}>
+          {j.place ? <div className="journal-map-place" data-tina-field={tinaField(j, 'place')}>📍 {j.place}</div> : null}
           <JournalMap lon={point.lon} lat={point.lat} styleName={props.mapStyle || 'liberty'} />
         </div>
       ) : null}
