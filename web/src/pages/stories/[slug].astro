@@ -3,6 +3,7 @@
 // React-Insel (Tina Live-Vorschau); reader-nav bleibt Astro.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import StoryReaderContent from '../../components/StoryReaderContent.tsx';
+import AdminEditButton from '../../components/AdminEditButton.astro';
 import { client } from '../../../tina/__generated__/client';
 import { buildStory, normalizePath } from '../../lib/stories';
 import appearance from '../../data/appearance-settings.json';
@@ -59,6 +60,7 @@ const articleLd: Record<string, any> = {
 <BaseLayout title={`${title} — Wide & Wild`} lang="de" description={metaDesc} ogType="article" jsonld={articleLd} noindex={archived}>
   <div id="page-story">
     <a class="story-back" href="/stories">← Stories</a>
+    <AdminEditButton collection="story" slug={slug} />
     <StoryReaderContent
       client:load
       query={res.query}
