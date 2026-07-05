@@ -781,20 +781,39 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
    angemeldete Admins ein. !important, damit das hidden ein evtl. display der Nav-Links schlägt. */
 .ww-admin-only[hidden] { display: none !important; }
 
-/* Admin-Werkzeuge an Kärtchen (Overlay) + „+ Neu"-Knopf — nur eingeblendet, wenn angemeldet. */
-.ww-admin-newbtn { display: inline-block; margin: 0 0 22px; padding: 9px 18px; border-radius: var(--radius-pill); background: var(--c-accent); color: #fff; font-weight: var(--fw-bold); font-size: var(--fs-label); letter-spacing: var(--tracking-slight); text-decoration: none; }
-.ww-admin-newbtn:hover { background: var(--c-accent-dk); }
+/* „+ Neu"-Knopf (admin-only): nutzt bewusst die Standard-.btn-Optik der Seite (Rahmen+Effekte über
+   frame_controls kommen dadurch automatisch). Sichtbarkeit via ww-admin-only (leak-sicher). */
+.ww-admin-newbtn { margin: 0 0 22px; }
+
+/* Inhalts-Werkzeuge (Bearbeiten/Archivieren/Löschen) — Insel AdminDocTools. */
 .ww-card-wrap { position: relative; }
-/* Werkzeuge sind für angemeldete Admins IMMER sichtbar (nicht nur beim Hovern) und heben beim
-   Hovern MIT der Karte (gleiche Anhebung wie .story-card:hover -6px), statt statisch zu bleiben. */
-.ww-card-tools { position: absolute; top: 8px; right: 8px; z-index: 5; display: flex; gap: 6px; transition: transform var(--dur-base) var(--ease); }
-.ww-card-wrap:hover .ww-card-tools { transform: translateY(-6px); }
-.ww-ct-btn { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(28,24,18,0.55); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); color: #f0d9bf; border: 1px solid rgba(240,217,191,0.45); text-decoration: none; box-shadow: 0 4px 12px -4px rgba(0,0,0,0.45); transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease; }
-.ww-ct-btn:hover { background: rgba(28,24,18,0.82); color: #fff; border-color: #f0d9bf; transform: translateY(-1px); }
-/* Schwebender „Bearbeiten"-Knopf auf Detailseiten (admin-only) */
-.ww-edit-fab { position: fixed; right: 18px; bottom: 18px; z-index: 60; display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: var(--radius-pill); background: rgba(28,24,18,0.82); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); color: #f0d9bf; border: 1px solid rgba(240,217,191,0.45); box-shadow: 0 8px 22px -8px rgba(0,0,0,0.5); font-weight: var(--fw-bold); font-size: var(--fs-label); letter-spacing: var(--tracking-slight); text-decoration: none; transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease; }
-.ww-edit-fab:hover { background: rgba(28,24,18,0.95); color: #fff; border-color: #f0d9bf; transform: translateY(-2px); }
-@media (max-width: 560px) { .ww-edit-fab { right: 12px; bottom: 12px; padding: 9px 13px; } }
+.ww-doc-tools { display: flex; gap: 6px; }
+/* Karten-Overlay: immer sichtbar (Insel rendert nur bei Login), hebt beim Hovern MIT der Karte. */
+.ww-doc-tools--card { position: absolute; top: 8px; right: 8px; z-index: 6; transition: transform var(--dur-base) var(--ease); }
+.ww-card-wrap:hover .ww-doc-tools--card { transform: translateY(-6px); }
+/* Detail-Leiste: dezente schwebende Trias unten rechts. */
+.ww-doc-tools--bar { position: fixed; right: 18px; bottom: 18px; z-index: 60; }
+@media (max-width: 560px) { .ww-doc-tools--bar { right: 12px; bottom: 12px; } }
+/* Einzelknopf: dunkel-glasig (über hellen UND dunklen Fotos lesbar), Rahmen + Schatten + Hover-Lift. */
+.ww-dt-btn { width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; padding: 0; background: rgba(28,24,18,0.6); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); color: #f0d9bf; border: 1px solid rgba(240,217,191,0.45); box-shadow: 0 4px 12px -4px rgba(0,0,0,0.45); text-decoration: none; cursor: pointer; transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease; }
+.ww-dt-btn:hover { background: rgba(28,24,18,0.85); color: #fff; border-color: #f0d9bf; transform: translateY(-1px); }
+.ww-dt-del:hover { background: #a3231d; border-color: #e07a6a; color: #fff; }
+
+/* 3-Wege-Lösch-Dialog */
+.ww-dt-overlay { position: fixed; inset: 0; z-index: 4000; display: flex; align-items: center; justify-content: center; background: rgba(20,16,10,0.55); padding: 22px; }
+.ww-dt-modal { background: var(--c-bg); border: 1px solid var(--c-line); border-radius: 14px; box-shadow: 0 30px 80px -20px rgba(0,0,0,0.5); padding: 24px; max-width: 380px; width: 100%; }
+.ww-dt-modal-ic { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(163,35,29,0.12); color: #a3231d; margin-bottom: 12px; }
+.ww-dt-modal h3 { font-family: var(--font-display); font-size: 22px; font-weight: 400; color: var(--c-ink); margin: 0 0 6px; }
+.ww-dt-note { color: var(--c-ink-soft); font-size: var(--fs-ui); line-height: 1.55; margin: 0 0 16px; }
+.ww-dt-err { color: #a3231d; font-size: var(--fs-label); margin: -6px 0 14px; }
+.ww-dt-actions { display: flex; flex-direction: column; gap: 8px; }
+.ww-dt-actions .btn { width: 100%; text-align: center; }
+.ww-dt-arch { background: var(--c-accent); }
+.ww-dt-danger { background: #a3231d; }
+.ww-dt-danger:hover { background: #86160f; }
+.ww-dt-danger:disabled { opacity: 0.65; cursor: progress; }
+.ww-dt-cancel { background: none; border: none; color: var(--c-ink-soft); font-weight: var(--fw-bold); font-size: var(--fs-label); cursor: pointer; padding: 6px; }
+.ww-dt-cancel:hover { color: var(--c-ink); }
 
 /* Statistik-Seite: eingebettetes Dashboard + Einrichtungs-Box */
 #page-stats .stats-embed { box-shadow: var(--ww-ring), var(--ww-shadow); border-radius: var(--radius-sm); overflow: hidden; }

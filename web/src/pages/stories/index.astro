@@ -3,7 +3,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import StoryCard from '../../components/StoryCard.astro';
-import AdminCardTools from '../../components/AdminCardTools.astro';
+import AdminDocTools from '../../components/AdminDocTools.tsx';
 import AdminNewButton from '../../components/AdminNewButton.astro';
 import SettingsHeader from '../../components/SettingsHeader.tsx';
 import { toSortedStories } from '../../lib/stories';
@@ -36,7 +36,7 @@ const s = settings as any;
             {g.items.map((s) => (
               <div class="ww-card-wrap">
                 <StoryCard story={s} lang="de" base="" />
-                <AdminCardTools collection="story" slug={s.slug} title={s.de.title} />
+                <AdminDocTools client:load collection="story" relativePath={`${s.slug}.md`} title={s.de.title} />
               </div>
             ))}
           </div>

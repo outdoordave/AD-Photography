@@ -5,4 +5,4 @@
 interface Props { collection: string; label: string }
 const { collection, label } = Astro.props;
 ---
-<a class="ww-admin-only ww-admin-newbtn" hidden href={`/admin/index.html#/collections/new/${collection}`} target="_top">+ {label}</a>
+<a class="btn ww-admin-only ww-admin-newbtn" hidden href={`/admin/index.html#/collections/new/${collection}`} target="_top">+ {label}</a>
