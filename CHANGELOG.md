@@ -31,6 +31,9 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   `#/collections/new/story`). In Stories-Übersicht DE+EN. Beide `ww-admin-only` (leak-sicher via
   `.ww-admin-only[hidden]{display:none!important}`). Verifiziert: Besucher `display:none`; angemeldet
   sichtbar + Hover-Reveal + korrekte Routen; Build grün. Kein Schema → kein Re-Index.
+- **Etappe 2b (`c6fa501`):** Karten-Werkzeuge heben beim Hovern **synchron mit der Karte** (translateY(-6px)
+  wie `.story-card:hover`, statt statisch) + Knopf **dunkel-glasig** (Kontrast über hellen UND dunklen Fotos).
+  Davids Einwand am Dev-Server geprüft (identische Hover-Transforms, Ecken-Position, Kontrast).
 - **Ehrlicher Vorbehalt:** der echte Lösch-/Archiv-**Mutationsdurchlauf** (Schreiben gegen Tina Cloud) ist
   offline nicht testbar → David bestätigt ihn im echten CMS. Delete = echter Commit (git-wiederherstellbar).
 
