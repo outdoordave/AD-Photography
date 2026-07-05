@@ -1,0 +1,8 @@
+---
+// „+ Neue …"-Knopf für eine Übersichtsseite — nur sichtbar, wenn im CMS angemeldet (ww-admin-only).
+// Öffnet Tinas Neuanlage-Route der Collection (target=_top, damit es auch aus der Vorschau greift).
+// Wiederverwendbar über alle Bereiche (Stories/Reisen/Alben/…), wie beim Journal „Neuer Beitrag".
+interface Props { collection: string; label: string }
+const { collection, label } = Astro.props;
+---
+<a class="ww-admin-only ww-admin-newbtn" hidden href={`/admin/index.html#/collections/new/${collection}`} target="_top">+ {label}</a>

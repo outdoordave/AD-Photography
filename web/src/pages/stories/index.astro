@@ -3,6 +3,8 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import StoryCard from '../../components/StoryCard.astro';
+import AdminCardTools from '../../components/AdminCardTools.astro';
+import AdminNewButton from '../../components/AdminNewButton.astro';
 import SettingsHeader from '../../components/SettingsHeader.tsx';
 import { toSortedStories } from '../../lib/stories';
 import { groupByYear } from '../../lib/groupByYear';
@@ -26,11 +28,17 @@ const s = settings as any;
   <section>
     <div class="wrap">
       <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="stories_settings" lang="de" />
+      <AdminNewButton collection="story" label="Neue Story" />
       {groupByYear(stories, (s) => s.date).map((g) => (
         <div class="year-chapter">
           <h2 class="year-head">{g.isArchive ? 'Archiv' : g.year}</h2>
           <div class="stories-grid">
-            {g.items.map((s) => <StoryCard story={s} lang="de" base="" />)}
+            {g.items.map((s) => (
+              <div class="ww-card-wrap">
+                <StoryCard story={s} lang="de" base="" />
+                <AdminCardTools collection="story" slug={s.slug} title={s.de.title} />
+              </div>
+            ))}
           </div>
         </div>
       ))}
