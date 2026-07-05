@@ -457,6 +457,7 @@ export default defineConfig({
         },
         fields: [
           { type: 'string', name: 'ww_here', label: '📔 Journal – Eintrag', ui: { component: SectionBanner } },
+          { type: 'boolean', name: 'archived', label: 'Archiviert (von der Website nehmen)', description: 'An = für Besucher ausgeblendet, bleibt im CMS erhalten und ist jederzeit zurückholbar.' },
           { type: 'string', name: 'date', label: 'Datum (YYYY-MM-DD)', required: true, description: 'Bestimmt die Sortierung (neueste zuerst) und die sichtbare Überschrift, wenn kein Titel gesetzt ist.' },
           { type: 'boolean', name: 'pin', label: 'Oben anheften (nicht archivieren)', description: 'Bleibt oben im Journal und wandert nie ins Archiv — egal wie alt.' },
           { type: 'string', name: 'title_de', label: 'Titel (optional)', description: 'Wenn leer, erscheint das Datum als Überschrift.' },
@@ -556,6 +557,7 @@ export default defineConfig({
         },
         fields: [
           { type: 'string', name: 'ww_here', label: '🖼️ Portfolio – Album', ui: { component: SectionBanner } },
+          { type: 'boolean', name: 'archived', label: 'Archiviert (von der Website nehmen)', description: 'An = für Besucher ausgeblendet, bleibt im CMS erhalten und ist jederzeit zurückholbar.' },
           {
             type: 'string', name: 'editor_language', label: 'Sprache',
             description: 'Nur Deutsch — oder Deutsch + Englisch. Gilt für alle Felder. (Nur Anzeige im Editor.)',
@@ -703,6 +705,7 @@ export default defineConfig({
         },
         fields: [
           { type: 'string', name: 'ww_here', label: '🧭 Reisen – Reise', ui: { component: SectionBanner } },
+          { type: 'boolean', name: 'archived', label: 'Archiviert (von der Website nehmen)', description: 'An = für Besucher ausgeblendet, bleibt im CMS erhalten und ist jederzeit zurückholbar.' },
           {
             type: 'string', name: 'editor_language', label: 'Sprache',
             description: 'Schalter: nur Deutsch — oder Deutsch + Englisch. Gilt für alle Felder. (Nur Anzeige im Editor.)',

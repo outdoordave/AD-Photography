@@ -4,6 +4,7 @@
 // der reisen-Collection zeigt hierher -> Visual-Editing (Klick=Feld + Live-Update) bleibt.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TripTimeline from '../../components/TripTimeline.tsx';
+import AdminDocTools from '../../components/AdminDocTools.tsx';
 import { richToPlain } from '../../components/RichText.tsx';
 import { linkedAlbumsByTrip } from '../../lib/albums';
 import { tripTitle, type RawTrip } from '../../lib/trips';
@@ -34,6 +35,7 @@ const revealMs = typeof s.reveal_ms === 'number' ? s.reveal_ms : 800;
 const snap = s.snap_enabled === true;
 const node = (res.data.reisenConnection?.edges || []).map((e: any) => e?.node).find((n: any) => n?._sys?.filename === slug);
 const trip = (node || {}) as RawTrip;
+const archived = (trip as any)?.archived === true;
 const ttl = tripTitle(trip, 'de') || (s.title_de || 'Reise');
 const customSvg = (trip as any).vehicle_custom_svg;
 const vehicleId = (typeof customSvg === 'string' && customSvg.trim().slice(0, 4) === '<svg') ? customSvg : ((trip as any).vehicle || 'expedition');
@@ -46,8 +48,9 @@ const tripDesignCss = tripDesignsCss(mergeTuning(s.designs));
 // Meta-Description aus vorhandenem Inhalt (Reise-Zusammenfassung), Fallback templatisiert.
 const metaDesc = (richToPlain(trip.summary_de) || `Reisebericht „${ttl}“ — Stationen, Karte und Fotos einer Reise von Wide & Wild.`).replace(/\s+/g, ' ').trim().slice(0, 200);
 ---
-<BaseLayout title={`${ttl} — Wide & Wild`} lang="de" description={metaDesc}>
+<BaseLayout title={`${ttl} — Wide & Wild`} lang="de" description={metaDesc} noindex={archived}>
   <Fragment set:html={`<style>${tripDesignCss}</style>`} />
+  <AdminDocTools client:load collection="reisen" relativePath={`${slug}.json`} title={ttl} variant="bar" />
   <section style="padding-top:8px;">
     <div class="wrap">
       <TripTimeline

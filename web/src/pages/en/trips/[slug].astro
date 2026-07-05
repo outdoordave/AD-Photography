@@ -2,6 +2,7 @@
 // Trip DETAIL EN ('/en/trips/<slug>') — Variante-B-Timeline (TripTimeline-Insel).
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import TripTimeline from '../../../components/TripTimeline.tsx';
+import AdminDocTools from '../../../components/AdminDocTools.tsx';
 import { richToPlain } from '../../../components/RichText.tsx';
 import { linkedAlbumsByTrip } from '../../../lib/albums';
 import { tripTitle, type RawTrip } from '../../../lib/trips';
@@ -31,6 +32,7 @@ const revealMs = typeof s.reveal_ms === 'number' ? s.reveal_ms : 800;
 const snap = s.snap_enabled === true;
 const node = (res.data.reisenConnection?.edges || []).map((e: any) => e?.node).find((n: any) => n?._sys?.filename === slug);
 const trip = (node || {}) as RawTrip;
+const archived = (trip as any)?.archived === true;
 const ttl = tripTitle(trip, 'en') || (s.title_en || s.title_de || 'Trip');
 const customSvg = (trip as any).vehicle_custom_svg;
 const vehicleId = (typeof customSvg === 'string' && customSvg.trim().slice(0, 4) === '<svg') ? customSvg : ((trip as any).vehicle || 'expedition');
@@ -41,8 +43,9 @@ const tripDesignCss = tripDesignsCss(mergeTuning(s.designs));
 // Meta-Description aus vorhandenem Inhalt (EN-Zusammenfassung, sonst DE), Fallback templatisiert.
 const metaDesc = (richToPlain(trip.summary_en) || richToPlain(trip.summary_de) || `Travel journal “${ttl}” — stops, map and photos from a trip by Wide & Wild.`).replace(/\s+/g, ' ').trim().slice(0, 200);
 ---
-<BaseLayout title={`${ttl} — Wide & Wild`} lang="en" description={metaDesc}>
+<BaseLayout title={`${ttl} — Wide & Wild`} lang="en" description={metaDesc} noindex={archived}>
   <Fragment set:html={`<style>${tripDesignCss}</style>`} />
+  <AdminDocTools client:load collection="reisen" relativePath={`${slug}.json`} title={ttl} variant="bar" />
   <section style="padding-top:8px;">
     <div class="wrap">
       <TripTimeline
