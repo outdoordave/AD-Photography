@@ -785,11 +785,10 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 .ww-admin-newbtn { display: inline-block; margin: 0 0 22px; padding: 9px 18px; border-radius: var(--radius-pill); background: var(--c-accent); color: #fff; font-weight: var(--fw-bold); font-size: var(--fs-label); letter-spacing: var(--tracking-slight); text-decoration: none; }
 .ww-admin-newbtn:hover { background: var(--c-accent-dk); }
 .ww-card-wrap { position: relative; }
-/* Werkzeuge heben sich beim Hovern MIT der Karte (gleiche Anhebung wie .story-card:hover -6px),
-   damit sie nicht statisch stehen bleiben, während die Karte steigt. */
-.ww-card-tools { position: absolute; top: 8px; right: 8px; z-index: 5; display: flex; gap: 6px; opacity: 0; pointer-events: none; transition: opacity 0.15s ease, transform var(--dur-base) var(--ease); }
-.ww-card-wrap:hover .ww-card-tools { opacity: 1; pointer-events: auto; transform: translateY(-6px); }
-.ww-card-tools:focus-within { opacity: 1; pointer-events: auto; }
+/* Werkzeuge sind für angemeldete Admins IMMER sichtbar (nicht nur beim Hovern) und heben beim
+   Hovern MIT der Karte (gleiche Anhebung wie .story-card:hover -6px), statt statisch zu bleiben. */
+.ww-card-tools { position: absolute; top: 8px; right: 8px; z-index: 5; display: flex; gap: 6px; transition: transform var(--dur-base) var(--ease); }
+.ww-card-wrap:hover .ww-card-tools { transform: translateY(-6px); }
 .ww-ct-btn { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(28,24,18,0.55); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); color: #f0d9bf; border: 1px solid rgba(240,217,191,0.45); text-decoration: none; box-shadow: 0 4px 12px -4px rgba(0,0,0,0.45); transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease; }
 .ww-ct-btn:hover { background: rgba(28,24,18,0.82); color: #fff; border-color: #f0d9bf; transform: translateY(-1px); }
 /* Schwebender „Bearbeiten"-Knopf auf Detailseiten (admin-only) */
