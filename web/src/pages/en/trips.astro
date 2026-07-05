@@ -3,7 +3,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SettingsHeader from '../../components/SettingsHeader.tsx';
 import TripsOverview from '../../components/TripsOverview.astro';
-import AdminNewButton from '../../components/AdminNewButton.astro';
+import AdminSectionBar from '../../components/AdminSectionBar.astro';
 import settings from '../../data/trips-settings.json';
 import { client } from '../../../tina/__generated__/client';
 import { sortTrips, type RawTrip } from '../../lib/trips';
@@ -11,15 +11,18 @@ import { sortTrips, type RawTrip } from '../../lib/trips';
 const res = await client.queries.reisenConnection({ first: 100 });
 const setRes = await client.queries.reisen_settings({ relativePath: 'trips-settings.json' });
 // Archived trips hidden from visitors (kept in CMS, restorable).
-const edges = (res.data.reisenConnection?.edges || []).filter(Boolean).filter((e: any) => e.node?.archived !== true);
+const allEdges = (res.data.reisenConnection?.edges || []).filter(Boolean);
+const edges = allEdges.filter((e: any) => e.node?.archived !== true);
 const trips = sortTrips(edges.map((e: any) => ({ slug: e.node._sys.filename, data: e.node as RawTrip })));
+const archivedItems = allEdges.filter((e: any) => e.node?.archived === true)
+  .map((e: any) => ({ relativePath: `${e.node._sys.filename}.json`, title: e.node.title_en || e.node.title || e.node._sys.filename }));
 const s = settings as any;
 ---
 <BaseLayout title={`${s.title_en || s.title_de || 'Trips'} — Wide & Wild`} lang="en" description="Our road trips — journeys by Wide & Wild as a map timeline with stops, photos and experiences.">
   <section>
     <div class="wrap">
       <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="reisen_settings" lang="en" />
-      <AdminNewButton collection="reisen" label="New trip" />
+      <AdminSectionBar collection="reisen" newLabel="New trip" archived={archivedItems} lang="en" />
       <TripsOverview trips={trips} lang="en" />
     </div>
   </section>

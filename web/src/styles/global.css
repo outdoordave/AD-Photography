@@ -815,6 +815,26 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 .ww-dt-cancel { background: none; border: none; color: var(--c-ink-soft); font-weight: var(--fw-bold); font-size: var(--fs-label); cursor: pointer; padding: 6px; }
 .ww-dt-cancel:hover { color: var(--c-ink); }
 
+/* „+ Neu" + „Archiv" nebeneinander */
+.ww-admin-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 0 0 22px; }
+.ww-admin-actions .ww-admin-newbtn { margin: 0; }
+/* „Archiv (N)"-Knopf: Sekundär-Pille mit Rahmen (Seiten-Stil) */
+.ww-archive-btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 20px; border-radius: var(--radius-pill); background: transparent; border: 1.5px solid var(--c-line); color: var(--c-ink-soft); font-weight: var(--fw-bold); font-size: var(--fs-ui); letter-spacing: var(--tracking-slight); cursor: pointer; transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease; }
+.ww-archive-btn:hover { border-color: var(--c-accent); color: var(--c-accent); transform: translateY(-2px); }
+.ww-archive-count { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--c-bg-alt); color: var(--c-ink-soft); font-size: 12px; }
+/* Archiv-Panel */
+.ww-archive-modal { max-width: 460px; }
+.ww-archive-list { list-style: none; margin: 6px 0 14px; padding: 0; max-height: 50vh; overflow-y: auto; }
+.ww-archive-item { display: flex; align-items: center; gap: 12px; justify-content: space-between; padding: 11px 2px; border-bottom: 1px solid var(--c-line); }
+.ww-archive-item:last-child { border-bottom: none; }
+.ww-archive-title { color: var(--c-ink); font-size: var(--fs-ui); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ww-archive-item-actions { display: inline-flex; gap: 12px; align-items: center; flex: 0 0 auto; }
+.ww-archive-restore { color: var(--c-accent); font-weight: var(--fw-bold); font-size: var(--fs-label); text-decoration: none; }
+.ww-archive-restore:hover { text-decoration: underline; }
+.ww-archive-del { background: none; border: none; color: var(--c-ink-soft); font-weight: var(--fw-bold); font-size: var(--fs-label); cursor: pointer; padding: 0; }
+.ww-archive-del:hover { color: #a3231d; }
+.ww-archive-foot { display: flex; justify-content: flex-end; }
+
 /* Statistik-Seite: eingebettetes Dashboard + Einrichtungs-Box */
 #page-stats .stats-embed { box-shadow: var(--ww-ring), var(--ww-shadow); border-radius: var(--radius-sm); overflow: hidden; }
 #page-stats .stats-embed iframe { display: block; width: 100%; height: 80vh; min-height: 520px; border: 0; }

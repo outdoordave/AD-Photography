@@ -3,7 +3,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import GalleryContent from '../../components/GalleryContent.tsx';
 import SettingsHeader from '../../components/SettingsHeader.tsx';
-import AdminNewButton from '../../components/AdminNewButton.astro';
+import AdminSectionBar from '../../components/AdminSectionBar.astro';
 import { tl } from '../../lib/albums';
 import settings from '../../data/gallery-settings.json';
 import { client } from '../../../tina/__generated__/client';
@@ -12,12 +12,15 @@ const res = await client.queries.albenConnection({ first: 1000 });
 const setRes = await client.queries.galerie_settings({ relativePath: 'gallery-settings.json' });
 const s = settings as any;
 const modes = s.modes || { album: true, chronological: false, alphabetical: false };
+const archivedItems = (res.data.albenConnection?.edges || []).filter(Boolean)
+  .filter((e: any) => e.node?.archived === true)
+  .map((e: any) => ({ relativePath: `${e.node._sys.filename}.json`, title: e.node.name_en || e.node.name || e.node._sys.filename }));
 ---
 <BaseLayout title={`${s.title_en || s.title_de || 'Portfolio'} — Wide & Wild`} lang="en" description="Selected work by Wide & Wild — landscapes, wildlife and travel moments in photo albums.">
   <section>
     <div class="wrap">
       <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="galerie_settings" lang="en" />
-      <AdminNewButton collection="alben" label="New album" />
+      <AdminSectionBar collection="alben" newLabel="New album" archived={archivedItems} lang="en" />
       <GalleryContent
         client:load
         query={res.query}

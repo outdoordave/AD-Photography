@@ -3,6 +3,7 @@ import { useTina, tinaField } from 'tinacms/dist/react';
 import { selectActiveFormId } from '../lib/tinaForm';
 import RichText from './RichText';
 import AdminDocTools from './AdminDocTools';
+import AdminArchive from './AdminArchive';
 import Lightbox, { type LbPhoto } from './Lightbox';
 import { socialIcon } from '../lib/socialIcons';
 import { normalizePath } from '../lib/stories';
@@ -73,9 +74,11 @@ export default function JournalArchive(props: Props) {
   const t = (de: any, en: any) => (isEn ? en || de || '' : de || '');
   const sf = (base: string) => tinaField(s, (isEn ? base + '_en' : base + '_de') as any);
 
-  const nodes = sortJournalNodes(((data as any).journalConnection?.edges ?? []).map((e: any) => e?.node).filter(Boolean))
-    // Archivierte Einträge für Besucher ausblenden (bleiben im CMS, zurückholbar).
-    .filter((n: any) => n.archived !== true);
+  const allNodes = sortJournalNodes(((data as any).journalConnection?.edges ?? []).map((e: any) => e?.node).filter(Boolean));
+  // Archivierte Einträge für Besucher ausblenden (bleiben im CMS, zurückholbar) + fürs Archiv-Panel sammeln.
+  const nodes = allNodes.filter((n: any) => n.archived !== true);
+  const archivedJournal = allNodes.filter((n: any) => n.archived === true)
+    .map((n: any) => ({ relativePath: `${n._sys.filename}.md`, title: journalHeading(n, lang) }));
   const { main, archive } = partitionJournal(nodes as any[], months);
 
   const renderItem = (j: any) => {
@@ -146,7 +149,10 @@ export default function JournalArchive(props: Props) {
         <p data-tina-field={sf('intro')}>{t(s.intro_de, s.intro_en)}</p>
       </div>
 
-      <a className="btn ww-admin-only ww-admin-newbtn" hidden href={NEW_HREF}>{isEn ? '+ New entry' : '+ Neuer Beitrag'}</a>
+      <div className="ww-admin-actions">
+        <a className="btn ww-admin-only ww-admin-newbtn" hidden href={NEW_HREF}>{isEn ? '+ New entry' : '+ Neuer Beitrag'}</a>
+        <AdminArchive collection="journal" items={archivedJournal} lang={lang} />
+      </div>
 
       {main.length === 0 && archive.length === 0 ? (
         <p className="journal-empty">{isEn ? 'No entries yet.' : 'Noch keine Einträge.'}</p>

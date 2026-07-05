@@ -4,7 +4,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import StoryCard from '../../../components/StoryCard.astro';
 import AdminDocTools from '../../../components/AdminDocTools.tsx';
-import AdminNewButton from '../../../components/AdminNewButton.astro';
+import AdminSectionBar from '../../../components/AdminSectionBar.astro';
 import SettingsHeader from '../../../components/SettingsHeader.tsx';
 import { toSortedStories } from '../../../lib/stories';
 import { groupByYear } from '../../../lib/groupByYear';
@@ -19,8 +19,11 @@ import { client } from '../../../../tina/__generated__/client';
 if ((appearance as any).show_stories !== true) return Astro.redirect('/en/');
 
 // Archived posts are hidden from visitors (kept in CMS + repo, restorable).
-const entries = (await getCollection('stories')).filter((e) => (e.data as any).archived !== true);
+const allEntries = await getCollection('stories');
+const entries = allEntries.filter((e) => (e.data as any).archived !== true);
 const stories = toSortedStories(entries.map((e) => ({ slug: e.slug, data: e.data })));
+const archivedItems = allEntries.filter((e) => (e.data as any).archived === true)
+  .map((e) => ({ relativePath: `${e.slug}.md`, title: (e.data as any).title_en || (e.data as any).title_de || e.slug }));
 const setRes = await client.queries.stories_settings({ relativePath: 'stories-settings.json' });
 const s = settings as any;
 ---
@@ -28,7 +31,7 @@ const s = settings as any;
   <section>
     <div class="wrap">
       <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="stories_settings" lang="en" />
-      <AdminNewButton collection="story" label="New story" />
+      <AdminSectionBar collection="story" newLabel="New story" archived={archivedItems} lang="en" />
       {groupByYear(stories, (s) => s.date).map((g) => (
         <div class="year-chapter">
           <h2 class="year-head">{g.isArchive ? 'Archive' : g.year}</h2>

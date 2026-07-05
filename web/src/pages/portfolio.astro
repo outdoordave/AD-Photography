@@ -4,7 +4,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import GalleryContent from '../components/GalleryContent.tsx';
 import SettingsHeader from '../components/SettingsHeader.tsx';
-import AdminNewButton from '../components/AdminNewButton.astro';
+import AdminSectionBar from '../components/AdminSectionBar.astro';
 import { tl } from '../lib/albums';
 import settings from '../data/gallery-settings.json';
 import { client } from '../../tina/__generated__/client';
@@ -13,12 +13,16 @@ const res = await client.queries.albenConnection({ first: 1000 });
 const setRes = await client.queries.galerie_settings({ relativePath: 'gallery-settings.json' });
 const s = settings as any;
 const modes = s.modes || { album: true, chronological: false, alphabetical: false };
+// Archivierte Alben für das Archiv-Panel (Ausblenden selbst passiert in GalleryContent).
+const archivedItems = (res.data.albenConnection?.edges || []).filter(Boolean)
+  .filter((e: any) => e.node?.archived === true)
+  .map((e: any) => ({ relativePath: `${e.node._sys.filename}.json`, title: e.node.name || e.node._sys.filename }));
 ---
 <BaseLayout title={`${s.title_de || 'Portfolio'} — Wide & Wild`} lang="de" description="Ausgewählte Aufnahmen von Wide & Wild — Landschaften, Wildlife und Reisemomente in Foto-Alben.">
   <section>
     <div class="wrap">
       <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="galerie_settings" lang="de" />
-      <AdminNewButton collection="alben" label="Neues Album" />
+      <AdminSectionBar collection="alben" newLabel="Neues Album" archived={archivedItems} lang="de" />
       <GalleryContent
         client:load
         query={res.query}
