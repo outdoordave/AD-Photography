@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTina, tinaField } from 'tinacms/dist/react';
 import Lightbox, { type LbPhoto } from './Lightbox';
+import AdminDocTools from './AdminDocTools';
 import { normalizePath } from '../lib/stories';
 import { ILLUS } from '../lib/illus';
 import {
@@ -139,7 +140,10 @@ export default function GalleryContent(props: Props) {
     // Absicherung: leere Live-Daten (Hydration) -> auf Server-Daten zurückfallen (keine leere Galerie).
     const edges = ((data as any)?.albenConnection?.edges || (props.data as any)?.albenConnection?.edges) || [];
     return sortAlbums(
-      edges.filter(Boolean).map((e: any) => ({ slug: e?.node?._sys?.filename || '', data: (e?.node || {}) as RawAlbum }))
+      edges.filter(Boolean)
+        .map((e: any) => ({ slug: e?.node?._sys?.filename || '', data: (e?.node || {}) as RawAlbum }))
+        // Archivierte Alben für Besucher ausblenden (bleiben im CMS, zurückholbar).
+        .filter((a: any) => a.data?.archived !== true)
     );
   }, [data]);
 
@@ -205,7 +209,7 @@ export default function GalleryContent(props: Props) {
             const name = albName(alb);
             const note = bi(alb.data, 'note', lang);
             return (
-              <div className="album-section" key={alb.slug}>
+              <div className="album-section ww-card-wrap" key={alb.slug}>
                 <div className="album-head">
                   <a className="album-head-text" href={`${hrefPrefix}/portfolio/${alb.slug}`}>
                     <h3 className="gallery-group-title" data-tina-field={tinaField(alb.data as any, 'name')}>
@@ -219,6 +223,7 @@ export default function GalleryContent(props: Props) {
                 <div className="album-body">
                   <AlbumSlideshow photos={photos} onOpenAt={(i) => openAlbumLightbox(photos, i, name)} />
                 </div>
+                <AdminDocTools collection="alben" relativePath={`${alb.slug}.json`} title={name} />
               </div>
             );
           })}

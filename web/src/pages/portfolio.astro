@@ -4,6 +4,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import GalleryContent from '../components/GalleryContent.tsx';
 import SettingsHeader from '../components/SettingsHeader.tsx';
+import AdminNewButton from '../components/AdminNewButton.astro';
 import { tl } from '../lib/albums';
 import settings from '../data/gallery-settings.json';
 import { client } from '../../tina/__generated__/client';
@@ -17,6 +18,7 @@ const modes = s.modes || { album: true, chronological: false, alphabetical: fals
   <section>
     <div class="wrap">
       <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="galerie_settings" lang="de" />
+      <AdminNewButton collection="alben" label="Neues Album" />
       <GalleryContent
         client:load
         query={res.query}

@@ -2,6 +2,7 @@ import React from 'react';
 import { useTina, tinaField } from 'tinacms/dist/react';
 import { selectActiveFormId } from '../lib/tinaForm';
 import RichText from './RichText';
+import AdminDocTools from './AdminDocTools';
 import Lightbox, { type LbPhoto } from './Lightbox';
 import { socialIcon } from '../lib/socialIcons';
 import { normalizePath } from '../lib/stories';
@@ -72,7 +73,9 @@ export default function JournalArchive(props: Props) {
   const t = (de: any, en: any) => (isEn ? en || de || '' : de || '');
   const sf = (base: string) => tinaField(s, (isEn ? base + '_en' : base + '_de') as any);
 
-  const nodes = sortJournalNodes(((data as any).journalConnection?.edges ?? []).map((e: any) => e?.node).filter(Boolean));
+  const nodes = sortJournalNodes(((data as any).journalConnection?.edges ?? []).map((e: any) => e?.node).filter(Boolean))
+    // Archivierte Einträge für Besucher ausblenden (bleiben im CMS, zurückholbar).
+    .filter((n: any) => n.archived !== true);
   const { main, archive } = partitionJournal(nodes as any[], months);
 
   const renderItem = (j: any) => {
@@ -91,7 +94,7 @@ export default function JournalArchive(props: Props) {
     const allPhotos = (Array.isArray(j.photos) ? j.photos.filter(Boolean) : []) as string[];
     const openPhotos = () => setPhotoLb({ photos: allPhotos.map((x) => ({ photo: normalizePath(x) })), name: heading });
     return (
-      <li className={`journal-item${isEditor ? '' : ' is-clickable'}`} key={slug} onClick={cardClick(detail)}>
+      <li className={`journal-item ww-card-wrap${isEditor ? '' : ' is-clickable'}`} key={slug} onClick={cardClick(detail)}>
         <a className="journal-item-head" href={detail}>
           <span className="ji-title" data-tina-field={tinaField(j, fTitle)}>{heading}</span>
           {journalHasTitle(j, lang) ? <span className="ji-date" data-tina-field={tinaField(j, 'date')}>{formatFullDate(j.date || '', lang)}</span> : null}
@@ -130,6 +133,7 @@ export default function JournalArchive(props: Props) {
             ) : null}
           </div>
         ) : null}
+        <AdminDocTools collection="journal" relativePath={`${slug}.md`} title={heading} />
       </li>
     );
   };
@@ -142,7 +146,7 @@ export default function JournalArchive(props: Props) {
         <p data-tina-field={sf('intro')}>{t(s.intro_de, s.intro_en)}</p>
       </div>
 
-      <a className="ww-admin-only journal-new-btn" hidden href={NEW_HREF}>{isEn ? '+ New entry' : '+ Neuer Beitrag'}</a>
+      <a className="btn ww-admin-only ww-admin-newbtn" hidden href={NEW_HREF}>{isEn ? '+ New entry' : '+ Neuer Beitrag'}</a>
 
       {main.length === 0 && archive.length === 0 ? (
         <p className="journal-empty">{isEn ? 'No entries yet.' : 'Noch keine Einträge.'}</p>

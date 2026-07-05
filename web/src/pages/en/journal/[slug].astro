@@ -2,6 +2,7 @@
 // Journal entry EN ('/en/journal/<slug>'). Mirror of the DE detail page.
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import JournalEntryContent from '../../../components/JournalEntryContent.tsx';
+import AdminDocTools from '../../../components/AdminDocTools.tsx';
 import { client } from '../../../../tina/__generated__/client';
 import { sortJournalNodes, journalHeading, journalFirstPhoto, resolveSocial, type JournalData } from '../../../lib/journal';
 import { normalizePath } from '../../../lib/stories';
@@ -34,6 +35,7 @@ const { prev, next } = Astro.props as {
 };
 const res = await client.queries.journal({ relativePath: `${slug}.md` });
 const j = res.data.journal as JournalData;
+const archived = (j as any).archived === true;
 const heading = journalHeading(j, 'en');
 const firstPhoto = journalFirstPhoto(j);
 const social = resolveSocial(j, 'en');
@@ -56,7 +58,8 @@ const articleLd: Record<string, any> = {
   publisher: orgRef,
 };
 ---
-<BaseLayout title={`${heading} — Wide & Wild`} lang="en" description={metaDesc} ogType="article" image={ogImg || undefined} jsonld={articleLd}>
+<BaseLayout title={`${heading} — Wide & Wild`} lang="en" description={metaDesc} ogType="article" image={ogImg || undefined} jsonld={articleLd} noindex={archived}>
+  <AdminDocTools client:load collection="journal" relativePath={`${slug}.md`} title={heading} variant="bar" />
   <div id="page-journal">
     <a class="story-back" href="/en/journal">← Journal</a>
     <JournalEntryContent client:load query={res.query} variables={res.variables} data={res.data} lang="en" />

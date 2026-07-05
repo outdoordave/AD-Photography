@@ -91,7 +91,7 @@ export default function AdminDocTools(props: Props) {
 
   return (
     <>
-      <div className={`ww-doc-tools ww-doc-tools--${variant}`}>
+      <div className={`ww-doc-tools ww-doc-tools--${variant}`} onClick={(e) => e.stopPropagation()}>
         <a className="ww-dt-btn" href={editHref} target="_top" title="Bearbeiten" aria-label={t ? `„${t}" bearbeiten` : 'Bearbeiten'}>
           <Icon d="M12 20h9" path2="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />
         </a>
@@ -104,7 +104,7 @@ export default function AdminDocTools(props: Props) {
       </div>
 
       {dlg ? (
-        <div className="ww-dt-overlay" role="dialog" aria-modal="true" onClick={() => { if (!busy) setDlg(false); }}>
+        <div className="ww-dt-overlay" role="dialog" aria-modal="true" onClick={(e) => { e.stopPropagation(); if (!busy) setDlg(false); }}>
           <div className="ww-dt-modal" onClick={(e) => e.stopPropagation()}>
             <div className="ww-dt-modal-ic" aria-hidden="true">
               <Icon d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0v13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V7" />
