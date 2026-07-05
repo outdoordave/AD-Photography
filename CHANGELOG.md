@@ -17,6 +17,30 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-05 — Inhalts-Verwaltung: Vollausbau über alle Bereiche (Bearbeiten/Archivieren/Löschen + „+ Neu")
+- **Kern `AdminDocTools.tsx` (`ce14925`…):** eine React-Insel mit 3 Werkzeugen je Inhalt, selbst-sichtbar
+  NUR bei Login (leak-sicher, für Besucher wird nichts gerendert). ✏️ Bearbeiten + 🗄️ Archivieren = Links
+  in den CMS-Editor (`target=_top`; Archivieren landet am Archiv-Schalter, erstes Feld). 🗑️ Löschen =
+  3-Wege-Dialog (Abbrechen / Lieber archivieren / Endgültig löschen) → **sichere** `deleteDocument`-Mutation.
+  Varianten: `card` (Overlay an Karten, hebt beim Hovern mit) + `bar` (dezente Trias unten rechts auf
+  Detailseiten). Seiten-Stil: dunkel-glasige Icon-Buttons (Rahmen+Schatten), Dialog als `.btn`-Karte.
+- **„+ Neu"-Knöpfe (`AdminNewButton`):** nutzen jetzt `.btn` (Rahmen+Effekte via frame_controls automatisch).
+  Ausgerollt: „+ Neue Story / Neue Reise / Neues Album" + Journal „Neuer Beitrag" (ebenfalls `.btn`).
+- **Ausgerollt auf ALLE Bereiche:** Stories, Reisen (`TripsOverview`), Alben (`GalleryContent`-Insel),
+  Journal (`JournalArchive`-Insel) — je an Übersichts-Karten UND Detailseiten (bar). `archived`-Feld in
+  story/reisen/alben/journal (+ Astro-Zod bei stories); archivierte Inhalte aus Besucher-Listen gefiltert
+  + Detailseiten `noindex` (bleiben gebaut → zurückholbar).
+- **Sicherheit/Robustheit:** Löschen trifft immer nur den exakt übergebenen Datensatz (collection+relativePath);
+  Fehlwirkung = „nichts passiert"/Fehlermeldung, nie Datenverlust. `stopPropagation`, damit Werkzeug-/Dialog-
+  Klicks nie die klickbare Karte (Journal) auslösen. Archivieren via CMS statt riskantem Blind-Schreiben
+  (`updateDocument` ersetzt den ganzen Datensatz → bewusst vermieden).
+- **Verifiziert (Login-Sim + Screenshots):** 3 Werkzeuge je Karte + Dialog + Fehlerpfad (kein Crash) +
+  Detail-Leiste; korrekte edit/new/delete-Routen je Bereich; „+ Neu" als `.btn`; Besucher sehen nichts;
+  Build grün (57 Seiten). ⚠️ **Echter Lösch-Mutations-Durchlauf nur im CMS bestätigbar** (David).
+- ⚠️ `archived` (reisen/alben/journal) = Schema → **Re-Index** (mit Stories-`archived` gebündelt).
+- **Noch offen:** „Archiv (N)"-Knopf pro Reiter + gesammelte Archiv-Ansicht + „Archiviert"-Band
+  (Zurückholen aktuell über den CMS-Editor / Tinas Collection-Liste).
+
 ## 2026-07-05 — Inhalts-Verwaltung (Bearbeiten/Archivieren/Löschen an Kärtchen) — Pilot Stories, Etappe 1
 - **Konzept abgestimmt (Mockups):** admin-only Knöpfe an jedem Kärtchen (✏️ Bearbeiten, 🗄️ Archivieren,
   🗑️ Löschen mit 3-Wege-Dialog inkl. „lieber archivieren"); pro Reiter oben „+ Neue …" + „Archiv"-Knopf;

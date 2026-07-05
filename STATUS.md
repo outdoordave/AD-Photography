@@ -48,18 +48,21 @@
 > nötig (David, nach Push+Deploy).** Belegt: Live `/journal/` liefert schon korrekt `journal-style-notes`
 > (curl) — „Stil wirkt nicht" lag an Vorschau (Build-Wert)/Browser-Cache, nicht am Code.
 >
-> **🚧 Inhalts-Verwaltung an Kärtchen (Bearbeiten/Archivieren/Löschen) — Pilot Stories, IM BAU.**
-> Ziel: admin-only Knöpfe an jedem Kärtchen (✏️ Bearbeiten → CMS-Vorschau+Formular; 🗄️ Archivieren;
-> 🗑️ Löschen mit 3-Wege-Dialog „lieber archivieren"); pro Reiter oben „+ Neue …" + „Archiv"-Knopf;
-> archivierte Kärtchen mit Band + eigene Archiv-Ansicht. Pilot **Stories**, danach Reisen/Alben/Journal/Home.
-> **Etappe 1 fertig (`1d2a258`):** Feld `archived` (Tina + Astro-Zod), Besucher-Ausblendung + `noindex`
-> (Detail bleibt gebaut → zurückholbar).
-> **Etappe 2 fertig:** `AdminCardTools.astro` (Hover-Stift → CMS-Bearbeiten-Route) + `AdminNewButton.astro`
-> („+ Neue Story"), in Stories-Übersicht DE+EN; beide `ww-admin-only` (leak-sicher). Verifiziert (Besucher
-> `display:none`, angemeldet sichtbar, Routen korrekt).
-> **Offen: Etappe 3** — Archivieren/Löschen-Knöpfe an den Karten (3-Wege-Dialog) + „Archiv"-Knopf +
-> Archiv-Ansicht + „Archiviert"-Band + `deleteDocument`/`updateDocument`-Mutation (**Mutationsdurchlauf nur
-> im echten CMS testbar**). ⚠️ `archived` = Schema → Teil des ausstehenden Re-Index.
+> **✅/🚧 Inhalts-Verwaltung an Kärtchen (Bearbeiten/Archivieren/Löschen + „+ Neu") — über ALLE Bereiche gebaut.**
+> **Kern `AdminDocTools.tsx`** (React-Insel, selbst-sichtbar nur bei Login, leak-sicher): 3 Werkzeuge je Inhalt —
+> ✏️ Bearbeiten + 🗄️ Archivieren (Links in den CMS-Editor, `target=_top`; Archivieren landet am Archiv-Schalter)
+> + 🗑️ Löschen (3-Wege-Dialog Abbrechen/Lieber archivieren/Endgültig löschen → **sichere** `deleteDocument`-
+> Mutation). Varianten `card` (Karten-Overlay, hebt mit) + `bar` (Detail unten rechts). Seiten-Stil
+> (dunkel-glasige Icon-Buttons, Dialog als `.btn`-Karte). **„+ Neu"-Knöpfe** (`AdminNewButton`, jetzt `.btn`):
+> Story/Reise/Album + Journal „Neuer Beitrag". **Ausgerollt: Stories, Reisen, Alben, Journal** (Übersichts-
+> Karten + Detailseiten); `archived`-Feld in allen vier (+ Astro-Zod bei stories), archivierte aus Besucher-
+> Listen gefiltert + Detail `noindex` (bleiben gebaut → zurückholbar). Verifiziert (Login-Sim, Screenshots,
+> Fehlerpfad, Build grün).
+> ⚠️ **Echter Lösch-Mutations-Durchlauf nur im CMS bestätigbar** (David); Delete = echter Commit
+> (git-wiederherstellbar). ⚠️ `archived` (reisen/alben/journal) = Schema → **Re-Index** (mit Stories gebündelt).
+> **Bewusst sicher:** Archivieren öffnet den CMS-Schalter statt riskantem `updateDocument` (ersetzt ganzen
+> Datensatz → Datenverlust-Risiko). **Noch offen:** „Archiv (N)"-Knopf pro Reiter + gesammelte Archiv-Ansicht +
+> „Archiviert"-Band (Zurückholen aktuell via CMS-Editor / Tina-Collection-Liste).
 >
 > **✅ Detail-Köpfe „wandernder Titel" — Mobil UND Desktop fertig (von David abgenommen, 25.06.).**
 > Reise + Story, beide Breakpoints. Architektur (für künftige Header wiederverwendbar, s. Memory
