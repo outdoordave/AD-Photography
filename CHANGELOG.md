@@ -17,6 +17,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-05 — Inhalts-Verwaltung (Bearbeiten/Archivieren/Löschen an Kärtchen) — Pilot Stories, Etappe 1
+- **Konzept abgestimmt (Mockups):** admin-only Knöpfe an jedem Kärtchen (✏️ Bearbeiten, 🗄️ Archivieren,
+  🗑️ Löschen mit 3-Wege-Dialog inkl. „lieber archivieren"); pro Reiter oben „+ Neue …" + „Archiv"-Knopf;
+  archivierte Kärtchen mit „Archiviert"-Band + eigene Archiv-Ansicht. Belegte Mechanik: Bearbeiten via
+  `#/collections/edit/<coll>/~/<slug>`; Löschen via `deleteDocument`-Mutation (Token in `localStorage["tinacms-auth"]`).
+  Pilot = Stories, danach Ausrollen auf Reisen/Alben/Journal/Home.
+- **Etappe 1 (`1d2a258`):** Feld `archived` (Tina story-Collection + Astro-Content-Zod). Archivierte Stories
+  aus der Besucher-Liste (`/stories` + `/en`) gefiltert; Detailseite bleibt gebaut (Bearbeiten/Zurückholen),
+  aber `noindex, nofollow`. Verifiziert (Liste 6→5, Detail noindex + 200). ⚠️ `archived` = Schema → Re-Index.
+- **Ehrlicher Vorbehalt:** der echte Lösch-/Archiv-**Mutationsdurchlauf** (Schreiben gegen Tina Cloud) ist
+  offline nicht testbar → David bestätigt ihn im echten CMS. Delete = echter Commit (git-wiederherstellbar).
+
 ## 2026-07-04 — Journal: Hero-Kachel verlinkt direkt auf den neuesten Eintrag
 - **Hero-Klickziel (`0b619b0`):** die Hero-Journal-Kachel führt jetzt auf den konkreten Beitrag
   (`/journal/<slug>`) statt auf die Übersicht — dort sind Foto-Lightbox, Karte und Link voll nutzbar.

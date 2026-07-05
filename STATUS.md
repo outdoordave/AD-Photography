@@ -48,6 +48,15 @@
 > nötig (David, nach Push+Deploy).** Belegt: Live `/journal/` liefert schon korrekt `journal-style-notes`
 > (curl) — „Stil wirkt nicht" lag an Vorschau (Build-Wert)/Browser-Cache, nicht am Code.
 >
+> **🚧 Inhalts-Verwaltung an Kärtchen (Bearbeiten/Archivieren/Löschen) — Pilot Stories, IM BAU.**
+> Ziel: admin-only Knöpfe an jedem Kärtchen (✏️ Bearbeiten → CMS-Vorschau+Formular; 🗄️ Archivieren;
+> 🗑️ Löschen mit 3-Wege-Dialog „lieber archivieren"); pro Reiter oben „+ Neue …" + „Archiv"-Knopf;
+> archivierte Kärtchen mit Band + eigene Archiv-Ansicht. Pilot **Stories**, danach Reisen/Alben/Journal/Home.
+> **Etappe 1 fertig (`1d2a258`):** Feld `archived` (Tina + Astro-Zod), Besucher-Ausblendung + `noindex`
+> (Detail bleibt gebaut → zurückholbar). **Offen:** Etappe 2 (Bearbeiten-Stift + „Neu"/„Archiv"-Knöpfe,
+> offline testbar) + Etappe 3 (Archiv-Ansicht + Markierung + `deleteDocument`/`updateDocument`-Mutation —
+> Mutationsdurchlauf nur im echten CMS testbar). ⚠️ `archived` = Schema → Teil des ausstehenden Re-Index.
+>
 > **✅ Detail-Köpfe „wandernder Titel" — Mobil UND Desktop fertig (von David abgenommen, 25.06.).**
 > Reise + Story, beide Breakpoints. Architektur (für künftige Header wiederverwendbar, s. Memory
 > `wandering-title-architektur`): vertikales Wandern + Andocken = natives `position: sticky` (hoher
