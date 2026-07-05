@@ -53,9 +53,13 @@
 > 🗑️ Löschen mit 3-Wege-Dialog „lieber archivieren"); pro Reiter oben „+ Neue …" + „Archiv"-Knopf;
 > archivierte Kärtchen mit Band + eigene Archiv-Ansicht. Pilot **Stories**, danach Reisen/Alben/Journal/Home.
 > **Etappe 1 fertig (`1d2a258`):** Feld `archived` (Tina + Astro-Zod), Besucher-Ausblendung + `noindex`
-> (Detail bleibt gebaut → zurückholbar). **Offen:** Etappe 2 (Bearbeiten-Stift + „Neu"/„Archiv"-Knöpfe,
-> offline testbar) + Etappe 3 (Archiv-Ansicht + Markierung + `deleteDocument`/`updateDocument`-Mutation —
-> Mutationsdurchlauf nur im echten CMS testbar). ⚠️ `archived` = Schema → Teil des ausstehenden Re-Index.
+> (Detail bleibt gebaut → zurückholbar).
+> **Etappe 2 fertig:** `AdminCardTools.astro` (Hover-Stift → CMS-Bearbeiten-Route) + `AdminNewButton.astro`
+> („+ Neue Story"), in Stories-Übersicht DE+EN; beide `ww-admin-only` (leak-sicher). Verifiziert (Besucher
+> `display:none`, angemeldet sichtbar, Routen korrekt).
+> **Offen: Etappe 3** — Archivieren/Löschen-Knöpfe an den Karten (3-Wege-Dialog) + „Archiv"-Knopf +
+> Archiv-Ansicht + „Archiviert"-Band + `deleteDocument`/`updateDocument`-Mutation (**Mutationsdurchlauf nur
+> im echten CMS testbar**). ⚠️ `archived` = Schema → Teil des ausstehenden Re-Index.
 >
 > **✅ Detail-Köpfe „wandernder Titel" — Mobil UND Desktop fertig (von David abgenommen, 25.06.).**
 > Reise + Story, beide Breakpoints. Architektur (für künftige Header wiederverwendbar, s. Memory

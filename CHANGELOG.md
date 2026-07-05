@@ -26,6 +26,11 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 - **Etappe 1 (`1d2a258`):** Feld `archived` (Tina story-Collection + Astro-Content-Zod). Archivierte Stories
   aus der Besucher-Liste (`/stories` + `/en`) gefiltert; Detailseite bleibt gebaut (Bearbeiten/Zurückholen),
   aber `noindex, nofollow`. Verifiziert (Liste 6→5, Detail noindex + 200). ⚠️ `archived` = Schema → Re-Index.
+- **Etappe 2 (`… siehe git`):** `AdminCardTools.astro` (Hover-Overlay am Kärtchen, Bearbeiten-Stift →
+  `#/collections/edit/story/~/<slug>`, `target=_top`) + `AdminNewButton.astro` („+ Neue Story" →
+  `#/collections/new/story`). In Stories-Übersicht DE+EN. Beide `ww-admin-only` (leak-sicher via
+  `.ww-admin-only[hidden]{display:none!important}`). Verifiziert: Besucher `display:none`; angemeldet
+  sichtbar + Hover-Reveal + korrekte Routen; Build grün. Kein Schema → kein Re-Index.
 - **Ehrlicher Vorbehalt:** der echte Lösch-/Archiv-**Mutationsdurchlauf** (Schreiben gegen Tina Cloud) ist
   offline nicht testbar → David bestätigt ihn im echten CMS. Delete = echter Commit (git-wiederherstellbar).
 
