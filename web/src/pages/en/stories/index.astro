@@ -16,7 +16,8 @@ import { client } from '../../../../tina/__generated__/client';
 // sperren. Logik = wie Nav/Footer (sichtbar NUR bei show_stories === true).
 if ((appearance as any).show_stories !== true) return Astro.redirect('/en/');
 
-const entries = await getCollection('stories');
+// Archived posts are hidden from visitors (kept in CMS + repo, restorable).
+const entries = (await getCollection('stories')).filter((e) => (e.data as any).archived !== true);
 const stories = toSortedStories(entries.map((e) => ({ slug: e.slug, data: e.data })));
 const setRes = await client.queries.stories_settings({ relativePath: 'stories-settings.json' });
 const s = settings as any;

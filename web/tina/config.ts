@@ -624,6 +624,7 @@ export default defineConfig({
         },
         fields: [
           { type: 'string', name: 'ww_here', label: '📖 Stories – Beitrag', ui: { component: SectionBanner } },
+          { type: 'boolean', name: 'archived', label: 'Archiviert (von der Website nehmen)', description: 'An = für Besucher ausgeblendet (aus Listen + Suchmaschinen), bleibt im CMS erhalten und ist jederzeit zurückholbar.' },
           // --- Deutsch (Haupt) ---
           { type: 'string', name: 'title_de', label: 'Titel', isTitle: true, required: true, description: 'Max. 35 Zeichen.', ui: { validate: validateTitleMax } },
           { type: 'string', name: 'category_de', label: 'Ort / Kategorie' },

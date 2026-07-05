@@ -5,6 +5,7 @@ import { defineCollection, z } from 'astro:content';
 const stories = defineCollection({
   type: 'content',
   schema: z.object({
+    archived: z.boolean().optional().default(false),
     title_de: z.string().default(''),
     category_de: z.string().default(''),
     date: z.string().default(''),

@@ -33,6 +33,8 @@ const { prev, next } = Astro.props as {
 if ((appearance as any).show_stories !== true) return Astro.redirect('/en/');
 const res = await client.queries.story({ relativePath: `${slug}.md` });
 const story = buildStory(res.data.story as any);
+// Archived -> page still built (edit/restore), but noindex (out of search).
+const archived = (res.data.story as any)?.archived === true;
 const title = story.en.title;
 // Meta-Description aus dem Story-Anriss (EN, sonst DE), Fallback templatisiert. og:type article.
 const metaDesc = (story.en.excerpt || `“${title}” — a travel story by Wide & Wild.`).replace(/\s+/g, ' ').trim().slice(0, 200);
@@ -54,7 +56,7 @@ const articleLd: Record<string, any> = {
   publisher: orgRef,
 };
 ---
-<BaseLayout title={`${title} — Wide & Wild`} lang="en" description={metaDesc} ogType="article" jsonld={articleLd}>
+<BaseLayout title={`${title} — Wide & Wild`} lang="en" description={metaDesc} ogType="article" jsonld={articleLd} noindex={archived}>
   <div id="page-story">
     <a class="story-back" href="/en/stories">← Stories</a>
     <StoryReaderContent
