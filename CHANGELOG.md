@@ -34,6 +34,9 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 - **Etappe 2b (`c6fa501`):** Karten-Werkzeuge heben beim Hovern **synchron mit der Karte** (translateY(-6px)
   wie `.story-card:hover`, statt statisch) + Knopf **dunkel-glasig** (Kontrast über hellen UND dunklen Fotos).
   Davids Einwand am Dev-Server geprüft (identische Hover-Transforms, Ecken-Position, Kontrast).
+- **Etappe 2c (`… siehe git`):** `AdminEditButton.astro` — schwebender admin-only „Bearbeiten"-Knopf (unten
+  rechts) **auf der Story-Detailseite** DE+EN → öffnet den Beitrag im CMS (target=_top). Verifiziert
+  (Besucher `display:none`, angemeldet sichtbar, Route korrekt). Wiederverwendbar für alle Detailseiten.
 - **Ehrlicher Vorbehalt:** der echte Lösch-/Archiv-**Mutationsdurchlauf** (Schreiben gegen Tina Cloud) ist
   offline nicht testbar → David bestätigt ihn im echten CMS. Delete = echter Commit (git-wiederherstellbar).
 
