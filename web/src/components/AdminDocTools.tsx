@@ -51,10 +51,7 @@ export default function AdminDocTools(props: Props) {
         <a className="ww-dt-btn" href={href} target="_top" title="Bearbeiten" aria-label={t ? `„${t}" bearbeiten` : 'Bearbeiten'}>
           <Icon d="M12 20h9" path2="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />
         </a>
-        <a className="ww-dt-btn ww-dt-arch-btn" href={href} target="_top" title="Archivieren (Schalter oben im CMS)" aria-label={t ? `„${t}" archivieren` : 'Archivieren'}>
-          <Icon d="M3 7h18M5 7v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7M9 11h6" />
-        </a>
-        <button type="button" className="ww-dt-btn ww-dt-del" onClick={() => { setErr(null); setDlg(true); }} title="Löschen" aria-label={t ? `„${t}" löschen` : 'Löschen'}>
+        <button type="button" className="ww-dt-btn ww-dt-del" onClick={() => { setErr(null); setDlg(true); }} title="Von der Website entfernen (archivieren oder löschen)" aria-label={t ? `„${t}" entfernen` : 'Entfernen'}>
           <Icon d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0v13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V7" />
         </button>
       </div>
