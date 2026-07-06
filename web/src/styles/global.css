@@ -847,6 +847,8 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 .ww-archive-del { background: none; border: none; color: var(--c-ink-soft); font-weight: var(--fw-bold); font-size: var(--fs-label); cursor: pointer; padding: 0; }
 .ww-archive-del:hover { color: #a3231d; }
 .ww-archive-foot { display: flex; justify-content: flex-end; }
+.ww-archive-btn.is-empty { opacity: 0.7; }
+.ww-archive-empty { color: var(--c-ink-soft); font-size: var(--fs-ui); padding: 14px 2px 8px; margin: 0; }
 
 /* Statistik-Seite: eingebettetes Dashboard + Einrichtungs-Box */
 #page-stats .stats-embed { box-shadow: var(--ww-ring), var(--ww-shadow); border-radius: var(--radius-sm); overflow: hidden; }

@@ -32,7 +32,8 @@ export default function AdminArchive({ collection, items, lang }: Props) {
     return () => window.removeEventListener('keydown', onKey);
   }, [open, del, busy]);
 
-  if (!show || !items || items.length === 0) return null;
+  if (!show) return null;
+  const list = items || [];
 
   const onDelete = async () => {
     if (!del) return;
@@ -44,28 +45,32 @@ export default function AdminArchive({ collection, items, lang }: Props) {
 
   return (
     <>
-      <button type="button" className="ww-archive-btn" onClick={() => setOpen(true)}>
+      <button type="button" className={`ww-archive-btn${list.length === 0 ? ' is-empty' : ''}`} onClick={() => setOpen(true)}>
         <ArchiveIcon />
         <span>{isEn ? 'Archive' : 'Archiv'}</span>
-        <span className="ww-archive-count">{items.length}</span>
+        <span className="ww-archive-count">{list.length}</span>
       </button>
 
       {open ? (
         <div className="ww-dt-overlay" role="dialog" aria-modal="true" onClick={() => setOpen(false)}>
           <div className="ww-dt-modal ww-archive-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>{isEn ? 'Archive' : 'Archiv'} ({items.length})</h3>
-            <p className="ww-dt-note">{isEn ? 'Hidden from visitors. Restore an item or delete it for good.' : 'Für Besucher ausgeblendet. Einen Eintrag zurückholen oder endgültig löschen.'}</p>
-            <ul className="ww-archive-list">
-              {items.map((it) => (
-                <li className="ww-archive-item" key={it.relativePath}>
-                  <span className="ww-archive-title" title={it.title}>{it.title || it.relativePath}</span>
-                  <span className="ww-archive-item-actions">
-                    <a className="ww-archive-restore" href={editHref(collection, it.relativePath)} target="_top">{isEn ? 'Restore' : 'Zurückholen'}</a>
-                    <button type="button" className="ww-archive-del" onClick={() => { setErr(null); setDel(it); }}>{isEn ? 'Delete' : 'Löschen'}</button>
-                  </span>
-                </li>
-              ))}
-            </ul>
+            <h3>{isEn ? 'Archive' : 'Archiv'} ({list.length})</h3>
+            <p className="ww-dt-note">{isEn ? 'Hidden from visitors. Restore an item or delete it for good.' : 'Für Besucher ausgeblendet — einen Eintrag zurückholen oder endgültig löschen.'}</p>
+            {list.length === 0 ? (
+              <p className="ww-archive-empty">{isEn ? 'Nothing archived here yet.' : 'Hier ist noch nichts archiviert.'}</p>
+            ) : (
+              <ul className="ww-archive-list">
+                {list.map((it) => (
+                  <li className="ww-archive-item" key={it.relativePath}>
+                    <span className="ww-archive-title" title={it.title}>{it.title || it.relativePath}</span>
+                    <span className="ww-archive-item-actions">
+                      <a className="ww-archive-restore" href={editHref(collection, it.relativePath)} target="_top">{isEn ? 'Restore' : 'Zurückholen'}</a>
+                      <button type="button" className="ww-archive-del" onClick={() => { setErr(null); setDel(it); }}>{isEn ? 'Delete' : 'Löschen'}</button>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
             <div className="ww-archive-foot">
               <button type="button" className="ww-dt-cancel" onClick={() => setOpen(false)}>{isEn ? 'Close' : 'Schließen'}</button>
             </div>
