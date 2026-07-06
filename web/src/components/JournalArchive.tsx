@@ -4,6 +4,7 @@ import { selectActiveFormId } from '../lib/tinaForm';
 import RichText from './RichText';
 import AdminDocTools from './AdminDocTools';
 import AdminArchive from './AdminArchive';
+import { loggedIn as adminLoggedIn } from '../lib/tinaAdmin';
 import Lightbox, { type LbPhoto } from './Lightbox';
 import { socialIcon } from '../lib/socialIcons';
 import { normalizePath } from '../lib/stories';
@@ -45,6 +46,10 @@ export default function JournalArchive(props: Props) {
   // Im Editor-iframe (self !== top) -> Symbole als Feld-Sprung; live -> echte Links/Aktionen.
   const [isEditor, setIsEditor] = React.useState(false);
   React.useEffect(() => { try { setIsEditor(window.self !== window.top); } catch { setIsEditor(true); } }, []);
+  // Admin-Zeile (Neu + Archiv) selbst-verwaltet rendern (nur bei Login) — vermeidet den Hidden-
+  // Attribut-Konflikt zwischen React-Insel und dem globalen ww-admin-only-Einblende-Script.
+  const [isAdmin, setIsAdmin] = React.useState(false);
+  React.useEffect(() => { setIsAdmin(adminLoggedIn()); }, []);
 
   // Standort-Lightbox (OpenFreeMap-Karte).
   const [mapPoint, setMapPoint] = React.useState<{ lon: number; lat: number } | null>(null);
@@ -149,10 +154,12 @@ export default function JournalArchive(props: Props) {
         <p data-tina-field={sf('intro')}>{t(s.intro_de, s.intro_en)}</p>
       </div>
 
-      <div className="ww-admin-actions">
-        <a className="btn ww-admin-only ww-admin-newbtn" hidden href={NEW_HREF}>{isEn ? '+ New entry' : '+ Neuer Beitrag'}</a>
-        <AdminArchive collection="journal" items={archivedJournal} lang={lang} />
-      </div>
+      {isAdmin ? (
+        <div className="ww-admin-actions">
+          <a className="btn ww-admin-newbtn" href={NEW_HREF} target="_top">{isEn ? '+ New entry' : '+ Neuer Beitrag'}</a>
+          <AdminArchive collection="journal" items={archivedJournal} lang={lang} />
+        </div>
+      ) : null}
 
       {main.length === 0 && archive.length === 0 ? (
         <p className="journal-empty">{isEn ? 'No entries yet.' : 'Noch keine Einträge.'}</p>

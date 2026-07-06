@@ -795,9 +795,16 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 .ww-doc-tools--bar { position: fixed; right: 18px; bottom: 18px; z-index: 60; }
 @media (max-width: 560px) { .ww-doc-tools--bar { right: 12px; bottom: 12px; } }
 /* Einzelknopf: dunkel-glasig (über hellen UND dunklen Fotos lesbar), Rahmen + Schatten + Hover-Lift. */
+/* Einzelknopf: dunkel-glasig (über hellen UND dunklen Fotos lesbar). Logische Farben je Funktion:
+   Bearbeiten = creme (neutral), Archivieren = amber, Löschen = rot. */
 .ww-dt-btn { width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; padding: 0; background: rgba(28,24,18,0.6); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); color: #f0d9bf; border: 1px solid rgba(240,217,191,0.45); box-shadow: 0 4px 12px -4px rgba(0,0,0,0.45); text-decoration: none; cursor: pointer; transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease; }
 .ww-dt-btn:hover { background: rgba(28,24,18,0.85); color: #fff; border-color: #f0d9bf; transform: translateY(-1px); }
-.ww-dt-del:hover { background: #a3231d; border-color: #e07a6a; color: #fff; }
+/* Archivieren = amber */
+.ww-dt-arch-btn { color: #eab558; border-color: rgba(234,181,88,0.5); }
+.ww-dt-arch-btn:hover { background: #b07d1c; color: #fff; border-color: #eab558; }
+/* Löschen = rot */
+.ww-dt-del { color: #ec8c7d; border-color: rgba(236,140,125,0.5); }
+.ww-dt-del:hover { background: #a3231d; color: #fff; border-color: #e07a6a; }
 
 /* 3-Wege-Lösch-Dialog */
 .ww-dt-overlay { position: fixed; inset: 0; z-index: 4000; display: flex; align-items: center; justify-content: center; background: rgba(20,16,10,0.55); padding: 22px; }
