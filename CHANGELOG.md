@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-05 — Inhalts-Verwaltung: redundanten Archiv-Knopf entfernt
+- **Fix (`6bb3e3e`):** der separate 🗄️-Archiv-Knopf öffnete denselben Editor wie ✏️ Bearbeiten
+  (verwirrend, „Bug"-Eindruck). Jetzt zwei Werkzeuge: **Bearbeiten + Entfernen**; Archivieren liegt im
+  **Entfernen-Dialog** („Lieber archivieren" vs. „Endgültig löschen"), Zurückholen im Archiv-Panel.
+  Grund: echtes Ein-Klick-Archivieren via `updateDocument` ist unsicher (ersetzt ganzen Datensatz).
+- **Offen/Diagnose (fehlende Live-Vorschau im CMS):** vermutlich **ausstehender Re-Index** — Schema hat
+  neue Felder (`archived` etc.), bis Tina Cloud re-indexiert scheitern die Vorschau-Queries → „nothing to
+  edit" über ALLE Bereiche. „Create new" ohne Vorschau ist normal (ungespeichert). Lokal nicht sauber
+  reproduzierbar (Vorschau-Browser fix 607px → Tina blendet die Vorschau-Spalte aus). Nach Re-Index prüfen.
+
 ## 2026-07-05 — Inhalts-Verwaltung: Archiv-Ansicht + logische Farben
 - **Archiv-Ansicht (`565bd28`… → siehe git):** neue Insel `AdminArchive.tsx` — Knopf „Archiv (N)" (nur bei
   Login + wenn N>0) → Panel mit den archivierten Inhalten des Bereichs; je Eintrag **Zurückholen**
