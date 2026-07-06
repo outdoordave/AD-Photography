@@ -25,7 +25,9 @@ export default function AdminDocTools(props: Props) {
   const [err, setErr] = React.useState<string | null>(null);
   const [done, setDone] = React.useState(false);
 
-  React.useEffect(() => { setShow(loggedIn()); }, []);
+  // Nur auf der echten Live-Seite (self===top) UND angemeldet — NIE im CMS-Vorschau-iframe,
+  // damit die Werkzeuge dort nichts stören (die Vorschau-Bereiche brauchen keine Buttons).
+  React.useEffect(() => { try { setShow(loggedIn() && window.self === window.top); } catch { setShow(false); } }, []);
   React.useEffect(() => {
     if (!dlg) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !busy) setDlg(false); };

@@ -49,7 +49,7 @@ export default function JournalArchive(props: Props) {
   // Admin-Zeile (Neu + Archiv) selbst-verwaltet rendern (nur bei Login) — vermeidet den Hidden-
   // Attribut-Konflikt zwischen React-Insel und dem globalen ww-admin-only-Einblende-Script.
   const [isAdmin, setIsAdmin] = React.useState(false);
-  React.useEffect(() => { setIsAdmin(adminLoggedIn()); }, []);
+  React.useEffect(() => { try { setIsAdmin(adminLoggedIn() && window.self === window.top); } catch { setIsAdmin(false); } }, []);
 
   // Standort-Lightbox (OpenFreeMap-Karte).
   const [mapPoint, setMapPoint] = React.useState<{ lon: number; lat: number } | null>(null);

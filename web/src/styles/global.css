@@ -790,7 +790,13 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 .ww-doc-tools { display: flex; gap: 6px; }
 /* Karten-Overlay: immer sichtbar (Insel rendert nur bei Login), hebt beim Hovern MIT der Karte. */
 .ww-doc-tools--card { position: absolute; top: 8px; right: 8px; z-index: 6; transition: transform var(--dur-base) var(--ease); }
-.ww-card-wrap:hover .ww-doc-tools--card { transform: translateY(-6px); }
+/* Werkzeuge heben beim Hovern EXAKT so mit wie die jeweilige Karte (sonst laufen sie auseinander).
+   Basis: kein Versatz; je Kartentyp der passende Wert via :has(). */
+.ww-card-wrap:hover .ww-doc-tools--card { transform: none; }
+.ww-card-wrap:has(.story-card):hover .ww-doc-tools--card { transform: translateY(-6px); }
+.ww-card-wrap:has(.trip-card):hover .ww-doc-tools--card { transform: translateY(-3px); }
+.journal-list.journal-style-card .journal-item.is-clickable:hover .ww-doc-tools--card,
+.journal-list.journal-style-notes .journal-item.is-clickable:hover .ww-doc-tools--card { transform: translateY(-2px); }
 /* Detail-Leiste: dezente schwebende Trias unten rechts. */
 .ww-doc-tools--bar { position: fixed; right: 18px; bottom: 18px; z-index: 60; }
 @media (max-width: 560px) { .ww-doc-tools--bar { right: 12px; bottom: 12px; } }
