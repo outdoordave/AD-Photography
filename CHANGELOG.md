@@ -17,6 +17,19 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-05 — Inhalts-Verwaltung: Archiv-Ansicht + logische Farben
+- **Archiv-Ansicht (`565bd28`… → siehe git):** neue Insel `AdminArchive.tsx` — Knopf „Archiv (N)" (nur bei
+  Login + wenn N>0) → Panel mit den archivierten Inhalten des Bereichs; je Eintrag **Zurückholen**
+  (CMS-Editor am Archiv-Schalter) + **Löschen** (sichere `deleteDocument`-Mutation mit Nachfrage).
+  `AdminSectionBar.astro` bündelt „+ Neu" + „Archiv (N)" in einer Zeile (Stories/Reisen/Alben; Journal
+  rendert die Zeile in der Insel). Gemeinsame Helfer in `src/lib/tinaAdmin.ts`. Seiten-Stil (Sekundär-Pille
+  + Panel). Verifiziert (Login-Sim + Screenshot): „Archiv (1)" → Panel mit Eintrag, Zurückholen-Route korrekt.
+- **Logische Farben (`f8985f7`):** die drei Werkzeuge in Reihenfolge **Bearbeiten (creme) → Archivieren
+  (amber) → Löschen (rot)** (Icon + Hover). Journal-Admin-Zeile rendert jetzt selbst nur bei Login
+  (kein `hidden`-Attribut in der React-Insel → Hydration-Konflikt behoben).
+- ⚠️ Weiterhin: `archived` (reisen/alben/journal) = Schema → **Re-Index**; echter Lösch-Durchlauf im CMS
+  von David zu bestätigen.
+
 ## 2026-07-05 — Inhalts-Verwaltung: Vollausbau über alle Bereiche (Bearbeiten/Archivieren/Löschen + „+ Neu")
 - **Kern `AdminDocTools.tsx` (`ce14925`…):** eine React-Insel mit 3 Werkzeugen je Inhalt, selbst-sichtbar
   NUR bei Login (leak-sicher, für Besucher wird nichts gerendert). ✏️ Bearbeiten + 🗄️ Archivieren = Links

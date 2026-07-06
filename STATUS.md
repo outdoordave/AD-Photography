@@ -61,8 +61,10 @@
 > ⚠️ **Echter Lösch-Mutations-Durchlauf nur im CMS bestätigbar** (David); Delete = echter Commit
 > (git-wiederherstellbar). ⚠️ `archived` (reisen/alben/journal) = Schema → **Re-Index** (mit Stories gebündelt).
 > **Bewusst sicher:** Archivieren öffnet den CMS-Schalter statt riskantem `updateDocument` (ersetzt ganzen
-> Datensatz → Datenverlust-Risiko). **Noch offen:** „Archiv (N)"-Knopf pro Reiter + gesammelte Archiv-Ansicht +
-> „Archiviert"-Band (Zurückholen aktuell via CMS-Editor / Tina-Collection-Liste).
+> Datensatz → Datenverlust-Risiko). **Archiv-Ansicht FERTIG:** Knopf „Archiv (N)" pro Reiter (nur bei Login +
+> N>0) → Panel (`AdminArchive`) mit Zurückholen (CMS-Schalter) + Löschen je Eintrag; `AdminSectionBar` bündelt
+> „+ Neu" + „Archiv". Gemeinsame Helfer `src/lib/tinaAdmin.ts`. Werkzeuge logisch eingefärbt (Bearbeiten creme
+> → Archivieren amber → Löschen rot).
 >
 > **✅ Detail-Köpfe „wandernder Titel" — Mobil UND Desktop fertig (von David abgenommen, 25.06.).**
 > Reise + Story, beide Breakpoints. Architektur (für künftige Header wiederverwendbar, s. Memory
