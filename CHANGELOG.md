@@ -17,6 +17,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-05 — Inhalts-Verwaltung: Vorschau-Fix (Verdacht) + Hover + Archiv-Knopf immer sichtbar
+- **Fehlende CMS-Vorschau (`e3846da`, Verdacht):** Admin-Werkzeuge (`AdminDocTools`/`AdminArchive` +
+  Journal-Admin-Zeile) rendern jetzt nur bei `self===top` UND Login → **nicht** im CMS-Vorschau-iframe.
+  Auf genau den Mehrfach-Seiten (Journal/Stories/Reisen/Alben) waren sie der einzige Unterschied zu den
+  funktionierenden Einzeldoc-Bereichen. **Von David im echten CMS zu bestätigen** (lokal nicht prüfbar:
+  Vorschau-Browser fix 607px → Tina blendet die Vorschau-Spalte aus). Nebenbei geklärt: dass ein
+  Mehrfach-Bereich links die Dateiliste zeigt, ist normales Tina — die Übersicht previewt „… – Einstellungen".
+- **Buttons bewegten sich unabhängig (`e3846da`):** Karten-Werkzeuge heben beim Hovern exakt so mit wie
+  die jeweilige Karte (via `:has()`: Story −6, Reise −3, Journal −2, sonst 0) statt pauschal −6.
+- **Archiv-Knopf immer sichtbar (`5df8335`):** „Archiv (N)" erscheint jetzt pro Reiter auch bei N=0 (dezent
+  gedämpft), Panel zeigt dann „Hier ist noch nichts archiviert." → immer auffindbar, verschwindet nicht.
+
 ## 2026-07-05 — Inhalts-Verwaltung: redundanten Archiv-Knopf entfernt
 - **Fix (`6bb3e3e`):** der separate 🗄️-Archiv-Knopf öffnete denselben Editor wie ✏️ Bearbeiten
   (verwirrend, „Bug"-Eindruck). Jetzt zwei Werkzeuge: **Bearbeiten + Entfernen**; Archivieren liegt im
