@@ -795,6 +795,11 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 .ww-card-wrap:hover .ww-doc-tools--card { transform: none; }
 .ww-card-wrap:has(.story-card):hover .ww-doc-tools--card { transform: translateY(-6px); }
 .ww-card-wrap:has(.trip-card):hover .ww-doc-tools--card { transform: translateY(-3px); }
+/* Karte am SELBEN Hover-Ziel (dem Wrap) heben wie das Overlay. Sonst verliert die Karte beim Zeigen
+   auf die Knöpfe ihren eigenen :hover (das Overlay liegt darüber) und fällt zurück, während die Knöpfe
+   oben bleiben — genau das „Karte rutscht runter, Knöpfe nach oben". Über den Wrap heben beide gemeinsam. */
+.ww-card-wrap:hover .story-card { transform: translateY(-6px); box-shadow: 0 20px 44px -20px rgba(46,36,24,0.5); }
+.ww-card-wrap:hover .trip-card { transform: translateY(-3px); box-shadow: var(--ww-ring), 0 16px 34px -12px rgba(46,36,24,0.42); }
 .journal-list.journal-style-card .journal-item.is-clickable:hover .ww-doc-tools--card,
 .journal-list.journal-style-notes .journal-item.is-clickable:hover .ww-doc-tools--card { transform: translateY(-2px); }
 /* Detail-Leiste: dezente schwebende Trias unten rechts. */
@@ -805,12 +810,12 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
    Bearbeiten = creme (neutral), Archivieren = amber, Löschen = rot. */
 .ww-dt-btn { width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; padding: 0; background: rgba(28,24,18,0.6); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); color: #f0d9bf; border: 1px solid rgba(240,217,191,0.45); box-shadow: 0 4px 12px -4px rgba(0,0,0,0.45); text-decoration: none; cursor: pointer; transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease; }
 .ww-dt-btn:hover { background: rgba(28,24,18,0.85); color: #fff; border-color: #f0d9bf; transform: translateY(-1px); }
-/* Archivieren = amber */
-.ww-dt-arch-btn { color: #eab558; border-color: rgba(234,181,88,0.5); }
-.ww-dt-arch-btn:hover { background: #b07d1c; color: #fff; border-color: #eab558; }
-/* Löschen = rot */
-.ww-dt-del { color: #ec8c7d; border-color: rgba(236,140,125,0.5); }
-.ww-dt-del:hover { background: #a3231d; color: #fff; border-color: #e07a6a; }
+/* In den Papierkorb = coral; erledigt = kurzer grüner Haken vor dem Neuladen */
+.ww-dt-trash { color: #f0997b; border-color: rgba(240,153,123,0.5); }
+.ww-dt-trash:hover { background: #993c1d; color: #fff; border-color: #f0997b; }
+.ww-dt-trash.is-done { color: #8fe0b6; border-color: rgba(143,224,182,0.6); background: rgba(15,110,86,0.55); }
+.ww-dt-trash:disabled { cursor: default; }
+.ww-dt-inlineerr { position: absolute; top: calc(100% + 6px); right: 0; max-width: 220px; background: #a3231d; color: #fff; font-size: var(--fs-label); line-height: 1.35; padding: 6px 9px; border-radius: var(--radius-sm); box-shadow: 0 6px 16px -6px rgba(0,0,0,0.5); z-index: 8; }
 
 /* 3-Wege-Lösch-Dialog */
 .ww-dt-overlay { position: fixed; inset: 0; z-index: 4000; display: flex; align-items: center; justify-content: center; background: rgba(20,16,10,0.55); padding: 22px; }

@@ -36,6 +36,47 @@ export function newHref(collection: string): string {
   return `/admin/index.html#/collections/new/${collection}`;
 }
 
+// Kleiner GraphQL-Helfer gegen die Tina-Content-API (mit Login-Token).
+async function tinaGql(query: string, variables: Record<string, any>): Promise<{ ok: boolean; data?: any; error?: string }> {
+  const token = authToken();
+  if (!token) return { ok: false, error: 'Kein Login-Token gefunden — bitte im CMS neu anmelden.' };
+  try {
+    const res = await fetch(CONTENT_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ query, variables }),
+    });
+    const json = await res.json().catch(() => ({} as any));
+    if (!res.ok || (json && json.errors)) {
+      return { ok: false, error: (json && json.errors && json.errors[0] && json.errors[0].message) || `Fehler (HTTP ${res.status}).` };
+    }
+    return { ok: true, data: json && json.data };
+  } catch (e) { return { ok: false, error: String((e as any)?.message || e) }; }
+}
+
+// Sicheres Setzen des `archived`-Schalters OHNE Bearbeiten-Menü — als „In den Papierkorb" (true) bzw.
+// „Wiederherstellen" (false). Verfahren wie Tinas eigener Speichern: erst die ROHEN Formularwerte
+// (`_values`, exakt die Eingabeform) lesen, dann NUR `archived` ändern und alles zurückschreiben
+// (updateDocument, params pro Collection). So gehen keine Felder verloren. Echter Durchlauf nur im CMS.
+export async function setArchived(collection: string, relativePath: string, archived: boolean): Promise<{ ok: boolean; error?: string }> {
+  const read = await tinaGql(
+    'query v($collection:String!,$relativePath:String!){ document(collection:$collection, relativePath:$relativePath){ ... on Document { _values } } }',
+    { collection, relativePath },
+  );
+  if (!read.ok) return { ok: false, error: read.error };
+  const values = read.data && read.data.document && read.data.document._values;
+  if (!values || typeof values !== 'object') return { ok: false, error: 'Datensatz nicht gefunden.' };
+  const params = { [collection]: { ...values, archived } };
+  const write = await tinaGql(
+    'mutation u($collection:String!,$relativePath:String!,$params:DocumentUpdateMutation!){ updateDocument(collection:$collection, relativePath:$relativePath, params:$params){ __typename } }',
+    { collection, relativePath, params },
+  );
+  return write.ok ? { ok: true } : { ok: false, error: write.error };
+}
+
+export const archiveDocument = (collection: string, relativePath: string) => setArchived(collection, relativePath, true);
+export const restoreDocument = (collection: string, relativePath: string) => setArchived(collection, relativePath, false);
+
 // Sicheres Löschen: trifft immer nur den exakt übergebenen Datensatz. Fehlwirkung = „nichts passiert"
 // (Fehlermeldung), nie Datenverlust. Echter Durchlauf nur im echten CMS (mit gültigem Token).
 export async function deleteDocument(collection: string, relativePath: string): Promise<{ ok: boolean; error?: string }> {
