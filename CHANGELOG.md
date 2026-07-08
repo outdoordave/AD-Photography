@@ -17,6 +17,27 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-08 16:03 — CMS-Seitenleiste: Datei-Listen der Mehrfach-Bereiche ausgeblendet
+- **Weg mit den rohen Dateilisten (`2a5bb14`):** Journal, Portfolio, Stories und Reisen hatten in der
+  CMS-Seitenleiste je zwei Einträge — den Mehrfach-Bereich mit der `.md`/`.json`-Dateiliste
+  („Add File/Add Folder") und den Einstellungen-Bereich (routet auf die Live-Übersicht). Mit den
+  Einzeldateien arbeitet David nicht. Jetzt: die vier Dateilisten (`journal`, `alben`, `story`,
+  `reisen`) sind per **CSS im `cmsCallback`** aus der Seitenleiste ausgeblendet — pro Reiter steht
+  genau **ein** Eintrag, der die **Live-Übersichtsseite** öffnet (Pflege dort via Karten-Knöpfe
+  Neu/Bearbeiten/Archiv/Löschen).
+  - CSS-Selektor: `li:not([data-slot]):has(> a[href$="/collections/<name>/~"]){display:none}` —
+    Sidebar-`<li>` haben kein `data-slot`, Breadcrumb-`<li>` schon → Brotkrumen bleiben unberührt.
+    Grundlage: DOM-Struktur aus dem gebauten Admin-Bundle (`public/admin`), nicht geraten.
+  - Verbleibende Bereiche umbenannt: „Journal – Einstellungen" → **„Journal"**, „Stories –
+    Einstellungen" → **„Stories"**, „Reisen – Einstellungen" → **„Reisen"** („Portfolio" hieß
+    bereits so). Die Datei-Listen-Bereiche existieren weiter (für Bearbeiten/Neu-Anlegen), nur
+    unsichtbar in der Leiste.
+- **Kein Re-Index nötig** (nur UI/Labels + Runtime-CSS). `tina-lock.json` neu erzeugt, `astro build`
+  grün (57 Seiten). **Von David im echten CMS gegenzuprüfen** (Sidebar lokal nicht darstellbar).
+- Dateien: `web/tina/config.ts`, `web/tina/tina-lock.json`.
+
+---
+
 ## 2026-07-05 — Inhalts-Verwaltung: Vorschau-Fix (Verdacht) + Hover + Archiv-Knopf immer sichtbar
 - **Fehlende CMS-Vorschau (`e3846da`, Verdacht):** Admin-Werkzeuge (`AdminDocTools`/`AdminArchive` +
   Journal-Admin-Zeile) rendern jetzt nur bei `self===top` UND Login → **nicht** im CMS-Vorschau-iframe.

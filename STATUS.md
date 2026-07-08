@@ -1,10 +1,23 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-07-03** · Live-Branch `main`. Seite **live**, Cutover durch. SEO-Grundlage steht
+> **Stand: 2026-07-08** · Live-Branch `main`. Seite **live**, Cutover durch. SEO-Grundlage steht
 > (Sitemap, JSON-LD, Google Search Console bestätigt + Sitemap gelesen), Datenschutz **vollständig**
 > (inkl. Web3Forms), Performance ok, A11y-Basics drin, Security-Header + CSP gesetzt. **Keine offenen
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
 > Session überschrieben). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
+>
+> **🆕 CMS-Seitenleiste aufgeräumt (08.07.2026, `2a5bb14`) — eine natürliche Kachel pro Reiter.**
+> Journal/Portfolio/Stories/Reisen hatten je ZWEI Sidebar-Einträge: die rohe `.md`/`.json`-**Dateiliste**
+> (Mehrfach-Bereich, „Add File/Add Folder") + den Einstellungen-Bereich (routet auf die Live-Übersicht).
+> David arbeitet nicht mit Einzeldateien → die **vier Dateilisten** (`journal`, `alben`, `story`, `reisen`)
+> sind jetzt per **CSS im `cmsCallback`** aus der Leiste ausgeblendet
+> (`li:not([data-slot]):has(> a[href$="/collections/<name>/~"]){display:none}`; Breadcrumbs tragen
+> `data-slot` → unberührt; DOM-Struktur aus dem gebauten `public/admin`-Bundle belegt). Verbleibende
+> Bereiche umbenannt: **„Journal", „Stories", „Reisen"** (vorher „… – Einstellungen"; „Portfolio" hieß schon so).
+> Pflege komplett über die **Live-Übersichtsseiten** (Karten-Knöpfe Neu/Bearbeiten/Archiv/Löschen). Die
+> Listen-Bereiche existieren weiter (Bearbeiten/Neu-Anlegen funktioniert), nur unsichtbar. **Nur UI/Labels →
+> KEIN Re-Index**; `tina-lock.json` neu, `astro build` grün (57 Seiten). ⚠️ **Sidebar lokal nicht darstellbar
+> → von David im echten `/admin` gegenzuprüfen** (Vorschau-Browser fix 607px; Admin-SPA nicht testbar).
 >
 > **🆕 Journal-Bereich (03.07.2026) — ausgebaut, lokal verifiziert, aktuell SICHTBAR (`show_journal`=true).**
 > `journal`-Collection (Tagebuch: kurze datierte Einträge, neueste zuerst; Datum+Text reichen). Seiten
