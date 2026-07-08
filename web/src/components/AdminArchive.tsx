@@ -23,8 +23,9 @@ export default function AdminArchive({ collection, items, lang }: Props) {
   const [err, setErr] = React.useState<string | null>(null);
   const [doneName, setDoneName] = React.useState<string | null>(null);
 
-  // Nur auf der echten Live-Seite (self===top) UND angemeldet — nicht im CMS-Vorschau-iframe.
-  React.useEffect(() => { try { setShow(loggedIn() && window.self === window.top); } catch { setShow(false); } }, []);
+  // Sichtbar, sobald angemeldet — auf der Live-Seite UND in der CMS-Vorschau (iframe), wo David die
+  // Übersicht jetzt erreicht. Leak-sicher: Besucher haben kein Tina-Token -> loggedIn() false.
+  React.useEffect(() => { try { setShow(loggedIn()); } catch { setShow(false); } }, []);
   React.useEffect(() => {
     if (!open && !del) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !busy) { setDel(null); if (!del) setOpen(false); } };

@@ -25,9 +25,11 @@ export default function AdminDocTools(props: Props) {
   const [err, setErr] = React.useState<string | null>(null);
   const [done, setDone] = React.useState(false);
 
-  // Nur auf der echten Live-Seite (self===top) UND angemeldet — NIE im CMS-Vorschau-iframe,
-  // damit die Werkzeuge dort nichts stören (die Vorschau-Bereiche brauchen keine Buttons).
-  React.useEffect(() => { try { setShow(loggedIn() && window.self === window.top); } catch { setShow(false); } }, []);
+  // Sichtbar, sobald man angemeldet ist — sowohl auf der echten Live-Seite ALS AUCH in der
+  // CMS-Live-Vorschau (iframe). Denn David erreicht die Übersicht künftig genau über die Vorschau
+  // (Reiter anklicken -> Live-Übersicht statt Dateiliste), und dort will er die Werkzeuge sehen.
+  // Leak-sicher: für Besucher (kein Tina-Token) ist loggedIn() false -> es wird nichts gerendert.
+  React.useEffect(() => { try { setShow(loggedIn()); } catch { setShow(false); } }, []);
   React.useEffect(() => {
     if (!dlg) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !busy) setDlg(false); };
