@@ -17,6 +17,26 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-08 21:55 — Archiv live aus Tina Cloud + Edit-Route zurückgedreht (`422222b`+`0658f47`)
+- **Edit-Route-Revert (`422222b`):** Die Umstellung auf `/collections/<name>/~/<slug>` war falsch —
+  Tina liest den Slug dort als ORDNER → „No documents found". Zurück auf `/collections/edit/<name>/~/<slug>`
+  (Tinas eigener Link, im Admin-Bundle belegt). Bitte im echten Admin prüfen, ob dort die Vorschau kommt.
+- **Archiv jetzt LIVE aus Tina Cloud (`0658f47`)** — löst „grüner Haken, aber nach Reload wieder da":
+  Archiv-Liste, Zahl und das Ausblenden archivierter Karten kamen bisher aus dem statischen Build (erst
+  nach dem Cloudflare-Build aktuell). Jetzt holen die Admin-Ansichten ihren Stand **live aus Tina Cloud**
+  (nur eingeloggt) → Archivieren/Wiederherstellen wirken **sofort**, auch nach Reload, ohne auf den Build
+  zu warten. Löschen: Datei raus aus GitHub, Seite baut im Hintergrund neu (Live-Ansicht sofort korrekt).
+  - `lib/tinaAdmin`: `archivedNodes(collection)` (gecacht, invalidierbar) + `mapArchived()`; Feldnamen je
+    Bereich aus dem Schema bestätigt. AdminArchive nutzt Live-Stand mit **Fallback** auf statische Props
+    (Abfrage-Fehler → bisheriges Verhalten, nichts bricht). AdminDocTools blendet live-archivierte Karten aus.
+  - Verifiziert offline: Fallback greift sauber (Fake-Token → 401 → statische Liste, keine Abstürze),
+    `astro build` grün. ⚠️ Echter Live-Durchlauf nur im echten CMS prüfbar.
+- **Hinweis:** `alaska-california-2026` + `westcoast-2023` stehen aktuell auf `archived: true` (von Davids
+  CMS-Tests, via „TinaCMS content update" committet) → nach dem nächsten Build aus den Live-Listen raus,
+  bis sie im Archiv „wiederhergestellt" werden.
+
+---
+
 ## 2026-07-08 21:20 — Inhalts-Verwaltung umstrukturiert: 3 Knöpfe, Edit mit Vorschau, ein „Archiv" (`f733841`)
 Nach Brainstorming mit David neu geordnet:
 - **Edit landet jetzt MIT Live-Vorschau.** Ursache der fehlenden Vorschau gefunden: Tina hat zwei

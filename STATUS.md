@@ -6,7 +6,18 @@
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
 > Session überschrieben). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
 >
-> **🆕 Verwaltung umstrukturiert — 3 Knöpfe + ein „Archiv" (08.07., `64e81b4`+`f733841`, aktueller Stand).**
+> **🆕 Archiv LIVE aus Tina Cloud + Edit-Route korrigiert (08.07., `422222b`+`0658f47`, neuester Stand).**
+> **Edit:** Route zurück auf `#/collections/edit/<name>/~/<slug>` (die Umstellung ohne `edit/` führte in
+> den Ordner-Browser → „No documents found"). **Archiv live:** Archiv-Liste, Zahl und das Ausblenden
+> archivierter Karten holen ihren Stand jetzt **live aus Tina Cloud** (nur eingeloggt), nicht mehr aus dem
+> statischen Build → Archivieren/Wiederherstellen wirken **sofort**, auch nach Reload (vorher erst nach dem
+> Cloudflare-Build → „grüner Haken, aber wieder da"). Helfer `archivedNodes`/`mapArchived`/`invalidateArchived`
+> in `lib/tinaAdmin`; **Fallback** auf statische Props, wenn die Live-Abfrage scheitert (nichts bricht).
+> Löschen: Datei raus aus GitHub, Build im Hintergrund. Offline verifiziert (Fallback + Build grün); echter
+> Live-Durchlauf nur im echten CMS mit Token. ⚠️ `alaska-california-2026` + `westcoast-2023` sind aktuell
+> `archived:true` (aus Davids CMS-Tests) → per „Wiederherstellen" zurückholbar.
+>
+> **🆕 Verwaltung umstrukturiert — 3 Knöpfe + ein „Archiv" (08.07., `64e81b4`+`f733841`).**
 > Nach Brainstorming: **(1) Edit mit Live-Vorschau** — `editHref` nutzt jetzt Tinas visuelle Route
 > `#/collections/<name>/~/<slug>` statt der Formular-only-Route `…/edit/…` (das war die Ursache der
 > fehlenden Vorschau im Edit-Menü). **(2) Drei Icon-Knöpfe** je Kärtchen: ✏️ Bearbeiten · 🗄️ Archivieren
