@@ -14,7 +14,7 @@ const s = settings as any;
 const modes = s.modes || { album: true, chronological: false, alphabetical: false };
 const archivedItems = (res.data.albenConnection?.edges || []).filter(Boolean)
   .filter((e: any) => e.node?.archived === true)
-  .map((e: any) => ({ relativePath: `${e.node._sys.filename}.json`, title: e.node.name_en || e.node.name || e.node._sys.filename }));
+  .map((e: any) => ({ relativePath: `${e.node._sys.filename}.json`, title: e.node.name_en || e.node.name || e.node._sys.filename, date: e.node.date || '', teaser: e.node.note_en || e.node.note_de || '', href: `/en/portfolio/${e.node._sys.filename}` }));
 ---
 <BaseLayout title={`${s.title_en || s.title_de || 'Portfolio'} — Wide & Wild`} lang="en" description="Selected work by Wide & Wild — landscapes, wildlife and travel moments in photo albums.">
   <section>

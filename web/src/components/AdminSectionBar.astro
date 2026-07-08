@@ -1,9 +1,10 @@
 ---
 // Admin-Leiste oben auf einer Übersichtsseite: „+ Neu …" (Standard-.btn, Rahmen+Effekte) +
-// „Archiv (N)" (Panel mit Zurückholen/Löschen). Nur sichtbar, wenn im CMS angemeldet.
-// `archived` = vorbereitete Liste der archivierten Inhalte des Bereichs ({relativePath, title}).
+// „Papierkorb (N)" (Vollansicht mit Wiederherstellen/endgültig Löschen). Nur sichtbar, wenn im CMS
+// angemeldet. `archived` = vorbereitete Liste der entfernten Inhalte ({relativePath, title, date?,
+// teaser?, href?}) für die Lese-Kärtchen im Papierkorb.
 import AdminArchive from './AdminArchive.tsx';
-interface Props { collection: string; newLabel: string; archived: { relativePath: string; title: string }[]; lang: 'de' | 'en' }
+interface Props { collection: string; newLabel: string; archived: { relativePath: string; title: string; date?: string; teaser?: string; href?: string }[]; lang: 'de' | 'en' }
 const { collection, newLabel, archived, lang } = Astro.props;
 ---
 <div class="ww-admin-actions">

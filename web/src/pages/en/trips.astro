@@ -15,7 +15,7 @@ const allEdges = (res.data.reisenConnection?.edges || []).filter(Boolean);
 const edges = allEdges.filter((e: any) => e.node?.archived !== true);
 const trips = sortTrips(edges.map((e: any) => ({ slug: e.node._sys.filename, data: e.node as RawTrip })));
 const archivedItems = allEdges.filter((e: any) => e.node?.archived === true)
-  .map((e: any) => ({ relativePath: `${e.node._sys.filename}.json`, title: e.node.title_en || e.node.title || e.node._sys.filename }));
+  .map((e: any) => ({ relativePath: `${e.node._sys.filename}.json`, title: e.node.title_en || e.node.title || e.node._sys.filename, date: e.node.date || '', teaser: e.node.meta_en || e.node.meta_de || '', href: `/en/trips/${e.node._sys.filename}` }));
 const s = settings as any;
 ---
 <BaseLayout title={`${s.title_en || s.title_de || 'Trips'} — Wide & Wild`} lang="en" description="Our road trips — journeys by Wide & Wild as a map timeline with stops, photos and experiences.">

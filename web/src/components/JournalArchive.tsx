@@ -10,7 +10,7 @@ import { socialIcon } from '../lib/socialIcons';
 import { normalizePath } from '../lib/stories';
 import {
   sortJournalNodes, partitionJournal, journalHeading, journalHasTitle, formatFullDate, journalText,
-  journalFirstPhoto, parseGeoPoint, resolveLinkedContent, resolveSocial, journalLink,
+  journalPlainText, journalFirstPhoto, parseGeoPoint, resolveLinkedContent, resolveSocial, journalLink,
 } from '../lib/journal';
 
 // MapLibre erst laden, wenn die Standort-Lightbox geöffnet wird (hält das Journal-Bundle schlank).
@@ -84,7 +84,13 @@ export default function JournalArchive(props: Props) {
   // Archivierte Einträge für Besucher ausblenden (bleiben im CMS, zurückholbar) + fürs Archiv-Panel sammeln.
   const nodes = allNodes.filter((n: any) => n.archived !== true);
   const archivedJournal = allNodes.filter((n: any) => n.archived === true)
-    .map((n: any) => ({ relativePath: `${n._sys.filename}.md`, title: journalHeading(n, lang) }));
+    .map((n: any) => ({
+      relativePath: `${n._sys.filename}.md`,
+      title: journalHeading(n, lang),
+      date: journalHasTitle(n, lang) ? formatFullDate(n.date || '', lang) : '',
+      teaser: journalPlainText(n, lang, 120),
+      href: `${prefix}/journal/${n._sys.filename}`,
+    }));
   const { main, archive } = partitionJournal(nodes as any[], months);
 
   const renderItem = (j: any) => {

@@ -16,7 +16,7 @@ const modes = s.modes || { album: true, chronological: false, alphabetical: fals
 // Archivierte Alben für das Archiv-Panel (Ausblenden selbst passiert in GalleryContent).
 const archivedItems = (res.data.albenConnection?.edges || []).filter(Boolean)
   .filter((e: any) => e.node?.archived === true)
-  .map((e: any) => ({ relativePath: `${e.node._sys.filename}.json`, title: e.node.name || e.node._sys.filename }));
+  .map((e: any) => ({ relativePath: `${e.node._sys.filename}.json`, title: e.node.name || e.node._sys.filename, date: e.node.date || '', teaser: e.node.note_de || '', href: `/portfolio/${e.node._sys.filename}` }));
 ---
 <BaseLayout title={`${s.title_de || 'Portfolio'} — Wide & Wild`} lang="de" description="Ausgewählte Aufnahmen von Wide & Wild — Landschaften, Wildlife und Reisemomente in Foto-Alben.">
   <section>

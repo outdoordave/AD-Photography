@@ -23,7 +23,7 @@ const allEntries = await getCollection('stories');
 const entries = allEntries.filter((e) => (e.data as any).archived !== true);
 const stories = toSortedStories(entries.map((e) => ({ slug: e.slug, data: e.data })));
 const archivedItems = allEntries.filter((e) => (e.data as any).archived === true)
-  .map((e) => ({ relativePath: `${e.slug}.md`, title: (e.data as any).title_en || (e.data as any).title_de || e.slug }));
+  .map((e) => ({ relativePath: `${e.slug}.md`, title: (e.data as any).title_en || (e.data as any).title_de || e.slug, date: (e.data as any).date || '', teaser: (e.data as any).excerpt_en || (e.data as any).excerpt_de || '', href: `/en/stories/${e.slug}` }));
 const setRes = await client.queries.stories_settings({ relativePath: 'stories-settings.json' });
 const s = settings as any;
 ---
