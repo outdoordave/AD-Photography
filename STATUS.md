@@ -16,8 +16,18 @@
 > Bereiche umbenannt: **„Journal", „Stories", „Reisen"** (vorher „… – Einstellungen"; „Portfolio" hieß schon so).
 > Pflege komplett über die **Live-Übersichtsseiten** (Karten-Knöpfe Neu/Bearbeiten/Archiv/Löschen). Die
 > Listen-Bereiche existieren weiter (Bearbeiten/Neu-Anlegen funktioniert), nur unsichtbar. **Nur UI/Labels →
-> KEIN Re-Index**; `tina-lock.json` neu, `astro build` grün (57 Seiten). ⚠️ **Sidebar lokal nicht darstellbar
-> → von David im echten `/admin` gegenzuprüfen** (Vorschau-Browser fix 607px; Admin-SPA nicht testbar).
+> KEIN Re-Index**; `tina-lock.json` neu, `astro build` grün (57 Seiten). ✅ **Von David abgenommen** („die
+> übersicht ist jetzt perfekt … so hab ich mir das vorgestellt") — als **Dauer-Vorgabe** gemerkt (Memory
+> `cms-eine-kachel-pro-reiter`): jeder neue Mehrfach-Bereich bekommt diese Ein-Kachel-Behandlung.
+>
+> **🆕 Verwaltungs-Werkzeuge auch in der CMS-Vorschau (08.07., `24940bb`).** Bearbeiten/Archiv/Löschen +
+> „+ Neu" waren auf `self===top` gegated (nur echte Live-Seite) — dadurch fehlten sie in der CMS-Vorschau,
+> also genau dort, wo David die Übersicht jetzt erreicht (Reiter → Live-Übersicht im iframe). Der Riegel
+> (`e3846da`) war ein **Fehl-Verdacht** gegen die „fehlende Vorschau"; die echte Ursache (Dateilisten der
+> Mehrfach-Bereiche) ist mit `2a5bb14` behoben. Jetzt: Werkzeuge sichtbar, **sobald angemeldet** (Live UND
+> Vorschau). Leak-Sicherheit unverändert (Besucher ohne Token → nichts). **Verifiziert per Same-Origin-iframe**
+> (self≠top + eingeloggt = CMS-Vorschau-Bedingung): `/stories` 6 Karten je Bearbeiten+Löschen + Archiv + „+ Neu",
+> `/journal` 4 Einträge je Werkzeuge + Admin-Zeile (Screenshot bestätigt).
 >
 > **🆕 Journal-Bereich (03.07.2026) — ausgebaut, lokal verifiziert, aktuell SICHTBAR (`show_journal`=true).**
 > `journal`-Collection (Tagebuch: kurze datierte Einträge, neueste zuerst; Datum+Text reichen). Seiten

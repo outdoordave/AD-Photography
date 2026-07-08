@@ -17,6 +17,24 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-08 16:48 — Inhalts-Verwaltung: Werkzeuge auch in der CMS-Vorschau sichtbar
+- **`self===top`-Riegel entfernt (`24940bb`):** Bearbeiten/Archiv/Löschen + „+ Neu" waren auf
+  `loggedIn() && self===top` gegated → nur echte Live-Seite, **nicht** im CMS-Vorschau-iframe. Genau
+  dort landet David aber seit dem Sidebar-Umbau (Reiter anklicken → Live-Übersicht **in der Vorschau**),
+  also fehlten die Knöpfe. Jetzt: sichtbar, sobald **angemeldet** (Live-Seite UND Vorschau).
+- **Retour zum früheren Verdacht:** Der Riegel (`e3846da`) war eine Hypothese gegen die „fehlende
+  Vorschau". Die echte Ursache war das Dateilisten-Verhalten der Mehrfach-Bereiche → mit `2a5bb14`
+  behoben. Der Riegel war überflüssig und hat nur die Knöpfe versteckt.
+- **Leak-Sicherheit unverändert:** Besucher ohne Tina-Token → `loggedIn()` false → nichts gerendert
+  (SSR + Client). Nur der `isEditor`-Schalter (Journal-Symbole live-Link vs. Klick-zum-Feld) bleibt
+  iframe-bewusst.
+- **Verifiziert per Same-Origin-iframe** (self!==top, eingeloggt = CMS-Vorschau-Bedingung): `/stories`
+  6 Karten je Bearbeiten+Löschen + „Archiv (0)" + „+ Neue Story"; `/journal` 4 Einträge je Werkzeuge +
+  Admin-Zeile. Screenshot bestätigt Stift/Papierkorb auf der Karte.
+- Dateien: `web/src/components/AdminDocTools.tsx`, `AdminArchive.tsx`, `JournalArchive.tsx`.
+
+---
+
 ## 2026-07-08 16:03 — CMS-Seitenleiste: Datei-Listen der Mehrfach-Bereiche ausgeblendet
 - **Weg mit den rohen Dateilisten (`2a5bb14`):** Journal, Portfolio, Stories und Reisen hatten in der
   CMS-Seitenleiste je zwei Einträge — den Mehrfach-Bereich mit der `.md`/`.json`-Dateiliste
