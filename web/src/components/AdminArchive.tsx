@@ -1,5 +1,5 @@
 import React from 'react';
-import { loggedIn, restoreDocument, deleteDocument, archivedNodes, mapArchived, invalidateArchived } from '../lib/tinaAdmin';
+import { loggedIn, restoreDocument, deleteDocument, archivedNodes, mapArchived, invalidateArchived, showToast } from '../lib/tinaAdmin';
 
 // „Papierkorb (N)" pro Bereich: Knopf öffnet eine bildschirmfüllende Papierkorb-Ansicht im Look der
 // jeweiligen Sektion (gleicher Hintergrund/Kopf-Stil), die die entfernten Beiträge als schlichte
@@ -44,6 +44,12 @@ export default function AdminArchive({ collection, items, lang }: Props) {
       .catch(() => { /* Fallback: statische items */ });
   }, [collection, lang]);
   React.useEffect(() => { if (show) loadLive(false); }, [show, loadLive]);
+  // Zahl/Liste sofort nachziehen, wenn anderswo (Karten-Knopf) etwas archiviert/gelöscht wurde.
+  React.useEffect(() => {
+    const onChanged = (e: any) => { if (!e || !e.detail || e.detail.collection === collection) loadLive(true); };
+    window.addEventListener('ww:archive-changed', onChanged as EventListener);
+    return () => window.removeEventListener('ww:archive-changed', onChanged as EventListener);
+  }, [collection, loadLive]);
   React.useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !busy) { if (emptyAll) setEmptyAll(false); else if (del) setDel(null); else setOpen(false); } };
@@ -57,34 +63,37 @@ export default function AdminArchive({ collection, items, lang }: Props) {
   const list = base.filter((it) => !gone[it.relativePath]);
   const t = (de: string, en: string) => (isEn ? en : de);
 
+  const changed = () => { invalidateArchived(collection); try { window.dispatchEvent(new CustomEvent('ww:archive-changed', { detail: { collection } })); } catch (e) { /* egal */ } };
+
   const onRestore = async (it: Item) => {
     if (busy) return;
     setBusy(it.relativePath); setErr(null);
     const r = await restoreDocument(collection, it.relativePath);
-    if (r.ok) { setGone((g) => ({ ...g, [it.relativePath]: 'restored' })); invalidateArchived(collection); }
-    else setErr(r.error || t('Wiederherstellen fehlgeschlagen.', 'Restore failed.'));
+    if (r.ok) { setGone((g) => ({ ...g, [it.relativePath]: 'restored' })); changed(); showToast(t('Wiederhergestellt', 'Restored'), 'success'); }
+    else { const m = r.error || t('Wiederherstellen fehlgeschlagen.', 'Restore failed.'); setErr(m); showToast(m, 'error'); }
     setBusy(null);
   };
   const onDelete = async () => {
     if (!del || busy) return;
     setBusy(del.relativePath); setErr(null);
     const r = await deleteDocument(collection, del.relativePath);
-    if (r.ok) { setGone((g) => ({ ...g, [del.relativePath]: 'deleted' })); invalidateArchived(collection); setDel(null); }
-    else setErr(r.error || t('Löschen fehlgeschlagen.', 'Delete failed.'));
+    if (r.ok) { setGone((g) => ({ ...g, [del.relativePath]: 'deleted' })); changed(); setDel(null); showToast(t('Endgültig gelöscht', 'Deleted for good'), 'success'); }
+    else { const m = r.error || t('Löschen fehlgeschlagen.', 'Delete failed.'); setErr(m); showToast(m, 'error'); }
     setBusy(null);
   };
   const onEmptyAll = async () => {
     if (busy) return;
     setBusy('__all__'); setErr(null);
-    let failed: string | null = null;
+    let failed: string | null = null; let n = 0;
     for (const it of list) {
       const r = await deleteDocument(collection, it.relativePath);
-      if (r.ok) setGone((g) => ({ ...g, [it.relativePath]: 'deleted' }));
+      if (r.ok) { setGone((g) => ({ ...g, [it.relativePath]: 'deleted' })); n++; }
       else { failed = r.error || t('Löschen fehlgeschlagen.', 'Delete failed.'); break; }
     }
-    invalidateArchived(collection);
+    changed();
     setBusy(null); setEmptyAll(false);
-    if (failed) setErr(failed);
+    if (failed) { setErr(failed); showToast(failed, 'error'); }
+    else showToast(t(`Archiv geleert (${n})`, `Archive emptied (${n})`), 'success');
   };
 
   return (
@@ -131,7 +140,7 @@ export default function AdminArchive({ collection, items, lang }: Props) {
                     } : undefined}
                   >
                     <div className="ww-doc-tools ww-doc-tools--card" onClick={(e) => e.stopPropagation()}>
-                      <button type="button" className="ww-dt-btn ww-dt-restore" onClick={() => onRestore(it)} disabled={busy === it.relativePath} title={t('Wiederherstellen', 'Restore')} aria-label={t('Wiederherstellen', 'Restore')}><IconRestore /></button>
+                      <button type="button" className={`ww-dt-btn ww-dt-restore${busy === it.relativePath ? ' is-busy' : ''}`} onClick={() => onRestore(it)} disabled={!!busy} title={t('Wiederherstellen', 'Restore')} aria-label={t('Wiederherstellen', 'Restore')}><IconRestore /></button>
                       <button type="button" className="ww-dt-btn ww-dt-del" onClick={() => { setErr(null); setDel(it); }} disabled={!!busy} title={t('Endgültig löschen', 'Delete for good')} aria-label={t('Endgültig löschen', 'Delete for good')}><IconTrash /></button>
                     </div>
                     <div className="ww-trash-title">{it.title || it.relativePath}</div>

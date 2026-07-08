@@ -117,6 +117,20 @@ export function archivedNodes(collection: string, force = false): Promise<any[] 
 }
 export function invalidateArchived(collection: string) { archivedCache[collection] = undefined; }
 
+// Dezentes Erfolgs-/Fehler-Popup (grün/rot), unten mittig, blendet sich selbst wieder aus. Reines
+// DOM (framework-frei) -> aus jeder Insel aufrufbar, funktioniert auch im CMS-Vorschau-iframe.
+export function showToast(message: string, kind: 'success' | 'error' = 'success') {
+  if (typeof document === 'undefined') return;
+  const el = document.createElement('div');
+  el.className = `ww-toast ww-toast--${kind}`;
+  el.setAttribute('role', 'status');
+  el.textContent = message;
+  (document.body || document.documentElement).appendChild(el);
+  requestAnimationFrame(() => el.classList.add('is-in'));
+  const remove = () => { el.classList.remove('is-in'); setTimeout(() => { try { el.remove(); } catch (e) { /* egal */ } }, 320); };
+  setTimeout(remove, kind === 'error' ? 4600 : 2400);
+}
+
 export function mapArchived(collection: string, node: any, lang: 'de' | 'en'): ArchivedItem {
   const cfg = FIELDS[collection];
   const en = lang === 'en';

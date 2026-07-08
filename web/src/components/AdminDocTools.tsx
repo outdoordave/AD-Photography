@@ -1,17 +1,18 @@
 import React from 'react';
-import { loggedIn, archiveDocument, deleteDocument, editHref, archivedNodes, invalidateArchived } from '../lib/tinaAdmin';
+import { loggedIn, archiveDocument, deleteDocument, editHref, archivedNodes, invalidateArchived, showToast } from '../lib/tinaAdmin';
 
 // Admin-Werkzeuge für EINEN Inhalt — wiederverwendbar über alle Bereiche (Stories, Reisen, Alben,
-// Journal). DREI Knöpfe: ✏️ Bearbeiten (Link in die CMS-Ansicht MIT Live-Vorschau, target=_top),
-// 🗄️ Archivieren (EIN Klick -> sichere archiveDocument-Mutation, setzt nur `archived:true`, umkehrbar),
-// 🗑️ Löschen (Nachfrage-Dialog: endgültig löschen ODER als Sicherheitsnetz „Lieber archivieren").
-// Endgültig löschen = Datei wird via Tina Cloud wirklich aus dem GitHub-Repo entfernt (unwiderruflich).
-// Als React-Insel, die sich SELBST nur bei Login zeigt (leak-sicher). Nach Erfolg wird das Kärtchen
-// SOFORT ausgeblendet (statt irreführendem Reload) — die echte Änderung erscheint nach dem nächsten
-// Cloudflare-Build. Echter Mutations-Durchlauf nur im echten CMS (mit gültigem Token).
+// Journal). DREI Knöpfe: ✏️ Bearbeiten (Link in die CMS-Ansicht, target=_top), 🗄️ Archivieren (EIN Klick
+// -> sichere archiveDocument-Mutation, umkehrbar), 🗑️ Löschen (Nachfrage-Dialog: endgültig löschen ODER
+// als Sicherheitsnetz „Lieber archivieren"). Endgültig löschen = Datei via Tina Cloud wirklich aus dem
+// GitHub-Repo entfernt. Als React-Insel, die sich SELBST nur bei Login zeigt (leak-sicher). Feedback:
+// laufende Aktion = Rahmen des Knopfes rotiert (is-busy) in seiner Farbe; Ergebnis = dezenter Toast
+// (grün/rot). Nach Erfolg wird das Kärtchen ausgeblendet (leere Jahres-Gruppe mit) + ein Event feuert,
+// damit die „Archiv"-Zahl sofort nachzieht. Echter Mutations-Durchlauf nur im echten CMS (mit Token).
 
 type Variant = 'card' | 'bar';
 type Props = { collection: string; relativePath: string; title?: string; variant?: Variant };
+type Busy = null | 'archive' | 'delete' | 'archive-alt';
 
 const Icon = ({ d, path2 }: { d: string; path2?: string }) => (
   <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -33,28 +34,36 @@ export default function AdminDocTools(props: Props) {
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   const [show, setShow] = React.useState(false);
   const [dlg, setDlg] = React.useState(false);
-  const [busy, setBusy] = React.useState(false);
+  const [busy, setBusy] = React.useState<Busy>(null);
   const [done, setDone] = React.useState<null | 'archived' | 'deleted'>(null);
   const [err, setErr] = React.useState<string | null>(null);
 
   React.useEffect(() => { try { setShow(loggedIn()); } catch { setShow(false); } }, []);
 
-  // Live-Abgleich: Ist dieser Beitrag laut Tina Cloud bereits archiviert (z. B. eben archiviert +
-  // Seite neu geladen, bevor der Build durch ist), blenden wir sein Kärtchen sofort aus — so wirkt
-  // Archivieren 1:1, ohne auf den Cloudflare-Build zu warten. Nur Karten-Variante; Fehler = kein Ausblenden.
-  const hideCard = React.useCallback(() => {
+  // Kärtchen ausblenden + leere Jahres-Gruppe (Stories) gleich mit — sonst bliebe eine Überschrift ohne
+  // Beiträge stehen (nur transient bis zum nächsten Build; danach baut groupByYear die leere Gruppe eh nicht).
+  const removeCardFromView = React.useCallback(() => {
     const card = rootRef.current && (rootRef.current.closest('.ww-card-wrap, .journal-item') as HTMLElement | null);
-    if (card) card.style.display = 'none';
+    if (!card) return;
+    card.style.display = 'none';
+    const chapter = card.closest('.year-chapter') as HTMLElement | null;
+    if (chapter) {
+      const anyVisible = Array.from(chapter.querySelectorAll('.ww-card-wrap')).some((c) => (c as HTMLElement).style.display !== 'none');
+      if (!anyVisible) chapter.style.display = 'none';
+    }
   }, []);
+
+  // Live-Abgleich: schon in Tina archiviert (z. B. eben archiviert + neu geladen vor dem Build)? -> Kärtchen
+  // sofort ausblenden, damit die Übersicht 1:1 stimmt. Nur Karten-Variante; Fehler = nichts ausblenden.
   React.useEffect(() => {
     if (!show || variant !== 'card') return;
     let alive = true;
     const mine = props.relativePath.replace(/\.[^.]+$/, '');
     archivedNodes(props.collection).then((ns) => {
-      if (alive && ns && ns.some((n: any) => n && n._sys && n._sys.filename === mine)) hideCard();
+      if (alive && ns && ns.some((n: any) => n && n._sys && n._sys.filename === mine)) removeCardFromView();
     }).catch(() => { /* Fallback: nichts ausblenden */ });
     return () => { alive = false; };
-  }, [show, variant, props.collection, props.relativePath, hideCard]);
+  }, [show, variant, props.collection, props.relativePath, removeCardFromView]);
 
   React.useEffect(() => {
     if (!dlg) return;
@@ -68,9 +77,10 @@ export default function AdminDocTools(props: Props) {
   const href = editHref(props.collection, props.relativePath);
   const t = props.title || '';
 
-  // Nach Erfolg: kurz Bestätigung zeigen, dann das Kärtchen ausblenden (Karte) bzw. zur Übersicht (Detail).
   const finish = (kind: 'archived' | 'deleted') => {
     invalidateArchived(props.collection); // Live-Cache verwerfen -> Archiv/Zahl/andere Karten holen frisch
+    try { window.dispatchEvent(new CustomEvent('ww:archive-changed', { detail: { collection: props.collection } })); } catch (e) { /* egal */ }
+    showToast(kind === 'archived' ? 'In den Archiv verschoben' : 'Endgültig gelöscht', 'success');
     setDone(kind);
     setTimeout(() => {
       if (variant === 'bar') {
@@ -79,29 +89,30 @@ export default function AdminDocTools(props: Props) {
         window.location.href = en ? `/en${base}` : base;
         return;
       }
-      const card = rootRef.current && rootRef.current.closest('.ww-card-wrap, .journal-item') as HTMLElement | null;
-      if (card) { card.style.transition = 'opacity .25s ease'; card.style.opacity = '0'; setTimeout(() => { card.style.display = 'none'; }, 250); }
-    }, 1300);
+      const card = rootRef.current && (rootRef.current.closest('.ww-card-wrap, .journal-item') as HTMLElement | null);
+      if (card) { card.style.transition = 'opacity .25s ease'; card.style.opacity = '0'; setTimeout(removeCardFromView, 250); }
+    }, 1100);
   };
+  const fail = (msg: string) => { setBusy(null); setErr(msg); showToast(msg, 'error'); };
 
   const onArchive = async (e: React.MouseEvent) => {
     e.preventDefault(); e.stopPropagation();
     if (busy || done) return;
-    setBusy(true); setErr(null);
+    setBusy('archive'); setErr(null);
     const r = await archiveDocument(props.collection, props.relativePath);
-    if (r.ok) finish('archived'); else { setBusy(false); setErr(r.error || 'Archivieren fehlgeschlagen.'); }
+    if (r.ok) finish('archived'); else fail(r.error || 'Archivieren fehlgeschlagen.');
   };
   const onDelete = async () => {
     if (busy || done) return;
-    setBusy(true); setErr(null);
+    setBusy('delete'); setErr(null);
     const r = await deleteDocument(props.collection, props.relativePath);
-    if (r.ok) { setDlg(false); finish('deleted'); } else { setBusy(false); setErr(r.error || 'Löschen fehlgeschlagen.'); }
+    if (r.ok) { setDlg(false); finish('deleted'); } else fail(r.error || 'Löschen fehlgeschlagen.');
   };
   const onArchiveFromDlg = async () => {
     if (busy || done) return;
-    setBusy(true); setErr(null);
+    setBusy('archive-alt'); setErr(null);
     const r = await archiveDocument(props.collection, props.relativePath);
-    if (r.ok) { setDlg(false); finish('archived'); } else { setBusy(false); setErr(r.error || 'Archivieren fehlgeschlagen.'); }
+    if (r.ok) { setDlg(false); finish('archived'); } else fail(r.error || 'Archivieren fehlgeschlagen.');
   };
 
   return (
@@ -112,13 +123,13 @@ export default function AdminDocTools(props: Props) {
         </span>
       ) : (
         <>
-          <a className="ww-dt-btn" href={href} target="_top" title="Bearbeiten (mit Live-Vorschau)" aria-label={t ? `„${t}" bearbeiten` : 'Bearbeiten'}>
+          <a className="ww-dt-btn" href={href} target="_top" title="Bearbeiten" aria-label={t ? `„${t}" bearbeiten` : 'Bearbeiten'}>
             <Icon d={D_EDIT} path2={D_EDIT2} />
           </a>
-          <button type="button" className="ww-dt-btn ww-dt-arch" onClick={onArchive} disabled={busy} title="Archivieren (umkehrbar)" aria-label={t ? `„${t}" archivieren` : 'Archivieren'}>
+          <button type="button" className={`ww-dt-btn ww-dt-arch${busy === 'archive' ? ' is-busy' : ''}`} onClick={onArchive} disabled={!!busy} title="Archivieren (umkehrbar)" aria-label={t ? `„${t}" archivieren` : 'Archivieren'}>
             <Icon d={D_ARCHIVE} />
           </button>
-          <button type="button" className="ww-dt-btn ww-dt-del" onClick={() => { setErr(null); setDlg(true); }} disabled={busy} title="Löschen (endgültig)" aria-label={t ? `„${t}" löschen` : 'Löschen'}>
+          <button type="button" className="ww-dt-btn ww-dt-del" onClick={() => { setErr(null); setDlg(true); }} disabled={!!busy} title="Löschen (endgültig)" aria-label={t ? `„${t}" löschen` : 'Löschen'}>
             <Icon d={D_TRASH} />
           </button>
           {err ? <span className="ww-dt-inlineerr" role="alert">{err}</span> : null}
@@ -133,9 +144,9 @@ export default function AdminDocTools(props: Props) {
             <p className="ww-dt-note">{t ? <>„{t}“ </> : null}wird <strong>dauerhaft aus dem GitHub-Repo entfernt</strong> — das lässt sich nicht rückgängig machen. Umkehrbar wäre <strong>Archivieren</strong>.</p>
             {err ? <p className="ww-dt-err">{err}</p> : null}
             <div className="ww-dt-actions">
-              <button type="button" className="btn ww-dt-danger" onClick={onDelete} disabled={busy}>{busy ? 'Lösche …' : 'Endgültig löschen'}</button>
-              <button type="button" className="btn ww-dt-arch-alt" onClick={onArchiveFromDlg} disabled={busy}>Lieber archivieren</button>
-              <button type="button" className="ww-dt-cancel" onClick={() => setDlg(false)} disabled={busy}>Abbrechen</button>
+              <button type="button" className={`btn ww-dt-danger${busy === 'delete' ? ' is-loading' : ''}`} onClick={onDelete} disabled={!!busy}>{busy === 'delete' ? 'Lösche …' : 'Endgültig löschen'}</button>
+              <button type="button" className={`btn ww-dt-arch-alt${busy === 'archive-alt' ? ' is-loading' : ''}`} onClick={onArchiveFromDlg} disabled={!!busy}>{busy === 'archive-alt' ? 'Archiviere …' : 'Lieber archivieren'}</button>
+              <button type="button" className="ww-dt-cancel" onClick={() => setDlg(false)} disabled={!!busy}>Abbrechen</button>
             </div>
           </div>
         </div>
