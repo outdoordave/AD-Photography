@@ -1,9 +1,10 @@
 ---
-title_de: "West Coast Road Trip – Herbst 2023"
-category_de: "USA-Westküste & Südwesten"
+archived: true
+title_de: West Coast Road Trip – Herbst 2023
+category_de: USA-Westküste & Südwesten
 date: '2023-09-01'
 cover: ''
-excerpt_de: "Es gibt Reisen, die man plant. Und dann gibt es Reisen, die einen formen."
+excerpt_de: 'Es gibt Reisen, die man plant. Und dann gibt es Reisen, die einen formen.'
 body_de: |
   ### Wo der Pazifik und die Bäume uns kleiner machen
 
@@ -29,9 +30,9 @@ body_de: |
 
   **Albuquerque** ist unser letzter Stop — Breaking Bad Pilgerfahrt inklusive. Wir fahren die Film Locations ab, erkennen Ecken wieder, staunen, wie real das alles wirkt. Dann der Flug nach Hause. Die Koffer sind schwerer als beim Hinflug. Die Augen auch.
 has_english: true
-title_en: "West Coast Road Trip – Fall 2023"
-category_en: "US West Coast & Southwest"
-excerpt_en: "Some trips you plan. And then there are trips that shape you."
+title_en: West Coast Road Trip – Fall 2023
+category_en: US West Coast & Southwest
+excerpt_en: Some trips you plan. And then there are trips that shape you.
 body_en: |
   ### Where the Pacific and the Trees Make You Small
 
@@ -57,3 +58,4 @@ body_en: |
 
   **Albuquerque** is our final stop — Breaking Bad pilgrimage included. We drive the film locations, recognize corners, marvel at how real it all feels. Then the flight home. The suitcases are heavier than on the way out. Our eyes too.
 ---
+
