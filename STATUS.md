@@ -6,6 +6,19 @@
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
 > Session überschrieben). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
 >
+> **🆕 Verwaltung umstrukturiert — 3 Knöpfe + ein „Archiv" (08.07., `64e81b4`+`f733841`, aktueller Stand).**
+> Nach Brainstorming: **(1) Edit mit Live-Vorschau** — `editHref` nutzt jetzt Tinas visuelle Route
+> `#/collections/<name>/~/<slug>` statt der Formular-only-Route `…/edit/…` (das war die Ursache der
+> fehlenden Vorschau im Edit-Menü). **(2) Drei Icon-Knöpfe** je Kärtchen: ✏️ Bearbeiten · 🗄️ Archivieren
+> (amber, 1 Klick, umkehrbar) · 🗑️ Löschen (rot → Dialog „Endgültig löschen" / „Lieber archivieren" /
+> „Abbrechen"; endgültig = Datei **wirklich aus dem GitHub-Repo**). **(3)** „Papierkorb" heißt überall
+> **„Archiv"**; im Archiv zusätzlich **„Archiv leeren"**. **(4)** Kein irreführendes Neuladen mehr: kurze
+> grüne Bestätigung → Kärtchen ausblenden (Detailseite → zur Bereichs-Übersicht). **(5) Fix:** `_values`
+> filtert System-Felder (`_collection`/`_template`) vor `updateDocument` (sonst „not defined by
+> ReisenMutation"). ⚠️ **Wichtig (statische Seite):** archivieren/löschen schreibt ins Repo → echte Wirkung
+> (aus Liste raus / im Archiv sichtbar) erst nach dem **nächsten Cloudflare-Build**. Verifiziert (Login-Sim,
+> Testarchiv, Screenshot, `astro build` grün); echte Mutationen nur im echten CMS mit Token prüfbar.
+>
 > **🆕 CMS-Seitenleiste aufgeräumt (08.07.2026, `2a5bb14`) — eine natürliche Kachel pro Reiter.**
 > Journal/Portfolio/Stories/Reisen hatten je ZWEI Sidebar-Einträge: die rohe `.md`/`.json`-**Dateiliste**
 > (Mehrfach-Bereich, „Add File/Add Folder") + den Einstellungen-Bereich (routet auf die Live-Übersicht).

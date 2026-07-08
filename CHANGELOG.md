@@ -17,6 +17,27 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-08 21:20 — Inhalts-Verwaltung umstrukturiert: 3 Knöpfe, Edit mit Vorschau, ein „Archiv" (`f733841`)
+Nach Brainstorming mit David neu geordnet:
+- **Edit landet jetzt MIT Live-Vorschau.** Ursache der fehlenden Vorschau gefunden: Tina hat zwei
+  Routen — `#/collections/edit/<name>/~/<slug>` (nur Formular) und `#/collections/<name>/~/<slug>`
+  (visuell MIT Vorschau, wie Tinas eigene Navigation). `editHref` nutzt jetzt letztere. (Nur im echten
+  Admin final bestätigbar.)
+- **Drei Knöpfe am Kärtchen:** ✏️ Bearbeiten · 🗄️ Archivieren (amber, 1 Klick, umkehrbar) · 🗑️ Löschen
+  (rot → Dialog „Endgültig löschen" / „Lieber archivieren" / „Abbrechen"). Endgültig löschen entfernt
+  die Datei via Tina Cloud **wirklich aus dem GitHub-Repo** (Dialogtext sagt das klar).
+- **Kein irreführendes Neuladen mehr:** nach Erfolg kurze grüne Bestätigung, dann Kärtchen ausblenden
+  (Detailseite → Weiterleitung zur Bereichs-Übersicht). Klargestellt: die echte Änderung erscheint erst
+  nach dem nächsten Cloudflare-Build (statische Seite) — das war die Ursache für „im Archiv ist nichts".
+- **„Papierkorb" → überall „Archiv"** (Davids Wahl). Im Archiv zusätzlich **„Archiv leeren (alle
+  endgültig löschen)"** mit Nachfrage; Wiederherstellen (grün) + Endgültig löschen (rot) je Beitrag bleiben.
+- Verifiziert (eingeloggt, /stories, Test-Archiv, Screenshot): 3 Knöpfe/Kärtchen, Edit-Href ohne
+  `edit/`, Lösch-Dialog mit 3 Wegen, „Archivierte Beiträge" + „Archiv leeren?"-Nachfrage, keine neuen
+  Konsolenfehler, `astro build` grün (57 Seiten). ⚠️ Echte Mutationen nur im echten CMS prüfbar.
+- Dateien: `web/src/lib/tinaAdmin.ts`, `web/src/components/{AdminDocTools,AdminArchive}.tsx`, `web/src/styles/global.css`.
+
+---
+
 ## 2026-07-08 19:10 — Papierkorb-Fix: System-Felder herausfiltern (`64e81b4`)
 - **Bug (von David im echten CMS gefunden):** Archivieren/Wiederherstellen brach ab mit
   „Field \"_collection\" is not defined by type \"ReisenMutation\"". Ursache: Tinas `_values` enthält
