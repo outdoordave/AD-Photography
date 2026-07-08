@@ -17,6 +17,23 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-08 22:40 — Verwaltung-UX: Zahl sofort, leere Jahres-Gruppe weg, Toast + Lade-Spinner (`60f6e5a`)
+- **Archiv-Zahl zieht sofort nach:** `AdminDocTools` feuert nach Archivieren/Löschen ein Event
+  `ww:archive-changed`; `AdminArchive` lauscht und holt den Live-Stand frisch → die Zahl neben „+ Neu"
+  stimmt sofort (vorher erst nach Reload).
+- **Leere Jahres-Überschrift verschwindet mit** (Stories): wird das letzte Kärtchen einer `.year-chapter`
+  ausgeblendet, geht die ganze Gruppe weg (transient bis zum Build; danach baut `groupByYear` sie eh nicht).
+- **Dezenter Toast** (grün Erfolg / rot Fehler, unten mittig, blendet sich aus): `showToast()` in
+  `lib/tinaAdmin`, genutzt bei Archivieren/Löschen/Wiederherstellen/„Archiv leeren".
+- **Lade-Anzeige:** der Rahmen des laufenden Icon-Knopfes rotiert als Spinner in seiner Farbe (Icon bleibt,
+  `.ww-dt-btn.is-busy`); Dialog-Pillen mit dezentem Ladebalken-Schimmer. Knopf-Zustand pro Aktion.
+- Verifiziert offline (Fehler-Toast rot + Screenshot, Fallback, Build grün); Erfolgs-Toast/Spinner-Dauer/
+  Zahl-Nachziehen auf dem Live-Pfad (echtes CMS). **Offen weiterhin: Live-Vorschau im Edit-Menü** —
+  Ursache lokal nicht reproduzierbar, Screenshot/Console aus Davids Admin nötig.
+- Dateien: `web/src/lib/tinaAdmin.ts`, `web/src/components/{AdminDocTools,AdminArchive}.tsx`, `web/src/styles/global.css`.
+
+---
+
 ## 2026-07-08 21:55 — Archiv live aus Tina Cloud + Edit-Route zurückgedreht (`422222b`+`0658f47`)
 - **Edit-Route-Revert (`422222b`):** Die Umstellung auf `/collections/<name>/~/<slug>` war falsch —
   Tina liest den Slug dort als ORDNER → „No documents found". Zurück auf `/collections/edit/<name>/~/<slug>`

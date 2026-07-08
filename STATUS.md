@@ -6,7 +6,15 @@
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
 > Session überschrieben). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
 >
-> **🆕 Archiv LIVE aus Tina Cloud + Edit-Route korrigiert (08.07., `422222b`+`0658f47`, neuester Stand).**
+> **🆕 Verwaltung-UX-Feinschliff (08.07., `60f6e5a`, neuester Stand).** Archiv-**Zahl** zieht sofort nach
+> (Event `ww:archive-changed` von `AdminDocTools` → `AdminArchive` refetcht live). **Leere Jahres-Gruppe**
+> (Stories) verschwindet beim Ausblenden des letzten Kärtchens. Dezenter **Toast** grün/rot (`showToast`)
+> bei allen Aktionen. **Lade-Anzeige:** Rahmen des laufenden Icon-Knopfes rotiert in seiner Farbe
+> (`.ww-dt-btn.is-busy`), Dialog-Pillen mit Ladebalken-Schimmer. ⚠️ **Weiter offen:** Live-Vorschau im
+> Edit-Menü fehlt (Route korrekt = Tinas eigene; Ursache lokal nicht reproduzierbar → Screenshot/Console
+> aus Davids echtem Admin nötig, um es zu knacken).
+>
+> **🆕 Archiv LIVE aus Tina Cloud + Edit-Route korrigiert (08.07., `422222b`+`0658f47`).**
 > **Edit:** Route zurück auf `#/collections/edit/<name>/~/<slug>` (die Umstellung ohne `edit/` führte in
 > den Ordner-Browser → „No documents found"). **Archiv live:** Archiv-Liste, Zahl und das Ausblenden
 > archivierter Karten holen ihren Stand jetzt **live aus Tina Cloud** (nur eingeloggt), nicht mehr aus dem
