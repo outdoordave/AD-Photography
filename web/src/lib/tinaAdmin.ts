@@ -66,7 +66,12 @@ export async function setArchived(collection: string, relativePath: string, arch
   if (!read.ok) return { ok: false, error: read.error };
   const values = read.data && read.data.document && read.data.document._values;
   if (!values || typeof values !== 'object') return { ok: false, error: 'Datensatz nicht gefunden.' };
-  const params = { [collection]: { ...values, archived } };
+  // `_values` enthält System-Felder (`_collection`, `_template`), die die `<Collection>Mutation`-
+  // Eingabe NICHT kennt -> würden den Update ablehnen. Deshalb alle `_`-Felder herausfiltern; echte
+  // Eingabefelder beginnen nie mit „_". Übrig bleibt die reine Eingabeform + der geänderte Schalter.
+  const clean: Record<string, any> = {};
+  for (const k of Object.keys(values)) { if (!k.startsWith('_')) clean[k] = (values as any)[k]; }
+  const params = { [collection]: { ...clean, archived } };
   const write = await tinaGql(
     'mutation u($collection:String!,$relativePath:String!,$params:DocumentUpdateMutation!){ updateDocument(collection:$collection, relativePath:$relativePath, params:$params){ __typename } }',
     { collection, relativePath, params },
