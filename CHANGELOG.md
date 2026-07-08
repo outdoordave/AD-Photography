@@ -17,6 +17,20 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-08 19:10 — Papierkorb-Fix: System-Felder herausfiltern (`64e81b4`)
+- **Bug (von David im echten CMS gefunden):** Archivieren/Wiederherstellen brach ab mit
+  „Field \"_collection\" is not defined by type \"ReisenMutation\"". Ursache: Tinas `_values` enthält
+  die System-Felder `_collection` und `_template`, die die `<Collection>Mutation`-Eingabe nicht kennt.
+- **Fix:** In `setArchived` (lib/tinaAdmin) werden vor dem `updateDocument` alle `_`-präfixierten Felder
+  herausgefiltert (echte Eingabefelder beginnen nie mit „_"). Strip-Logik per Node isoliert belegt.
+- **Offen (Punkt 2, nicht Code):** „Live-Vorschau fehlt im Edit-Menü" — lokal NICHT reproduzierbar
+  (echtes `/admin` braucht Tina-Cloud-Login + breites Fenster). Belegt: die Detailseiten (inkl.
+  `/trips/<slug>` mit MapLibre) rendern im Same-Origin-iframe sauber (Timeline + Karten-Canvas, KEIN
+  Absturz, kein „projection"-Fehler) → kein Seiten-Crash. Nächster Schritt: Konsolen-Fehler aus Davids
+  echtem Admin. Datei: `web/src/lib/tinaAdmin.ts`.
+
+---
+
 ## 2026-07-08 18:25 — Papierkorb pro Bereich + 1-Klick-Archivieren + Knopf-Kopplung
 Umsetzung von Davids Rückmeldung (mehrteilig, nach Visualisierung + Rückfragen gebaut):
 - **Wandernde Knöpfe behoben (`932b1b2`):** Ursache war ein Hover-Ziel-Mismatch — Karte hob bei
