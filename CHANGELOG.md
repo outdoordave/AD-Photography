@@ -17,6 +17,35 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-08 18:25 — Papierkorb pro Bereich + 1-Klick-Archivieren + Knopf-Kopplung
+Umsetzung von Davids Rückmeldung (mehrteilig, nach Visualisierung + Rückfragen gebaut):
+- **Wandernde Knöpfe behoben (`932b1b2`):** Ursache war ein Hover-Ziel-Mismatch — Karte hob bei
+  `.story-card:hover`, das Knopf-Overlay bei `.ww-card-wrap:hover`. Beim Zeigen auf die Knöpfe verlor
+  die Karte ihren `:hover` (Overlay liegt darüber) und fiel zurück, während die Knöpfe oben blieben.
+  Fix: Karte hebt ebenfalls am Wrap-Hover → Karte + Knöpfe bewegen sich als ein Stück. (Journal war nie
+  betroffen: Overlay ist dort ein Kind der Karte.)
+- **1-Klick „In den Papierkorb" (`932b1b2`):** neue sichere Helfer `setArchived`/`archiveDocument`/
+  `restoreDocument` (`lib/tinaAdmin`) lesen die rohen Formularwerte (`_values`, exakt die Eingabeform)
+  und schreiben NUR `archived` zurück (`updateDocument`) — wie Tinas eigener „Speichern", kein
+  Datenverlust. `AdminDocTools` hat nur noch Bearbeiten + einen coral **Papierkorb-Knopf** (1 Klick,
+  kurzer grüner Haken, dann Neuladen); der 3-Wege-Lösch-Dialog am Kärtchen entfällt. Damit landet man
+  fürs Archivieren nie mehr im Bearbeiten-Menü (die dort vermisste Live-Vorschau ist kein Thema mehr).
+- **Papierkorb pro Bereich (`20291da`):** aus „Archiv (N)" wird **„Papierkorb (N)"** — ein Klick öffnet
+  eine bildschirmfüllende Ansicht im Look der Sektion (gleicher Hintergrund/Kopf, Nav bleibt als Rahmen).
+  Entfernte Beiträge als schlichte **Lese-Kärtchen** (Titel + Datum + kurzer Teaser, **kein** Titelbild);
+  Klick öffnet den echten Beitrag. Über jedem Kärtchen **🔁 Wiederherstellen** (1 Klick) + **🗑️ Endgültig
+  löschen** (mit Nachfrage). Alle vier Bereiche, DE + EN. Die Übersichten reichen angereicherte Einträge
+  `{relativePath, title, date, teaser, href}` durch.
+- **Verifiziert** (eingeloggt, /stories, eine Story testweise archiviert): Karten je Bearbeiten +
+  1-Klick-Papierkorb, Knopf-Kopplung aktiv, „Papierkorb 1" → Vollansicht mit Lese-Kärtchen +
+  Wiederherstellen/Löschen, Back-Knopf klärt die Admin-Leiste, Fehlerpfad (401 mit Test-Token) sauber.
+  `astro build` grün (57 Seiten). ⚠️ **Echter Mutations-Durchlauf** (archivieren/wiederherstellen/löschen)
+  nur im echten CMS mit gültigem Token prüfbar — bei Fehlern die Meldung an Claude.
+- Dateien: `web/src/lib/tinaAdmin.ts`, `web/src/components/{AdminDocTools,AdminArchive,JournalArchive,AdminSectionBar}.*`,
+  `web/src/pages/{stories,trips,portfolio}` (+ `en/`), `web/src/styles/global.css`.
+
+---
+
 ## 2026-07-08 16:48 — Inhalts-Verwaltung: Werkzeuge auch in der CMS-Vorschau sichtbar
 - **`self===top`-Riegel entfernt (`24940bb`):** Bearbeiten/Archiv/Löschen + „+ Neu" waren auf
   `loggedIn() && self===top` gegated → nur echte Live-Seite, **nicht** im CMS-Vorschau-iframe. Genau

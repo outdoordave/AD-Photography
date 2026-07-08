@@ -20,6 +20,21 @@
 > übersicht ist jetzt perfekt … so hab ich mir das vorgestellt") — als **Dauer-Vorgabe** gemerkt (Memory
 > `cms-eine-kachel-pro-reiter`): jeder neue Mehrfach-Bereich bekommt diese Ein-Kachel-Behandlung.
 >
+> **🆕 Papierkorb pro Bereich + 1-Klick-Archivieren + Knopf-Kopplung (08.07., `932b1b2`+`20291da`).**
+> Aus Davids Rückmeldung (nach Visualisierung + Rückfragen gebaut): **(1)** Wandernde Knöpfe behoben —
+> Hover-Ziel-Mismatch (Karte hob bei `.story-card:hover`, Overlay bei `.ww-card-wrap:hover` → Karte fiel
+> beim Zeigen auf die Knöpfe zurück); jetzt hebt die Karte am Wrap-Hover, beide als ein Stück. **(2)**
+> Kärtchen-Knopf ist jetzt **1-Klick „In den Papierkorb"** (coral) — sichere Helfer `setArchived`/
+> `archiveDocument`/`restoreDocument` (`lib/tinaAdmin`): rohe `_values` lesen, nur `archived` ändern,
+> `updateDocument` zurückschreiben (wie Tinas Speichern, kein Datenverlust). Kein Lösch-Dialog mehr am
+> Kärtchen; man landet fürs Archivieren nie im Bearbeiten-Menü. **(3)** „Archiv (N)" → **„Papierkorb (N)"**:
+> ein Klick öffnet eine bildschirmfüllende Ansicht im Look der Sektion (Nav bleibt Rahmen), entfernte
+> Beiträge als **Lese-Kärtchen** (Titel + Datum + Teaser, kein Titelbild, Klick → echter Beitrag), je
+> **🔁 Wiederherstellen** (1 Klick) + **🗑️ Endgültig löschen** (Nachfrage). Alle 4 Bereiche, DE+EN.
+> Verifiziert (Login-Sim, Testarchiv, Screenshot, Fehlerpfad 401, `astro build` grün). ⚠️ **Echter
+> Mutations-Durchlauf** (archivieren/wiederherstellen/löschen) nur im echten CMS mit Token prüfbar.
+> **CMS-Präferenz gemerkt** (Memory `cms-eine-kachel-pro-reiter`): eine Kachel pro Reiter → Live-Übersicht.
+>
 > **🆕 Verwaltungs-Werkzeuge auch in der CMS-Vorschau (08.07., `24940bb`).** Bearbeiten/Archiv/Löschen +
 > „+ Neu" waren auf `self===top` gegated (nur echte Live-Seite) — dadurch fehlten sie in der CMS-Vorschau,
 > also genau dort, wo David die Übersicht jetzt erreicht (Reiter → Live-Übersicht im iframe). Der Riegel
@@ -71,23 +86,18 @@
 > nötig (David, nach Push+Deploy).** Belegt: Live `/journal/` liefert schon korrekt `journal-style-notes`
 > (curl) — „Stil wirkt nicht" lag an Vorschau (Build-Wert)/Browser-Cache, nicht am Code.
 >
-> **✅/🚧 Inhalts-Verwaltung an Kärtchen (Bearbeiten/Archivieren/Löschen + „+ Neu") — über ALLE Bereiche gebaut.**
-> **Kern `AdminDocTools.tsx`** (React-Insel, selbst-sichtbar nur bei Login, leak-sicher): 3 Werkzeuge je Inhalt —
-> ✏️ Bearbeiten + 🗄️ Archivieren (Links in den CMS-Editor, `target=_top`; Archivieren landet am Archiv-Schalter)
-> + 🗑️ Löschen (3-Wege-Dialog Abbrechen/Lieber archivieren/Endgültig löschen → **sichere** `deleteDocument`-
-> Mutation). Varianten `card` (Karten-Overlay, hebt mit) + `bar` (Detail unten rechts). Seiten-Stil
-> (dunkel-glasige Icon-Buttons, Dialog als `.btn`-Karte). **„+ Neu"-Knöpfe** (`AdminNewButton`, jetzt `.btn`):
-> Story/Reise/Album + Journal „Neuer Beitrag". **Ausgerollt: Stories, Reisen, Alben, Journal** (Übersichts-
-> Karten + Detailseiten); `archived`-Feld in allen vier (+ Astro-Zod bei stories), archivierte aus Besucher-
-> Listen gefiltert + Detail `noindex` (bleiben gebaut → zurückholbar). Verifiziert (Login-Sim, Screenshots,
-> Fehlerpfad, Build grün).
-> ⚠️ **Echter Lösch-Mutations-Durchlauf nur im CMS bestätigbar** (David); Delete = echter Commit
-> (git-wiederherstellbar). ⚠️ `archived` (reisen/alben/journal) = Schema → **Re-Index** (mit Stories gebündelt).
-> **Bewusst sicher:** Archivieren öffnet den CMS-Schalter statt riskantem `updateDocument` (ersetzt ganzen
-> Datensatz → Datenverlust-Risiko). **Archiv-Ansicht FERTIG:** Knopf „Archiv (N)" pro Reiter (nur bei Login +
-> N>0) → Panel (`AdminArchive`) mit Zurückholen (CMS-Schalter) + Löschen je Eintrag; `AdminSectionBar` bündelt
-> „+ Neu" + „Archiv". Gemeinsame Helfer `src/lib/tinaAdmin.ts`. Werkzeuge logisch eingefärbt (Bearbeiten creme
-> → Archivieren amber → Löschen rot).
+> **✅ Inhalts-Verwaltung an Kärtchen (Bearbeiten + Papierkorb + „+ Neu") — über ALLE Bereiche, Live + CMS-Vorschau.**
+> Aktueller Stand (Details im 08.07.-Block ganz oben): **`AdminDocTools.tsx`** (React-Insel, sichtbar sobald
+> angemeldet, leak-sicher) zeigt je Inhalt **✏️ Bearbeiten** (Link in den CMS-Editor, `target=_top`) + einen
+> **🗑️ Papierkorb-Knopf** (1 Klick → `archiveDocument`, kein Dialog). **„+ Neu"** je Bereich (`AdminSectionBar` +
+> Journal-Zeile). **Papierkorb pro Bereich** (`AdminArchive.tsx`, „Papierkorb (N)"): bildschirmfüllende Ansicht im
+> Sektions-Look mit Lese-Kärtchen + 🔁 Wiederherstellen / 🗑️ endgültig Löschen. Sichere Helfer in
+> `src/lib/tinaAdmin.ts` (`setArchived`/`archiveDocument`/`restoreDocument` via `_values`+`updateDocument`;
+> `deleteDocument`). `archived`-Feld in allen vier Bereichen (+ Astro-Zod bei stories); archivierte aus
+> Besucher-Listen gefiltert + Detail `noindex` (bleiben gebaut → zurückholbar).
+> ⚠️ **Echter Mutations-Durchlauf** (archivieren/wiederherstellen/löschen) nur im echten CMS mit Token prüfbar;
+> Löschen = echter Commit (git-wiederherstellbar). ⚠️ `archived` (reisen/alben/journal) = Schema → **Re-Index**
+> (mit Stories gebündelt, steht mit dem nächsten Deploy noch aus).
 >
 > **✅ Detail-Köpfe „wandernder Titel" — Mobil UND Desktop fertig (von David abgenommen, 25.06.).**
 > Reise + Story, beide Breakpoints. Architektur (für künftige Header wiederverwendbar, s. Memory
