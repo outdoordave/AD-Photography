@@ -1,4 +1,5 @@
 ---
+archived: true
 title_de: Alaska & California – Herbst 2026
 category_de: Alaska & Kalifornien
 date: '2026-10-01'
@@ -26,7 +27,6 @@ body_de: |
   **Fairbanks** und dann — der Polarkreis. Die **Arctic Circle**: eine unsichtbare Linie auf der Erde, die man trotzdem spürt, wenn man davor steht. Kein Trubel. Keine Souvenirläden. Nur Weite und der Gedanke: hier endet Mitteleuropa, nicht geographisch, aber irgendwie existenziell.
 
   Zurück über **Tok** nach Anchorage. Der Rückflug nach San Francisco, dann Dresden. Koffer, Jetlag, das leise Gefühl: Wir haben etwas gesehen, das die meisten nur auf Karten kennen.
-linked_album: ''
 has_english: true
 title_en: Alaska & California – Fall 2026
 category_en: Alaska & California
