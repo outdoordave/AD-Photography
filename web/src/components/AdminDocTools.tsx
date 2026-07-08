@@ -1,12 +1,14 @@
 import React from 'react';
-import { loggedIn, archiveDocument, editHref } from '../lib/tinaAdmin';
+import { loggedIn, archiveDocument, deleteDocument, editHref } from '../lib/tinaAdmin';
 
 // Admin-Werkzeuge für EINEN Inhalt — wiederverwendbar über alle Bereiche (Stories, Reisen, Alben,
-// Journal). Zwei Knöpfe: ✏️ Bearbeiten (Link in den CMS-Editor, target=_top) und 🗑️ „In den Papierkorb"
-// (EIN Klick -> sichere archiveDocument-Mutation, setzt nur `archived:true`, kein Datenverlust; kein
-// Dialog). Endgültig gelöscht wird NUR im Papierkorb (eigene Seite je Bereich). Als React-Insel, die
-// sich SELBST nur bei Login zeigt (leak-sicher: für Besucher wird nichts gerendert) — auf der Live-Seite
-// UND in der CMS-Vorschau. Echter Mutations-Durchlauf nur im echten CMS (mit gültigem Token).
+// Journal). DREI Knöpfe: ✏️ Bearbeiten (Link in die CMS-Ansicht MIT Live-Vorschau, target=_top),
+// 🗄️ Archivieren (EIN Klick -> sichere archiveDocument-Mutation, setzt nur `archived:true`, umkehrbar),
+// 🗑️ Löschen (Nachfrage-Dialog: endgültig löschen ODER als Sicherheitsnetz „Lieber archivieren").
+// Endgültig löschen = Datei wird via Tina Cloud wirklich aus dem GitHub-Repo entfernt (unwiderruflich).
+// Als React-Insel, die sich SELBST nur bei Login zeigt (leak-sicher). Nach Erfolg wird das Kärtchen
+// SOFORT ausgeblendet (statt irreführendem Reload) — die echte Änderung erscheint nach dem nächsten
+// Cloudflare-Build. Echter Mutations-Durchlauf nur im echten CMS (mit gültigem Token).
 
 type Variant = 'card' | 'bar';
 type Props = { collection: string; relativePath: string; title?: string; variant?: Variant };
@@ -19,50 +21,106 @@ const Icon = ({ d, path2 }: { d: string; path2?: string }) => (
 
 const D_EDIT = 'M12 20h9';
 const D_EDIT2 = 'M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z';
+const D_ARCHIVE = 'M3 7h18M5 7v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7M9 11h6';
 const D_TRASH = 'M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0v13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V7';
 const D_CHECK = 'M20 6 9 17l-5-5';
 
+// Übersichtsseite eines Bereichs (für die Weiterleitung nach Aktion auf einer Detailseite).
+const OVERVIEW: Record<string, string> = { story: '/stories', reisen: '/trips', alben: '/portfolio', journal: '/journal' };
+
 export default function AdminDocTools(props: Props) {
   const variant: Variant = props.variant || 'card';
+  const rootRef = React.useRef<HTMLDivElement | null>(null);
   const [show, setShow] = React.useState(false);
+  const [dlg, setDlg] = React.useState(false);
   const [busy, setBusy] = React.useState(false);
-  const [done, setDone] = React.useState(false);
+  const [done, setDone] = React.useState<null | 'archived' | 'deleted'>(null);
   const [err, setErr] = React.useState<string | null>(null);
 
-  // Sichtbar, sobald angemeldet — Live-Seite UND CMS-Vorschau. Besucher (kein Token) -> nichts.
   React.useEffect(() => { try { setShow(loggedIn()); } catch { setShow(false); } }, []);
+  React.useEffect(() => {
+    if (!dlg) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !busy) setDlg(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [dlg, busy]);
 
   if (!show) return null;
 
   const href = editHref(props.collection, props.relativePath);
   const t = props.title || '';
 
-  // Ein Klick -> in den Papierkorb (archived:true). Reversibel über die Papierkorb-Seite.
+  // Nach Erfolg: kurz Bestätigung zeigen, dann das Kärtchen ausblenden (Karte) bzw. zur Übersicht (Detail).
+  const finish = (kind: 'archived' | 'deleted') => {
+    setDone(kind);
+    setTimeout(() => {
+      if (variant === 'bar') {
+        const en = typeof location !== 'undefined' && location.pathname.startsWith('/en/');
+        const base = OVERVIEW[props.collection] || '/';
+        window.location.href = en ? `/en${base}` : base;
+        return;
+      }
+      const card = rootRef.current && rootRef.current.closest('.ww-card-wrap, .journal-item') as HTMLElement | null;
+      if (card) { card.style.transition = 'opacity .25s ease'; card.style.opacity = '0'; setTimeout(() => { card.style.display = 'none'; }, 250); }
+    }, 1300);
+  };
+
   const onArchive = async (e: React.MouseEvent) => {
     e.preventDefault(); e.stopPropagation();
     if (busy || done) return;
     setBusy(true); setErr(null);
     const r = await archiveDocument(props.collection, props.relativePath);
-    if (r.ok) { setDone(true); setTimeout(() => window.location.reload(), 1200); }
-    else { setBusy(false); setErr(r.error || 'Verschieben fehlgeschlagen.'); }
+    if (r.ok) finish('archived'); else { setBusy(false); setErr(r.error || 'Archivieren fehlgeschlagen.'); }
+  };
+  const onDelete = async () => {
+    if (busy || done) return;
+    setBusy(true); setErr(null);
+    const r = await deleteDocument(props.collection, props.relativePath);
+    if (r.ok) { setDlg(false); finish('deleted'); } else { setBusy(false); setErr(r.error || 'Löschen fehlgeschlagen.'); }
+  };
+  const onArchiveFromDlg = async () => {
+    if (busy || done) return;
+    setBusy(true); setErr(null);
+    const r = await archiveDocument(props.collection, props.relativePath);
+    if (r.ok) { setDlg(false); finish('archived'); } else { setBusy(false); setErr(r.error || 'Archivieren fehlgeschlagen.'); }
   };
 
   return (
-    <div className={`ww-doc-tools ww-doc-tools--${variant}`} onClick={(e) => e.stopPropagation()}>
-      <a className="ww-dt-btn" href={href} target="_top" title="Bearbeiten" aria-label={t ? `„${t}" bearbeiten` : 'Bearbeiten'}>
-        <Icon d={D_EDIT} path2={D_EDIT2} />
-      </a>
-      <button
-        type="button"
-        className={`ww-dt-btn ww-dt-trash${done ? ' is-done' : ''}`}
-        onClick={onArchive}
-        disabled={busy || done}
-        title={done ? 'Im Papierkorb' : 'In den Papierkorb'}
-        aria-label={t ? `„${t}" in den Papierkorb` : 'In den Papierkorb'}
-      >
-        <Icon d={done ? D_CHECK : D_TRASH} />
-      </button>
-      {err ? <span className="ww-dt-inlineerr" role="alert">{err}</span> : null}
+    <div ref={rootRef} className={`ww-doc-tools ww-doc-tools--${variant}`} onClick={(e) => e.stopPropagation()}>
+      {done ? (
+        <span className="ww-dt-doneflag" role="status">
+          <Icon d={D_CHECK} /> {done === 'archived' ? 'Archiviert' : 'Gelöscht'}
+        </span>
+      ) : (
+        <>
+          <a className="ww-dt-btn" href={href} target="_top" title="Bearbeiten (mit Live-Vorschau)" aria-label={t ? `„${t}" bearbeiten` : 'Bearbeiten'}>
+            <Icon d={D_EDIT} path2={D_EDIT2} />
+          </a>
+          <button type="button" className="ww-dt-btn ww-dt-arch" onClick={onArchive} disabled={busy} title="Archivieren (umkehrbar)" aria-label={t ? `„${t}" archivieren` : 'Archivieren'}>
+            <Icon d={D_ARCHIVE} />
+          </button>
+          <button type="button" className="ww-dt-btn ww-dt-del" onClick={() => { setErr(null); setDlg(true); }} disabled={busy} title="Löschen (endgültig)" aria-label={t ? `„${t}" löschen` : 'Löschen'}>
+            <Icon d={D_TRASH} />
+          </button>
+          {err ? <span className="ww-dt-inlineerr" role="alert">{err}</span> : null}
+        </>
+      )}
+
+      {dlg ? (
+        <div className="ww-dt-overlay" role="dialog" aria-modal="true" onClick={(e) => { e.stopPropagation(); if (!busy) setDlg(false); }}>
+          <div className="ww-dt-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="ww-dt-modal-ic" aria-hidden="true"><Icon d={D_TRASH} /></div>
+            <h3>Endgültig löschen?</h3>
+            <p className="ww-dt-note">{t ? <>„{t}“ </> : null}wird <strong>dauerhaft aus dem GitHub-Repo entfernt</strong> — das lässt sich nicht rückgängig machen. Umkehrbar wäre <strong>Archivieren</strong>.</p>
+            {err ? <p className="ww-dt-err">{err}</p> : null}
+            <div className="ww-dt-actions">
+              <button type="button" className="btn ww-dt-danger" onClick={onDelete} disabled={busy}>{busy ? 'Lösche …' : 'Endgültig löschen'}</button>
+              <button type="button" className="btn ww-dt-arch-alt" onClick={onArchiveFromDlg} disabled={busy}>Lieber archivieren</button>
+              <button type="button" className="ww-dt-cancel" onClick={() => setDlg(false)} disabled={busy}>Abbrechen</button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -810,11 +810,14 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
    Bearbeiten = creme (neutral), Archivieren = amber, Löschen = rot. */
 .ww-dt-btn { width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; padding: 0; background: rgba(28,24,18,0.6); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); color: #f0d9bf; border: 1px solid rgba(240,217,191,0.45); box-shadow: 0 4px 12px -4px rgba(0,0,0,0.45); text-decoration: none; cursor: pointer; transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease; }
 .ww-dt-btn:hover { background: rgba(28,24,18,0.85); color: #fff; border-color: #f0d9bf; transform: translateY(-1px); }
-/* In den Papierkorb = coral; erledigt = kurzer grüner Haken vor dem Neuladen */
-.ww-dt-trash { color: #f0997b; border-color: rgba(240,153,123,0.5); }
-.ww-dt-trash:hover { background: #993c1d; color: #fff; border-color: #f0997b; }
-.ww-dt-trash.is-done { color: #8fe0b6; border-color: rgba(143,224,182,0.6); background: rgba(15,110,86,0.55); }
-.ww-dt-trash:disabled { cursor: default; }
+/* Archivieren = amber (umkehrbar), Löschen = rot (endgültig). Icon-Knöpfe am Kärtchen. */
+.ww-dt-arch { color: #eab558; border-color: rgba(234,181,88,0.5); }
+.ww-dt-arch:hover { background: #b07d1c; color: #fff; border-color: #eab558; }
+.ww-dt-del { color: #ec8c7d; border-color: rgba(236,140,125,0.5); }
+.ww-dt-del:hover { background: #a3231d; color: #fff; border-color: #e07a6a; }
+.ww-dt-btn:disabled { cursor: default; opacity: 0.7; }
+/* Kurze Erfolgs-Bestätigung, bevor das Kärtchen ausgeblendet wird (kein irreführendes Neuladen) */
+.ww-dt-doneflag { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: var(--radius-pill); background: rgba(15,110,86,0.9); color: #eafaf3; font-size: var(--fs-label); font-weight: var(--fw-bold); white-space: nowrap; box-shadow: 0 4px 12px -4px rgba(0,0,0,0.45); }
 .ww-dt-inlineerr { position: absolute; top: calc(100% + 6px); right: 0; max-width: 220px; background: #a3231d; color: #fff; font-size: var(--fs-label); line-height: 1.35; padding: 6px 9px; border-radius: var(--radius-sm); box-shadow: 0 6px 16px -6px rgba(0,0,0,0.5); z-index: 8; }
 
 /* 3-Wege-Lösch-Dialog */
@@ -826,7 +829,9 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 .ww-dt-err { color: #a3231d; font-size: var(--fs-label); margin: -6px 0 14px; }
 .ww-dt-actions { display: flex; flex-direction: column; gap: 8px; }
 .ww-dt-actions .btn { width: 100%; text-align: center; }
-.ww-dt-arch { background: var(--c-accent); }
+.ww-dt-arch-alt { background: #b07d1c; }
+.ww-dt-arch-alt:hover { background: #946914; }
+.ww-dt-arch-alt:disabled { opacity: 0.65; cursor: progress; }
 .ww-dt-danger { background: #a3231d; }
 .ww-dt-danger:hover { background: #86160f; }
 .ww-dt-danger:disabled { opacity: 0.65; cursor: progress; }
@@ -864,6 +869,9 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 .ww-trash-back { display: inline-flex; align-items: center; gap: 8px; background: none; border: none; color: var(--c-ink-soft); font-weight: var(--fw-bold); font-size: var(--fs-ui); letter-spacing: var(--tracking-slight); cursor: pointer; padding: 6px 0; margin-bottom: 8px; }
 .ww-trash-back:hover { color: var(--c-accent); }
 .ww-trash-head { margin-bottom: 30px; }
+.ww-archive-empty-all { margin-top: 12px; background: none; border: 1px solid rgba(163,35,29,0.5); color: #a3231d; font-weight: var(--fw-bold); font-size: var(--fs-label); letter-spacing: var(--tracking-slight); padding: 8px 16px; border-radius: var(--radius-pill); cursor: pointer; transition: background 0.15s ease, color 0.15s ease; }
+.ww-archive-empty-all:hover { background: #a3231d; color: #fff; }
+.ww-archive-empty-all:disabled { opacity: 0.6; cursor: default; }
 .ww-trash-err { color: #a3231d; font-weight: var(--fw-semibold); font-size: var(--fs-ui); text-align: center; margin: 0 0 16px; }
 .ww-trash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
 .ww-trash-card { position: relative; background: var(--c-bg-alt); border: 1px solid var(--c-line); border-radius: var(--radius-sm); padding: 18px 18px 16px; transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease); }

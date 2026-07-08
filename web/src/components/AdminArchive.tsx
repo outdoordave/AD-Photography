@@ -30,17 +30,18 @@ export default function AdminArchive({ collection, items, lang }: Props) {
   const [show, setShow] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [del, setDel] = React.useState<Item | null>(null);
-  const [busy, setBusy] = React.useState<string | null>(null); // relativePath in Arbeit
+  const [emptyAll, setEmptyAll] = React.useState(false);
+  const [busy, setBusy] = React.useState<string | null>(null); // relativePath in Arbeit ('__all__' = leeren)
   const [err, setErr] = React.useState<string | null>(null);
   const [gone, setGone] = React.useState<Record<string, 'restored' | 'deleted'>>({});
 
   React.useEffect(() => { try { setShow(loggedIn()); } catch { setShow(false); } }, []);
   React.useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !busy) { if (del) setDel(null); else setOpen(false); } };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !busy) { if (emptyAll) setEmptyAll(false); else if (del) setDel(null); else setOpen(false); } };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [open, del, busy]);
+  }, [open, del, emptyAll, busy]);
 
   if (!show) return null;
   const list = (items || []).filter((it) => !gone[it.relativePath]);
@@ -62,28 +63,45 @@ export default function AdminArchive({ collection, items, lang }: Props) {
     else setErr(r.error || t('Löschen fehlgeschlagen.', 'Delete failed.'));
     setBusy(null);
   };
+  const onEmptyAll = async () => {
+    if (busy) return;
+    setBusy('__all__'); setErr(null);
+    let failed: string | null = null;
+    for (const it of list) {
+      const r = await deleteDocument(collection, it.relativePath);
+      if (r.ok) setGone((g) => ({ ...g, [it.relativePath]: 'deleted' }));
+      else { failed = r.error || t('Löschen fehlgeschlagen.', 'Delete failed.'); break; }
+    }
+    setBusy(null); setEmptyAll(false);
+    if (failed) setErr(failed);
+  };
 
   return (
     <>
       <button type="button" className={`ww-archive-btn${(items || []).length === 0 ? ' is-empty' : ''}`} onClick={() => { setErr(null); setOpen(true); }}>
         <IconArchive />
-        <span>{t('Papierkorb', 'Trash')}</span>
+        <span>{t('Archiv', 'Archive')}</span>
         <span className="ww-archive-count">{list.length}</span>
       </button>
 
       {open ? (
-        <div className="ww-trash-screen" role="dialog" aria-modal="true" aria-label={t('Papierkorb', 'Trash')}>
+        <div className="ww-trash-screen" role="dialog" aria-modal="true" aria-label={t('Archiv', 'Archive')}>
           <div className="ww-trash-inner">
             <button type="button" className="ww-trash-back" onClick={() => setOpen(false)}>
               <span aria-hidden="true">←</span> {t('Zurück zur Übersicht', 'Back to overview')}
             </button>
 
             <div className="page-title ww-trash-head">
-              <div className="kicker">{t('Papierkorb', 'Trash')}</div>
-              <h1>{t('Entfernte Beiträge', 'Removed items')}</h1>
+              <div className="kicker">{t('Archiv', 'Archive')}</div>
+              <h1>{t('Archivierte Beiträge', 'Archived items')}</h1>
               <p>{list.length === 0
-                ? t('Der Papierkorb ist leer.', 'The trash is empty.')
+                ? t('Das Archiv ist leer.', 'The archive is empty.')
                 : `${list.length} ${list.length === 1 ? t('Beitrag', 'item') : t('Beiträge', 'items')} · ${t('für Besucher unsichtbar', 'hidden from visitors')}`}</p>
+              {list.length > 0 ? (
+                <button type="button" className="ww-archive-empty-all" onClick={() => { setErr(null); setEmptyAll(true); }} disabled={!!busy}>
+                  {t('Archiv leeren (alle endgültig löschen)', 'Empty archive (delete all for good)')}
+                </button>
+              ) : null}
             </div>
 
             {err ? <p className="ww-trash-err" role="alert">{err}</p> : null}
@@ -124,6 +142,21 @@ export default function AdminArchive({ collection, items, lang }: Props) {
                 <div className="ww-dt-actions">
                   <button type="button" className="btn ww-dt-danger" onClick={onDelete} disabled={!!busy}>{busy ? t('Lösche …', 'Deleting …') : t('Endgültig löschen', 'Delete for good')}</button>
                   <button type="button" className="ww-dt-cancel" onClick={() => setDel(null)} disabled={!!busy}>{t('Abbrechen', 'Cancel')}</button>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {emptyAll ? (
+            <div className="ww-dt-overlay" role="dialog" aria-modal="true" onClick={() => { if (!busy) setEmptyAll(false); }}>
+              <div className="ww-dt-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="ww-dt-modal-ic" aria-hidden="true"><IconTrash /></div>
+                <h3>{t('Archiv leeren?', 'Empty archive?')}</h3>
+                <p className="ww-dt-note">{t(`Alle ${list.length} archivierten Beiträge werden dauerhaft aus dem GitHub-Repo entfernt. Das lässt sich nicht rückgängig machen.`, `All ${list.length} archived items will be permanently removed from the GitHub repo. This can’t be undone.`)}</p>
+                {err ? <p className="ww-dt-err">{err}</p> : null}
+                <div className="ww-dt-actions">
+                  <button type="button" className="btn ww-dt-danger" onClick={onEmptyAll} disabled={!!busy}>{busy === '__all__' ? t('Lösche …', 'Deleting …') : t('Ja, Archiv leeren', 'Yes, empty archive')}</button>
+                  <button type="button" className="ww-dt-cancel" onClick={() => setEmptyAll(false)} disabled={!!busy}>{t('Abbrechen', 'Cancel')}</button>
                 </div>
               </div>
             </div>
