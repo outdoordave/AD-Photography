@@ -1,5 +1,5 @@
 import React from 'react';
-import { loggedIn, archiveDocument, deleteDocument, editHref } from '../lib/tinaAdmin';
+import { loggedIn, archiveDocument, deleteDocument, editHref, archivedNodes, invalidateArchived } from '../lib/tinaAdmin';
 
 // Admin-Werkzeuge für EINEN Inhalt — wiederverwendbar über alle Bereiche (Stories, Reisen, Alben,
 // Journal). DREI Knöpfe: ✏️ Bearbeiten (Link in die CMS-Ansicht MIT Live-Vorschau, target=_top),
@@ -38,6 +38,24 @@ export default function AdminDocTools(props: Props) {
   const [err, setErr] = React.useState<string | null>(null);
 
   React.useEffect(() => { try { setShow(loggedIn()); } catch { setShow(false); } }, []);
+
+  // Live-Abgleich: Ist dieser Beitrag laut Tina Cloud bereits archiviert (z. B. eben archiviert +
+  // Seite neu geladen, bevor der Build durch ist), blenden wir sein Kärtchen sofort aus — so wirkt
+  // Archivieren 1:1, ohne auf den Cloudflare-Build zu warten. Nur Karten-Variante; Fehler = kein Ausblenden.
+  const hideCard = React.useCallback(() => {
+    const card = rootRef.current && (rootRef.current.closest('.ww-card-wrap, .journal-item') as HTMLElement | null);
+    if (card) card.style.display = 'none';
+  }, []);
+  React.useEffect(() => {
+    if (!show || variant !== 'card') return;
+    let alive = true;
+    const mine = props.relativePath.replace(/\.[^.]+$/, '');
+    archivedNodes(props.collection).then((ns) => {
+      if (alive && ns && ns.some((n: any) => n && n._sys && n._sys.filename === mine)) hideCard();
+    }).catch(() => { /* Fallback: nichts ausblenden */ });
+    return () => { alive = false; };
+  }, [show, variant, props.collection, props.relativePath, hideCard]);
+
   React.useEffect(() => {
     if (!dlg) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !busy) setDlg(false); };
@@ -52,6 +70,7 @@ export default function AdminDocTools(props: Props) {
 
   // Nach Erfolg: kurz Bestätigung zeigen, dann das Kärtchen ausblenden (Karte) bzw. zur Übersicht (Detail).
   const finish = (kind: 'archived' | 'deleted') => {
+    invalidateArchived(props.collection); // Live-Cache verwerfen -> Archiv/Zahl/andere Karten holen frisch
     setDone(kind);
     setTimeout(() => {
       if (variant === 'bar') {

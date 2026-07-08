@@ -84,6 +84,58 @@ export async function setArchived(collection: string, relativePath: string, arch
 export const archiveDocument = (collection: string, relativePath: string) => setArchived(collection, relativePath, true);
 export const restoreDocument = (collection: string, relativePath: string) => setArchived(collection, relativePath, false);
 
+// --- LIVE-Stand aus Tina Cloud (nur eingeloggt) ---------------------------------------------------
+// Damit Archivieren/Wiederherstellen/Löschen SOFORT wirken (nicht erst nach dem Cloudflare-Build):
+// Archiv-Liste, Zahl und das Ausblenden archivierter Karten holen ihren Stand direkt von Tina Cloud.
+// Tina Cloud kennt jede Mutation sofort -> stimmt auch nach Reload. Für Besucher (kein Token) liefert
+// das nichts (null) -> die aufrufenden Inseln fallen auf den statischen Build-Stand zurück (sicher).
+export type ArchivedItem = { relativePath: string; title: string; date?: string; teaser?: string; href?: string };
+type FieldCfg = { conn: string; ext: 'md' | 'json'; base: string; title: [string, string]; teaser: [string, string] | []; };
+const FIELDS: Record<string, FieldCfg> = {
+  story:   { conn: 'storyConnection',   ext: 'md',   base: '/stories',   title: ['title_de', 'title_en'], teaser: ['excerpt_de', 'excerpt_en'] },
+  reisen:  { conn: 'reisenConnection',  ext: 'json', base: '/trips',     title: ['title', 'title_en'],    teaser: ['meta_de', 'meta_en'] },
+  alben:   { conn: 'albenConnection',   ext: 'json', base: '/portfolio', title: ['name', 'name_en'],      teaser: ['note_de', 'note_en'] },
+  journal: { conn: 'journalConnection', ext: 'md',   base: '/journal',   title: ['title_de', 'title_en'], teaser: [] },
+};
+
+const archivedCache: Record<string, Promise<any[] | null> | undefined> = {};
+
+async function fetchArchivedRaw(collection: string): Promise<any[] | null> {
+  const cfg = FIELDS[collection];
+  if (!cfg || !authToken()) return null;
+  const fields = ['_sys{ filename }', 'archived', 'date', ...cfg.title, ...cfg.teaser].join(' ');
+  const r = await tinaGql(`query{ ${cfg.conn}(first: 1000){ edges{ node{ ${fields} } } } }`, {});
+  if (!r.ok || !r.data || !r.data[cfg.conn]) return null;
+  const edges = r.data[cfg.conn].edges || [];
+  return edges.map((e: any) => e && e.node).filter((n: any) => n && n.archived === true);
+}
+
+// Gecacht je Bereich (eine Abfrage, viele Karten teilen sie). `force` nach einer Mutation.
+export function archivedNodes(collection: string, force = false): Promise<any[] | null> {
+  if (force || !archivedCache[collection]) archivedCache[collection] = fetchArchivedRaw(collection);
+  return archivedCache[collection] as Promise<any[] | null>;
+}
+export function invalidateArchived(collection: string) { archivedCache[collection] = undefined; }
+
+export function mapArchived(collection: string, node: any, lang: 'de' | 'en'): ArchivedItem {
+  const cfg = FIELDS[collection];
+  const en = lang === 'en';
+  const f = node?._sys?.filename || '';
+  const pick = (pair: string[] | []) => {
+    if (!pair.length) return '';
+    const de = node?.[pair[0]]; const env = node?.[pair[1]];
+    return (en ? (env || de) : de) || '';
+  };
+  const title = pick(cfg.title) || node?.date || f;
+  return {
+    relativePath: `${f}.${cfg.ext}`,
+    title,
+    date: node?.date || '',
+    teaser: pick(cfg.teaser),
+    href: `${en ? '/en' : ''}${cfg.base}/${f}`,
+  };
+}
+
 // Sicheres Löschen: trifft immer nur den exakt übergebenen Datensatz. Fehlwirkung = „nichts passiert"
 // (Fehlermeldung), nie Datenverlust. Echter Durchlauf nur im echten CMS (mit gültigem Token).
 export async function deleteDocument(collection: string, relativePath: string): Promise<{ ok: boolean; error?: string }> {

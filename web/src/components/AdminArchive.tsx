@@ -1,5 +1,5 @@
 import React from 'react';
-import { loggedIn, restoreDocument, deleteDocument } from '../lib/tinaAdmin';
+import { loggedIn, restoreDocument, deleteDocument, archivedNodes, mapArchived, invalidateArchived } from '../lib/tinaAdmin';
 
 // „Papierkorb (N)" pro Bereich: Knopf öffnet eine bildschirmfüllende Papierkorb-Ansicht im Look der
 // jeweiligen Sektion (gleicher Hintergrund/Kopf-Stil), die die entfernten Beiträge als schlichte
@@ -34,8 +34,16 @@ export default function AdminArchive({ collection, items, lang }: Props) {
   const [busy, setBusy] = React.useState<string | null>(null); // relativePath in Arbeit ('__all__' = leeren)
   const [err, setErr] = React.useState<string | null>(null);
   const [gone, setGone] = React.useState<Record<string, 'restored' | 'deleted'>>({});
+  // LIVE-Stand aus Tina Cloud (null = noch nicht geladen/fehlgeschlagen -> statischer `items`-Fallback).
+  const [live, setLive] = React.useState<Item[] | null>(null);
 
   React.useEffect(() => { try { setShow(loggedIn()); } catch { setShow(false); } }, []);
+  const loadLive = React.useCallback((force = false) => {
+    archivedNodes(collection, force)
+      .then((ns) => { if (ns) setLive(ns.map((n) => mapArchived(collection, n, lang))); })
+      .catch(() => { /* Fallback: statische items */ });
+  }, [collection, lang]);
+  React.useEffect(() => { if (show) loadLive(false); }, [show, loadLive]);
   React.useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !busy) { if (emptyAll) setEmptyAll(false); else if (del) setDel(null); else setOpen(false); } };
@@ -44,14 +52,16 @@ export default function AdminArchive({ collection, items, lang }: Props) {
   }, [open, del, emptyAll, busy]);
 
   if (!show) return null;
-  const list = (items || []).filter((it) => !gone[it.relativePath]);
+  // Live-Stand bevorzugen (aus Tina Cloud), sonst statischen Build-Stand als Fallback.
+  const base = live ?? (items || []);
+  const list = base.filter((it) => !gone[it.relativePath]);
   const t = (de: string, en: string) => (isEn ? en : de);
 
   const onRestore = async (it: Item) => {
     if (busy) return;
     setBusy(it.relativePath); setErr(null);
     const r = await restoreDocument(collection, it.relativePath);
-    if (r.ok) setGone((g) => ({ ...g, [it.relativePath]: 'restored' }));
+    if (r.ok) { setGone((g) => ({ ...g, [it.relativePath]: 'restored' })); invalidateArchived(collection); }
     else setErr(r.error || t('Wiederherstellen fehlgeschlagen.', 'Restore failed.'));
     setBusy(null);
   };
@@ -59,7 +69,7 @@ export default function AdminArchive({ collection, items, lang }: Props) {
     if (!del || busy) return;
     setBusy(del.relativePath); setErr(null);
     const r = await deleteDocument(collection, del.relativePath);
-    if (r.ok) { setGone((g) => ({ ...g, [del.relativePath]: 'deleted' })); setDel(null); }
+    if (r.ok) { setGone((g) => ({ ...g, [del.relativePath]: 'deleted' })); invalidateArchived(collection); setDel(null); }
     else setErr(r.error || t('Löschen fehlgeschlagen.', 'Delete failed.'));
     setBusy(null);
   };
@@ -72,13 +82,14 @@ export default function AdminArchive({ collection, items, lang }: Props) {
       if (r.ok) setGone((g) => ({ ...g, [it.relativePath]: 'deleted' }));
       else { failed = r.error || t('Löschen fehlgeschlagen.', 'Delete failed.'); break; }
     }
+    invalidateArchived(collection);
     setBusy(null); setEmptyAll(false);
     if (failed) setErr(failed);
   };
 
   return (
     <>
-      <button type="button" className={`ww-archive-btn${(items || []).length === 0 ? ' is-empty' : ''}`} onClick={() => { setErr(null); setOpen(true); }}>
+      <button type="button" className={`ww-archive-btn${list.length === 0 ? ' is-empty' : ''}`} onClick={() => { setErr(null); setOpen(true); loadLive(true); }}>
         <IconArchive />
         <span>{t('Archiv', 'Archive')}</span>
         <span className="ww-archive-count">{list.length}</span>
