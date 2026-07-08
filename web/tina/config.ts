@@ -72,7 +72,19 @@ export default defineConfig({
       try {
         const st = document.createElement('style');
         st.setAttribute('data-ww', 'cms-css');
-        st.textContent = '.whitespace-nowrap.overflow-x-visible{white-space:normal;}';
+        st.textContent =
+          '.whitespace-nowrap.overflow-x-visible{white-space:normal;}' +
+          // Die Datei-Listen der Mehrfach-Bereiche (Journal, Alben, Stories, Reisen) aus der
+          // Seitenleiste ausblenden — mit den einzelnen .md/.json-Dateien arbeitet David nicht.
+          // Gepflegt wird stattdessen über die LIVE-Übersichtsseiten (der jeweilige „…"-Bereich
+          // routet dorthin) + die Karten-Knöpfe (Neu/Bearbeiten/Archiv/Löschen). Rein kosmetisch
+          // (kein Re-Index): jeder Sidebar-Eintrag ist ein <li ohne data-slot> mit einem Link auf
+          // /collections/<name>/~. Breadcrumb-<li> tragen data-slot -> per :not([data-slot])
+          // ausgenommen, damit die Brotkrumen-Navigation unberührt bleibt.
+          'li:not([data-slot]):has(> a[href$="/collections/journal/~"]),' +
+          'li:not([data-slot]):has(> a[href$="/collections/alben/~"]),' +
+          'li:not([data-slot]):has(> a[href$="/collections/story/~"]),' +
+          'li:not([data-slot]):has(> a[href$="/collections/reisen/~"]){display:none!important;}';
         (document.head || document.documentElement).appendChild(st);
       } catch (e) { /* ignore */ }
     }
@@ -510,7 +522,7 @@ export default defineConfig({
       // --- Journal: Seiten-Einstellungen (Kopf-Texte + Listen-Stil) ---
       {
         name: 'journal_settings',
-        label: '📔 Journal – Einstellungen',
+        label: '📔 Journal',
         path: 'src/data',
         format: 'json',
         match: { include: 'journal-settings' },
@@ -670,7 +682,7 @@ export default defineConfig({
       // --- Stories: Seiten-Einstellungen (Kopf-Texte der Stories-Liste) ---
       {
         name: 'stories_settings',
-        label: '📖 Stories – Einstellungen',
+        label: '📖 Stories',
         path: 'src/data',
         format: 'json',
         match: { include: 'stories-settings' },
@@ -780,7 +792,7 @@ export default defineConfig({
       // --- Reisen: Seiten-Einstellungen (Texte + Karten-Stil) ---
       {
         name: 'reisen_settings',
-        label: '🧭 Reisen – Einstellungen',
+        label: '🧭 Reisen',
         path: 'src/data',
         format: 'json',
         match: { include: 'trips-settings' },
