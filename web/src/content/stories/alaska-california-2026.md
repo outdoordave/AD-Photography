@@ -1,5 +1,5 @@
 ---
-archived: false
+archived: true
 title_de: Alaska & California – Herbst 2026
 category_de: Alaska & Kalifornien
 date: '2026-10-01'
