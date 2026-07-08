@@ -1,4 +1,5 @@
 ---
+archived: true
 date: '2026-06-05'
 title_de: Erste Fotos sortiert
 text_de: |
@@ -11,3 +12,4 @@ title_en: First photos sorted
 text_en: |
   Order in the archive at last: the first shots are curated and now live as an album. A good moment to look back for a bit.
 ---
+
