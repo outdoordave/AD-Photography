@@ -1,5 +1,5 @@
 ---
-archived: true
+archived: false
 date: '2026-06-05'
 title_de: Erste Fotos sortiert
 text_de: |
