@@ -1,9 +1,10 @@
 ---
-title_de: "Florida & The Deep South – Sommer 2025"
-category_de: "Florida & Deep South"
+archived: true
+title_de: Florida & The Deep South – Sommer 2025
+category_de: Florida & Deep South
 date: '2025-08-01'
 cover: ''
-excerpt_de: "Der Süden der USA riecht anders. Nach feuchter Hitze, nach frisch gebrühtem Kaffee in zu kleinen Diner-Tassen und nach diesem leicht salzigen Hauch der Golfküste."
+excerpt_de: 'Der Süden der USA riecht anders. Nach feuchter Hitze, nach frisch gebrühtem Kaffee in zu kleinen Diner-Tassen und nach diesem leicht salzigen Hauch der Golfküste.'
 body_de: |
   ### Von den Everglades bis Bourbon Street: Der tiefe Süden auf vier Rädern
 
@@ -29,9 +30,9 @@ body_de: |
 
   Letzter Stop: **Austin**. Der **YETI Flagship Store** — weil man manche Pilgerfahrten schlicht machen muss. Die Stadt selbst: lebendig, jung, mit einem Energieüberschuss, der ansteckt. Hier verabschieden wir uns — Alexandra fliegt nach Hause. David bleibt noch einen Moment länger.
 has_english: true
-title_en: "Florida & The Deep South – Summer 2025"
-category_en: "Florida & the Deep South"
-excerpt_en: "The American South smells different. Like humid heat, freshly brewed coffee in too-small diner cups, and that faintly salty breeze of the Gulf Coast."
+title_en: Florida & The Deep South – Summer 2025
+category_en: Florida & the Deep South
+excerpt_en: 'The American South smells different. Like humid heat, freshly brewed coffee in too-small diner cups, and that faintly salty breeze of the Gulf Coast.'
 body_en: |
   ### From the Everglades to Bourbon Street: The Deep South on Four Wheels
 
@@ -57,3 +58,4 @@ body_en: |
 
   Last stop: **Austin**. The **YETI Flagship Store** — because some pilgrimages you simply have to make. The city itself: alive, young, with an infectious surplus of energy. This is where we say goodbye — Alexandra flies home. David stays a little longer.
 ---
+
