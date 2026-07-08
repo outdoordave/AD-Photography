@@ -25,14 +25,13 @@ export function authToken(): string | null {
   } catch (e) { return null; }
 }
 
-// Tina-Route eines Dokuments MIT Live-Vorschau. Wichtig: Tina hat zwei Routen —
-//   /collections/edit/<name>/~/<slug>  -> NUR Formular (keine Vorschau)
-//   /collections/<name>/~/<slug>       -> visuelle Ansicht MIT Live-Vorschau (wie Tinas eigene Navigation)
-// Wir wollen letztere, damit „Bearbeiten" genau dort landet, wo man auch über die Übersicht hinkommt.
-// relativePath MIT Endung (z. B. „slug.md"); die Route braucht den Dateinamen OHNE Endung.
+// Tina-Editor-Route eines Dokuments. WICHTIG: exakt diese Form nutzt auch Tinas eigener Link
+// (belegt im Admin-Bundle: `/collections/edit/${_sys.collection.name}/~/${filename}`). Ein Weglassen
+// von „edit/" führt in den ORDNER-Browser („No documents found"). relativePath MIT Endung
+// (z. B. „slug.md"); die Route braucht den Dateinamen OHNE Endung.
 export function editHref(collection: string, relativePath: string): string {
   const noExt = relativePath.replace(/\.[^.]+$/, '');
-  return `/admin/index.html#/collections/${collection}/~/${noExt}`;
+  return `/admin/index.html#/collections/edit/${collection}/~/${noExt}`;
 }
 
 export function newHref(collection: string): string {
