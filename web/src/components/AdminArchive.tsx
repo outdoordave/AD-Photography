@@ -36,6 +36,9 @@ export default function AdminArchive({ collection, items, lang }: Props) {
   const [gone, setGone] = React.useState<Record<string, 'restored' | 'deleted'>>({});
   // LIVE-Stand aus Tina Cloud (null = noch nicht geladen/fehlgeschlagen -> statischer `items`-Fallback).
   const [live, setLive] = React.useState<Item[] | null>(null);
+  // Mehrfachauswahl (relativePaths) + Nachfrage fürs Bulk-Löschen.
+  const [selected, setSelected] = React.useState<Set<string>>(new Set());
+  const [bulkDel, setBulkDel] = React.useState(false);
 
   React.useEffect(() => { try { setShow(loggedIn()); } catch { setShow(false); } }, []);
   const loadLive = React.useCallback((force = false) => {
@@ -52,10 +55,10 @@ export default function AdminArchive({ collection, items, lang }: Props) {
   }, [collection, loadLive]);
   React.useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !busy) { if (emptyAll) setEmptyAll(false); else if (del) setDel(null); else setOpen(false); } };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && !busy) { if (bulkDel) setBulkDel(false); else if (emptyAll) setEmptyAll(false); else if (del) setDel(null); else if (selected.size) setSelected(new Set()); else setOpen(false); } };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [open, del, emptyAll, busy]);
+  }, [open, del, emptyAll, bulkDel, busy, selected]);
 
   if (!show) return null;
   // Live-Stand bevorzugen (aus Tina Cloud), sonst statischen Build-Stand als Fallback.
@@ -96,6 +99,42 @@ export default function AdminArchive({ collection, items, lang }: Props) {
     else showToast(t(`Archiv geleert (${n})`, `Archive emptied (${n})`), 'success');
   };
 
+  // --- Mehrfachauswahl ---
+  const toggleSel = (rp: string) => setSelected((s) => { const n = new Set(s); if (n.has(rp)) n.delete(rp); else n.add(rp); return n; });
+  const allSelected = list.length > 0 && list.every((it) => selected.has(it.relativePath));
+  const toggleAll = () => setSelected(allSelected ? new Set() : new Set(list.map((it) => it.relativePath)));
+  const clearSel = () => setSelected(new Set());
+  const selCount = list.filter((it) => selected.has(it.relativePath)).length;
+
+  const onBulkRestore = async () => {
+    if (busy) return;
+    const picked = list.filter((it) => selected.has(it.relativePath));
+    setBusy('__bulk__'); setErr(null);
+    let failed: string | null = null; let n = 0;
+    for (const it of picked) {
+      const r = await restoreDocument(collection, it.relativePath);
+      if (r.ok) { setGone((g) => ({ ...g, [it.relativePath]: 'restored' })); n++; }
+      else { failed = r.error || t('Wiederherstellen fehlgeschlagen.', 'Restore failed.'); break; }
+    }
+    changed(); setBusy(null); clearSel();
+    if (failed) { setErr(failed); showToast(failed, 'error'); }
+    else showToast(t(`${n} wiederhergestellt`, `${n} restored`), 'success');
+  };
+  const onBulkDelete = async () => {
+    if (busy) return;
+    const picked = list.filter((it) => selected.has(it.relativePath));
+    setBusy('__bulk__'); setErr(null);
+    let failed: string | null = null; let n = 0;
+    for (const it of picked) {
+      const r = await deleteDocument(collection, it.relativePath);
+      if (r.ok) { setGone((g) => ({ ...g, [it.relativePath]: 'deleted' })); n++; }
+      else { failed = r.error || t('Löschen fehlgeschlagen.', 'Delete failed.'); break; }
+    }
+    changed(); setBusy(null); setBulkDel(false); clearSel();
+    if (failed) { setErr(failed); showToast(failed, 'error'); }
+    else showToast(t(`${n} endgültig gelöscht`, `${n} deleted for good`), 'success');
+  };
+
   return (
     <>
       <button type="button" className={`ww-archive-btn${list.length === 0 ? ' is-empty' : ''}`} onClick={() => { setErr(null); setOpen(true); loadLive(true); }}>
@@ -118,27 +157,44 @@ export default function AdminArchive({ collection, items, lang }: Props) {
                 ? t('Das Archiv ist leer.', 'The archive is empty.')
                 : `${list.length} ${list.length === 1 ? t('Beitrag', 'item') : t('Beiträge', 'items')} · ${t('für Besucher unsichtbar', 'hidden from visitors')}`}</p>
               {list.length > 0 ? (
-                <button type="button" className="ww-archive-empty-all" onClick={() => { setErr(null); setEmptyAll(true); }} disabled={!!busy}>
-                  {t('Archiv leeren (alle endgültig löschen)', 'Empty archive (delete all for good)')}
-                </button>
+                <div className="ww-archive-headactions">
+                  <button type="button" className="ww-archive-selall" onClick={toggleAll} disabled={!!busy}>
+                    {allSelected ? t('Auswahl aufheben', 'Clear selection') : t('Alle auswählen', 'Select all')}
+                  </button>
+                  <button type="button" className="ww-archive-empty-all" onClick={() => { setErr(null); setEmptyAll(true); }} disabled={!!busy}>
+                    {t('Archiv leeren (alle endgültig löschen)', 'Empty archive (delete all for good)')}
+                  </button>
+                </div>
               ) : null}
             </div>
 
             {err ? <p className="ww-trash-err" role="alert">{err}</p> : null}
 
+            {selCount > 0 ? (
+              <div className="ww-archive-selbar" role="region" aria-label={t('Auswahl-Aktionen', 'Selection actions')}>
+                <span className="ww-archive-selcount">{selCount} {t('ausgewählt', 'selected')}</span>
+                <button type="button" className="btn ww-archive-selrestore" onClick={onBulkRestore} disabled={!!busy}>{busy === '__bulk__' ? t('…', '…') : t('Wiederherstellen', 'Restore')}</button>
+                <button type="button" className="btn ww-dt-danger" onClick={() => { setErr(null); setBulkDel(true); }} disabled={!!busy}>{t('Endgültig löschen', 'Delete for good')}</button>
+                <button type="button" className="ww-dt-cancel" onClick={clearSel} disabled={!!busy}>{t('Auswahl aufheben', 'Clear')}</button>
+              </div>
+            ) : null}
+
             {list.length > 0 ? (
               <div className="ww-trash-grid">
                 {list.map((it) => (
                   <div
-                    className={`ww-trash-card${it.href ? ' is-clickable' : ''}`}
+                    className={`ww-trash-card${it.href ? ' is-clickable' : ''}${selected.has(it.relativePath) ? ' is-selected' : ''}`}
                     key={it.relativePath}
                     onClick={it.href ? (e) => {
                       const el = e.target as HTMLElement;
-                      if (el.closest('button')) return;
+                      if (el.closest('button, label, input')) return;
                       if (window.getSelection && String(window.getSelection())) return;
                       window.location.href = it.href as string;
                     } : undefined}
                   >
+                    <label className="ww-trash-check" onClick={(e) => e.stopPropagation()} title={t('Auswählen', 'Select')}>
+                      <input type="checkbox" checked={selected.has(it.relativePath)} onChange={() => toggleSel(it.relativePath)} disabled={!!busy} aria-label={t('Auswählen', 'Select')} />
+                    </label>
                     <div className="ww-doc-tools ww-doc-tools--card" onClick={(e) => e.stopPropagation()}>
                       <button type="button" className={`ww-dt-btn ww-dt-restore${busy === it.relativePath ? ' is-busy' : ''}`} onClick={() => onRestore(it)} disabled={!!busy} title={t('Wiederherstellen', 'Restore')} aria-label={t('Wiederherstellen', 'Restore')}><IconRestore /></button>
                       <button type="button" className="ww-dt-btn ww-dt-del" onClick={() => { setErr(null); setDel(it); }} disabled={!!busy} title={t('Endgültig löschen', 'Delete for good')} aria-label={t('Endgültig löschen', 'Delete for good')}><IconTrash /></button>
@@ -162,6 +218,21 @@ export default function AdminArchive({ collection, items, lang }: Props) {
                 <div className="ww-dt-actions">
                   <button type="button" className="btn ww-dt-danger" onClick={onDelete} disabled={!!busy}>{busy ? t('Lösche …', 'Deleting …') : t('Endgültig löschen', 'Delete for good')}</button>
                   <button type="button" className="ww-dt-cancel" onClick={() => setDel(null)} disabled={!!busy}>{t('Abbrechen', 'Cancel')}</button>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {bulkDel ? (
+            <div className="ww-dt-overlay" role="dialog" aria-modal="true" onClick={() => { if (!busy) setBulkDel(false); }}>
+              <div className="ww-dt-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="ww-dt-modal-ic" aria-hidden="true"><IconTrash /></div>
+                <h3>{t('Auswahl endgültig löschen?', 'Delete selection for good?')}</h3>
+                <p className="ww-dt-note">{t(`Die ${selCount} ausgewählten Beiträge werden dauerhaft aus dem GitHub-Repo entfernt. Das lässt sich nicht rückgängig machen.`, `The ${selCount} selected items will be permanently removed from the GitHub repo. This can’t be undone.`)}</p>
+                {err ? <p className="ww-dt-err">{err}</p> : null}
+                <div className="ww-dt-actions">
+                  <button type="button" className="btn ww-dt-danger" onClick={onBulkDelete} disabled={!!busy}>{busy === '__bulk__' ? t('Lösche …', 'Deleting …') : t(`Ja, ${selCount} löschen`, `Yes, delete ${selCount}`)}</button>
+                  <button type="button" className="ww-dt-cancel" onClick={() => setBulkDel(false)} disabled={!!busy}>{t('Abbrechen', 'Cancel')}</button>
                 </div>
               </div>
             </div>

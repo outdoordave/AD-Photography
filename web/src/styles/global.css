@@ -882,15 +882,30 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 .ww-trash-back { display: inline-flex; align-items: center; gap: 8px; background: none; border: none; color: var(--c-ink-soft); font-weight: var(--fw-bold); font-size: var(--fs-ui); letter-spacing: var(--tracking-slight); cursor: pointer; padding: 6px 0; margin-bottom: 8px; }
 .ww-trash-back:hover { color: var(--c-accent); }
 .ww-trash-head { margin-bottom: 30px; }
-.ww-archive-empty-all { margin-top: 12px; background: none; border: 1px solid rgba(163,35,29,0.5); color: #a3231d; font-weight: var(--fw-bold); font-size: var(--fs-label); letter-spacing: var(--tracking-slight); padding: 8px 16px; border-radius: var(--radius-pill); cursor: pointer; transition: background 0.15s ease, color 0.15s ease; }
+.ww-archive-headactions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 12px; }
+.ww-archive-empty-all { background: none; border: 1px solid rgba(163,35,29,0.5); color: #a3231d; font-weight: var(--fw-bold); font-size: var(--fs-label); letter-spacing: var(--tracking-slight); padding: 8px 16px; border-radius: var(--radius-pill); cursor: pointer; transition: background 0.15s ease, color 0.15s ease; }
 .ww-archive-empty-all:hover { background: #a3231d; color: #fff; }
 .ww-archive-empty-all:disabled { opacity: 0.6; cursor: default; }
+.ww-archive-selall { background: none; border: 1px solid var(--c-line); color: var(--c-ink-soft); font-weight: var(--fw-bold); font-size: var(--fs-label); letter-spacing: var(--tracking-slight); padding: 8px 16px; border-radius: var(--radius-pill); cursor: pointer; transition: border-color 0.15s ease, color 0.15s ease; }
+.ww-archive-selall:hover { border-color: var(--c-accent); color: var(--c-accent); }
+.ww-archive-selall:disabled { opacity: 0.6; cursor: default; }
+/* Auswahl-Aktionsleiste (erscheint bei >=1 Auswahl) */
+.ww-archive-selbar { position: sticky; top: 8px; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; justify-content: center; margin: 0 auto 20px; padding: 10px 16px; max-width: 640px; background: var(--c-bg-alt); border: 1px solid var(--c-line); border-radius: var(--radius-pill); box-shadow: 0 8px 22px -12px rgba(46,36,24,0.4); }
+.ww-archive-selcount { font-weight: var(--fw-bold); color: var(--c-ink); font-size: var(--fs-ui); }
+.ww-archive-selbar .btn { padding: 9px 18px; font-size: var(--fs-label); }
+.ww-archive-selrestore { background: #0f6e56; }
+.ww-archive-selrestore:hover { background: #0b5745; }
+.ww-archive-selbar .btn:disabled { opacity: 0.65; cursor: progress; }
+/* Auswahl-Häkchen oben links auf dem Kärtchen */
+.ww-trash-check { position: absolute; top: 8px; left: 8px; z-index: 3; display: inline-flex; }
+.ww-trash-check input { width: 20px; height: 20px; cursor: pointer; accent-color: var(--c-accent); }
+.ww-trash-card.is-selected { outline: 2px solid var(--c-accent); outline-offset: 1px; }
 .ww-trash-err { color: #a3231d; font-weight: var(--fw-semibold); font-size: var(--fs-ui); text-align: center; margin: 0 0 16px; }
 .ww-trash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
-.ww-trash-card { position: relative; background: var(--c-bg-alt); border: 1px solid var(--c-line); border-radius: var(--radius-sm); padding: 18px 18px 16px; transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease); }
+.ww-trash-card { position: relative; background: var(--c-bg-alt); border: 1px solid var(--c-line); border-radius: var(--radius-sm); padding: 48px 18px 16px; transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease); }
 .ww-trash-card.is-clickable { cursor: pointer; }
 .ww-trash-card.is-clickable:hover { transform: translateY(-4px); box-shadow: 0 16px 34px -18px rgba(46,36,24,0.45); }
-.ww-trash-title { font-family: var(--font-display); font-size: var(--fs-title-sm); font-weight: var(--fw-medium); color: var(--c-ink); line-height: 1.2; padding-right: 66px; }
+.ww-trash-title { font-family: var(--font-display); font-size: var(--fs-title-sm); font-weight: var(--fw-medium); color: var(--c-ink); line-height: 1.2; }
 .ww-trash-date { color: var(--c-ink-soft); font-size: var(--fs-label); margin-top: 4px; }
 .ww-trash-teaser { color: var(--c-ink-soft); font-size: var(--fs-ui); line-height: 1.5; margin-top: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .ww-trash-open { display: inline-block; margin-top: 12px; color: var(--c-accent); font-weight: var(--fw-bold); font-size: var(--fs-label); }
