@@ -6,7 +6,14 @@
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
 > Session überschrieben). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
 >
-> **🆕 Edit-Knopf öffnet die Story mit Live-Vorschau (09.07., `4640923`, neuester Stand).** Gelöst: Tinas
+> **🆕 Archiv-Mehrfachauswahl (09.07., `0534eff`, neuester Stand).** Häkchen je Kärtchen + „Alle auswählen";
+> Aktionsleiste „N ausgewählt · Wiederherstellen · Endgültig löschen · Auswahl aufheben" (Bulk, mit
+> Toast + Nachfrage beim Löschen). „Archiv leeren (alle)" bleibt. Verifiziert (2 Test-Archive, Screenshot,
+> Build grün). **Offen/besprochen:** Mehrfach-Archivieren in der NICHT-archivierten Übersicht (kartenüber-
+> greifende Auswahl über mehrere Inseln — machbar, aber aufwändiger; auf David-Freigabe). Git-**Mediathek**
+> ist bereits da: Tinas eingebauter Medienmanager („Medien" in der Sidebar/SITE, `media.tina`-Config).
+>
+> **🆕 Edit-Knopf öffnet die Story mit Live-Vorschau (09.07., `4640923`).** Gelöst: Tinas
 > Formular-Editor (`/collections/edit/…`) hat keine seitliche Vorschau (im Admin-Bundle belegt). Die
 > gewünschte „Formular + Live-Vorschau" ist Tinas **visuelle Bearbeitung**, die entsteht, wenn die Vorschau
 > zur Detailseite navigiert. Fix: der Stift verlinkt jetzt auf die **Detailseite** (`/stories/<slug>` etc.)

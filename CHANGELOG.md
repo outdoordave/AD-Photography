@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-09 14:10 — Archiv: Mehrfachauswahl (ausgewählte wiederherstellen/löschen) (`0534eff`)
+- Häkchen oben links je Kärtchen + „Alle auswählen"/„Auswahl aufheben" im Kopf. Bei ≥1 Auswahl eine
+  sticky Aktionsleiste „N ausgewählt · Wiederherstellen · Endgültig löschen · Auswahl aufheben".
+- Bulk-Wiederherstellen (grün, 1 Klick) + Bulk-Löschen (rot, Nachfrage „Ja, N löschen") — beide mit
+  Toast + Live-Refresh. „Archiv leeren (alle)" bleibt als Extra. Ausgewählte Karten mit Rahmen.
+- Verifiziert (2 Test-Archive, Screenshot, Build grün). Echte Bulk-Mutation nur im echten CMS.
+- Datei: `web/src/components/AdminArchive.tsx`, `web/src/styles/global.css`.
+
+---
+
 ## 2026-07-09 06:36 — Edit-Knopf öffnet die Story mit Live-Vorschau (`4640923`)
 - **Endlich gelöst (Screenshots von David):** Tinas Formular-Editor (`/collections/edit/…`) hat in dieser
   Version KEINE seitliche Live-Vorschau — belegt im Admin-Bundle (kein Vorschau-iframe dort). Die
