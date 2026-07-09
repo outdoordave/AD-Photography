@@ -6,7 +6,15 @@
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
 > Session überschrieben). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
 >
-> **🆕 Archiv-Mehrfachauswahl (09.07., `0534eff`, neuester Stand).** Häkchen je Kärtchen + „Alle auswählen";
+> **🆕 Übersicht-Mehrfachauswahl (09.07., `c9c42a2`, neuester Stand).** In der nicht-archivierten Übersicht:
+> „Mehrere auswählen" → Häkchen je Karte statt der Knöpfe (umrandet), fixe Leiste „N ausgewählt · N
+> archivieren · Fertig" → Bulk-Archivieren (Karten blenden aus, Zahl zieht nach, Toast). Geteilter Speicher
+> `lib/adminSelect.ts` koppelt die Karten-Inseln; getrennt von der Mehrfachauswahl im Archiv. Verifiziert
+> (Screenshot, Build grün). **Umgebungs-Notiz:** `~/Dokumente` war zwischenzeitlich TCC-gesperrt (iCloud/
+> Dateizugriff, „Operation not permitted") → gelöst via Festplattenvollzugriff für die Claude-App; Repo bei
+> Bedarf nach `~/dev/` verschieben.
+>
+> **🆕 Archiv-Mehrfachauswahl (09.07., `0534eff`).** Häkchen je Kärtchen + „Alle auswählen";
 > Aktionsleiste „N ausgewählt · Wiederherstellen · Endgültig löschen · Auswahl aufheben" (Bulk, mit
 > Toast + Nachfrage beim Löschen). „Archiv leeren (alle)" bleibt. Verifiziert (2 Test-Archive, Screenshot,
 > Build grün). **Offen/besprochen:** Mehrfach-Archivieren in der NICHT-archivierten Übersicht (kartenüber-

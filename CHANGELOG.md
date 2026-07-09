@@ -17,6 +17,21 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-09 21:58 — Übersicht: mehrere Beiträge auswählen + zusammen archivieren (`c9c42a2`)
+- Neuer Auswahl-Modus in der (nicht-archivierten) Übersicht: **„Mehrere auswählen"** neben „Archiv" →
+  jede Karte zeigt ein Häkchen statt der drei Knöpfe (ausgewählte umrandet). Fixe Leiste
+  „N ausgewählt · N archivieren · Fertig" → Bulk-Archivieren; Karten blenden sich sofort aus, Archiv-Zahl
+  zieht nach, Toast.
+- Technik: geteilter Auswahl-Speicher `lib/adminSelect.ts` (Modul-Singleton + subscribe) koppelt die
+  einzelnen Karten-Inseln über alle vier Bereiche; getrennt von der Mehrfachauswahl INNERHALB des Archivs.
+- Verifiziert (/stories: 6 Häkchen, „2 ausgewählt/2 archivieren", umrandet, „Auswahl beenden" stellt
+  Knöpfe wieder her), Screenshot, Build grün. Echte Bulk-Mutation nur im echten CMS.
+- Voraus-Arbeit unter iCloud-/TCC-Blocker: der `~/Dokumente`-Ordner war zwischenzeitlich für Dateizugriff
+  gesperrt („Operation not permitted") → gelöst durch Festplattenvollzugriff für die Claude-App.
+- Dateien: `web/src/lib/adminSelect.ts` (neu), `web/src/components/{AdminDocTools,AdminArchive}.tsx`, `web/src/styles/global.css`.
+
+---
+
 ## 2026-07-09 14:10 — Archiv: Mehrfachauswahl (ausgewählte wiederherstellen/löschen) (`0534eff`)
 - Häkchen oben links je Kärtchen + „Alle auswählen"/„Auswahl aufheben" im Kopf. Bei ≥1 Auswahl eine
   sticky Aktionsleiste „N ausgewählt · Wiederherstellen · Endgültig löschen · Auswahl aufheben".
