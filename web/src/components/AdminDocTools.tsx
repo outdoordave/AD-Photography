@@ -1,5 +1,6 @@
 import React from 'react';
 import { loggedIn, archiveDocument, deleteDocument, archivedNodes, invalidateArchived, showToast } from '../lib/tinaAdmin';
+import { subscribeSelect, getSelect, toggleSelectItem } from '../lib/adminSelect';
 
 // Admin-Werkzeuge für EINEN Inhalt — wiederverwendbar über alle Bereiche (Stories, Reisen, Alben,
 // Journal). DREI Knöpfe: ✏️ Bearbeiten (Link in die CMS-Ansicht, target=_top), 🗄️ Archivieren (EIN Klick
@@ -40,6 +41,10 @@ export default function AdminDocTools(props: Props) {
 
   React.useEffect(() => { try { setShow(loggedIn()); } catch { setShow(false); } }, []);
 
+  // Mehrfach-Auswahl-Modus (geteilter Speiter über alle Karten des Bereichs). Bei Änderung neu rendern.
+  const [, forceSel] = React.useReducer((x) => x + 1, 0);
+  React.useEffect(() => subscribeSelect(forceSel), []);
+
   // Kärtchen ausblenden + leere Jahres-Gruppe (Stories) gleich mit — sonst bliebe eine Überschrift ohne
   // Beiträge stehen (nur transient bis zum nächsten Build; danach baut groupByYear die leere Gruppe eh nicht).
   const removeCardFromView = React.useCallback(() => {
@@ -72,7 +77,27 @@ export default function AdminDocTools(props: Props) {
     return () => window.removeEventListener('keydown', onKey);
   }, [dlg, busy]);
 
+  // Nach einer (Bulk-)Aktion irgendwo im Bereich neu prüfen, ob DIESER Beitrag jetzt archiviert ist ->
+  // dann sein Kärtchen ausblenden. So verschwinden auch beim Bulk-Archivieren die Karten sofort.
+  React.useEffect(() => {
+    if (variant !== 'card') return;
+    const mine = props.relativePath.replace(/\.[^.]+$/, '');
+    const onChanged = (e: any) => {
+      if (e && e.detail && e.detail.collection !== props.collection) return;
+      archivedNodes(props.collection).then((ns) => {
+        if (ns && ns.some((n: any) => n && n._sys && n._sys.filename === mine)) removeCardFromView();
+      }).catch(() => { /* egal */ });
+    };
+    window.addEventListener('ww:archive-changed', onChanged as EventListener);
+    return () => window.removeEventListener('ww:archive-changed', onChanged as EventListener);
+  }, [variant, props.collection, props.relativePath, removeCardFromView]);
+
   if (!show) return null;
+
+  // Auswahl-Modus für DIESEN Bereich? -> Karte zeigt ein Häkchen statt der drei Knöpfe.
+  const sel = getSelect();
+  const selMode = sel.mode && sel.collection === props.collection && variant === 'card';
+  const selectedNow = sel.selected.has(props.relativePath);
 
   // „Bearbeiten" = einfach zur Detailseite navigieren (im SELBEN Fenster, kein target=_top). In der
   // CMS-Vorschau springt die Vorschau damit auf die Story -> Tinas visuelle Bearbeitung (Formular +
@@ -126,6 +151,10 @@ export default function AdminDocTools(props: Props) {
         <span className="ww-dt-doneflag" role="status">
           <Icon d={D_CHECK} /> {done === 'archived' ? 'Archiviert' : 'Gelöscht'}
         </span>
+      ) : selMode ? (
+        <label className="ww-dt-selbox" title="Auswählen" onClick={(e) => e.stopPropagation()}>
+          <input type="checkbox" checked={selectedNow} onChange={() => toggleSelectItem(props.relativePath)} aria-label={t ? `„${t}" auswählen` : 'Auswählen'} />
+        </label>
       ) : (
         <>
           <a className="ww-dt-btn" href={href} title="Bearbeiten (öffnet die Story mit Live-Vorschau)" aria-label={t ? `„${t}" bearbeiten` : 'Bearbeiten'}>

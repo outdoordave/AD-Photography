@@ -1,5 +1,6 @@
 import React from 'react';
-import { loggedIn, restoreDocument, deleteDocument, archivedNodes, mapArchived, invalidateArchived, showToast } from '../lib/tinaAdmin';
+import { loggedIn, restoreDocument, deleteDocument, archiveDocument, archivedNodes, mapArchived, invalidateArchived, showToast } from '../lib/tinaAdmin';
+import { subscribeSelect, getSelect, enterSelect, exitSelect } from '../lib/adminSelect';
 
 // „Papierkorb (N)" pro Bereich: Knopf öffnet eine bildschirmfüllende Papierkorb-Ansicht im Look der
 // jeweiligen Sektion (gleicher Hintergrund/Kopf-Stil), die die entfernten Beiträge als schlichte
@@ -41,6 +42,10 @@ export default function AdminArchive({ collection, items, lang }: Props) {
   const [bulkDel, setBulkDel] = React.useState(false);
 
   React.useEffect(() => { try { setShow(loggedIn()); } catch { setShow(false); } }, []);
+  // Auswahl-Modus der ÜBERSICHT (geteilter Speicher, koppelt die einzelnen Karten-Inseln). Neu rendern bei Änderung.
+  const [, forceSel] = React.useReducer((x) => x + 1, 0);
+  React.useEffect(() => subscribeSelect(forceSel), []);
+  const [bulkBusy, setBulkBusy] = React.useState(false);
   const loadLive = React.useCallback((force = false) => {
     archivedNodes(collection, force)
       .then((ns) => { if (ns) setLive(ns.map((n) => mapArchived(collection, n, lang))); })
@@ -65,6 +70,26 @@ export default function AdminArchive({ collection, items, lang }: Props) {
   const base = live ?? (items || []);
   const list = base.filter((it) => !gone[it.relativePath]);
   const t = (de: string, en: string) => (isEn ? en : de);
+
+  // Auswahl-Modus der ÜBERSICHT (geteilter Speicher; die Karten zeigen dann Häkchen). Getrennt von der
+  // Mehrfachauswahl INNERHALB des Archivs (die nutzt den lokalen `selected`-State weiter unten).
+  const ov = getSelect();
+  const ovActive = ov.mode && ov.collection === collection;
+  const ovCount = ov.selected.size;
+  const onBulkArchive = async () => {
+    const paths = Array.from(ov.selected);
+    if (!paths.length || bulkBusy) return;
+    setBulkBusy(true);
+    let failed: string | null = null; let n = 0;
+    for (const rp of paths) {
+      const r = await archiveDocument(collection, rp);
+      if (r.ok) n++; else { failed = r.error || t('Archivieren fehlgeschlagen.', 'Archiving failed.'); break; }
+    }
+    invalidateArchived(collection);
+    try { window.dispatchEvent(new CustomEvent('ww:archive-changed', { detail: { collection } })); } catch (e) { /* egal */ }
+    setBulkBusy(false); exitSelect();
+    if (failed) showToast(failed, 'error'); else showToast(t(`${n} archiviert`, `${n} archived`), 'success');
+  };
 
   const changed = () => { invalidateArchived(collection); try { window.dispatchEvent(new CustomEvent('ww:archive-changed', { detail: { collection } })); } catch (e) { /* egal */ } };
 
@@ -142,6 +167,20 @@ export default function AdminArchive({ collection, items, lang }: Props) {
         <span>{t('Archiv', 'Archive')}</span>
         <span className="ww-archive-count">{list.length}</span>
       </button>
+
+      <button type="button" className={`ww-archive-selmode${ovActive ? ' is-active' : ''}`} onClick={() => (ovActive ? exitSelect() : enterSelect(collection))}>
+        {ovActive ? t('Auswahl beenden', 'Done selecting') : t('Mehrere auswählen', 'Select multiple')}
+      </button>
+
+      {ovActive ? (
+        <div className="ww-bulkbar" role="region" aria-label={t('Auswahl-Aktionen', 'Selection actions')}>
+          <span className="ww-bulkbar-count">{ovCount} {t('ausgewählt', 'selected')}</span>
+          <button type="button" className="btn ww-bulkbar-arch" onClick={onBulkArchive} disabled={bulkBusy || ovCount === 0}>
+            {bulkBusy ? t('Archiviere …', 'Archiving …') : t(`${ovCount} archivieren`, `Archive ${ovCount}`)}
+          </button>
+          <button type="button" className="ww-dt-cancel" onClick={exitSelect} disabled={bulkBusy}>{t('Fertig', 'Done')}</button>
+        </div>
+      ) : null}
 
       {open ? (
         <div className="ww-trash-screen" role="dialog" aria-modal="true" aria-label={t('Archiv', 'Archive')}>
