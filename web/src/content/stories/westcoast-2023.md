@@ -1,5 +1,5 @@
 ---
-archived: true
+archived: false
 title_de: West Coast Road Trip – Herbst 2023
 category_de: USA-Westküste & Südwesten
 date: '2023-09-01'
