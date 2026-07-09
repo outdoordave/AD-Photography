@@ -1,5 +1,5 @@
 import React from 'react';
-import { loggedIn, archiveDocument, deleteDocument, editHref, archivedNodes, invalidateArchived, showToast } from '../lib/tinaAdmin';
+import { loggedIn, archiveDocument, deleteDocument, archivedNodes, invalidateArchived, showToast } from '../lib/tinaAdmin';
 
 // Admin-Werkzeuge für EINEN Inhalt — wiederverwendbar über alle Bereiche (Stories, Reisen, Alben,
 // Journal). DREI Knöpfe: ✏️ Bearbeiten (Link in die CMS-Ansicht, target=_top), 🗄️ Archivieren (EIN Klick
@@ -74,7 +74,12 @@ export default function AdminDocTools(props: Props) {
 
   if (!show) return null;
 
-  const href = editHref(props.collection, props.relativePath);
+  // „Bearbeiten" = einfach zur Detailseite navigieren (im SELBEN Fenster, kein target=_top). In der
+  // CMS-Vorschau springt die Vorschau damit auf die Story -> Tinas visuelle Bearbeitung (Formular +
+  // Live-Vorschau), exakt so, als hätte man die Karte angeklickt. Auf der Live-Seite: normale Navigation.
+  const en = typeof location !== 'undefined' && location.pathname.startsWith('/en/');
+  const filename = props.relativePath.replace(/\.[^.]+$/, '');
+  const href = `${en ? '/en' : ''}${OVERVIEW[props.collection] || ''}/${filename}`;
   const t = props.title || '';
 
   const finish = (kind: 'archived' | 'deleted') => {
@@ -123,7 +128,7 @@ export default function AdminDocTools(props: Props) {
         </span>
       ) : (
         <>
-          <a className="ww-dt-btn" href={href} target="_top" title="Bearbeiten" aria-label={t ? `„${t}" bearbeiten` : 'Bearbeiten'}>
+          <a className="ww-dt-btn" href={href} title="Bearbeiten (öffnet die Story mit Live-Vorschau)" aria-label={t ? `„${t}" bearbeiten` : 'Bearbeiten'}>
             <Icon d={D_EDIT} path2={D_EDIT2} />
           </a>
           <button type="button" className={`ww-dt-btn ww-dt-arch${busy === 'archive' ? ' is-busy' : ''}`} onClick={onArchive} disabled={!!busy} title="Archivieren (umkehrbar)" aria-label={t ? `„${t}" archivieren` : 'Archivieren'}>
