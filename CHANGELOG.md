@@ -17,6 +17,22 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-09 06:36 — Edit-Knopf öffnet die Story mit Live-Vorschau (`4640923`)
+- **Endlich gelöst (Screenshots von David):** Tinas Formular-Editor (`/collections/edit/…`) hat in dieser
+  Version KEINE seitliche Live-Vorschau — belegt im Admin-Bundle (kein Vorschau-iframe dort). Die
+  „Formular + Live-Vorschau", die David will, ist Tinas **visuelle Bearbeitung**, die entsteht, wenn die
+  **Vorschau zur Detailseite navigiert** (wie beim Klick auf eine Story-Karte in der Vorschau).
+- **Fix:** Der Stift verlinkt jetzt einfach auf die **Detailseite** (`/stories/<slug>` etc.) im **selben
+  Fenster** (kein `target=_top`). In der CMS-Vorschau springt die Vorschau damit auf die Story = exakt die
+  visuelle Bearbeitung, „als hätte man die Karte angeklickt" (identische URL wie der Karten-Link). Auf der
+  Live-Seite: normale Navigation zur Story.
+- Verifiziert: Edit-Href = Karten-Link, kein `target=_top`, `astro build` grün.
+- **Bekannte Kosmetik (harmlos):** In Safari erscheint beim Archivieren/Wiederherstellen kurz das
+  Lade-Symbol (Netzwerk-Indikator der Hintergrund-Speicherung), verschwindet bei Mausbewegung; nichts hängt.
+- Datei: `web/src/components/AdminDocTools.tsx`.
+
+---
+
 ## 2026-07-08 22:40 — Verwaltung-UX: Zahl sofort, leere Jahres-Gruppe weg, Toast + Lade-Spinner (`60f6e5a`)
 - **Archiv-Zahl zieht sofort nach:** `AdminDocTools` feuert nach Archivieren/Löschen ein Event
   `ww:archive-changed`; `AdminArchive` lauscht und holt den Live-Stand frisch → die Zahl neben „+ Neu"

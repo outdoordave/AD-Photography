@@ -6,7 +6,15 @@
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
 > Session überschrieben). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
 >
-> **🆕 Verwaltung-UX-Feinschliff (08.07., `60f6e5a`, neuester Stand).** Archiv-**Zahl** zieht sofort nach
+> **🆕 Edit-Knopf öffnet die Story mit Live-Vorschau (09.07., `4640923`, neuester Stand).** Gelöst: Tinas
+> Formular-Editor (`/collections/edit/…`) hat keine seitliche Vorschau (im Admin-Bundle belegt). Die
+> gewünschte „Formular + Live-Vorschau" ist Tinas **visuelle Bearbeitung**, die entsteht, wenn die Vorschau
+> zur Detailseite navigiert. Fix: der Stift verlinkt jetzt auf die **Detailseite** (`/stories/<slug>` etc.)
+> im **selben Fenster** (kein `target=_top`) → in der CMS-Vorschau exakt die visuelle Bearbeitung, „als
+> hätte man die Karte angeklickt". Verifiziert (Href = Karten-Link, Build grün). Archivieren/Wiederherstellen
+> laufen laut David „super"; Safari-Ladesymbol beim Speichern ist harmlose Kosmetik.
+>
+> **🆕 Verwaltung-UX-Feinschliff (08.07., `60f6e5a`).** Archiv-**Zahl** zieht sofort nach
 > (Event `ww:archive-changed` von `AdminDocTools` → `AdminArchive` refetcht live). **Leere Jahres-Gruppe**
 > (Stories) verschwindet beim Ausblenden des letzten Kärtchens. Dezenter **Toast** grün/rot (`showToast`)
 > bei allen Aktionen. **Lade-Anzeige:** Rahmen des laufenden Icon-Knopfes rotiert in seiner Farbe
