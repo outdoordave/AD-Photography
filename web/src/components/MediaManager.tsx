@@ -89,6 +89,9 @@ export default function MediaManager() {
   const [lb, setLb] = React.useState<string | null>(null);         // Lightbox-Bildpfad (Doppelklick)
   // Für den (mount-once) Tastatur-Handler: aktueller Zustand in einem Ref, damit keine veralteten Closures.
   const stateRef = React.useRef<any>({});
+  // Drag & Drop: aktuelles Ziel (Ordnerpfad) beim Drüberziehen + Nutzlast (gezogene Bildpfade).
+  const [dropTarget, setDropTarget] = React.useState<string | null>(null);
+  const dragRef = React.useRef<string[]>([]);
 
   React.useEffect(() => { try { setShow(loggedIn()); } catch { setShow(false); } }, []);
   // Ordnerwechsel -> Auswahl leeren (sonst blieben unsichtbare Dateien ausgewählt).
@@ -255,27 +258,40 @@ export default function MediaManager() {
     if (lastErr) showToast(lastErr, 'error');
   }
 
-  async function doBulkMove() {
-    const target = (moveNew.trim() || moveTarget).replace(/^\/+|\/+$/g, '');
-    const items = Array.from(picked);
-    if (!items.length || bulkBusy) return;
+  // Kern: mehrere Bilder in einen Zielordner verschieben (aus Modal ODER per Drag&Drop).
+  async function moveMany(paths: string[], targetDir: string) {
+    const target = (targetDir || '').replace(/^\/+|\/+$/g, '');
+    if (!paths.length || bulkBusy) return;
     setBulkBusy(true);
     let okN = 0; let refsN = 0; let lastErr = '';
-    for (let i = 0; i < items.length; i++) {
-      setProgress(`Verschiebe ${i + 1}/${items.length} …`);
-      const r = await moveInCloud(items[i], target);
+    for (let i = 0; i < paths.length; i++) {
+      setProgress(`Verschiebe ${i + 1}/${paths.length} …`);
+      const r = await moveInCloud(paths[i], target);
       if (r.ok && r.newPath) {
         const np = r.newPath;
-        setGone((g) => new Set(g).add(items[i]));
+        setGone((g) => new Set(g).add(paths[i]));
         setFresh((prev) => [{ path: np, url: np }, ...prev.filter((x) => x.path !== np)]);
         okN++; refsN += r.refs || 0;
       } else { lastErr = r.error || 'Verschieben fehlgeschlagen'; break; }
     }
-    if (sel && items.indexOf(sel) !== -1) setSel(null);
-    setBulkBusy(false); setProgress(''); setMoveOpen(false); setMoveNew(''); setMoveTarget(''); setPicked(new Set());
+    if (sel && paths.indexOf(sel) !== -1) setSel(null);
+    setBulkBusy(false); setProgress(''); setPicked(new Set());
     if (okN) showToast(`${okN} verschoben${refsN ? ` · ${refsN} Verweise angepasst` : ''} → ${target || 'uploads'}/`, 'success');
     if (lastErr) showToast(lastErr, 'error');
   }
+
+  async function doBulkMove() {
+    const target = moveNew.trim() || moveTarget;
+    setMoveOpen(false); setMoveNew(''); setMoveTarget('');
+    await moveMany(Array.from(picked), target);
+  }
+
+  // Ordner als Drop-Ziel: Drüberziehen hebt hervor, Loslassen verschiebt die gezogenen Bilder dorthin.
+  const folderDropProps = (targetFolder: string) => ({
+    onDragOver: (e: React.DragEvent) => { if (dragRef.current.length) { e.preventDefault(); e.stopPropagation(); e.dataTransfer.dropEffect = 'move'; setDropTarget(targetFolder); } },
+    onDragLeave: () => setDropTarget((cur) => (cur === targetFolder ? null : cur)),
+    onDrop: (e: React.DragEvent) => { e.preventDefault(); e.stopPropagation(); const payload = dragRef.current; dragRef.current = []; setDropTarget(null); if (payload.length) moveMany(payload, targetFolder); },
+  });
 
   async function doAssign(overwrite: boolean) {
     const tgt = ASSIGN_TARGETS.find((t) => t.collection === aColl);
@@ -292,12 +308,14 @@ export default function MediaManager() {
   const fileTile = (p: string, idx: number) => {
     const isPicked = picked.has(p);
     return (
-      <button key={p} type="button"
+      <button key={p} type="button" draggable
         className={`ww-mm-file${sel === p ? ' is-sel' : ''}${isPicked ? ' is-picked' : ''}`}
         onClick={(e) => onTileClick(e, p, idx)}
         onDoubleClick={(e) => { e.preventDefault(); setLb(p); }}
+        onDragStart={(e) => { const payload = isPicked && picked.size > 0 ? Array.from(picked) : [p]; dragRef.current = payload; e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', payload.join('\n')); } catch (err) { /* egal */ } }}
+        onDragEnd={() => { dragRef.current = []; setDropTarget(null); }}
         onContextMenu={(e) => { e.preventDefault(); if (!selMode) { setSel(p); setAssignFor(p); } }}
-        title={`${relOf(p)}\n(Doppelklick: groß · Shift/Strg-Klick: mehrfach · Rechtsklick: zuweisen)`}>
+        title={`${relOf(p)}\n(Doppelklick: groß · Shift/Strg-Klick: mehrfach · auf einen Ordner ziehen: verschieben)`}>
         {selMode ? <span className={`ww-mm-check${isPicked ? ' is-on' : ''}`} aria-hidden="true">{isPicked ? '✓' : ''}</span> : null}
         <img src={previewOf(p)} alt="" loading="lazy" draggable={false} />
         <span className="ww-mm-fname">{p.split('/').pop()}</span>
@@ -327,13 +345,13 @@ export default function MediaManager() {
       {/* Ordner-Baum-Leiste (Explorer-Optik) */}
       <aside className="ww-mm-tree" aria-label="Ordner">
         <div className="ww-mm-tree-head">Ordner</div>
-        <button type="button" className={`ww-mm-treeitem${folder === '' ? ' is-here' : ''}`} onClick={() => { setSel(null); setFolder(''); }} title="uploads">
+        <button type="button" className={`ww-mm-treeitem${folder === '' ? ' is-here' : ''}${dropTarget === '' ? ' is-drop' : ''}`} onClick={() => { setSel(null); setFolder(''); }} title="uploads" {...folderDropProps('')}>
           <span className="ww-mm-treeicon" aria-hidden="true">🗂️</span> uploads
         </button>
         {folderList.map((f) => (
-          <button key={f} type="button" className={`ww-mm-treeitem${folder === f ? ' is-here' : ''}`}
+          <button key={f} type="button" className={`ww-mm-treeitem${folder === f ? ' is-here' : ''}${dropTarget === f ? ' is-drop' : ''}`}
             style={{ paddingLeft: `${12 + f.split('/').length * 15}px` }}
-            onClick={() => { setSel(null); setFolder(f); }} title={f}>
+            onClick={() => { setSel(null); setFolder(f); }} title={f} {...folderDropProps(f)}>
             <span className="ww-mm-treeicon" aria-hidden="true">📁</span> {f.split('/').pop()}
           </button>
         ))}
@@ -373,9 +391,9 @@ export default function MediaManager() {
       <div
         className={`ww-mm-grid-wrap${dragOver ? ' is-drag' : ''}`}
         onClick={(e) => { const el = e.target as HTMLElement; if (el.closest('.ww-mm-file, .ww-mm-folder, button, a, input')) return; if (picked.size) setPicked(new Set()); }}
-        onDragOver={(e) => { e.preventDefault(); if (!busy) setDragOver(true); }}
+        onDragOver={(e) => { if (dragRef.current.length) return; e.preventDefault(); if (!busy) setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
-        onDrop={(e) => { e.preventDefault(); setDragOver(false); if (!busy) handleFiles(e.dataTransfer.files); }}
+        onDrop={(e) => { if (dragRef.current.length) return; e.preventDefault(); setDragOver(false); if (!busy) handleFiles(e.dataTransfer.files); }}
       >
         {searching ? (
           <div className="ww-mm-grid">
@@ -383,12 +401,15 @@ export default function MediaManager() {
           </div>
         ) : (
           <div className="ww-mm-grid">
-            {allSubdirs.map((d) => (
-              <button key={'d:' + d} type="button" className="ww-mm-folder" onClick={() => { setSel(null); setFolder(folder ? `${folder}/${d}` : d); }} title={d}>
-                <span className="ww-mm-foldericon" aria-hidden="true">📁</span>
-                <span className="ww-mm-fname">{d}</span>
-              </button>
-            ))}
+            {allSubdirs.map((d) => {
+              const dPath = folder ? `${folder}/${d}` : d;
+              return (
+                <button key={'d:' + d} type="button" className={`ww-mm-folder${dropTarget === dPath ? ' is-drop' : ''}`} onClick={() => { setSel(null); setFolder(dPath); }} title={d} {...folderDropProps(dPath)}>
+                  <span className="ww-mm-foldericon" aria-hidden="true">📁</span>
+                  <span className="ww-mm-fname">{d}</span>
+                </button>
+              );
+            })}
             {visible.map((p, i) => fileTile(p, i))}
             {!allSubdirs.length && !visible.length ? <p className="ww-mm-empty">Dieser Ordner ist leer. Zieh Bilder hierher oder nutze „Hochladen".</p> : null}
           </div>
