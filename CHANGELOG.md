@@ -17,6 +17,22 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-10 23:30 — Medien-Manager: Datei-Manager-Gesten (Auswahl, DnD, Marquee, Lightbox, Sortierung)
+Standard-Finder/Explorer-Bedienung, in drei Commits. Auswahl-Logik lokal im Browser verifiziert;
+das eigentliche Verschieben (Cloud + Referenz-Umschreiben) braucht weiterhin ein CMS-Token.
+- **Auswahl-Gesten (`4de71f4`)**: Cmd/Strg-Klick = einzeln dazu/weg, Shift-Klick = Bereich ab Anker,
+  Klick ins Leere = abwählen, Cmd/Strg+A = alle. Tastatur: Entf = löschen (mit Nachfrage), Esc =
+  abwählen/Lightbox zu. **Doppelklick = Lightbox** (←/→ blättert). **Sortierung Name A–Z / Z–A**.
+  (⚠️ Mac: Strg-Klick = Rechtsklick/Kontextmenü → für Mehrfach Cmd nutzen.)
+- **Drag & Drop (`58626ad`)**: Bilder (Auswahl oder einzeln) auf einen Ordner im Baum ODER auf eine
+  Ordner-Kachel ziehen → verschiebt dorthin (Ziel hebt hervor). Gemeinsamer Kern `moveMany`.
+- **Gummiband/Marquee (`d83e0d8`)**: auf leerer Fläche ein Rechteck aufziehen → Kacheln darin live
+  markieren.
+- Verifiziert (lokaler Browser): Cmd-Klick, Shift-Bereich (4), Cmd+A (32), Esc, Lightbox+Pfeil,
+  Sortier-Umschaltung, DnD-Kette (dragstart→dragover-Highlight→drop→moveMany), Marquee (2 Kacheln).
+- **Offen (bewusst):** Sortierung nach **Datum** (Manifest ist `string[]` ohne Zeitstempel → braucht
+  Format-Erweiterung) und **Umbenennen** (= Verschieben mit Referenz-Umschreiben) — beides Folge-Schritte.
+
 ## 2026-07-10 22:45 — Medien-Manager: Explorer-Optik (Ordner-Baum-Leiste + „Neuer Ordner") (`c366c06`)
 Grund: „sieht null aus wie Finder/Explorer / wo ist die Ordnerstruktur?" — Ursache: es gab (a) noch
 gar keine Unterordner (alle 33 Bilder flach in `uploads/`) und (b) keine Baum-Ansicht.
