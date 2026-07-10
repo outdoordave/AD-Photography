@@ -17,6 +17,18 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-10 22:45 — Medien-Manager: Explorer-Optik (Ordner-Baum-Leiste + „Neuer Ordner") (`c366c06`)
+Grund: „sieht null aus wie Finder/Explorer / wo ist die Ordnerstruktur?" — Ursache: es gab (a) noch
+gar keine Unterordner (alle 33 Bilder flach in `uploads/`) und (b) keine Baum-Ansicht.
+- **Zwei-Spalten-Layout** (`.ww-mm-body`): links eine sticky **Ordner-Baum-Leiste** (`.ww-mm-tree`) mit
+  uploads-Wurzel + allen Ordnern (eingerückt nach Tiefe, aktueller hervorgehoben), rechts der Hauptbereich.
+  Mobil: Leiste klappt als Chips über den Inhalt.
+- **„Neuer Ordner"** (inline-Eingabe): legt einen Ordner im aktuellen Ordner an + wechselt hinein; wird
+  dauerhaft, sobald ein Bild darin liegt (leere Ordner gibt es im statischen Repo nicht → Session-`newFolders`).
+  Erscheint sofort im Baum, als Kachel im Elternordner und als Ziel im „Verschieben nach…"-Modal.
+- Verifiziert (lokaler Browser: Baum-Leiste, Ordner „Tiere" anlegen → Breadcrumb + Upload-Ziel folgen,
+  leerer-Ordner-Hinweis). Löschen-Nachfrage (einzeln + Bulk) war bereits vorhanden.
+
 ## 2026-07-10 22:06 — Medien-Manager-Ausbau (Verschieben/Ordnen) + Übersicht-Bulk-Aktionen
 Fortsetzung des Medien-Managers + Nachschärfung der Beitrags-Mehrfachauswahl.
 - **404-Fix (`b66d60e`)**: Der „🖼️ Medien"-Link der Admin-Leiste zeigte auf `/medien-manager`
