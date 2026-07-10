@@ -83,10 +83,41 @@ export default function MediaManager() {
   const [newFolders, setNewFolders] = React.useState<Set<string>>(new Set());
   const [creating, setCreating] = React.useState(false);
   const [newName, setNewName] = React.useState('');
+  // Desktop-Auswahl-Gesten + Ansicht.
+  const [anchor, setAnchor] = React.useState<number | null>(null); // Index für Shift-Bereichsauswahl
+  const [sortDesc, setSortDesc] = React.useState(false);           // Name Z–A statt A–Z
+  const [lb, setLb] = React.useState<string | null>(null);         // Lightbox-Bildpfad (Doppelklick)
+  // Für den (mount-once) Tastatur-Handler: aktueller Zustand in einem Ref, damit keine veralteten Closures.
+  const stateRef = React.useRef<any>({});
 
   React.useEffect(() => { try { setShow(loggedIn()); } catch { setShow(false); } }, []);
   // Ordnerwechsel -> Auswahl leeren (sonst blieben unsichtbare Dateien ausgewählt).
   React.useEffect(() => { setPicked(new Set()); }, [folder]);
+  // Tastatur-Gesten (mount-once, Zustand über stateRef): Cmd/Strg+A = alle, Entf = löschen, Esc = abwählen/
+  // Lightbox schließen, ←/→ = Lightbox blättern. In Eingabefeldern nichts abfangen.
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const s = stateRef.current;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT')) return;
+      if (s.lb) {
+        if (e.key === 'Escape') { setLb(null); return; }
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+          const v: string[] = s.visible || []; const i = v.indexOf(s.lb);
+          if (i >= 0) { const ni = e.key === 'ArrowRight' ? Math.min(v.length - 1, i + 1) : Math.max(0, i - 1); setLb(v[ni]); }
+          return;
+        }
+        return;
+      }
+      if ((e.metaKey || e.ctrlKey) && (e.key === 'a' || e.key === 'A')) {
+        e.preventDefault(); setPicked(new Set(s.visible || [])); setSelMode(true); return;
+      }
+      if (e.key === 'Escape' && s.selMode && !s.anyModal) { setSelMode(false); setPicked(new Set()); return; }
+      if ((e.key === 'Delete' || e.key === 'Backspace') && s.pickedSize > 0 && !s.anyModal) { e.preventDefault(); setBulkDel(true); return; }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
   // „Verwendet in" für die aktuell gewählte Datei laden.
   React.useEffect(() => {
     if (!sel) { setUsage({ loading: false }); return; }
@@ -140,6 +171,25 @@ export default function MediaManager() {
     .filter((f) => (f.includes('/') ? f.slice(0, f.lastIndexOf('/')) : '') === folder)
     .map((f) => f.split('/').pop() as string);
   const allSubdirs = Array.from(new Set([...subdirs, ...newSubs])).sort((a, b) => a.localeCompare(b));
+
+  // Sichtbare Datei-Reihenfolge (für Shift-Bereich, Cmd+A, Lightbox-Blättern) — nach Name A–Z bzw. Z–A.
+  const visible = (searching ? searchHits : files).slice().sort((a, b) => (sortDesc ? b.localeCompare(a) : a.localeCompare(b)));
+  stateRef.current = {
+    visible, selMode, lb, pickedSize: picked.size,
+    anyModal: !!(del || bulkDel || moveOpen || assignFor || creating),
+  };
+
+  // Klick auf eine Kachel — mit Standard-Desktop-Modifiern: Shift = Bereich ab Anker, Cmd/Strg = einzeln
+  // dazu/weg, sonst im Auswahl-Modus umschalten bzw. normal das Detail-Panel öffnen.
+  const onTileClick = (e: React.MouseEvent, p: string, idx: number) => {
+    if (e.shiftKey && anchor !== null) {
+      const [lo, hi] = anchor < idx ? [anchor, idx] : [idx, anchor];
+      setPicked(new Set(visible.slice(lo, hi + 1))); setSelMode(true); return;
+    }
+    if (e.metaKey || e.ctrlKey) { togglePick(p); setAnchor(idx); setSelMode(true); return; }
+    if (selMode) { togglePick(p); setAnchor(idx); return; }
+    setSel(p); setAnchor(idx);
+  };
 
   const uploadTarget = folder || 'allgemein';
 
@@ -239,16 +289,17 @@ export default function MediaManager() {
     else showToast(r.error || 'Zuweisen fehlgeschlagen', 'error');
   }
 
-  const fileTile = (p: string) => {
+  const fileTile = (p: string, idx: number) => {
     const isPicked = picked.has(p);
     return (
       <button key={p} type="button"
-        className={`ww-mm-file${sel === p ? ' is-sel' : ''}${selMode && isPicked ? ' is-picked' : ''}`}
-        onClick={() => (selMode ? togglePick(p) : setSel(p))}
+        className={`ww-mm-file${sel === p ? ' is-sel' : ''}${isPicked ? ' is-picked' : ''}`}
+        onClick={(e) => onTileClick(e, p, idx)}
+        onDoubleClick={(e) => { e.preventDefault(); setLb(p); }}
         onContextMenu={(e) => { e.preventDefault(); if (!selMode) { setSel(p); setAssignFor(p); } }}
-        title={selMode ? relOf(p) : `${relOf(p)}\n(Rechtsklick: einem Inhalt zuweisen)`}>
+        title={`${relOf(p)}\n(Doppelklick: groß · Shift/Strg-Klick: mehrfach · Rechtsklick: zuweisen)`}>
         {selMode ? <span className={`ww-mm-check${isPicked ? ' is-on' : ''}`} aria-hidden="true">{isPicked ? '✓' : ''}</span> : null}
-        <img src={previewOf(p)} alt="" loading="lazy" />
+        <img src={previewOf(p)} alt="" loading="lazy" draggable={false} />
         <span className="ww-mm-fname">{p.split('/').pop()}</span>
       </button>
     );
@@ -304,6 +355,9 @@ export default function MediaManager() {
       {/* Toolbar */}
       <div className="ww-mm-toolbar">
         <input type="search" className="ww-mm-search" placeholder="Dateiname suchen (ordnerübergreifend) …" value={search} onChange={(e) => setSearch(e.target.value)} />
+        <button type="button" className="ww-mm-sort" onClick={() => setSortDesc((s) => !s)} title="Sortierung umschalten">
+          {sortDesc ? 'Name Z–A' : 'Name A–Z'}
+        </button>
         <button type="button" className={`ww-mm-selmode${selMode ? ' is-active' : ''}`} onClick={() => (selMode ? exitSel() : setSelMode(true))}>
           {selMode ? 'Auswahl beenden' : 'Auswählen'}
         </button>
@@ -318,13 +372,14 @@ export default function MediaManager() {
       {/* Grid / Drop-Zone */}
       <div
         className={`ww-mm-grid-wrap${dragOver ? ' is-drag' : ''}`}
+        onClick={(e) => { const el = e.target as HTMLElement; if (el.closest('.ww-mm-file, .ww-mm-folder, button, a, input')) return; if (picked.size) setPicked(new Set()); }}
         onDragOver={(e) => { e.preventDefault(); if (!busy) setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
         onDrop={(e) => { e.preventDefault(); setDragOver(false); if (!busy) handleFiles(e.dataTransfer.files); }}
       >
         {searching ? (
           <div className="ww-mm-grid">
-            {searchHits.length ? searchHits.map(fileTile) : <p className="ww-mm-empty">Keine Treffer für „{search}".</p>}
+            {visible.length ? visible.map((p, i) => fileTile(p, i)) : <p className="ww-mm-empty">Keine Treffer für „{search}".</p>}
           </div>
         ) : (
           <div className="ww-mm-grid">
@@ -334,8 +389,8 @@ export default function MediaManager() {
                 <span className="ww-mm-fname">{d}</span>
               </button>
             ))}
-            {files.map(fileTile)}
-            {!allSubdirs.length && !files.length ? <p className="ww-mm-empty">Dieser Ordner ist leer. Zieh Bilder hierher oder nutze „Hochladen".</p> : null}
+            {visible.map((p, i) => fileTile(p, i))}
+            {!allSubdirs.length && !visible.length ? <p className="ww-mm-empty">Dieser Ordner ist leer. Zieh Bilder hierher oder nutze „Hochladen".</p> : null}
           </div>
         )}
         {dragOver ? <div className="ww-mm-dropnote">Loslassen zum Hochladen → {uploadTarget}/</div> : null}
@@ -475,6 +530,15 @@ export default function MediaManager() {
               <button type="button" className="ww-dt-cancel" onClick={() => setMoveOpen(false)} disabled={bulkBusy}>Abbrechen</button>
             </div>
           </div>
+        </div>
+      ) : null}
+
+      {/* Lightbox (Doppelklick) — ←/→ blättert, Esc/Klick schließt */}
+      {lb ? (
+        <div className="ww-mm-lb" role="dialog" aria-modal="true" onClick={() => setLb(null)}>
+          <img src={previewOf(lb)} alt={lb.split('/').pop() || ''} onClick={(e) => e.stopPropagation()} />
+          <button type="button" className="ww-mm-lb-close" onClick={() => setLb(null)} aria-label="Schließen">✕</button>
+          <div className="ww-mm-lb-name">{lb.split('/').pop()}</div>
         </div>
       ) : null}
     </div>
