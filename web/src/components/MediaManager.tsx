@@ -1,6 +1,6 @@
 import React from 'react';
 import { loggedIn } from '../lib/tinaAdmin';
-import { uploadToCloud, deleteFromCloud } from '../lib/mediaCloud';
+import { uploadToCloud, deleteFromCloud, findUsage, type UsageItem } from '../lib/mediaCloud';
 import { showToast } from '../lib/tinaAdmin';
 import { detectEncoder, toOptimized, type EncoderMode } from '../../tina/fields/webpEncode';
 
@@ -12,6 +12,11 @@ import { detectEncoder, toOptimized, type EncoderMode } from '../../tina/fields/
 // iPad-tauglich: Tap statt Klick, Datei-Dialog als vollwertige Alternative zu Drag&Drop.
 
 type Fresh = { path: string; url: string };
+
+const COLL_LABEL: Record<string, string> = {
+  startseite: 'Startseite', journal: 'Journal', alben: 'Album', story: 'Story',
+  reisen: 'Reise', ueber_uns: 'Über uns', highlights: 'Highlights', darstellung: 'Darstellung',
+};
 
 function relOf(p: string): string { return p.replace(/^\/uploads\//, ''); }
 
@@ -46,8 +51,18 @@ export default function MediaManager() {
   const [dragOver, setDragOver] = React.useState(false);
   const [encoder, setEncoder] = React.useState<EncoderMode>('checking');
   const [del, setDel] = React.useState<string | null>(null);
+  const [usage, setUsage] = React.useState<{ loading: boolean; items?: UsageItem[]; err?: string }>({ loading: false });
 
   React.useEffect(() => { try { setShow(loggedIn()); } catch { setShow(false); } }, []);
+  // „Verwendet in" für die aktuell gewählte Datei laden.
+  React.useEffect(() => {
+    if (!sel) { setUsage({ loading: false }); return; }
+    let alive = true;
+    setUsage({ loading: true });
+    findUsage(sel).then((r) => { if (alive) setUsage({ loading: false, items: r.ok ? r.items : undefined, err: r.ok ? undefined : r.error }); })
+      .catch((e) => { if (alive) setUsage({ loading: false, err: String(e?.message || e) }); });
+    return () => { alive = false; };
+  }, [sel]);
   React.useEffect(() => {
     if (!show) return;
     detectEncoder().then(setEncoder).catch(() => {});
@@ -177,6 +192,20 @@ export default function MediaManager() {
           <img className="ww-mm-detail-img" src={previewOf(sel)} alt="" />
           <div className="ww-mm-detail-name">{sel.split('/').pop()}</div>
           <div className="ww-mm-detail-path">{sel}</div>
+
+          <div className="ww-mm-usage">
+            <div className="ww-mm-usage-title">Verwendet in</div>
+            {usage.loading ? <div className="ww-mm-usage-note">wird geprüft …</div>
+              : usage.err ? <div className="ww-mm-usage-err">{usage.err}</div>
+              : usage.items && usage.items.length ? (
+                <ul className="ww-mm-usage-list">
+                  {usage.items.map((u, i) => (
+                    <li key={i}><span className="ww-mm-usage-coll">{COLL_LABEL[u.collection] || u.collection}</span> {u.label}</li>
+                  ))}
+                </ul>
+              ) : <div className="ww-mm-usage-note ww-mm-usage-free">Unbenutzt — wird nirgends verwendet.</div>}
+          </div>
+
           <div className="ww-mm-detail-actions">
             <a className="btn ghost" href={sel} target="_blank" rel="noopener">Original öffnen</a>
             <button type="button" className="btn ww-mm-delbtn" onClick={() => setDel(sel)} disabled={busy}>Löschen</button>

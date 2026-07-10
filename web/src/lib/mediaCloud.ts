@@ -8,7 +8,8 @@
 //
 // ⚠️ Der Browser-PUT auf die signierte Fremd-URL ist CORS-abhängig; offline nicht testbar. Falls das
 // im echten CMS scheitert, ist das der mit David abgestimmte „zurückmelden"-Fall (kein Auto-Fallback).
-import { authToken, CONTENT_API_URL } from './tinaAdmin';
+import { authToken, CONTENT_API_URL, tinaGql } from './tinaAdmin';
+import { toLocalMedia, dedupeUploads } from '../../tina/fields/mediaPath';
 
 // CONTENT_API_URL = https://content.tinajs.io/1.6/content/<clientId>/github/<branch>
 function parts() {
@@ -74,6 +75,50 @@ export async function uploadToCloud(file: File, directory: string): Promise<Clou
   } catch (e: any) {
     return { ok: false, error: String(e?.message || e) };
   }
+}
+
+// --- „Verwendet in": Nutzungs-Check über die Content-API ---------------------------------------
+// Alle Sammlungen mit Bild-Feldern. Wir holen je Dokument die ROHEN Werte (_values) und durchsuchen
+// sie rekursiv nach dem Bildpfad — das fängt direkte Felder, verschachtelte Arrays UND eingebettete
+// Rich-Text-Bilder (story.body_*: der /uploads-Pfad steckt als String im gespeicherten Text) auf einmal,
+// ohne pro Feld/AST zu parsen. Robust gegen Schema-Änderungen.
+const USAGE_COLLECTIONS = ['startseite', 'journal', 'alben', 'story', 'reisen', 'ueber_uns', 'highlights', 'darstellung'];
+
+// Bildpfad auf eine vergleichbare Form bringen (assets.tina.io-URL -> /uploads/…, Doppel-/uploads einklappen).
+function canonMedia(s: string): string { return dedupeUploads(toLocalMedia(s || '')); }
+
+function collectStrings(v: any, out: string[]): void {
+  if (typeof v === 'string') out.push(v);
+  else if (Array.isArray(v)) { for (const x of v) collectStrings(x, out); }
+  else if (v && typeof v === 'object') { for (const k of Object.keys(v)) collectStrings(v[k], out); }
+}
+
+function labelFrom(values: any, filename: string): string {
+  return (values && (values.title_de || values.title || values.name || values.name_en || values.title_en)) || filename;
+}
+
+export type UsageItem = { collection: string; label: string; filename: string };
+export type UsageResult = { ok: boolean; items?: UsageItem[]; error?: string };
+
+export async function findUsage(uploadsPath: string): Promise<UsageResult> {
+  if (!authToken()) return { ok: false, error: 'Kein Login-Token — bitte im CMS anmelden.' };
+  const target = canonMedia(uploadsPath);
+  if (!target) return { ok: true, items: [] };
+  const q = 'query{ ' + USAGE_COLLECTIONS.map((c) => `${c}: ${c}Connection(first: 1000){ edges{ node{ _sys{ filename } _values } } }`).join(' ') + ' }';
+  const r = await tinaGql(q);
+  if (!r.ok || !r.data) return { ok: false, error: r.error || 'Nutzungs-Abfrage fehlgeschlagen.' };
+  const items: UsageItem[] = [];
+  for (const c of USAGE_COLLECTIONS) {
+    const edges = (r.data[c] && r.data[c].edges) || [];
+    for (const e of edges) {
+      const node = e && e.node; if (!node || !node._values) continue;
+      const strs: string[] = []; collectStrings(node._values, strs);
+      if (strs.some((s) => canonMedia(s).includes(target))) {
+        items.push({ collection: c, label: labelFrom(node._values, node._sys?.filename || ''), filename: node._sys?.filename || '' });
+      }
+    }
+  }
+  return { ok: true, items };
 }
 
 // Datei löschen (Pfad wie „/uploads/<dir>/<file>" ODER „<dir>/<file>").

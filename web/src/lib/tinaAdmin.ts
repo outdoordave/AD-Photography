@@ -39,7 +39,7 @@ export function newHref(collection: string): string {
 }
 
 // Kleiner GraphQL-Helfer gegen die Tina-Content-API (mit Login-Token).
-async function tinaGql(query: string, variables: Record<string, any>): Promise<{ ok: boolean; data?: any; error?: string }> {
+export async function tinaGql(query: string, variables: Record<string, any> = {}): Promise<{ ok: boolean; data?: any; error?: string }> {
   const token = authToken();
   if (!token) return { ok: false, error: 'Kein Login-Token gefunden — bitte im CMS neu anmelden.' };
   try {
