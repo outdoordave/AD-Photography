@@ -46,6 +46,7 @@ export default function AdminArchive({ collection, items, lang }: Props) {
   const [, forceSel] = React.useReducer((x) => x + 1, 0);
   React.useEffect(() => subscribeSelect(forceSel), []);
   const [bulkBusy, setBulkBusy] = React.useState(false);
+  const [ovDel, setOvDel] = React.useState(false); // Nachfrage fürs Bulk-Löschen aus der ÜBERSICHT
   const loadLive = React.useCallback((force = false) => {
     archivedNodes(collection, force)
       .then((ns) => { if (ns) setLive(ns.map((n) => mapArchived(collection, n, lang))); })
@@ -89,6 +90,23 @@ export default function AdminArchive({ collection, items, lang }: Props) {
     try { window.dispatchEvent(new CustomEvent('ww:archive-changed', { detail: { collection } })); } catch (e) { /* egal */ }
     setBulkBusy(false); exitSelect();
     if (failed) showToast(failed, 'error'); else showToast(t(`${n} archiviert`, `${n} archived`), 'success');
+  };
+  // Bulk-LÖSCHEN aus der Übersicht (endgültig, aus dem GitHub-Repo). Danach die betroffenen Karten sofort
+  // ausblenden (Event ww:docs-removed) — anders als beim Archivieren tauchen gelöschte NICHT im Archiv auf.
+  const onBulkDeleteOverview = async () => {
+    const paths = Array.from(ov.selected);
+    if (!paths.length || bulkBusy) return;
+    setBulkBusy(true);
+    let failed: string | null = null; let n = 0; const doneP: string[] = [];
+    for (const rp of paths) {
+      const r = await deleteDocument(collection, rp);
+      if (r.ok) { n++; doneP.push(rp); } else { failed = r.error || t('Löschen fehlgeschlagen.', 'Delete failed.'); break; }
+    }
+    invalidateArchived(collection);
+    try { window.dispatchEvent(new CustomEvent('ww:docs-removed', { detail: { collection, paths: doneP } })); } catch (e) { /* egal */ }
+    try { window.dispatchEvent(new CustomEvent('ww:archive-changed', { detail: { collection } })); } catch (e) { /* egal */ }
+    setBulkBusy(false); setOvDel(false); exitSelect();
+    if (failed) showToast(failed, 'error'); else showToast(t(`${n} endgültig gelöscht`, `${n} deleted for good`), 'success');
   };
 
   const changed = () => { invalidateArchived(collection); try { window.dispatchEvent(new CustomEvent('ww:archive-changed', { detail: { collection } })); } catch (e) { /* egal */ } };
@@ -178,7 +196,24 @@ export default function AdminArchive({ collection, items, lang }: Props) {
           <button type="button" className="btn ww-bulkbar-arch" onClick={onBulkArchive} disabled={bulkBusy || ovCount === 0}>
             {bulkBusy ? t('Archiviere …', 'Archiving …') : t(`${ovCount} archivieren`, `Archive ${ovCount}`)}
           </button>
+          <button type="button" className="btn ww-dt-danger" onClick={() => setOvDel(true)} disabled={bulkBusy || ovCount === 0}>
+            {t(`${ovCount} löschen`, `Delete ${ovCount}`)}
+          </button>
           <button type="button" className="ww-dt-cancel" onClick={exitSelect} disabled={bulkBusy}>{t('Fertig', 'Done')}</button>
+        </div>
+      ) : null}
+
+      {ovDel ? (
+        <div className="ww-dt-overlay" role="dialog" aria-modal="true" onClick={() => { if (!bulkBusy) setOvDel(false); }}>
+          <div className="ww-dt-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="ww-dt-modal-ic" aria-hidden="true"><IconTrash /></div>
+            <h3>{t('Auswahl endgültig löschen?', 'Delete selection for good?')}</h3>
+            <p className="ww-dt-note">{t(`Die ${ovCount} ausgewählten Beiträge werden dauerhaft aus dem GitHub-Repo entfernt. Das lässt sich nicht rückgängig machen — umkehrbar wäre stattdessen Archivieren.`, `The ${ovCount} selected items will be permanently removed from the GitHub repo. This can’t be undone — archiving would be reversible instead.`)}</p>
+            <div className="ww-dt-actions">
+              <button type="button" className="btn ww-dt-danger" onClick={onBulkDeleteOverview} disabled={bulkBusy}>{bulkBusy ? t('Lösche …', 'Deleting …') : t(`Ja, ${ovCount} löschen`, `Yes, delete ${ovCount}`)}</button>
+              <button type="button" className="ww-dt-cancel" onClick={() => setOvDel(false)} disabled={bulkBusy}>{t('Abbrechen', 'Cancel')}</button>
+            </div>
+          </div>
         </div>
       ) : null}
 

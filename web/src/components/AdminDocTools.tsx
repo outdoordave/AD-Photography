@@ -45,6 +45,30 @@ export default function AdminDocTools(props: Props) {
   const [, forceSel] = React.useReducer((x) => x + 1, 0);
   React.useEffect(() => subscribeSelect(forceSel), []);
 
+  // Auswahl-Zustand für DIESEN Bereich (geteilter Speicher) — vor den Effekten/dem Render berechnen,
+  // damit der Ganz-Kachel-Klick-Effekt ihn nutzen kann. `selMode` verlangt Login + Karten-Variante.
+  const selState = getSelect();
+  const selMode = show && selState.mode && selState.collection === props.collection && variant === 'card';
+  const selectedNow = selState.selected.has(props.relativePath);
+
+  // Auswahl-Modus: die GANZE Kachel als Auswahl-Ziel (nicht nur das kleine Häkchen). Ein Klick irgendwo
+  // auf die Karte schaltet die Auswahl um und unterbindet die normale Navigation; Klicks auf die
+  // Werkzeuge (Häkchen) selbst bleiben deren eigenem Handler. Capture-Phase, damit es vor dem <a> greift.
+  React.useEffect(() => {
+    if (!selMode) return;
+    const card = rootRef.current && (rootRef.current.closest('.ww-card-wrap, .journal-item') as HTMLElement | null);
+    if (!card) return;
+    card.classList.add('ww-card-selecting');
+    const onClick = (e: MouseEvent) => {
+      const el = e.target as HTMLElement;
+      if (el && el.closest && el.closest('.ww-doc-tools')) return; // Häkchen selbst -> dessen onChange
+      e.preventDefault(); e.stopPropagation();
+      toggleSelectItem(props.relativePath);
+    };
+    card.addEventListener('click', onClick, true);
+    return () => { card.classList.remove('ww-card-selecting'); card.removeEventListener('click', onClick, true); };
+  }, [selMode, props.relativePath]);
+
   // Kärtchen ausblenden + leere Jahres-Gruppe (Stories) gleich mit — sonst bliebe eine Überschrift ohne
   // Beiträge stehen (nur transient bis zum nächsten Build; danach baut groupByYear die leere Gruppe eh nicht).
   const removeCardFromView = React.useCallback(() => {
@@ -92,12 +116,21 @@ export default function AdminDocTools(props: Props) {
     return () => window.removeEventListener('ww:archive-changed', onChanged as EventListener);
   }, [variant, props.collection, props.relativePath, removeCardFromView]);
 
+  // Bulk-Löschen aus der Übersicht: gelöschte Beiträge tauchen NICHT im Archiv auf, daher eigenes Event.
+  // Ist DIESE Karte unter den gelöschten Pfaden -> sofort ausblenden.
+  React.useEffect(() => {
+    if (variant !== 'card') return;
+    const onRemoved = (e: any) => {
+      const d = e && e.detail; if (!d || d.collection !== props.collection) return;
+      if (Array.isArray(d.paths) && d.paths.indexOf(props.relativePath) !== -1) removeCardFromView();
+    };
+    window.addEventListener('ww:docs-removed', onRemoved as EventListener);
+    return () => window.removeEventListener('ww:docs-removed', onRemoved as EventListener);
+  }, [variant, props.collection, props.relativePath, removeCardFromView]);
+
   if (!show) return null;
 
-  // Auswahl-Modus für DIESEN Bereich? -> Karte zeigt ein Häkchen statt der drei Knöpfe.
-  const sel = getSelect();
-  const selMode = sel.mode && sel.collection === props.collection && variant === 'card';
-  const selectedNow = sel.selected.has(props.relativePath);
+  // (selMode/selectedNow oben berechnet: im Auswahl-Modus zeigt die Karte ein Häkchen statt der drei Knöpfe.)
 
   // „Bearbeiten" = einfach zur Detailseite navigieren (im SELBEN Fenster, kein target=_top). In der
   // CMS-Vorschau springt die Vorschau damit auf die Story -> Tinas visuelle Bearbeitung (Formular +
