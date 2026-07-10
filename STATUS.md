@@ -6,7 +6,20 @@
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
 > Session überschrieben). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
 >
-> **🆕 Übersicht-Mehrfachauswahl (09.07., `c9c42a2`, neuester Stand).** In der nicht-archivierten Übersicht:
+> **🆕 Medien-Manager `/medien-manager` (10.07., neuester Stand — 7 Commits `6640d32`…Link).** Eigene
+> login-geschützte Finder-Seite im Website-Look (wie /statistik, noindex) zum Durchsuchen/Ordnen/Verwalten
+> der Bild-Uploads — ergänzt Tinas „Medien". Ordnerbaum (rekursives Manifest), Breadcrumbs, Thumbnail-Grid,
+> Suche, Drag&Drop-/Dialog-Upload in den aktuellen Ordner, Löschen, **„Verwendet in"** (Nutzungs-Check über
+> `_values` aller Sammlungen inkl. Rich-Text-Bilder), Rechtsklick **„Einem Inhalt zuweisen"**. Neue Uploads
+> landen kontextabhängig in Ordnern (`resolveUploadDir`: reisen/<slug>, alben/<slug>, journal/, stories/,
+> site/…, allgemein/) — **kein Re-Index** (keine Schema-Änderung), kein Migration des Altbestands. Eigener
+> Assets-Client (`src/lib/mediaCloud.ts`, Tinas Cloud-Flow 1:1), da /medien-manager kein `cms.media` hat.
+> ⚠️ **Nur im echten CMS prüfbar:** Hochladen/Löschen (Assets-API, **CORS-Risiko** beim Signed-PUT → falls
+> unzuverlässig: mit David abgestimmter Rückmelde-Fall, KEIN Auto-Wechsel auf Custom-Screen), „Verwendet
+> in"-Treffer, Zuweisen, korrektes Ordner-Landen. Offline verifiziert: Manifest-Rekursion, Resolver-Mapping,
+> Finder-Navigation/Suche/Grid, Modal-Strukturen + Fehlerpfade, `astro build` grün (58 Seiten).
+>
+> **🆕 Übersicht-Mehrfachauswahl (09.07., `c9c42a2`).** In der nicht-archivierten Übersicht:
 > „Mehrere auswählen" → Häkchen je Karte statt der Knöpfe (umrandet), fixe Leiste „N ausgewählt · N
 > archivieren · Fertig" → Bulk-Archivieren (Karten blenden aus, Zahl zieht nach, Toast). Geteilter Speicher
 > `lib/adminSelect.ts` koppelt die Karten-Inseln; getrennt von der Mehrfachauswahl im Archiv. Verifiziert

@@ -17,6 +17,31 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-10 — Medien-Manager: eigene Finder-Seite /medien-manager (7 Commits)
+Neue login-geschützte Seite (wie /statistik, noindex) zum Durchsuchen/Ordnen/Verwalten der Bild-Uploads
+im Website-Look — ergänzt Tinas eigenen Medien-Manager, ersetzt ihn nicht. Analyse-Plan zuerst vorgelegt,
+dann auf Freigabe (Antworten 1–5) gebaut. Commit-Kette:
+- **1 (`6640d32`)** gen-uploads-manifest.mjs **rekursiv** (inkl. Unterordner) — Basis fürs Browsen.
+- **2 (`4bf3275`)** Ordner-Struktur: `resolveUploadDir` (Zielordner aus Sammlung+Feld via Admin-URL-Slug,
+  Fallback `allgemein`) in den 4 Foto-Feldern; optimize-uploads.mjs rekursiv. **Kein Re-Index** (keine
+  Schema-Änderung). Bestehende Bilder unangetastet (keine Migration).
+- **3 (`89fae1c`)** `src/lib/mediaCloud.ts` — eigener Assets-Client (weil /medien-manager kein cms.media
+  hat): Tinas Cloud-Flow 1:1 (upload_url → Signed-PUT → Poll; delete + Poll), Bearer id_token.
+- **4 (`4f2a943`)** Seite + Insel `MediaManager.tsx`: Ordnerbaum, Breadcrumbs, Thumbnail-Grid, Suche,
+  Drag&Drop-/Dialog-Upload in den aktuellen Ordner, Löschen mit Nachfrage. iPad-tauglich.
+- **5 (`2b50e21`)** „Verwendet in": Nutzungs-Check über `_values` aller 8 Sammlungen + rekursiver
+  String-Scan — fängt direkte Felder, Arrays UND Rich-Text-Bilder (story.body) auf einmal.
+- **6 (`a4057e3`)** Rechtsklick/Detail-Knopf „Einem Inhalt zuweisen": Bereich→Beitrag→Feld → `_values`
+  lesen → setzen/anhängen → zurückschreiben (wie setArchived), mit Überschreib-Nachfrage.
+- **7** Link „🖼️ Medien" in `SiteAdminBar.astro`.
+Verifiziert offline: rekursives Manifest, Resolver-Mapping, Finder-Navigation/Suche/Grid (Test-Unterordner),
+„Verwendet in"- + Zuweisen-Modal-Struktur (+ saubere Fehlerpfade bei Fake-Token), astro build grün (58 Seiten).
+⚠️ **Nur im echten CMS prüfbar** (brauchen gültigen Token): tatsächliches Hochladen/Löschen (Assets-API,
+**CORS-Risiko** beim Signed-PUT — abgestimmter „zurückmelden"-Fall), „Verwendet in"-Treffer, Zuweisen,
+und ob Uploads im richtigen Ordner landen.
+
+---
+
 ## 2026-07-09 21:58 — Übersicht: mehrere Beiträge auswählen + zusammen archivieren (`c9c42a2`)
 - Neuer Auswahl-Modus in der (nicht-archivierten) Übersicht: **„Mehrere auswählen"** neben „Archiv" →
   jede Karte zeigt ein Häkchen statt der drei Knöpfe (ausgewählte umrandet). Fixe Leiste
