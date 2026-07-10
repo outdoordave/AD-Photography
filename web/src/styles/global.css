@@ -927,6 +927,27 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 .ww-mm-crumbs button { background: none; border: none; color: var(--c-accent); font-weight: var(--fw-bold); cursor: pointer; padding: 2px 4px; font-size: inherit; }
 .ww-mm-crumbs button.is-here { color: var(--c-ink); cursor: default; }
 .ww-mm-crumbs .sep { color: var(--c-ink-soft); }
+/* Zwei-Spalten-Layout: linke Ordner-Baum-Leiste (Explorer) + Hauptbereich */
+.ww-mm-body { display: flex; gap: 20px; align-items: flex-start; }
+.ww-mm-main { flex: 1 1 auto; min-width: 0; }
+.ww-mm-tree { flex: 0 0 210px; position: sticky; top: 16px; align-self: flex-start; border: 1px solid var(--c-line); border-radius: var(--radius-sm); background: var(--c-bg-alt); padding: 10px; max-height: 70vh; overflow-y: auto; }
+.ww-mm-tree-head { font-size: var(--fs-label); font-weight: var(--fw-bold); letter-spacing: var(--tracking-slight); text-transform: uppercase; color: var(--c-ink-soft); padding: 4px 8px 8px; }
+.ww-mm-treeitem { display: flex; align-items: center; gap: 6px; width: 100%; text-align: left; padding: 7px 10px; border: none; background: transparent; border-radius: var(--radius-sm); color: var(--c-ink); font-size: var(--fs-label); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ww-mm-treeitem:hover { background: rgba(46,36,24,0.06); }
+.ww-mm-treeitem.is-here { background: var(--c-accent); color: #fff; font-weight: var(--fw-bold); }
+.ww-mm-treeicon { flex: 0 0 auto; font-size: 14px; }
+.ww-mm-tree-add { display: block; width: 100%; text-align: left; margin-top: 8px; padding: 8px 10px; border: 1px dashed var(--c-line); background: transparent; border-radius: var(--radius-sm); color: var(--c-ink-soft); font-size: var(--fs-label); font-weight: var(--fw-bold); cursor: pointer; }
+.ww-mm-tree-add:hover { border-color: var(--c-accent); color: var(--c-accent); }
+.ww-mm-tree-new { display: flex; gap: 6px; margin-top: 8px; }
+.ww-mm-tree-new input { flex: 1 1 auto; min-width: 0; padding: 7px 9px; border: 1px solid var(--c-accent); border-radius: var(--radius-sm); font: inherit; font-size: var(--fs-label); color: var(--c-ink); background: #fff; }
+.ww-mm-tree-new button { flex: 0 0 auto; padding: 0 12px; border: none; border-radius: var(--radius-sm); background: var(--c-accent); color: #fff; font-weight: 700; cursor: pointer; }
+@media (max-width: 720px) {
+  .ww-mm-body { flex-direction: column; }
+  .ww-mm-tree { flex: none; width: 100%; position: static; max-height: none; display: flex; flex-wrap: wrap; gap: 4px; }
+  .ww-mm-tree-head { width: 100%; }
+  .ww-mm-treeitem { width: auto; padding-left: 10px !important; border: 1px solid var(--c-line); }
+  .ww-mm-tree-add { width: auto; margin-top: 0; }
+}
 .ww-mm-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px; }
 .ww-mm-search { flex: 1 1 260px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--c-line); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: var(--fs-ui); background: #fff; color: var(--c-ink); }
 .ww-mm-upload { cursor: pointer; }

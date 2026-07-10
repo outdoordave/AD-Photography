@@ -79,6 +79,10 @@ export default function MediaManager() {
   const [moveOpen, setMoveOpen] = React.useState(false);
   const [moveTarget, setMoveTarget] = React.useState(''); // vorhandener Ordner (Select)
   const [moveNew, setMoveNew] = React.useState('');        // ODER neuer Ordnername (Eingabe)
+  // Frisch angelegte (noch leere) Ordner — nur Session; werden erst durch ein hineingelegtes Bild dauerhaft.
+  const [newFolders, setNewFolders] = React.useState<Set<string>>(new Set());
+  const [creating, setCreating] = React.useState(false);
+  const [newName, setNewName] = React.useState('');
 
   React.useEffect(() => { try { setShow(loggedIn()); } catch { setShow(false); } }, []);
   // Ordnerwechsel -> Auswahl leeren (sonst blieben unsichtbare Dateien ausgewählt).
@@ -129,6 +133,14 @@ export default function MediaManager() {
     : [];
   const { subdirs, files } = viewOf(all, folder);
 
+  // Vollständige Ordnerliste (aus Dateien abgeleitet + frisch angelegte leere) — für Baum-Leiste + Verschieben.
+  const folderList = Array.from(new Set([...allFolders(all), ...Array.from(newFolders)])).sort((a, b) => a.localeCompare(b));
+  // Frisch angelegte, noch leere Unterordner des aktuellen Ordners mit ins Grid aufnehmen.
+  const newSubs = Array.from(newFolders)
+    .filter((f) => (f.includes('/') ? f.slice(0, f.lastIndexOf('/')) : '') === folder)
+    .map((f) => f.split('/').pop() as string);
+  const allSubdirs = Array.from(new Set([...subdirs, ...newSubs])).sort((a, b) => a.localeCompare(b));
+
   const uploadTarget = folder || 'allgemein';
 
   async function handleFiles(list: FileList | File[] | null) {
@@ -166,6 +178,17 @@ export default function MediaManager() {
   // --- Mehrfachauswahl ---
   const togglePick = (p: string) => setPicked((s) => { const n = new Set(s); if (n.has(p)) n.delete(p); else n.add(p); return n; });
   const exitSel = () => { setSelMode(false); setPicked(new Set()); };
+
+  // Neuen (leeren) Ordner IM AKTUELLEN Ordner anlegen und hineinwechseln. Persistiert erst, sobald ein
+  // Bild darin liegt (Upload/Verschieben) — leere Ordner gibt es im statischen Repo nicht.
+  function createFolder() {
+    const raw = newName.trim().replace(/^\/+|\/+$/g, '').replace(/\s+/g, '-');
+    setCreating(false); setNewName('');
+    if (!raw) return;
+    const full = folder ? `${folder}/${raw}` : raw;
+    setNewFolders((s) => new Set(s).add(full));
+    setSel(null); setFolder(full);
+  }
 
   async function doBulkDelete() {
     const items = Array.from(picked);
@@ -249,6 +272,35 @@ export default function MediaManager() {
         ))}
       </div>
 
+      <div className="ww-mm-body">
+      {/* Ordner-Baum-Leiste (Explorer-Optik) */}
+      <aside className="ww-mm-tree" aria-label="Ordner">
+        <div className="ww-mm-tree-head">Ordner</div>
+        <button type="button" className={`ww-mm-treeitem${folder === '' ? ' is-here' : ''}`} onClick={() => { setSel(null); setFolder(''); }} title="uploads">
+          <span className="ww-mm-treeicon" aria-hidden="true">🗂️</span> uploads
+        </button>
+        {folderList.map((f) => (
+          <button key={f} type="button" className={`ww-mm-treeitem${folder === f ? ' is-here' : ''}`}
+            style={{ paddingLeft: `${12 + f.split('/').length * 15}px` }}
+            onClick={() => { setSel(null); setFolder(f); }} title={f}>
+            <span className="ww-mm-treeicon" aria-hidden="true">📁</span> {f.split('/').pop()}
+          </button>
+        ))}
+        {creating ? (
+          <div className="ww-mm-tree-new">
+            <input autoFocus value={newName} placeholder="Ordnername …"
+              onChange={(e) => setNewName(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') createFolder(); if (e.key === 'Escape') { setCreating(false); setNewName(''); } }} />
+            <button type="button" onClick={createFolder} title="Anlegen">✓</button>
+          </div>
+        ) : (
+          <button type="button" className="ww-mm-tree-add" onClick={() => setCreating(true)}>
+            ＋ Neuer Ordner{folder ? ` in ${folder}/` : ''}
+          </button>
+        )}
+      </aside>
+
+      <div className="ww-mm-main">
       {/* Toolbar */}
       <div className="ww-mm-toolbar">
         <input type="search" className="ww-mm-search" placeholder="Dateiname suchen (ordnerübergreifend) …" value={search} onChange={(e) => setSearch(e.target.value)} />
@@ -276,18 +328,20 @@ export default function MediaManager() {
           </div>
         ) : (
           <div className="ww-mm-grid">
-            {subdirs.map((d) => (
+            {allSubdirs.map((d) => (
               <button key={'d:' + d} type="button" className="ww-mm-folder" onClick={() => { setSel(null); setFolder(folder ? `${folder}/${d}` : d); }} title={d}>
                 <span className="ww-mm-foldericon" aria-hidden="true">📁</span>
                 <span className="ww-mm-fname">{d}</span>
               </button>
             ))}
             {files.map(fileTile)}
-            {!subdirs.length && !files.length ? <p className="ww-mm-empty">Dieser Ordner ist leer. Zieh Bilder hierher oder nutze „Hochladen".</p> : null}
+            {!allSubdirs.length && !files.length ? <p className="ww-mm-empty">Dieser Ordner ist leer. Zieh Bilder hierher oder nutze „Hochladen".</p> : null}
           </div>
         )}
         {dragOver ? <div className="ww-mm-dropnote">Loslassen zum Hochladen → {uploadTarget}/</div> : null}
       </div>
+      </div>{/* .ww-mm-main */}
+      </div>{/* .ww-mm-body */}
 
       {/* Detail-Panel */}
       {sel ? (
@@ -409,7 +463,7 @@ export default function MediaManager() {
             <label className="ww-mm-assign-row"><span>Ordner</span>
               <select value={moveTarget} onChange={(e) => { setMoveTarget(e.target.value); setMoveNew(''); }} disabled={bulkBusy || !!moveNew.trim()}>
                 <option value="">(Wurzel: uploads/)</option>
-                {allFolders(all).map((f) => <option key={f} value={f}>{f}/</option>)}
+                {folderList.map((f) => <option key={f} value={f}>{f}/</option>)}
               </select>
             </label>
             <label className="ww-mm-assign-row"><span>Neuer Ordner</span>
