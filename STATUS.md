@@ -6,7 +6,7 @@
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
 > Session überschrieben). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
 >
-> **🆕 Medien-Manager `/medien-manager` (10.07., neuester Stand — 7 Commits `6640d32`…Link).** Eigene
+> **🆕 Medien-Manager `/medien-manager` (10.07., neuester Stand — Commits `6640d32`…`32b5b67`).** Eigene
 > login-geschützte Finder-Seite im Website-Look (wie /statistik, noindex) zum Durchsuchen/Ordnen/Verwalten
 > der Bild-Uploads — ergänzt Tinas „Medien". Ordnerbaum (rekursives Manifest), Breadcrumbs, Thumbnail-Grid,
 > Suche, Drag&Drop-/Dialog-Upload in den aktuellen Ordner, Löschen, **„Verwendet in"** (Nutzungs-Check über
@@ -14,25 +14,36 @@
 > landen kontextabhängig in Ordnern (`resolveUploadDir`: reisen/<slug>, alben/<slug>, journal/, stories/,
 > site/…, allgemein/) — **kein Re-Index** (keine Schema-Änderung), kein Migration des Altbestands. Eigener
 > Assets-Client (`src/lib/mediaCloud.ts`, Tinas Cloud-Flow 1:1), da /medien-manager kein `cms.media` hat.
-> ⚠️ **Nur im echten CMS prüfbar:** Hochladen/Löschen (Assets-API, **CORS-Risiko** beim Signed-PUT → falls
-> unzuverlässig: mit David abgestimmter Rückmelde-Fall, KEIN Auto-Wechsel auf Custom-Screen), „Verwendet
-> in"-Treffer, Zuweisen, korrektes Ordner-Landen. Offline verifiziert: Manifest-Rekursion, Resolver-Mapping,
-> Finder-Navigation/Suche/Grid, Modal-Strukturen + Fehlerpfade, `astro build` grün (58 Seiten).
+> **Ausbau (`b66d60e`, `32b5b67`):** (a) 404-Fix des „Medien"-Links (Schrägstrich — Cloudflare leitet
+> `/medien-manager` ohne Slash nicht um); (b) **Mehrfachauswahl** (Häkchen je Kachel) + **fixe, mitscrollende
+> Aktionsleiste** (Alle im Ordner / Verschieben nach… / N löschen / Fertig); (c) **Verschieben nach Ordner**
+> (vorhandener oder neuer Name): `moveInCloud` kopiert → `rewriteReferences` biegt ALLE Fundstellen automatisch
+> um (inkl. Rich-Text) → alte Datei löschen (nie eine tote Referenz). Der Altbestand (33 Bilder, flach in
+> `uploads/`) lässt sich damit nachträglich in Ordner einsortieren.
+> ⚠️ **Nur im echten CMS prüfbar:** Hochladen/Löschen/**Verschieben+Umschreiben**/**Bulk-Löschen** (Assets-API,
+> **CORS-Risiko** beim Signed-PUT → falls unzuverlässig: mit David abgestimmter Rückmelde-Fall, KEIN
+> Auto-Wechsel auf Custom-Screen), „Verwendet in"-Treffer, Zuweisen, korrektes Ordner-Landen. Offline
+> verifiziert: Manifest-Rekursion, Resolver-Mapping, Finder-Navigation/Suche/Grid, **Auswahl-Modus +
+> Bulk-Leiste + Verschieben-Modal + Ziel-Vorschau** (lokaler Browser), Modal-Strukturen + Fehlerpfade.
 >
-> **🆕 Übersicht-Mehrfachauswahl (09.07., `c9c42a2`).** In der nicht-archivierten Übersicht:
-> „Mehrere auswählen" → Häkchen je Karte statt der Knöpfe (umrandet), fixe Leiste „N ausgewählt · N
-> archivieren · Fertig" → Bulk-Archivieren (Karten blenden aus, Zahl zieht nach, Toast). Geteilter Speicher
-> `lib/adminSelect.ts` koppelt die Karten-Inseln; getrennt von der Mehrfachauswahl im Archiv. Verifiziert
-> (Screenshot, Build grün). **Umgebungs-Notiz:** `~/Dokumente` war zwischenzeitlich TCC-gesperrt (iCloud/
+> **🆕 Übersicht-Mehrfachauswahl (09.07. `c9c42a2`, erweitert 10.07. `32ac74a`).** In der nicht-archivierten
+> Übersicht: „Mehrere auswählen" → Häkchen je Karte statt der Knöpfe (umrandet), fixe Leiste „N ausgewählt ·
+> N archivieren · **N löschen** · Fertig" → Bulk-Archivieren **und Bulk-Löschen** (endgültig, mit Nachfrage;
+> Karten blenden aus, Zahl zieht nach, Toast). **Neu:** im Auswahl-Modus ist die **ganze Kachel** anklickbar
+> (nicht nur der Kreis) — Klick schaltet Auswahl um, Navigation unterdrückt (Capture). Gelöschte Karten
+> blenden sofort über `ww:docs-removed` aus (Gelöschtes taucht — anders als Archiviertes — nicht im Archiv
+> auf). Geteilter Speicher `lib/adminSelect.ts` koppelt die Karten-Inseln; getrennt von der Mehrfachauswahl
+> im Archiv. Verifiziert (lokaler Browser: Ganz-Kachel-Klick + „N löschen"-Leiste; Screenshot, Build grün).
+> **Umgebungs-Notiz:** `~/Dokumente` war zwischenzeitlich TCC-gesperrt (iCloud/
 > Dateizugriff, „Operation not permitted") → gelöst via Festplattenvollzugriff für die Claude-App; Repo bei
 > Bedarf nach `~/dev/` verschieben.
 >
 > **🆕 Archiv-Mehrfachauswahl (09.07., `0534eff`).** Häkchen je Kärtchen + „Alle auswählen";
 > Aktionsleiste „N ausgewählt · Wiederherstellen · Endgültig löschen · Auswahl aufheben" (Bulk, mit
 > Toast + Nachfrage beim Löschen). „Archiv leeren (alle)" bleibt. Verifiziert (2 Test-Archive, Screenshot,
-> Build grün). **Offen/besprochen:** Mehrfach-Archivieren in der NICHT-archivierten Übersicht (kartenüber-
-> greifende Auswahl über mehrere Inseln — machbar, aber aufwändiger; auf David-Freigabe). Git-**Mediathek**
-> ist bereits da: Tinas eingebauter Medienmanager („Medien" in der Sidebar/SITE, `media.tina`-Config).
+> Build grün). Mehrfach-Archivieren in der NICHT-archivierten Übersicht ist **umgesetzt** (`c9c42a2`, +
+> Löschen `32ac74a`). Git-**Mediathek** eigenständig: `/medien-manager` (s. o.) — ergänzt Tinas eingebauten
+> Medienmanager („Medien" in der Sidebar/SITE, `media.tina`-Config).
 >
 > **🆕 Edit-Knopf öffnet die Story mit Live-Vorschau (09.07., `4640923`).** Gelöst: Tinas
 > Formular-Editor (`/collections/edit/…`) hat keine seitliche Vorschau (im Admin-Bundle belegt). Die
@@ -278,9 +289,11 @@
 > re-indext, Build grün, CMS in Nutzung — der frühere `?`-/Schema-Mismatch ist Geschichte. Seither nur noch
 > UI-/Editor-/Build-Feinschliff (kein Schema-Eingriff, `tina-lock.json` unverändert → kein weiterer Re-Index).
 >
-> **Aktuell offen (Reihenfolge):** 1) **Letzte Commits pushen** (vorher `git pull` — Tina Cloud committet
-> autonom auf `main`, s. Memory `origin-main-moving-target`); nach Deploy hart neu laden + Logo/Bilder prüfen.
-> 2) Geparkte Kür (§6). — **✅ Bild-Quellen vereinheitlicht** (26.06., `ad0c574`): alles in `web/public/uploads`,
+> **Aktuell offen (Reihenfolge):** 1) **Letzte Commits pushen** (`b66d60e`, `32ac74a`, `32b5b67`; vorher
+> `git pull` — Tina Cloud committet autonom auf `main`, s. Memory `origin-main-moving-target`); nach Deploy
+> hart neu laden + Logo/Bilder prüfen. 2) **Im echten CMS testen** (eingeloggt): Medien-Manager Verschieben
+> nach Ordner + Referenz-Umschreiben (⚠️ am wichtigsten — verändert Content!), Bulk-Löschen, Signed-PUT-Upload;
+> Übersicht Ganz-Kachel-Klick + Bulk-Löschen. 3) Geparkte Kür (§6). — **✅ Bild-Quellen vereinheitlicht** (26.06., `ad0c574`): alles in `web/public/uploads`,
 > Repo-Wurzel `/uploads` + `copy-uploads.mjs` raus, Logo entspaced. (Lokal noch ein paar ungetrackte Test-Reste
 > in `web/public/uploads` — deployen nie; optional `git clean -fd web/public/uploads`.)
 >

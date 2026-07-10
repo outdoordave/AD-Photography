@@ -17,6 +17,28 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-10 22:06 — Medien-Manager-Ausbau (Verschieben/Ordnen) + Übersicht-Bulk-Aktionen
+Fortsetzung des Medien-Managers + Nachschärfung der Beitrags-Mehrfachauswahl.
+- **404-Fix (`b66d60e`)**: Der „🖼️ Medien"-Link der Admin-Leiste zeigte auf `/medien-manager`
+  **ohne** Schrägstrich — Cloudflare leitet diese neue Seite (anders als `/statistik`) nicht
+  automatisch auf die Slash-Variante um → hartes 404 („Seite weg"). Schrägstrich ergänzt. Die
+  Seite selbst war die ganze Zeit intakt (live unter `/medien-manager/`).
+- **Übersicht-Mehrfachauswahl (`32ac74a`)**: (a) Im Auswahl-Modus ist jetzt die **ganze Kachel**
+  anklickbar (nicht nur der kleine Kreis) — Klick schaltet Auswahl um, Navigation unterdrückt
+  (Capture-Phase). (b) Die fixe, mitscrollende Bulk-Leiste bekommt **„N löschen"** neben
+  „N archivieren" (endgültig, mit Nachfrage). Gelöschte Karten blenden sofort aus (neues Event
+  `ww:docs-removed`, da Gelöschtes — anders als Archiviertes — nicht im Archiv auftaucht).
+  Dateien: `AdminDocTools.tsx`, `AdminArchive.tsx`, `global.css`.
+- **Medien-Manager (`32b5b67`)**: **Mehrfachauswahl** (Häkchen je Kachel) + **fixe Aktionsleiste**
+  (Alle im Ordner / Verschieben nach… / N löschen / Fertig). **Verschieben nach Ordner** (vorhandener
+  aus Liste ODER neuer Name): `moveInCloud` kopiert die Datei an den neuen Pfad, `rewriteReferences`
+  biegt **alle** Fundstellen automatisch um (inkl. Rich-Text-Fließtext), dann wird die alte Datei
+  gelöscht (Reihenfolge so, dass nie eine tote Referenz entsteht). Dateien: `MediaManager.tsx`,
+  `mediaCloud.ts`, `global.css`.
+- **Verifikation**: UI (Auswahl, Leisten, Verschieben-Modal + Ziel-Vorschau, Ganz-Kachel-Klick)
+  lokal im Browser bestätigt. ⚠️ **Verschieben/Umschreiben, Bulk-Löschen und Signed-PUT nur im
+  echten CMS testbar** (Token + Content-API + CORS) — offline nicht ausführbar.
+
 ## 2026-07-10 — Medien-Manager: eigene Finder-Seite /medien-manager (7 Commits)
 Neue login-geschützte Seite (wie /statistik, noindex) zum Durchsuchen/Ordnen/Verwalten der Bild-Uploads
 im Website-Look — ergänzt Tinas eigenen Medien-Manager, ersetzt ihn nicht. Analyse-Plan zuerst vorgelegt,
