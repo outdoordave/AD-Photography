@@ -18,6 +18,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { fmt, detectEncoder, toOptimized, type EncoderMode } from './webpEncode';
 import { toLocalMedia, dedupeUploads } from './mediaPath';
+import { resolveUploadDir } from './uploadDir';
 import { putFreshMedia } from '../../src/lib/freshMedia';
 
 // Eigenes Galerie-Feld fuer AD-Photography:
@@ -62,8 +63,9 @@ function SortableTile({ src, previewSrc, onRemove }: { src: string; previewSrc: 
   );
 }
 
-const BulkPhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
+const BulkPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
   const cms = useCMS();
+  const uploadDir = resolveUploadDir(field?.name);
   const value: string[] = Array.isArray(input.value) ? input.value : [];
   const [busy, setBusy] = React.useState(false);
   const [progress, setProgress] = React.useState('');
@@ -117,7 +119,7 @@ const BulkPhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
         converted.push(file);
       }
       setProgress(`Lade ${converted.length} Bild(er) hoch …`);
-      const media = await cms.media.persist(converted.map((file) => ({ directory: '', file })));
+      const media = await cms.media.persist(converted.map((file) => ({ directory: uploadDir, file })));
       // src je Datei (index-treu zu `converted`) -> Frisch-Vorschau (Feld-blob: + Live-Vorschau-Brücke).
       const pairs = media.map((m: any, i: number) => ({ src: dedupeUploads(m.src), file: converted[i] })).filter((p: any) => p.src);
       const addFresh: Record<string, string> = {};

@@ -4,6 +4,7 @@ import { fmt, detectEncoder, toOptimized, type EncoderMode } from './webpEncode'
 import { toLocalMedia, dedupeUploads } from './mediaPath';
 import { MediaPickerButton } from './MediaPicker';
 import { putFreshMedia, putSwapInfo } from '../../src/lib/freshMedia';
+import { resolveUploadDir } from './uploadDir';
 
 // Einzelfoto-Feld mit Auto-WebP (gleiche Logik wie BulkPhotoField, aber EIN Bild):
 //  - Datei waehlen oder hierher ziehen,
@@ -13,8 +14,9 @@ import { putFreshMedia, putSwapInfo } from '../../src/lib/freshMedia';
 
 const PREVIEW = 120;
 
-const SinglePhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
+const SinglePhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
   const cms = useCMS();
+  const uploadDir = resolveUploadDir(field?.name);
   const value: string = typeof input.value === 'string' ? input.value : '';
   const [busy, setBusy] = React.useState(false);
   const [progress, setProgress] = React.useState('');
@@ -56,7 +58,7 @@ const SinglePhotoFieldInner = wrapFieldsWithMeta(({ input }: any) => {
       const { file, format } = await toOptimized(files[0], mode);
       try { setPreview(URL.createObjectURL(file)); } catch (e) { /* ignore */ }
       setProgress('Lade hoch …');
-      const media = await cms.media.persist([{ directory: '', file }]);
+      const media = await cms.media.persist([{ directory: uploadDir, file }]);
       const src = media.map((m: any) => dedupeUploads(m.src)).filter(Boolean)[0];
       if (!src) throw new Error('Upload ohne Ergebnis');
       input.onChange(src);

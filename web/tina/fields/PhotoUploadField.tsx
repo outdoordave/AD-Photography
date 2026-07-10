@@ -3,6 +3,7 @@ import { useCMS } from 'tinacms';
 import { detectEncoder, toOptimized, fmt, type EncoderMode } from './webpEncode';
 import { toLocalMedia, dedupeUploads } from './mediaPath';
 import { putFreshMedia } from '../../src/lib/freshMedia';
+import { resolveUploadDir } from './uploadDir';
 
 // Foto-Feld für den „📷 Foto"-Rich-Text-Baustein (Story-Haupttext).
 // Setzt KEINEN Tina-Medien-Manager ein — stattdessen wie der bisherige StoryBodyField:
@@ -52,7 +53,7 @@ export default function PhotoUploadField({ input, field }: any) {
       // Sofort-Vorschau zeigen, bevor der (noch nicht ausgelieferte) /uploads-Pfad greift.
       try { setPreview(URL.createObjectURL(file)); } catch (e) { /* ignore */ }
       setProgress('Lade hoch …');
-      const m = await cms.media.persist([{ directory: '', file }]);
+      const m = await cms.media.persist([{ directory: resolveUploadDir(field?.name), file }]);
       const src = m.map((x: any) => dedupeUploads(x.src)).filter(Boolean)[0];
       if (!src) throw new Error('Upload ohne Ergebnis');
       input.onChange(src);

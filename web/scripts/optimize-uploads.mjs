@@ -25,10 +25,21 @@ const exts = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 let count = 0;
 let savedBytes = 0;
 
-for (const name of readdirSync(dir)) {
-  const ext = extname(name).toLowerCase();
-  if (!exts.has(ext)) continue;
-  const file = join(dir, name);
+// REKURSIV, damit auch Unterordner (reisen/<slug>/…, alben/<slug>/…, site/…, …) optimiert werden.
+function collect(d, out) {
+  for (const name of readdirSync(d)) {
+    if (name.startsWith('.')) continue;
+    const p = join(d, name);
+    let st; try { st = statSync(p); } catch { continue; }
+    if (st.isDirectory()) collect(p, out);
+    else if (exts.has(extname(name).toLowerCase())) out.push(p);
+  }
+}
+const allFiles = [];
+collect(dir, allFiles);
+
+for (const file of allFiles) {
+  const ext = extname(file).toLowerCase();
   try {
     const before = statSync(file).size;
     const pipe = sharp(file, { failOn: 'none' })
@@ -44,7 +55,7 @@ for (const name of readdirSync(dir)) {
       count++;
     }
   } catch (e) {
-    console.warn('[optimize-uploads] uebersprungen (Fehler):', name, e?.message || e);
+    console.warn('[optimize-uploads] uebersprungen (Fehler):', file, e?.message || e);
   }
 }
 

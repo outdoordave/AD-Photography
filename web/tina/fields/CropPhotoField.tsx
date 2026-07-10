@@ -4,6 +4,7 @@ import { detectEncoder, toOptimized, loadImage, type EncoderMode } from './webpE
 import { toLocalMedia, dedupeUploads } from './mediaPath';
 import { MediaPickerButton } from './MediaPicker';
 import { putFreshMedia } from '../../src/lib/freshMedia';
+import { resolveUploadDir } from './uploadDir';
 
 // Zuschnitt-Foto-Feld: EIN gerahmtes Bild mit Zoom + Verschieben. Wert = String-JSON
 // { original, crop }:
@@ -45,6 +46,7 @@ function serialize(p: { original: string; display: string; crop: CropRect | null
 
 const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
   const cms = useCMS();
+  const uploadDir = resolveUploadDir(field?.name);
   const rawRatio = field?.cropRatio ?? field?.ui?.cropRatio;
   const ratio: number = (typeof rawRatio === 'number' && rawRatio > 0) ? rawRatio : 4 / 3;
   const val = parseVal(input.value);
@@ -197,7 +199,7 @@ const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
     try {
       const { file } = await toOptimized(files[0], mode);
       setProgress('Lade hoch …');
-      const media = await cms.media.persist([{ directory: '', file }]);
+      const media = await cms.media.persist([{ directory: uploadDir, file }]);
       const src = media.map((m: any) => dedupeUploads(m.src)).filter(Boolean)[0];
       if (!src) throw new Error('Upload ohne Ergebnis');
       setFresh(URL.createObjectURL(file)); // Zuschnitt-Editor + Live-Vorschau sofort versorgen
