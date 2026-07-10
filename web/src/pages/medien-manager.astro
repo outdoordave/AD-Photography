@@ -1,0 +1,13 @@
+---
+// Medien-Manager — eigenständige, login-geschützte Seite (wie /statistik: noindex, nicht im Menü).
+// Zugang: Link in der Admin-Leiste oder direkte URL. Die Insel gated sich selbst auf Login.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MediaManager from '../components/MediaManager.tsx';
+---
+<BaseLayout title="Medien-Manager — Wide & Wild" lang="de" noindex={true}>
+  <section>
+    <div class="wrap">
+      <MediaManager client:load />
+    </div>
+  </section>
+</BaseLayout>
