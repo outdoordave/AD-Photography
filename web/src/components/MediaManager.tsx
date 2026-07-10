@@ -1,6 +1,6 @@
 import React from 'react';
 import { loggedIn } from '../lib/tinaAdmin';
-import { uploadToCloud, deleteFromCloud, findUsage, type UsageItem, ASSIGN_TARGETS, listAssignDocs, assignImage, type AssignTarget } from '../lib/mediaCloud';
+import { uploadToCloud, deleteFromCloud, moveInCloud, findUsage, type UsageItem, ASSIGN_TARGETS, listAssignDocs, assignImage, type AssignTarget } from '../lib/mediaCloud';
 import { showToast } from '../lib/tinaAdmin';
 import { detectEncoder, toOptimized, type EncoderMode } from '../../tina/fields/webpEncode';
 
@@ -19,6 +19,17 @@ const COLL_LABEL: Record<string, string> = {
 };
 
 function relOf(p: string): string { return p.replace(/^\/uploads\//, ''); }
+
+// Alle vorhandenen Ordnerpfade (inkl. Zwischenebenen) aus der Dateiliste ableiten — für die Ziel-Auswahl.
+function allFolders(paths: string[]): string[] {
+  const s = new Set<string>();
+  for (const p of paths) {
+    const parts = relOf(p).split('/'); parts.pop(); // Dateiname weg
+    let acc = '';
+    for (const seg of parts) { acc = acc ? `${acc}/${seg}` : seg; s.add(acc); }
+  }
+  return Array.from(s).sort((a, b) => a.localeCompare(b));
+}
 
 // Aus der flachen Manifest-Liste die Unterordner + Dateien des aktuellen Ordners ableiten.
 function viewOf(all: string[], folder: string): { subdirs: string[]; files: string[] } {
@@ -60,8 +71,18 @@ export default function MediaManager() {
   const [aFieldPath, setAFieldPath] = React.useState('');
   const [aBusy, setABusy] = React.useState(false);
   const [aConfirm, setAConfirm] = React.useState<string | null>(null); // aktueller Wert bei set-Überschreibung
+  // Mehrfachauswahl (Finder-artig) + Bulk-Aktionen.
+  const [selMode, setSelMode] = React.useState(false);
+  const [picked, setPicked] = React.useState<Set<string>>(new Set());
+  const [bulkDel, setBulkDel] = React.useState(false);
+  const [bulkBusy, setBulkBusy] = React.useState(false);
+  const [moveOpen, setMoveOpen] = React.useState(false);
+  const [moveTarget, setMoveTarget] = React.useState(''); // vorhandener Ordner (Select)
+  const [moveNew, setMoveNew] = React.useState('');        // ODER neuer Ordnername (Eingabe)
 
   React.useEffect(() => { try { setShow(loggedIn()); } catch { setShow(false); } }, []);
+  // Ordnerwechsel -> Auswahl leeren (sonst blieben unsichtbare Dateien ausgewählt).
+  React.useEffect(() => { setPicked(new Set()); }, [folder]);
   // „Verwendet in" für die aktuell gewählte Datei laden.
   React.useEffect(() => {
     if (!sel) { setUsage({ loading: false }); return; }
@@ -142,6 +163,47 @@ export default function MediaManager() {
     else showToast(r.error || 'Löschen fehlgeschlagen', 'error');
   }
 
+  // --- Mehrfachauswahl ---
+  const togglePick = (p: string) => setPicked((s) => { const n = new Set(s); if (n.has(p)) n.delete(p); else n.add(p); return n; });
+  const exitSel = () => { setSelMode(false); setPicked(new Set()); };
+
+  async function doBulkDelete() {
+    const items = Array.from(picked);
+    if (!items.length || bulkBusy) return;
+    setBulkBusy(true);
+    let okN = 0; let lastErr = '';
+    for (const p of items) {
+      const r = await deleteFromCloud(p);
+      if (r.ok) { setGone((g) => new Set(g).add(p)); okN++; } else { lastErr = r.error || 'Löschen fehlgeschlagen'; break; }
+    }
+    if (sel && items.indexOf(sel) !== -1) setSel(null);
+    setBulkBusy(false); setBulkDel(false); setPicked(new Set());
+    if (okN) showToast(`${okN} gelöscht`, 'success');
+    if (lastErr) showToast(lastErr, 'error');
+  }
+
+  async function doBulkMove() {
+    const target = (moveNew.trim() || moveTarget).replace(/^\/+|\/+$/g, '');
+    const items = Array.from(picked);
+    if (!items.length || bulkBusy) return;
+    setBulkBusy(true);
+    let okN = 0; let refsN = 0; let lastErr = '';
+    for (let i = 0; i < items.length; i++) {
+      setProgress(`Verschiebe ${i + 1}/${items.length} …`);
+      const r = await moveInCloud(items[i], target);
+      if (r.ok && r.newPath) {
+        const np = r.newPath;
+        setGone((g) => new Set(g).add(items[i]));
+        setFresh((prev) => [{ path: np, url: np }, ...prev.filter((x) => x.path !== np)]);
+        okN++; refsN += r.refs || 0;
+      } else { lastErr = r.error || 'Verschieben fehlgeschlagen'; break; }
+    }
+    if (sel && items.indexOf(sel) !== -1) setSel(null);
+    setBulkBusy(false); setProgress(''); setMoveOpen(false); setMoveNew(''); setMoveTarget(''); setPicked(new Set());
+    if (okN) showToast(`${okN} verschoben${refsN ? ` · ${refsN} Verweise angepasst` : ''} → ${target || 'uploads'}/`, 'success');
+    if (lastErr) showToast(lastErr, 'error');
+  }
+
   async function doAssign(overwrite: boolean) {
     const tgt = ASSIGN_TARGETS.find((t) => t.collection === aColl);
     const field = tgt?.fields.find((f) => f.path === aFieldPath);
@@ -154,13 +216,20 @@ export default function MediaManager() {
     else showToast(r.error || 'Zuweisen fehlgeschlagen', 'error');
   }
 
-  const fileTile = (p: string) => (
-    <button key={p} type="button" className={`ww-mm-file${sel === p ? ' is-sel' : ''}`} onClick={() => setSel(p)}
-      onContextMenu={(e) => { e.preventDefault(); setSel(p); setAssignFor(p); }} title={`${relOf(p)}\n(Rechtsklick: einem Inhalt zuweisen)`}>
-      <img src={previewOf(p)} alt="" loading="lazy" />
-      <span className="ww-mm-fname">{p.split('/').pop()}</span>
-    </button>
-  );
+  const fileTile = (p: string) => {
+    const isPicked = picked.has(p);
+    return (
+      <button key={p} type="button"
+        className={`ww-mm-file${sel === p ? ' is-sel' : ''}${selMode && isPicked ? ' is-picked' : ''}`}
+        onClick={() => (selMode ? togglePick(p) : setSel(p))}
+        onContextMenu={(e) => { e.preventDefault(); if (!selMode) { setSel(p); setAssignFor(p); } }}
+        title={selMode ? relOf(p) : `${relOf(p)}\n(Rechtsklick: einem Inhalt zuweisen)`}>
+        {selMode ? <span className={`ww-mm-check${isPicked ? ' is-on' : ''}`} aria-hidden="true">{isPicked ? '✓' : ''}</span> : null}
+        <img src={previewOf(p)} alt="" loading="lazy" />
+        <span className="ww-mm-fname">{p.split('/').pop()}</span>
+      </button>
+    );
+  };
 
   return (
     <div className="ww-mm">
@@ -183,6 +252,9 @@ export default function MediaManager() {
       {/* Toolbar */}
       <div className="ww-mm-toolbar">
         <input type="search" className="ww-mm-search" placeholder="Dateiname suchen (ordnerübergreifend) …" value={search} onChange={(e) => setSearch(e.target.value)} />
+        <button type="button" className={`ww-mm-selmode${selMode ? ' is-active' : ''}`} onClick={() => (selMode ? exitSel() : setSelMode(true))}>
+          {selMode ? 'Auswahl beenden' : 'Auswählen'}
+        </button>
         <label className={`btn ww-mm-upload${busy ? ' is-busy' : ''}`}>
           {busy ? (progress || 'Arbeite …') : `+ Hochladen (→ ${uploadTarget}/)`}
           <input type="file" accept="image/*" multiple disabled={busy} onChange={(e) => handleFiles(e.target.files)} hidden />
@@ -299,6 +371,55 @@ export default function MediaManager() {
                 </div>
               </>
             )}
+          </div>
+        </div>
+      ) : null}
+
+      {/* Fixe Auswahl-Leiste (bleibt beim Scrollen unten stehen) */}
+      {selMode ? (
+        <div className="ww-bulkbar ww-mm-bulkbar" role="region" aria-label="Auswahl-Aktionen">
+          <span className="ww-bulkbar-count">{picked.size} ausgewählt</span>
+          <button type="button" className="ww-mm-selall" onClick={() => setPicked(new Set(searching ? searchHits : files))} disabled={bulkBusy}>Alle im Ordner</button>
+          <button type="button" className="btn ww-bulkbar-move" onClick={() => { setMoveTarget(''); setMoveNew(''); setMoveOpen(true); }} disabled={bulkBusy || picked.size === 0}>Verschieben nach …</button>
+          <button type="button" className="btn ww-dt-danger" onClick={() => setBulkDel(true)} disabled={bulkBusy || picked.size === 0}>{picked.size} löschen</button>
+          <button type="button" className="ww-dt-cancel" onClick={exitSel} disabled={bulkBusy}>Fertig</button>
+        </div>
+      ) : null}
+
+      {/* Bulk-Lösch-Nachfrage */}
+      {bulkDel ? (
+        <div className="ww-dt-overlay" role="dialog" aria-modal="true" onClick={() => { if (!bulkBusy) setBulkDel(false); }}>
+          <div className="ww-dt-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>{picked.size} Bilder löschen?</h3>
+            <p className="ww-dt-note">Die ausgewählten Bilder werden dauerhaft aus dem Repo entfernt. Wo sie noch verwendet werden, bricht dort das Bild.</p>
+            <div className="ww-dt-actions">
+              <button type="button" className="btn ww-dt-danger" onClick={doBulkDelete} disabled={bulkBusy}>{bulkBusy ? 'Lösche …' : `Endgültig löschen (${picked.size})`}</button>
+              <button type="button" className="ww-dt-cancel" onClick={() => setBulkDel(false)} disabled={bulkBusy}>Abbrechen</button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {/* Verschieben-nach-Ordner-Modal */}
+      {moveOpen ? (
+        <div className="ww-dt-overlay" role="dialog" aria-modal="true" onClick={() => { if (!bulkBusy) setMoveOpen(false); }}>
+          <div className="ww-dt-modal ww-mm-move" onClick={(e) => e.stopPropagation()}>
+            <h3>{picked.size} {picked.size === 1 ? 'Bild' : 'Bilder'} verschieben</h3>
+            <p className="ww-dt-note">Wähle einen vorhandenen Ordner oder tippe einen neuen Namen. Verwendete Bilder werden automatisch überall auf den neuen Pfad umgeschrieben.</p>
+            <label className="ww-mm-assign-row"><span>Ordner</span>
+              <select value={moveTarget} onChange={(e) => { setMoveTarget(e.target.value); setMoveNew(''); }} disabled={bulkBusy || !!moveNew.trim()}>
+                <option value="">(Wurzel: uploads/)</option>
+                {allFolders(all).map((f) => <option key={f} value={f}>{f}/</option>)}
+              </select>
+            </label>
+            <label className="ww-mm-assign-row"><span>Neuer Ordner</span>
+              <input type="text" placeholder="z. B. tiere  oder  landschaft/berge" value={moveNew} onChange={(e) => setMoveNew(e.target.value)} disabled={bulkBusy} />
+            </label>
+            <div className="ww-mm-move-target">Ziel: <code>uploads/{(moveNew.trim() || moveTarget).replace(/^\/+|\/+$/g, '')}/</code></div>
+            <div className="ww-dt-actions">
+              <button type="button" className="btn" onClick={doBulkMove} disabled={bulkBusy}>{bulkBusy ? (progress || 'Verschiebe …') : 'Verschieben'}</button>
+              <button type="button" className="ww-dt-cancel" onClick={() => setMoveOpen(false)} disabled={bulkBusy}>Abbrechen</button>
+            </div>
           </div>
         </div>
       ) : null}

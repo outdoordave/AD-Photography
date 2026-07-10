@@ -203,3 +203,91 @@ export async function deleteFromCloud(uploadsPath: string): Promise<CloudResult>
     return { ok: false, error: String(e?.message || e) };
   }
 }
+
+// --- Verschieben (Ordnen) mit automatischem Referenz-Umschreiben ---------------------------------
+// Tina kennt kein „move": Datei an neuen Pfad kopieren -> ALLE Fundstellen umbiegen -> alte Datei löschen.
+// Reihenfolge bewusst so: nach dem Kopieren zeigen die umgeschriebenen Referenzen bereits auf die
+// vorhandene Kopie; erst danach die alte Datei entfernen. Bricht ein Schritt ab, bleibt der Stand
+// wiederherstellbar (nie eine tote Referenz). ⚠️ Nur im echten CMS testbar (Token + Content-API + CORS).
+const COLLECTION_EXT: Record<string, 'md' | 'json'> = {
+  startseite: 'json', journal: 'md', alben: 'json', story: 'md',
+  reisen: 'json', ueber_uns: 'json', highlights: 'json', darstellung: 'json',
+};
+
+// Rekursiv alle Strings in einem _values-Baum ersetzen, die auf das alte Bild zeigen. Zwei Fälle:
+// (1) der ganze Feldwert IST das Bild (kanonischer Treffer) -> auf neuen Pfad setzen; (2) das Bild
+// steckt als Teilstring (Rich-Text-Fließtext) -> die /uploads-Form ersetzen. Gibt {changed, value} zurück.
+function replaceRefsDeep(v: any, oldPath: string, newPath: string): { changed: boolean; value: any } {
+  if (typeof v === 'string') {
+    if (canonMedia(v) === canonMedia(oldPath)) return { changed: v !== newPath, value: newPath };
+    const oldRel = oldPath.replace(/^\/+/, '');
+    const newRel = newPath.replace(/^\/+/, '');
+    if (v.indexOf(oldPath) !== -1) { const nv = v.split(oldPath).join(newPath); return { changed: nv !== v, value: nv }; }
+    if (v.indexOf(oldRel) !== -1) { const nv = v.split(oldRel).join(newRel); return { changed: nv !== v, value: nv }; }
+    return { changed: false, value: v };
+  }
+  if (Array.isArray(v)) {
+    let changed = false;
+    const out = v.map((x) => { const r = replaceRefsDeep(x, oldPath, newPath); if (r.changed) changed = true; return r.value; });
+    return { changed, value: changed ? out : v };
+  }
+  if (v && typeof v === 'object') {
+    let changed = false; const out: Record<string, any> = {};
+    for (const k of Object.keys(v)) { const r = replaceRefsDeep(v[k], oldPath, newPath); if (r.changed) changed = true; out[k] = r.value; }
+    return { changed, value: changed ? out : v };
+  }
+  return { changed: false, value: v };
+}
+
+// Alle Dokumente durchgehen und Referenzen old->new umschreiben. Gibt die Zahl geänderter Dokumente zurück.
+async function rewriteReferences(oldPath: string, newPath: string): Promise<{ ok: boolean; count: number; error?: string }> {
+  const q = 'query{ ' + USAGE_COLLECTIONS.map((c) => `${c}: ${c}Connection(first: 1000){ edges{ node{ _sys{ filename } _values } } }`).join(' ') + ' }';
+  const r = await tinaGql(q);
+  if (!r.ok || !r.data) return { ok: false, count: 0, error: r.error || 'Nutzungs-Abfrage fehlgeschlagen.' };
+  let count = 0;
+  for (const c of USAGE_COLLECTIONS) {
+    const edges = (r.data[c] && r.data[c].edges) || [];
+    for (const e of edges) {
+      const node = e && e.node; if (!node || !node._values) continue;
+      const filename = node._sys && node._sys.filename; if (!filename) continue;
+      const { changed, value } = replaceRefsDeep(node._values, oldPath, newPath);
+      if (!changed) continue;
+      const clean: Record<string, any> = {};
+      for (const k of Object.keys(value)) { if (!k.startsWith('_')) clean[k] = value[k]; }
+      const relativePath = `${filename}.${COLLECTION_EXT[c]}`;
+      const w = await tinaGql('mutation u($collection:String!,$relativePath:String!,$params:DocumentUpdateMutation!){ updateDocument(collection:$collection, relativePath:$relativePath, params:$params){ __typename } }', { collection: c, relativePath, params: { [c]: clean } });
+      if (!w.ok) return { ok: false, count, error: `${c}/${filename}: ${w.error}` };
+      count++;
+    }
+  }
+  return { ok: true, count };
+}
+
+export type MoveResult = { ok: boolean; newPath?: string; refs?: number; error?: string };
+
+// Ein Bild in einen Zielordner verschieben (targetDir relativ zu uploads, z. B. "tiere" oder "reisen/x").
+export async function moveInCloud(oldPath: string, targetDir: string): Promise<MoveResult> {
+  if (!authToken()) return { ok: false, error: 'Kein Login-Token — bitte im CMS anmelden.' };
+  const filename = (oldPath.split('/').pop() || '').trim();
+  if (!filename) return { ok: false, error: 'Ungültiger Pfad.' };
+  const newPath = `/uploads/${joinPath(targetDir, filename)}`;
+  if (canonMedia(newPath) === canonMedia(oldPath)) return { ok: false, error: 'Quelle und Ziel sind identisch.' };
+  // 1) Bytes der alten Datei holen
+  let file: File;
+  try {
+    const res = await fetch(oldPath, { cache: 'no-store' });
+    if (!res.ok) return { ok: false, error: `Datei nicht ladbar (HTTP ${res.status}).` };
+    const blob = await res.blob();
+    file = new File([blob], filename, { type: blob.type || 'application/octet-stream' });
+  } catch (e: any) { return { ok: false, error: 'Datei nicht ladbar: ' + String(e?.message || e) }; }
+  // 2) an den neuen Pfad hochladen (Kopie)
+  const up = await uploadToCloud(file, targetDir);
+  if (!up.ok || !up.path) return { ok: false, error: up.error || 'Kopieren fehlgeschlagen.' };
+  // 3) alle Referenzen umbiegen
+  const rw = await rewriteReferences(oldPath, up.path);
+  if (!rw.ok) return { ok: false, newPath: up.path, error: 'Kopiert, aber Referenzen umschreiben fehlgeschlagen: ' + rw.error };
+  // 4) alte Datei löschen
+  const del = await deleteFromCloud(oldPath);
+  if (!del.ok) return { ok: true, newPath: up.path, refs: rw.count, error: 'Verschoben, aber die alte Datei blieb liegen: ' + del.error };
+  return { ok: true, newPath: up.path, refs: rw.count };
+}
