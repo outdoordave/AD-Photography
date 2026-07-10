@@ -92,6 +92,9 @@ export default function MediaManager() {
   // Drag & Drop: aktuelles Ziel (Ordnerpfad) beim Drüberziehen + Nutzlast (gezogene Bildpfade).
   const [dropTarget, setDropTarget] = React.useState<string | null>(null);
   const dragRef = React.useRef<string[]>([]);
+  // Gummiband-Auswahl (Marquee): das aufgezogene Rechteck (Viewport-Koordinaten) + „hat sich bewegt?".
+  const [marquee, setMarquee] = React.useState<null | { x0: number; y0: number; x1: number; y1: number }>(null);
+  const marqueeMovedRef = React.useRef(false);
 
   React.useEffect(() => { try { setShow(loggedIn()); } catch { setShow(false); } }, []);
   // Ordnerwechsel -> Auswahl leeren (sonst blieben unsichtbare Dateien ausgewählt).
@@ -192,6 +195,32 @@ export default function MediaManager() {
     if (e.metaKey || e.ctrlKey) { togglePick(p); setAnchor(idx); setSelMode(true); return; }
     if (selMode) { togglePick(p); setAnchor(idx); return; }
     setSel(p); setAnchor(idx);
+  };
+
+  // Gummiband-Auswahl: auf leerer Grid-Fläche mit der linken Maustaste ein Rechteck aufziehen -> alle
+  // Kacheln darin markieren (live). Startet nur auf Leerraum (nicht auf Kachel/Ordner/Knopf).
+  const onGridMouseDown = (e: React.MouseEvent) => {
+    if (e.button !== 0) return;
+    const el = e.target as HTMLElement;
+    if (el.closest('.ww-mm-file, .ww-mm-folder, button, a, input, .ww-mm-detail')) return;
+    e.preventDefault();
+    const sx = e.clientX, sy = e.clientY;
+    marqueeMovedRef.current = false;
+    const onMove = (me: MouseEvent) => {
+      const x0 = Math.min(sx, me.clientX), y0 = Math.min(sy, me.clientY), x1 = Math.max(sx, me.clientX), y1 = Math.max(sy, me.clientY);
+      if (Math.abs(me.clientX - sx) + Math.abs(me.clientY - sy) > 4) marqueeMovedRef.current = true;
+      setMarquee({ x0, y0, x1, y1 });
+      const hit = new Set<string>();
+      document.querySelectorAll('.ww-mm-grid .ww-mm-file').forEach((node) => {
+        const r = (node as HTMLElement).getBoundingClientRect();
+        if (r.left < x1 && r.right > x0 && r.top < y1 && r.bottom > y0) { const p = (node as HTMLElement).getAttribute('data-path'); if (p) hit.add(p); }
+      });
+      setPicked(hit);
+      if (hit.size) setSelMode(true);
+    };
+    const onUp = () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); setMarquee(null); };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
   };
 
   const uploadTarget = folder || 'allgemein';
@@ -308,7 +337,7 @@ export default function MediaManager() {
   const fileTile = (p: string, idx: number) => {
     const isPicked = picked.has(p);
     return (
-      <button key={p} type="button" draggable
+      <button key={p} type="button" draggable data-path={p}
         className={`ww-mm-file${sel === p ? ' is-sel' : ''}${isPicked ? ' is-picked' : ''}`}
         onClick={(e) => onTileClick(e, p, idx)}
         onDoubleClick={(e) => { e.preventDefault(); setLb(p); }}
@@ -390,7 +419,8 @@ export default function MediaManager() {
       {/* Grid / Drop-Zone */}
       <div
         className={`ww-mm-grid-wrap${dragOver ? ' is-drag' : ''}`}
-        onClick={(e) => { const el = e.target as HTMLElement; if (el.closest('.ww-mm-file, .ww-mm-folder, button, a, input')) return; if (picked.size) setPicked(new Set()); }}
+        onMouseDown={onGridMouseDown}
+        onClick={(e) => { if (marqueeMovedRef.current) { marqueeMovedRef.current = false; return; } const el = e.target as HTMLElement; if (el.closest('.ww-mm-file, .ww-mm-folder, button, a, input')) return; if (picked.size) setPicked(new Set()); }}
         onDragOver={(e) => { if (dragRef.current.length) return; e.preventDefault(); if (!busy) setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
         onDrop={(e) => { if (dragRef.current.length) return; e.preventDefault(); setDragOver(false); if (!busy) handleFiles(e.dataTransfer.files); }}
@@ -553,6 +583,9 @@ export default function MediaManager() {
           </div>
         </div>
       ) : null}
+
+      {/* Gummiband-Rechteck */}
+      {marquee ? <div className="ww-mm-marquee" style={{ left: marquee.x0, top: marquee.y0, width: marquee.x1 - marquee.x0, height: marquee.y1 - marquee.y0 }} /> : null}
 
       {/* Lightbox (Doppelklick) — ←/→ blättert, Esc/Klick schließt */}
       {lb ? (

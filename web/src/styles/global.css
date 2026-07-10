@@ -938,6 +938,7 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 .ww-mm-treeitem.is-drop, .ww-mm-folder.is-drop { outline: 2px dashed var(--c-accent); outline-offset: 1px; background: rgba(176,125,28,0.14); }
 .ww-mm-file { cursor: grab; }
 .ww-mm-file:active { cursor: grabbing; }
+.ww-mm-marquee { position: fixed; z-index: 900; border: 1.5px solid var(--c-accent); background: rgba(176,125,28,0.12); pointer-events: none; border-radius: 2px; }
 .ww-mm-treeicon { flex: 0 0 auto; font-size: 14px; }
 .ww-mm-tree-add { display: block; width: 100%; text-align: left; margin-top: 8px; padding: 8px 10px; border: 1px dashed var(--c-line); background: transparent; border-radius: var(--radius-sm); color: var(--c-ink-soft); font-size: var(--fs-label); font-weight: var(--fw-bold); cursor: pointer; }
 .ww-mm-tree-add:hover { border-color: var(--c-accent); color: var(--c-accent); }
