@@ -958,6 +958,12 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 .ww-mm-detail-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .ww-mm-delbtn { background: #a3231d; }
 .ww-mm-delbtn:hover { background: #86160f; }
+.ww-mm-assign { max-width: 440px; }
+.ww-mm-assign-img { width: 100%; max-height: 160px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--c-line); margin: 6px 0 16px; }
+.ww-mm-assign-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.ww-mm-assign-row > span { flex: 0 0 78px; font-weight: var(--fw-bold); font-size: var(--fs-label); color: var(--c-ink-soft); }
+.ww-mm-assign-row select { flex: 1; min-height: 40px; padding: 8px 10px; border: 1px solid var(--c-line); border-radius: var(--radius-sm); background: #fff; color: var(--c-ink); font-family: var(--font-body); font-size: var(--fs-ui); }
+.ww-mm-assign-row select:disabled { opacity: 0.6; }
 .ww-trash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
 .ww-trash-card { position: relative; background: var(--c-bg-alt); border: 1px solid var(--c-line); border-radius: var(--radius-sm); padding: 48px 18px 16px; transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease); }
 .ww-trash-card.is-clickable { cursor: pointer; }

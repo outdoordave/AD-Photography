@@ -1,6 +1,6 @@
 import React from 'react';
 import { loggedIn } from '../lib/tinaAdmin';
-import { uploadToCloud, deleteFromCloud, findUsage, type UsageItem } from '../lib/mediaCloud';
+import { uploadToCloud, deleteFromCloud, findUsage, type UsageItem, ASSIGN_TARGETS, listAssignDocs, assignImage, type AssignTarget } from '../lib/mediaCloud';
 import { showToast } from '../lib/tinaAdmin';
 import { detectEncoder, toOptimized, type EncoderMode } from '../../tina/fields/webpEncode';
 
@@ -52,6 +52,14 @@ export default function MediaManager() {
   const [encoder, setEncoder] = React.useState<EncoderMode>('checking');
   const [del, setDel] = React.useState<string | null>(null);
   const [usage, setUsage] = React.useState<{ loading: boolean; items?: UsageItem[]; err?: string }>({ loading: false });
+  // Zuweisen-Modal
+  const [assignFor, setAssignFor] = React.useState<string | null>(null);
+  const [aColl, setAColl] = React.useState('');
+  const [aDocs, setADocs] = React.useState<{ filename: string; label: string }[] | null>(null);
+  const [aDoc, setADoc] = React.useState('');
+  const [aFieldPath, setAFieldPath] = React.useState('');
+  const [aBusy, setABusy] = React.useState(false);
+  const [aConfirm, setAConfirm] = React.useState<string | null>(null); // aktueller Wert bei set-Überschreibung
 
   React.useEffect(() => { try { setShow(loggedIn()); } catch { setShow(false); } }, []);
   // „Verwendet in" für die aktuell gewählte Datei laden.
@@ -63,6 +71,17 @@ export default function MediaManager() {
       .catch((e) => { if (alive) setUsage({ loading: false, err: String(e?.message || e) }); });
     return () => { alive = false; };
   }, [sel]);
+  // Zuweisen-Modal öffnen -> Auswahl zurücksetzen.
+  React.useEffect(() => { if (assignFor) { setAColl(''); setADocs(null); setADoc(''); setAFieldPath(''); setAConfirm(null); } }, [assignFor]);
+  // Sammlung gewählt -> Dokumentliste laden + erstes Feld vorwählen.
+  React.useEffect(() => {
+    if (!assignFor || !aColl) { setADocs(null); return; }
+    const tgt = ASSIGN_TARGETS.find((t) => t.collection === aColl);
+    setAFieldPath(tgt?.fields[0]?.path || ''); setADoc(''); setADocs(null);
+    let alive = true;
+    listAssignDocs(tgt as AssignTarget).then((r) => { if (alive) setADocs(r.ok ? (r.docs || []) : []); }).catch(() => { if (alive) setADocs([]); });
+    return () => { alive = false; };
+  }, [assignFor, aColl]);
   React.useEffect(() => {
     if (!show) return;
     detectEncoder().then(setEncoder).catch(() => {});
@@ -123,8 +142,21 @@ export default function MediaManager() {
     else showToast(r.error || 'Löschen fehlgeschlagen', 'error');
   }
 
+  async function doAssign(overwrite: boolean) {
+    const tgt = ASSIGN_TARGETS.find((t) => t.collection === aColl);
+    const field = tgt?.fields.find((f) => f.path === aFieldPath);
+    if (!assignFor || !tgt || !field || !aDoc) return;
+    setABusy(true);
+    const r = await assignImage(tgt, aDoc, field, assignFor, { overwrite });
+    setABusy(false);
+    if (r.needConfirm) { setAConfirm(r.current || ''); return; }
+    if (r.ok) { showToast('Bild zugewiesen', 'success'); setAssignFor(null); }
+    else showToast(r.error || 'Zuweisen fehlgeschlagen', 'error');
+  }
+
   const fileTile = (p: string) => (
-    <button key={p} type="button" className={`ww-mm-file${sel === p ? ' is-sel' : ''}`} onClick={() => setSel(p)} title={relOf(p)}>
+    <button key={p} type="button" className={`ww-mm-file${sel === p ? ' is-sel' : ''}`} onClick={() => setSel(p)}
+      onContextMenu={(e) => { e.preventDefault(); setSel(p); setAssignFor(p); }} title={`${relOf(p)}\n(Rechtsklick: einem Inhalt zuweisen)`}>
       <img src={previewOf(p)} alt="" loading="lazy" />
       <span className="ww-mm-fname">{p.split('/').pop()}</span>
     </button>
@@ -207,6 +239,7 @@ export default function MediaManager() {
           </div>
 
           <div className="ww-mm-detail-actions">
+            <button type="button" className="btn" onClick={() => setAssignFor(sel)}>Einem Inhalt zuweisen</button>
             <a className="btn ghost" href={sel} target="_blank" rel="noopener">Original öffnen</a>
             <button type="button" className="btn ww-mm-delbtn" onClick={() => setDel(sel)} disabled={busy}>Löschen</button>
           </div>
@@ -223,6 +256,49 @@ export default function MediaManager() {
               <button type="button" className="btn ww-dt-danger" onClick={() => doDelete(del)} disabled={busy}>{busy ? 'Lösche …' : 'Endgültig löschen'}</button>
               <button type="button" className="ww-dt-cancel" onClick={() => setDel(null)} disabled={busy}>Abbrechen</button>
             </div>
+          </div>
+        </div>
+      ) : null}
+
+      {/* Zuweisen-Modal */}
+      {assignFor ? (
+        <div className="ww-dt-overlay" role="dialog" aria-modal="true" onClick={() => { if (!aBusy) setAssignFor(null); }}>
+          <div className="ww-dt-modal ww-mm-assign" onClick={(e) => e.stopPropagation()}>
+            <h3>Bild einem Inhalt zuweisen</h3>
+            <img className="ww-mm-assign-img" src={previewOf(assignFor)} alt="" />
+            {aConfirm !== null ? (
+              <>
+                <p className="ww-dt-note">Dieses Feld hat bereits ein Bild (<code>{aConfirm.split('/').pop()}</code>). Ersetzen?</p>
+                <div className="ww-dt-actions">
+                  <button type="button" className="btn ww-dt-danger" onClick={() => doAssign(true)} disabled={aBusy}>{aBusy ? 'Ersetze …' : 'Ersetzen'}</button>
+                  <button type="button" className="ww-dt-cancel" onClick={() => setAConfirm(null)} disabled={aBusy}>Abbrechen</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <label className="ww-mm-assign-row"><span>Bereich</span>
+                  <select value={aColl} onChange={(e) => setAColl(e.target.value)}>
+                    <option value="">— wählen —</option>
+                    {ASSIGN_TARGETS.map((t) => <option key={t.collection} value={t.collection}>{t.label}</option>)}
+                  </select>
+                </label>
+                <label className="ww-mm-assign-row"><span>Beitrag</span>
+                  <select value={aDoc} onChange={(e) => setADoc(e.target.value)} disabled={!aColl || !aDocs}>
+                    <option value="">{!aColl ? '— erst Bereich —' : aDocs == null ? 'lädt …' : '— wählen —'}</option>
+                    {(aDocs || []).map((d) => <option key={d.filename} value={d.filename}>{d.label}</option>)}
+                  </select>
+                </label>
+                <label className="ww-mm-assign-row"><span>Feld</span>
+                  <select value={aFieldPath} onChange={(e) => setAFieldPath(e.target.value)} disabled={!aColl}>
+                    {(ASSIGN_TARGETS.find((t) => t.collection === aColl)?.fields || []).map((f) => <option key={f.path} value={f.path}>{f.label}</option>)}
+                  </select>
+                </label>
+                <div className="ww-dt-actions">
+                  <button type="button" className="btn ww-dt-arch-alt" onClick={() => doAssign(false)} disabled={aBusy || !aColl || !aDoc || !aFieldPath}>{aBusy ? 'Weise zu …' : 'Zuweisen'}</button>
+                  <button type="button" className="ww-dt-cancel" onClick={() => setAssignFor(null)} disabled={aBusy}>Abbrechen</button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       ) : null}

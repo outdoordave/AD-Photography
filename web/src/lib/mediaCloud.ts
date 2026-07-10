@@ -121,6 +121,69 @@ export async function findUsage(uploadsPath: string): Promise<UsageResult> {
   return { ok: true, items };
 }
 
+// --- „Diesem Inhalt zuweisen": Bild einem Feld eines Dokuments zuordnen -------------------------
+// Zuweisbare TOP-LEVEL-Bildfelder je Sammlung (Einzelwert = ersetzen, Liste = anhängen). Verschachtelte
+// Array-Felder (reisen.stops[], ueber_uns.persons[], reisen.gallery[]) und Rich-Text-Bilder sind hier
+// bewusst NICHT dabei (bräuchten Index-/Text-Auswahl) — die pflegt man im jeweiligen Dokument.
+export type AssignField = { path: string; label: string; kind: 'set' | 'append' };
+export type AssignTarget = { collection: string; ext: 'md' | 'json'; label: string; titleField: string; fields: AssignField[] };
+export const ASSIGN_TARGETS: AssignTarget[] = [
+  { collection: 'story', ext: 'md', label: 'Story', titleField: 'title_de', fields: [{ path: 'cover', label: 'Titelbild', kind: 'set' }] },
+  { collection: 'alben', ext: 'json', label: 'Album', titleField: 'name', fields: [{ path: 'photos', label: 'Fotos (anhängen)', kind: 'append' }] },
+  { collection: 'journal', ext: 'md', label: 'Journal', titleField: 'title_de', fields: [{ path: 'photos', label: 'Fotos (anhängen)', kind: 'append' }] },
+  { collection: 'highlights', ext: 'json', label: 'Highlights', titleField: '', fields: [{ path: 'images', label: 'Highlight-Fotos (anhängen)', kind: 'append' }] },
+  { collection: 'darstellung', ext: 'json', label: 'Darstellung', titleField: '', fields: [{ path: 'logo', label: 'Logo', kind: 'set' }] },
+  { collection: 'startseite', ext: 'json', label: 'Startseite', titleField: '', fields: [{ path: 'hero.image', label: 'Hero-Einzelbild', kind: 'set' }, { path: 'hero.slideshow', label: 'Hero-Diashow (anhängen)', kind: 'append' }] },
+];
+
+function getAt(obj: any, path: string): any { return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj); }
+function setAt(obj: any, path: string, value: any): void {
+  const ks = path.split('.'); let o = obj;
+  for (let i = 0; i < ks.length - 1; i++) { if (o[ks[i]] == null || typeof o[ks[i]] !== 'object') o[ks[i]] = {}; o = o[ks[i]]; }
+  o[ks[ks.length - 1]] = value;
+}
+
+// Dokument-Liste einer Sammlung (für die Auswahl). label aus dem Titelfeld (Fallback Dateiname).
+export async function listAssignDocs(target: AssignTarget): Promise<{ ok: boolean; docs?: { filename: string; label: string }[]; error?: string }> {
+  if (!authToken()) return { ok: false, error: 'Kein Login-Token.' };
+  const r = await tinaGql(`query{ ${target.collection}Connection(first: 1000){ edges{ node{ _sys{ filename } _values } } } }`);
+  if (!r.ok || !r.data) return { ok: false, error: r.error || 'Dokumentliste fehlgeschlagen.' };
+  const edges = (r.data[`${target.collection}Connection`] && r.data[`${target.collection}Connection`].edges) || [];
+  const docs = edges.map((e: any) => {
+    const n = e && e.node; const f = (n && n._sys && n._sys.filename) || '';
+    const label = (n && n._values && (n._values[target.titleField] || n._values.title_de || n._values.title || n._values.name)) || f;
+    return { filename: f, label };
+  }).filter((d: any) => d.filename);
+  return { ok: true, docs };
+}
+
+// Zuweisen: _values lesen, Feld setzen/anhängen, `_`-Felder filtern, zurückschreiben (wie setArchived).
+// Bei kind:'set' und bereits gesetztem Feld -> needConfirm (nur mit overwrite=true wirklich ersetzen).
+export async function assignImage(
+  target: AssignTarget, filename: string, field: AssignField, imagePath: string, opts: { overwrite?: boolean } = {},
+): Promise<{ ok: boolean; needConfirm?: boolean; current?: string; error?: string }> {
+  if (!authToken()) return { ok: false, error: 'Kein Login-Token.' };
+  const relativePath = `${filename}.${target.ext}`;
+  const read = await tinaGql('query v($collection:String!,$relativePath:String!){ document(collection:$collection, relativePath:$relativePath){ ... on Document { _values } } }', { collection: target.collection, relativePath });
+  if (!read.ok) return { ok: false, error: read.error };
+  const values = read.data && read.data.document && read.data.document._values;
+  if (!values || typeof values !== 'object') return { ok: false, error: 'Dokument nicht gefunden.' };
+  if (field.kind === 'set') {
+    const cur = getAt(values, field.path);
+    if (cur && !opts.overwrite) return { ok: false, needConfirm: true, current: String(cur) };
+    setAt(values, field.path, imagePath);
+  } else {
+    const cur = getAt(values, field.path);
+    const arr = Array.isArray(cur) ? cur.slice() : [];
+    if (arr.indexOf(imagePath) === -1) arr.push(imagePath);
+    setAt(values, field.path, arr);
+  }
+  const clean: Record<string, any> = {};
+  for (const k of Object.keys(values)) { if (!k.startsWith('_')) clean[k] = values[k]; }
+  const write = await tinaGql('mutation u($collection:String!,$relativePath:String!,$params:DocumentUpdateMutation!){ updateDocument(collection:$collection, relativePath:$relativePath, params:$params){ __typename } }', { collection: target.collection, relativePath, params: { [target.collection]: clean } });
+  return write.ok ? { ok: true } : { ok: false, error: write.error };
+}
+
 // Datei löschen (Pfad wie „/uploads/<dir>/<file>" ODER „<dir>/<file>").
 export async function deleteFromCloud(uploadsPath: string): Promise<CloudResult> {
   const token = authToken();
