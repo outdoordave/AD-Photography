@@ -430,7 +430,7 @@ export default function MediaManager() {
           {selMode ? 'Auswahl beenden' : 'Auswählen'}
         </button>
         <label className={`btn ww-mm-upload${busy ? ' is-busy' : ''}`}>
-          {busy ? (progress || 'Arbeite …') : `+ Hochladen (→ ${uploadTarget}/)`}
+          {busy ? <><span className="ww-spinner" />{progress || 'Arbeite …'}</> : `+ Hochladen (→ ${uploadTarget}/)`}
           <input type="file" accept="image/*" multiple disabled={busy} onChange={(e) => handleFiles(e.target.files)} hidden />
         </label>
       </div>
@@ -516,7 +516,7 @@ export default function MediaManager() {
             <h3>Bild löschen?</h3>
             <p className="ww-dt-note">„{del.split('/').pop()}" wird dauerhaft aus dem Repo entfernt. Falls es noch irgendwo verwendet wird, bricht dort das Bild.</p>
             <div className="ww-dt-actions">
-              <button type="button" className="btn ww-dt-danger" onClick={() => doDelete(del)} disabled={busy}>{busy ? 'Lösche …' : 'Endgültig löschen'}</button>
+              <button type="button" className="btn ww-dt-danger" onClick={() => doDelete(del)} disabled={busy}>{busy ? <><span className="ww-spinner" />Lösche …</> : 'Endgültig löschen'}</button>
               <button type="button" className="ww-dt-cancel" onClick={() => setDel(null)} disabled={busy}>Abbrechen</button>
             </div>
           </div>
@@ -533,7 +533,7 @@ export default function MediaManager() {
               <>
                 <p className="ww-dt-note">Dieses Feld hat bereits ein Bild (<code>{aConfirm.split('/').pop()}</code>). Ersetzen?</p>
                 <div className="ww-dt-actions">
-                  <button type="button" className="btn ww-dt-danger" onClick={() => doAssign(true)} disabled={aBusy}>{aBusy ? 'Ersetze …' : 'Ersetzen'}</button>
+                  <button type="button" className="btn ww-dt-danger" onClick={() => doAssign(true)} disabled={aBusy}>{aBusy ? <><span className="ww-spinner" />Ersetze …</> : 'Ersetzen'}</button>
                   <button type="button" className="ww-dt-cancel" onClick={() => setAConfirm(null)} disabled={aBusy}>Abbrechen</button>
                 </div>
               </>
@@ -557,7 +557,7 @@ export default function MediaManager() {
                   </select>
                 </label>
                 <div className="ww-dt-actions">
-                  <button type="button" className="btn ww-dt-arch-alt" onClick={() => doAssign(false)} disabled={aBusy || !aColl || !aDoc || !aFieldPath}>{aBusy ? 'Weise zu …' : 'Zuweisen'}</button>
+                  <button type="button" className="btn ww-dt-arch-alt" onClick={() => doAssign(false)} disabled={aBusy || !aColl || !aDoc || !aFieldPath}>{aBusy ? <><span className="ww-spinner" />Weise zu …</> : 'Zuweisen'}</button>
                   <button type="button" className="ww-dt-cancel" onClick={() => setAssignFor(null)} disabled={aBusy}>Abbrechen</button>
                 </div>
               </>
@@ -584,7 +584,7 @@ export default function MediaManager() {
             <h3>{picked.size} Bilder löschen?</h3>
             <p className="ww-dt-note">Die ausgewählten Bilder werden dauerhaft aus dem Repo entfernt. Wo sie noch verwendet werden, bricht dort das Bild.</p>
             <div className="ww-dt-actions">
-              <button type="button" className="btn ww-dt-danger" onClick={doBulkDelete} disabled={bulkBusy}>{bulkBusy ? 'Lösche …' : `Endgültig löschen (${picked.size})`}</button>
+              <button type="button" className="btn ww-dt-danger" onClick={doBulkDelete} disabled={bulkBusy}>{bulkBusy ? <><span className="ww-spinner" />Lösche …</> : `Endgültig löschen (${picked.size})`}</button>
               <button type="button" className="ww-dt-cancel" onClick={() => setBulkDel(false)} disabled={bulkBusy}>Abbrechen</button>
             </div>
           </div>
@@ -608,7 +608,7 @@ export default function MediaManager() {
             </label>
             <div className="ww-mm-move-target">Ziel: <code>uploads/{(moveNew.trim() || moveTarget).replace(/^\/+|\/+$/g, '')}/</code></div>
             <div className="ww-dt-actions">
-              <button type="button" className="btn" onClick={doBulkMove} disabled={bulkBusy}>{bulkBusy ? (progress || 'Verschiebe …') : 'Verschieben'}</button>
+              <button type="button" className="btn" onClick={doBulkMove} disabled={bulkBusy}>{bulkBusy ? <><span className="ww-spinner" />{progress || 'Verschiebe …'}</> : 'Verschieben'}</button>
               <button type="button" className="ww-dt-cancel" onClick={() => setMoveOpen(false)} disabled={bulkBusy}>Abbrechen</button>
             </div>
           </div>
