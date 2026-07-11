@@ -951,8 +951,10 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
   .ww-mm-tree-head { width: 100%; }
   .ww-mm-treeitem { width: auto; padding-left: 10px !important; border: 1px solid var(--c-line); }
   .ww-mm-tree-add { width: auto; margin-top: 0; }
+  .ww-mm-toolbar { position: static; }
 }
-.ww-mm-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px; }
+/* Toolbar bleibt beim Scrollen sichtbar (klebt unter der Kopfleiste, gleiche Höhe wie die Ordner-Leiste). */
+.ww-mm-toolbar { position: sticky; top: 132px; z-index: 30; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; padding: 10px 0; background: var(--c-bg); }
 .ww-mm-search { flex: 1 1 260px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--c-line); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: var(--fs-ui); background: #fff; color: var(--c-ink); }
 .ww-mm-upload { cursor: pointer; }
 .ww-mm-upload.is-busy { opacity: 0.75; cursor: progress; }
@@ -992,6 +994,9 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 .ww-mm-file.is-picked { border-color: var(--c-accent); outline: 2px solid var(--c-accent); outline-offset: 1px; }
 .ww-mm-check { position: absolute; top: 8px; left: 8px; z-index: 2; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(28,24,18,0.6); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); border: 1.5px solid rgba(240,217,191,0.7); color: #fff; font-size: 15px; font-weight: 700; }
 .ww-mm-check.is-on { background: var(--c-accent); border-color: var(--c-accent); }
+/* Direkt-Löschen je Kachel: kleiner Mülleimer oben rechts (kollidiert nicht mit dem Häkchen oben links). */
+.ww-mm-tiledel { position: absolute; top: 6px; right: 6px; z-index: 3; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(28,24,18,0.55); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); border: 1.5px solid rgba(240,217,191,0.6); color: #fff; font-size: 14px; line-height: 1; cursor: pointer; opacity: 0.85; transition: background 0.15s ease, opacity 0.15s ease, transform 0.15s ease; }
+.ww-mm-tiledel:hover { background: #b4472e; border-color: #b4472e; opacity: 1; transform: scale(1.08); }
 .ww-mm-bulkbar { flex-wrap: wrap; justify-content: center; max-width: min(92vw, 640px); }
 .ww-mm-selall { background: transparent; border: 1.5px solid var(--c-line); color: var(--c-ink); padding: 9px 16px; border-radius: var(--radius-pill); font-weight: var(--fw-bold); font-size: var(--fs-label); cursor: pointer; }
 .ww-mm-selall:hover { border-color: var(--c-accent); color: var(--c-accent); }

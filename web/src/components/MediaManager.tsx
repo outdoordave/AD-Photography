@@ -356,6 +356,13 @@ export default function MediaManager() {
         onContextMenu={(e) => { e.preventDefault(); if (!selMode) { setSel(p); setAssignFor(p); } }}
         title={`${relOf(p)}\n(Doppelklick: groß · Shift/Strg-Klick: mehrfach · auf einen Ordner ziehen: verschieben)`}>
         {selMode ? <span className={`ww-mm-check${isPicked ? ' is-on' : ''}`} aria-hidden="true">{isPicked ? '✓' : ''}</span> : null}
+        {!selMode ? (
+          // Direkt-Löschen je Kachel (mit Nachfrage). Kein <button> im <button> -> span mit role. stopPropagation
+          // verhindert das Öffnen der Lightbox/Auswahl. In der Mehrfachauswahl ausgeblendet (dort löscht die Leiste).
+          <span className="ww-mm-tiledel" role="button" tabIndex={-1} aria-label="Löschen" title="Löschen"
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => { e.stopPropagation(); e.preventDefault(); setSel(null); setDel(p); }}>🗑</span>
+        ) : null}
         <img src={previewOf(p)} alt="" loading="lazy" draggable={false} />
         <span className="ww-mm-fname">{p.split('/').pop()}</span>
       </button>
