@@ -361,7 +361,11 @@ export default function MediaManager() {
           // verhindert das Öffnen der Lightbox/Auswahl. In der Mehrfachauswahl ausgeblendet (dort löscht die Leiste).
           <span className="ww-mm-tiledel" role="button" tabIndex={-1} aria-label="Löschen" title="Löschen"
             onMouseDown={(e) => e.stopPropagation()}
-            onClick={(e) => { e.stopPropagation(); e.preventDefault(); setSel(null); setDel(p); }}>🗑</span>
+            onClick={(e) => { e.stopPropagation(); e.preventDefault(); setSel(null); setDel(p); }}>
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0v13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V7" />
+            </svg>
+          </span>
         ) : null}
         <img src={previewOf(p)} alt="" loading="lazy" draggable={false} />
         <span className="ww-mm-fname">{p.split('/').pop()}</span>
