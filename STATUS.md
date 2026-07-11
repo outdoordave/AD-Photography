@@ -52,6 +52,13 @@
 > z-index 1100) → **kein Spalt** mehr, durch den Kacheln beim Scrollen sichtbar waren (`5bdf92c`). ⚠️ Der
 > URL-Fix (Löschen/Verschieben) ist nur im echten CMS voll prüfbar. Löschen entfernt die Datei **auch aus
 > GitHub** (Tina-Cloud committet die Entfernung aus `web/public/uploads/` autonom auf `main`).
+> **Rotes Icon + Lade-Spinner + Header-Spalt (`9e28b23`):** Kachel-Mülleimer jetzt rot (`#ec8c7d`, Hover
+> `#a3231d`) wie die Beitrags-Kacheln. Wiederverwendbarer Lade-Kreisel `.ww-spinner` (nutzt `ww-spin`) in
+> allen Warte-Zuständen (Löschen/Bulk/Verschieben/Hochladen/Zuweisen); Beitrags-Kacheln haben ihren Spinner
+> schon über `.ww-dt-btn.is-busy`. **Header-Durchscroll-Spalt (nur Admin):** Header klebte bei `top:38px`,
+> Admin-Leiste endet ~34px → 4px scharfer Spalt; auf `top:33px` korrigiert (nur `html.ww-adminbar-on`, kein
+> Besucher-Effekt, Frosted-Glass bleibt). ⚠️ Offen/optional: Header ganz deckend statt Frosted (Besucher-
+> Design) — nur auf ausdrückliche Freigabe.
 > ⚠️ **Nur im echten CMS prüfbar:** Hochladen/Löschen/**Verschieben+Umschreiben**/**Bulk-Löschen** (Assets-API,
 > **CORS-Risiko** beim Signed-PUT → falls unzuverlässig: mit David abgestimmter Rückmelde-Fall, KEIN
 > Auto-Wechsel auf Custom-Screen), „Verwendet in"-Treffer, Zuweisen, korrektes Ordner-Landen. Offline

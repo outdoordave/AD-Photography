@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-11 — Medien-Manager: rotes Lösch-Icon + Lade-Spinner; Header-Spalt (Admin) zu (`9e28b23`)
+- **Rotes Icon**: Kachel-Mülleimer jetzt `#ec8c7d` (Hover `#a3231d`/weiß) wie die Beitrags-Kacheln, statt weiß.
+- **Lade-Spinner**: wiederverwendbare `.ww-spinner`-Klasse (nutzt das vorhandene `ww-spin`); in allen Warte-
+  Zuständen des Medien-Managers eingesetzt: Löschen, Bulk-Löschen, Verschieben, Hochladen, Zuweisen/Ersetzen.
+  (Beitrags-Kacheln drehen über `.ww-dt-btn.is-busy` beim Archivieren/Löschen bereits.)
+- **Header-Durchscroll-Spalt (nur Admin)**: Header klebte bei `top:38px`, Admin-Leiste endet ~34px → 4px
+  scharfer Spalt, durch den Inhalt schimmerte. Header auf `top:33px` (1px unter die Leiste, z-index 1200
+  verdeckt sie) → kein Spalt. Nur `html.ww-adminbar-on` — **kein Besucher-Effekt**; Frosted-Glass bleibt.
+- Dateien: `web/src/components/MediaManager.tsx`, `web/src/styles/global.css`.
+
 ## 2026-07-11 — Medien-Manager: Mülleimer-SVG statt Emoji + Sticky-Leiste ohne Spalt (`5bdf92c`)
 - **Icon**: Der Kachel-Mülleimer nutzt jetzt dasselbe **SVG** wie die Reise-/Beitrags-Kacheln (`D_TRASH`,
   `stroke=currentColor`) statt des 🗑-Emojis — einheitliche Optik.
