@@ -86,7 +86,6 @@ export default function MediaManager() {
   // Desktop-Auswahl-Gesten + Ansicht.
   const [anchor, setAnchor] = React.useState<number | null>(null); // Index für Shift-Bereichsauswahl
   const [sortDesc, setSortDesc] = React.useState(false);           // Name Z–A statt A–Z
-  const [lb, setLb] = React.useState<string | null>(null);         // Lightbox-Bildpfad (Doppelklick)
   // Für den (mount-once) Tastatur-Handler: aktueller Zustand in einem Ref, damit keine veralteten Closures.
   const stateRef = React.useRef<any>({});
   // Drag & Drop: aktuelles Ziel (Ordnerpfad) beim Drüberziehen + Nutzlast (gezogene Bildpfade).
@@ -106,11 +105,12 @@ export default function MediaManager() {
       const s = stateRef.current;
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT')) return;
-      if (s.lb) {
-        if (e.key === 'Escape') { setLb(null); return; }
+      if (s.sel) { // Lightbox offen: ←/→ blättert, Esc schließt
+        if (s.anyModal) return; // Zuweisen/Löschen-Dialog offen -> Tasten dort lassen
+        if (e.key === 'Escape') { setSel(null); return; }
         if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-          const v: string[] = s.visible || []; const i = v.indexOf(s.lb);
-          if (i >= 0) { const ni = e.key === 'ArrowRight' ? Math.min(v.length - 1, i + 1) : Math.max(0, i - 1); setLb(v[ni]); }
+          const v: string[] = s.visible || []; const i = v.indexOf(s.sel);
+          if (i >= 0) { const ni = e.key === 'ArrowRight' ? Math.min(v.length - 1, i + 1) : Math.max(0, i - 1); setSel(v[ni]); }
           return;
         }
         return;
@@ -181,8 +181,13 @@ export default function MediaManager() {
   // Sichtbare Datei-Reihenfolge (für Shift-Bereich, Cmd+A, Lightbox-Blättern) — nach Name A–Z bzw. Z–A.
   const visible = (searching ? searchHits : files).slice().sort((a, b) => (sortDesc ? b.localeCompare(a) : a.localeCompare(b)));
   stateRef.current = {
-    visible, selMode, lb, pickedSize: picked.size,
+    visible, selMode, sel, pickedSize: picked.size,
     anyModal: !!(del || bulkDel || moveOpen || assignFor || creating),
+  };
+  // Lightbox weiterblättern (Pfeil-Knöpfe): zum vorigen/nächsten sichtbaren Bild.
+  const navSel = (dir: 1 | -1) => {
+    if (!sel) return; const i = visible.indexOf(sel); if (i < 0) return;
+    const ni = Math.min(visible.length - 1, Math.max(0, i + dir)); setSel(visible[ni]);
   };
 
   // Klick auf eine Kachel — mit Standard-Desktop-Modifiern: Shift = Bereich ab Anker, Cmd/Strg = einzeln
@@ -317,9 +322,10 @@ export default function MediaManager() {
 
   // Ordner als Drop-Ziel: Drüberziehen hebt hervor, Loslassen verschiebt die gezogenen Bilder dorthin.
   const folderDropProps = (targetFolder: string) => ({
+    onDragEnter: (e: React.DragEvent) => { if (dragRef.current.length) { e.preventDefault(); e.stopPropagation(); setDropTarget(targetFolder); } },
     onDragOver: (e: React.DragEvent) => { if (dragRef.current.length) { e.preventDefault(); e.stopPropagation(); e.dataTransfer.dropEffect = 'move'; setDropTarget(targetFolder); } },
     onDragLeave: () => setDropTarget((cur) => (cur === targetFolder ? null : cur)),
-    onDrop: (e: React.DragEvent) => { e.preventDefault(); e.stopPropagation(); const payload = dragRef.current; dragRef.current = []; setDropTarget(null); if (payload.length) moveMany(payload, targetFolder); },
+    onDrop: (e: React.DragEvent) => { e.preventDefault(); e.stopPropagation(); const payload = dragRef.current.slice(); dragRef.current = []; setDropTarget(null); if (payload.length) moveMany(payload, targetFolder); },
   });
 
   async function doAssign(overwrite: boolean) {
@@ -340,7 +346,7 @@ export default function MediaManager() {
       <button key={p} type="button" draggable data-path={p}
         className={`ww-mm-file${sel === p ? ' is-sel' : ''}${isPicked ? ' is-picked' : ''}`}
         onClick={(e) => onTileClick(e, p, idx)}
-        onDoubleClick={(e) => { e.preventDefault(); setLb(p); }}
+        onDoubleClick={(e) => { e.preventDefault(); setSel(p); }}
         onDragStart={(e) => { const payload = isPicked && picked.size > 0 ? Array.from(picked) : [p]; dragRef.current = payload; e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', payload.join('\n')); } catch (err) { /* egal */ } }}
         onDragEnd={() => { dragRef.current = []; setDropTarget(null); }}
         onContextMenu={(e) => { e.preventDefault(); if (!selMode) { setSel(p); setAssignFor(p); } }}
@@ -449,36 +455,37 @@ export default function MediaManager() {
       </div>{/* .ww-mm-main */}
       </div>{/* .ww-mm-body */}
 
-      {/* Detail-Panel */}
+      {/* Lightbox mit Infos — Klick auf ein Bild öffnet groß; ←/→ blättert; Esc/Backdrop/✕ schließt. */}
       {sel ? (
-        <>
-        <div className="ww-mm-detail-backdrop" onClick={() => setSel(null)} />
-        <div className="ww-mm-detail" role="dialog" aria-label="Bild-Details">
-          <button type="button" className="ww-mm-detail-close" onClick={() => setSel(null)} aria-label="Schließen">✕</button>
-          <img className="ww-mm-detail-img" src={previewOf(sel)} alt="" />
-          <div className="ww-mm-detail-name">{sel.split('/').pop()}</div>
-          <div className="ww-mm-detail-path">{sel}</div>
-
-          <div className="ww-mm-usage">
-            <div className="ww-mm-usage-title">Verwendet in</div>
-            {usage.loading ? <div className="ww-mm-usage-note">wird geprüft …</div>
-              : usage.err ? <div className="ww-mm-usage-err">{usage.err}</div>
-              : usage.items && usage.items.length ? (
-                <ul className="ww-mm-usage-list">
-                  {usage.items.map((u, i) => (
-                    <li key={i}><span className="ww-mm-usage-coll">{COLL_LABEL[u.collection] || u.collection}</span> {u.label}</li>
-                  ))}
-                </ul>
-              ) : <div className="ww-mm-usage-note ww-mm-usage-free">Unbenutzt — wird nirgends verwendet.</div>}
+        <div className="ww-mm-lb" role="dialog" aria-modal="true" aria-label="Bild-Ansicht" onClick={() => setSel(null)}>
+          <button type="button" className="ww-mm-lb-close" onClick={() => setSel(null)} aria-label="Schließen">✕</button>
+          {visible.length > 1 ? <button type="button" className="ww-mm-lb-nav prev" onClick={(e) => { e.stopPropagation(); navSel(-1); }} aria-label="Vorheriges">‹</button> : null}
+          <div className="ww-mm-lb-stage" onClick={(e) => e.stopPropagation()}>
+            <div className="ww-mm-lb-imgwrap"><img src={previewOf(sel)} alt={sel.split('/').pop() || ''} /></div>
+            <div className="ww-mm-lb-info">
+              <div className="ww-mm-lb-name">{sel.split('/').pop()}</div>
+              <div className="ww-mm-lb-path">{sel}</div>
+              <div className="ww-mm-usage">
+                <div className="ww-mm-usage-title">Verwendet in</div>
+                {usage.loading ? <div className="ww-mm-usage-note">wird geprüft …</div>
+                  : usage.err ? <div className="ww-mm-usage-err">{usage.err}</div>
+                  : usage.items && usage.items.length ? (
+                    <ul className="ww-mm-usage-list">
+                      {usage.items.map((u, i) => (
+                        <li key={i}><span className="ww-mm-usage-coll">{COLL_LABEL[u.collection] || u.collection}</span> {u.label}</li>
+                      ))}
+                    </ul>
+                  ) : <div className="ww-mm-usage-note ww-mm-usage-free">Unbenutzt — wird nirgends verwendet.</div>}
+              </div>
+              <div className="ww-mm-detail-actions">
+                <button type="button" className="btn" onClick={() => setAssignFor(sel)}>Einem Inhalt zuweisen</button>
+                <a className="btn ghost" href={sel} target="_blank" rel="noopener">Original öffnen</a>
+                <button type="button" className="btn ww-mm-delbtn" onClick={() => setDel(sel)} disabled={busy}>Löschen</button>
+              </div>
+            </div>
           </div>
-
-          <div className="ww-mm-detail-actions">
-            <button type="button" className="btn" onClick={() => setAssignFor(sel)}>Einem Inhalt zuweisen</button>
-            <a className="btn ghost" href={sel} target="_blank" rel="noopener">Original öffnen</a>
-            <button type="button" className="btn ww-mm-delbtn" onClick={() => setDel(sel)} disabled={busy}>Löschen</button>
-          </div>
+          {visible.length > 1 ? <button type="button" className="ww-mm-lb-nav next" onClick={(e) => { e.stopPropagation(); navSel(1); }} aria-label="Nächstes">›</button> : null}
         </div>
-        </>
       ) : null}
 
       {/* Lösch-Nachfrage */}
@@ -589,15 +596,6 @@ export default function MediaManager() {
 
       {/* Gummiband-Rechteck */}
       {marquee ? <div className="ww-mm-marquee" style={{ left: marquee.x0, top: marquee.y0, width: marquee.x1 - marquee.x0, height: marquee.y1 - marquee.y0 }} /> : null}
-
-      {/* Lightbox (Doppelklick) — ←/→ blättert, Esc/Klick schließt */}
-      {lb ? (
-        <div className="ww-mm-lb" role="dialog" aria-modal="true" onClick={() => setLb(null)}>
-          <img src={previewOf(lb)} alt={lb.split('/').pop() || ''} onClick={(e) => e.stopPropagation()} />
-          <button type="button" className="ww-mm-lb-close" onClick={() => setLb(null)} aria-label="Schließen">✕</button>
-          <div className="ww-mm-lb-name">{lb.split('/').pop()}</div>
-        </div>
-      ) : null}
     </div>
   );
 }
