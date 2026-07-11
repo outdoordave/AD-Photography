@@ -17,6 +17,19 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-11 — Medien-Manager: Klick-Lightbox mit Infos + fixe Ordner-Leiste + DnD-Fix (`e2249c0`)
+Drei Wünsche in einem Rutsch:
+- **Klick-Lightbox**: Klick auf ein Bild öffnet jetzt eine **Lightbox** (großes Bild links, Info-Panel
+  rechts) mit denselben Infos wie zuvor das Detail-Panel (Name, Pfad, „Verwendet in", Zuweisen/Original/
+  Löschen) **plus Durchblättern** (Pfeil-Knöpfe + ←/→, Esc/Backdrop/✕ schließt). Ersetzt das rechte
+  Detail-Panel **und** die alte Nur-Bild-Lightbox (`lb`-State entfernt, alles über `sel`).
+- **Fixe Ordner-Leiste**: die Baum-Leiste bleibt beim Scrollen **sticky unter der Kopfleiste**
+  (`top:132px`, eigener Scrollbereich) → Ordner sind auch bei vielen Bildern immer als Drop-Ziel erreichbar.
+- **DnD-Fix**: `onDragEnter` mit `preventDefault` ergänzt — häufige Ursache, dass der Drop nicht feuert
+  („Animation kommt, verschiebt nichts"); Drop-Payload defensiv kopiert. ⚠️ Voraussetzung fürs Verschieben:
+  ein **Zielordner** muss existieren (sonst nur die uploads-Wurzel = „identisch"). Real (Cloud) im echten
+  CMS gegentesten; natives DnD ist per Automation nicht auslösbar (Handler-Kette synthetisch belegt).
+
 ## 2026-07-11 — Medien-Manager: Detail-Panel-Fix (`6cfa6d7`)
 Bug: Das Bild-Detail-Panel (Klick auf ein Bild) lag mit `z-index: 950` **unter** der stickyy
 Kopfleiste (`z-index: 1100`) → oberer Rand samt Schließen-✕ war verdeckt; ein Klick daneben schloss
