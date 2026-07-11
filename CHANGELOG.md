@@ -17,6 +17,13 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-11 — Medien-Manager: Detail-Panel-Fix (`6cfa6d7`)
+Bug: Das Bild-Detail-Panel (Klick auf ein Bild) lag mit `z-index: 950` **unter** der stickyy
+Kopfleiste (`z-index: 1100`) → oberer Rand samt Schließen-✕ war verdeckt; ein Klick daneben schloss
+das Panel nicht. Fix: Panel auf `z-index: 1200` (über die Kopfleiste) + **Backdrop** (`1190`), der den
+Rest abdunkelt und **per Klick schließt**; ✕ als klar sichtbarer runder Knopf oben rechts. Verifiziert
+im lokalen Browser (Panel über Header, ✕ sichtbar, Klick-daneben schließt).
+
 ## 2026-07-10 23:30 — Medien-Manager: Datei-Manager-Gesten (Auswahl, DnD, Marquee, Lightbox, Sortierung)
 Standard-Finder/Explorer-Bedienung, in drei Commits. Auswahl-Logik lokal im Browser verifiziert;
 das eigentliche Verschieben (Cloud + Referenz-Umschreiben) braucht weiterhin ein CMS-Token.

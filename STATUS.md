@@ -26,7 +26,8 @@
 > (`4de71f4`, `58626ad`, `d83e0d8`):** Cmd/Strg-Klick + Shift-Bereich + Marquee + Cmd/Strg+A; Klick ins Leere
 > abwählen; Entf/Esc; **Doppelklick = Lightbox** (←/→); **Drag & Drop** auf Ordner (Baum/Kachel) = verschieben;
 > **Sortierung Name A–Z/Z–A**. Offen: Sortierung nach **Datum** (Manifest braucht Zeitstempel) + **Umbenennen**.
-> ⚠️ Mac: Strg-Klick = Rechtsklick → für Mehrfachauswahl **Cmd** nutzen.
+> ⚠️ Mac: Strg-Klick = Rechtsklick → für Mehrfachauswahl **Cmd** nutzen. **Detail-Panel (`6cfa6d7`):** liegt
+> jetzt über der Kopfleiste (z-index 1200) mit Backdrop (Klick daneben schließt) + sichtbarem ✕.
 > ⚠️ **Nur im echten CMS prüfbar:** Hochladen/Löschen/**Verschieben+Umschreiben**/**Bulk-Löschen** (Assets-API,
 > **CORS-Risiko** beim Signed-PUT → falls unzuverlässig: mit David abgestimmter Rückmelde-Fall, KEIN
 > Auto-Wechsel auf Custom-Screen), „Verwendet in"-Treffer, Zuweisen, korrektes Ordner-Landen. Offline
@@ -296,7 +297,7 @@
 > re-indext, Build grün, CMS in Nutzung — der frühere `?`-/Schema-Mismatch ist Geschichte. Seither nur noch
 > UI-/Editor-/Build-Feinschliff (kein Schema-Eingriff, `tina-lock.json` unverändert → kein weiterer Re-Index).
 >
-> **Aktuell offen (Reihenfolge):** 1) **Letzte Commits pushen** (`b66d60e`, `32ac74a`, `32b5b67`, `c366c06`, `4de71f4`, `58626ad`, `d83e0d8`; vorher
+> **Aktuell offen (Reihenfolge):** 1) **Letzte Commits pushen** (`b66d60e`, `32ac74a`, `32b5b67`, `c366c06`, `4de71f4`, `58626ad`, `d83e0d8`, `6cfa6d7`; vorher
 > `git pull` — Tina Cloud committet autonom auf `main`, s. Memory `origin-main-moving-target`); nach Deploy
 > hart neu laden + Logo/Bilder prüfen. 2) **Im echten CMS testen** (eingeloggt): Medien-Manager Verschieben
 > nach Ordner + Referenz-Umschreiben (⚠️ am wichtigsten — verändert Content!), Bulk-Löschen, Signed-PUT-Upload;
