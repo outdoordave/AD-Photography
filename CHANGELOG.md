@@ -17,6 +17,17 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-11 — Medien-Manager: „HTTP 401" bei manchen Bildern (Token-Refresh) + Rest-Sliver zu (`f8ba234`, `ee819b9`)
+- **„Verwendet in: Fehler (HTTP 401)" bei manchen Bildern (`f8ba234`)**: /medien-manager läuft ohne Tina-Client,
+  der den Login-Token erneuert; der id_token lebt ~1h → erste Abfragen klappen, spätere geben 401 (daher „manche").
+  Tinas `getRefreshedToken` 1:1 nachgebaut: neue `freshToken()` in `tinaAdmin.ts` parst den access_token-JWT und
+  erneuert bei <120 s Rest per Cognito `REFRESH_TOKEN_AUTH` gegen den Issuer, schreibt `tinacms-auth` zurück.
+  `tinaGql` nutzt es (Verwendet-in/Zuweisen/Archiv/Löschen); `uploadToCloud`/`deleteFromCloud` frischen vorab auf.
+- **Rest-Sliver über der Toolbar (`ee819b9`)**: nachdem der Header auf top:33 rückte (Unterkante ~122px), klebte die
+  Toolbar mit top:124 2px zu tief. Toolbar+Baum auf top:118 + opaker `::before`-Deckstreifen (14px) über der Toolbar
+  → deckende Fläche durchgehend ab ~104px, unabhängig von der Header-Höhe; im Leerraum/hinter dem Header unsichtbar.
+- Dateien: `web/src/lib/tinaAdmin.ts`, `web/src/lib/mediaCloud.ts`, `web/src/styles/global.css`.
+
 ## 2026-07-11 — Medien-Manager: rotes Lösch-Icon + Lade-Spinner; Header-Spalt (Admin) zu (`9e28b23`)
 - **Rotes Icon**: Kachel-Mülleimer jetzt `#ec8c7d` (Hover `#a3231d`/weiß) wie die Beitrags-Kacheln, statt weiß.
 - **Lade-Spinner**: wiederverwendbare `.ww-spinner`-Klasse (nutzt das vorhandene `ww-spin`); in allen Warte-

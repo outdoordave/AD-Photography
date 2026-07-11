@@ -59,6 +59,12 @@
 > Admin-Leiste endet ~34px → 4px scharfer Spalt; auf `top:33px` korrigiert (nur `html.ww-adminbar-on`, kein
 > Besucher-Effekt, Frosted-Glass bleibt). ⚠️ Offen/optional: Header ganz deckend statt Frosted (Besucher-
 > Design) — nur auf ausdrückliche Freigabe.
+> **Token-Refresh gegen „HTTP 401" (`f8ba234`):** /medien-manager läuft ohne Tina-Client, der den id_token
+> erneuert (lebt ~1h) → „Verwendet in" gab bei später geprüften Bildern „Fehler (HTTP 401)". Tinas
+> `getRefreshedToken` nachgebaut: `freshToken()` in `tinaAdmin.ts` erneuert den Token bei <120 s Rest per
+> Cognito `REFRESH_TOKEN_AUTH` und schreibt `tinacms-auth` zurück; `tinaGql` + Upload/Delete nutzen ihn.
+> **Rest-Sliver über der Toolbar (`ee819b9`):** Toolbar+Baum auf `top:118` + opaker `::before`-Deckstreifen
+> (14px) → durchgehende Deckung ab ~104px, robust gegen die Header-Höhe.
 > ⚠️ **Nur im echten CMS prüfbar:** Hochladen/Löschen/**Verschieben+Umschreiben**/**Bulk-Löschen** (Assets-API,
 > **CORS-Risiko** beim Signed-PUT → falls unzuverlässig: mit David abgestimmter Rückmelde-Fall, KEIN
 > Auto-Wechsel auf Custom-Screen), „Verwendet in"-Treffer, Zuweisen, korrektes Ordner-Landen. Offline
