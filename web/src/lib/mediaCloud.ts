@@ -15,10 +15,12 @@ import { toLocalMedia, dedupeUploads } from '../../tina/fields/mediaPath';
 function parts() {
   const u = new URL(CONTENT_API_URL);
   const seg = u.pathname.split('/').filter(Boolean); // ['1.6','content','<clientId>','github','<branch>']
-  const version = seg[0] || '1.6';
   const clientId = seg[2] || '';
   const assetsBase = `${u.origin.replace('content', 'assets')}/v1/${clientId}`;
-  const requestStatusBase = `${u.origin}/${version}/request-status/${clientId}`;
+  // WICHTIG: Tina pollt den Request-Status OHNE Versions-Segment: `content.tinajs.io/request-status/<id>/<req>`
+  // (Bundle: `${contentApiBase}/request-status/${clientId}/${requestId}`, contentApiBase = Origin ohne Version).
+  // Ein fälschlich eingefügtes `/1.6/` ließ den Poll-Fetch scheitern -> „Load failed" nach dem eigentlichen DELETE.
+  const requestStatusBase = `${u.origin}/request-status/${clientId}`;
   return { clientId, assetsBase, requestStatusBase };
 }
 
