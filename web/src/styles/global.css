@@ -932,7 +932,7 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 /* Zwei-Spalten-Layout: linke Ordner-Baum-Leiste (Explorer) + Hauptbereich */
 .ww-mm-body { display: flex; gap: 20px; align-items: flex-start; }
 .ww-mm-main { flex: 1 1 auto; min-width: 0; }
-.ww-mm-tree { flex: 0 0 210px; position: sticky; top: 124px; align-self: flex-start; border: 1px solid var(--c-line); border-radius: var(--radius-sm); background: var(--c-bg-alt); padding: 10px; max-height: calc(100vh - 150px); overflow-y: auto; }
+.ww-mm-tree { flex: 0 0 210px; position: sticky; top: 118px; align-self: flex-start; border: 1px solid var(--c-line); border-radius: var(--radius-sm); background: var(--c-bg-alt); padding: 10px; max-height: calc(100vh - 150px); overflow-y: auto; }
 .ww-mm-tree-head { font-size: var(--fs-label); font-weight: var(--fw-bold); letter-spacing: var(--tracking-slight); text-transform: uppercase; color: var(--c-ink-soft); padding: 4px 8px 8px; }
 .ww-mm-treeitem { display: flex; align-items: center; gap: 6px; width: 100%; text-align: left; padding: 7px 10px; border: none; background: transparent; border-radius: var(--radius-sm); color: var(--c-ink); font-size: var(--fs-label); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ww-mm-treeitem:hover { background: rgba(46,36,24,0.06); }
@@ -955,9 +955,12 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
   .ww-mm-tree-add { width: auto; margin-top: 0; }
   .ww-mm-toolbar { position: static; }
 }
-/* Toolbar bleibt beim Scrollen sichtbar. top:124 lässt die Oberkante 3px unter die Kopfleiste (Ende 127px)
-   gleiten -> die Kopfleiste (z-index 1100) verdeckt sie dort, es bleibt KEIN Spalt, durch den Kacheln scrollen. */
-.ww-mm-toolbar { position: sticky; top: 124px; z-index: 30; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; padding: 12px 0 10px; background: var(--c-bg); }
+/* Toolbar bleibt beim Scrollen sichtbar. top:118 lässt die Oberkante ein paar px unter die Kopfleiste gleiten.
+   Der ::before-Streifen verlängert die deckende Fläche nach OBEN (14px) und fängt jede Rest-Lücke zwischen
+   Kopfleisten-Unterkante und Toolbar ab — er liegt im Leerraum über der Toolbar bzw. hinter dem (frosted)
+   Header, ist also unsichtbar, deckt aber durchscrollenden Inhalt zuverlässig ab (robust gegen Header-Höhe). */
+.ww-mm-toolbar { position: sticky; top: 118px; z-index: 30; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; padding: 12px 0 10px; background: var(--c-bg); }
+.ww-mm-toolbar::before { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: 14px; background: var(--c-bg); }
 .ww-mm-search { flex: 1 1 260px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--c-line); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: var(--fs-ui); background: #fff; color: var(--c-ink); }
 .ww-mm-upload { cursor: pointer; }
 .ww-mm-upload.is-busy { opacity: 0.75; cursor: progress; }
