@@ -17,6 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-11 — Medien-Manager: Mülleimer-SVG statt Emoji + Sticky-Leiste ohne Spalt (`5bdf92c`)
+- **Icon**: Der Kachel-Mülleimer nutzt jetzt dasselbe **SVG** wie die Reise-/Beitrags-Kacheln (`D_TRASH`,
+  `stroke=currentColor`) statt des 🗑-Emojis — einheitliche Optik.
+- **Sticky ohne Spalt**: Toolbar + Ordner-Baum kleben jetzt bei `top:124px` statt `132px`. Vorher blieb ein
+  5px-Spalt zwischen Kopfleisten-Unterkante (127px) und der Leiste (132px), durch den beim Scrollen Kachel-
+  Ränder sichtbar waren. Bei 124px gleitet die Oberkante 3px unter die Kopfleiste (z-index 1100 verdeckt sie
+  dort) → kein Spalt mehr. Verifiziert (lokaler Browser: SVG weiß, Toolbar klebt bündig, Inhalt scrollt darunter).
+- Dateien: `web/src/components/MediaManager.tsx`, `web/src/styles/global.css`.
+
 ## 2026-07-11 — Medien-Manager: „Load failed"-Löschbug behoben + Toolbar sticky + Mülleimer je Kachel (`e8c13e1`, `423b391`)
 - **Echter Bug „Löschen: Load failed" (`e8c13e1`)**: Nach dem DELETE (und dem Upload-Abschluss) pollt der Client
   den Request-Status. Tina baut diese URL **ohne** Versions-Segment (`content.tinajs.io/request-status/<id>/<req>`);

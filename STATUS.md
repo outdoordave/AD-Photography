@@ -46,8 +46,12 @@
 > hatte fälschlich `/1.6/` drin → Poll scheiterte NACH dem DELETE mit „Load failed" (deshalb schlug Löschen fehl
 > UND das Verschieben ließ die alte Datei liegen). Poll-URL korrigiert; `assetsBase`/DELETE/`upload_url` waren
 > korrekt. **Toolbar sticky + Mülleimer je Kachel (`423b391`):** obere Leiste bleibt beim Scrollen sichtbar
-> (`sticky top:132px`, mobil static; Bulk-Leiste war schon `fixed`); je Kachel ein 🗑 oben rechts → direkte
-> Lösch-Nachfrage (in der Mehrfachauswahl ausgeblendet). ⚠️ Der URL-Fix ist nur im echten CMS voll prüfbar.
+> (`sticky top:124px`, mobil static; Bulk-Leiste war schon `fixed`); je Kachel oben rechts ein Mülleimer
+> (**SVG wie die Beitrags-Kacheln**, nicht Emoji) → direkte Lösch-Nachfrage (in der Mehrfachauswahl
+> ausgeblendet). Sticky-`top` auf **124px** (statt 132): Oberkante gleitet 3px unter die Kopfleiste (Ende 127,
+> z-index 1100) → **kein Spalt** mehr, durch den Kacheln beim Scrollen sichtbar waren (`5bdf92c`). ⚠️ Der
+> URL-Fix (Löschen/Verschieben) ist nur im echten CMS voll prüfbar. Löschen entfernt die Datei **auch aus
+> GitHub** (Tina-Cloud committet die Entfernung aus `web/public/uploads/` autonom auf `main`).
 > ⚠️ **Nur im echten CMS prüfbar:** Hochladen/Löschen/**Verschieben+Umschreiben**/**Bulk-Löschen** (Assets-API,
 > **CORS-Risiko** beim Signed-PUT → falls unzuverlässig: mit David abgestimmter Rückmelde-Fall, KEIN
 > Auto-Wechsel auf Custom-Screen), „Verwendet in"-Treffer, Zuweisen, korrektes Ordner-Landen. Offline
