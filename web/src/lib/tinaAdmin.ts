@@ -25,6 +25,56 @@ export function authToken(): string | null {
   } catch (e) { return null; }
 }
 
+// JWT-Payload dekodieren (wie Tinas parseJwt): base64url -> JSON. Bei Fehler null.
+function parseJwt(token: string): any {
+  try {
+    const b64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    const json = decodeURIComponent(atob(b64).split('').map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+    return JSON.parse(json);
+  } catch (e) { return null; }
+}
+
+// FRISCHEN id_token holen — repliziert Tinas Client-Refresh (getRefreshedToken): access_token-JWT prüfen und,
+// wenn er (fast) abgelaufen ist (< 120 s Rest), per Cognito REFRESH_TOKEN_AUTH gegen den Issuer (`iss`) erneuern
+// und `tinacms-auth` zurückschreiben. Nötig, weil /medien-manager KEIN Tina-Client läuft, der das sonst tut —
+// sonst steht der id_token in langen Sitzungen und Content-API-Abfragen enden in „Fehler (HTTP 401)".
+let refreshInFlight: Promise<string | null> | null = null;
+export async function freshToken(): Promise<string | null> {
+  let toks: any;
+  try {
+    const raw = localStorage.getItem('tinacms-auth');
+    if (!raw) return null;
+    toks = JSON.parse(raw);
+  } catch (e) { return null; }
+  const access = toks && toks.access_token;
+  const refresh = toks && toks.refresh_token;
+  const claims = access ? parseJwt(access) : null;
+  // Kein prüfbarer access_token oder kein refresh_token -> nicht erneuerbar, bestehenden id_token nehmen.
+  if (!claims || !claims.exp || !claims.iss || !claims.client_id || !refresh) {
+    return (toks && (toks.id_token || toks.access_token)) || null;
+  }
+  if (Date.now() / 1000 < claims.exp - 120) return toks.id_token || null; // noch gültig
+  if (!refreshInFlight) {
+    refreshInFlight = (async () => {
+      try {
+        const res = await fetch(claims.iss, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-amz-json-1.1', 'x-amz-target': 'AWSCognitoIdentityProviderService.InitiateAuth' },
+          body: JSON.stringify({ ClientId: claims.client_id, AuthFlow: 'REFRESH_TOKEN_AUTH', AuthParameters: { REFRESH_TOKEN: refresh, DEVICE_KEY: null } }),
+        });
+        if (res.status !== 200) throw new Error('Refresh HTTP ' + res.status);
+        const j = await res.json();
+        const nt = { access_token: j.AuthenticationResult.AccessToken, id_token: j.AuthenticationResult.IdToken, refresh_token: refresh };
+        try { localStorage.setItem('tinacms-auth', JSON.stringify(nt, null, 2)); } catch (e) { /* egal */ }
+        return nt.id_token as string;
+      } catch (e) {
+        return (toks && toks.id_token) || null; // Fallback: alter Token (Aufrufer meldet ggf. weiter 401)
+      } finally { refreshInFlight = null; }
+    })();
+  }
+  return refreshInFlight;
+}
+
 // Tina-Editor-Route eines Dokuments. WICHTIG: exakt diese Form nutzt auch Tinas eigener Link
 // (belegt im Admin-Bundle: `/collections/edit/${_sys.collection.name}/~/${filename}`). Ein Weglassen
 // von „edit/" führt in den ORDNER-Browser („No documents found"). relativePath MIT Endung
@@ -40,7 +90,7 @@ export function newHref(collection: string): string {
 
 // Kleiner GraphQL-Helfer gegen die Tina-Content-API (mit Login-Token).
 export async function tinaGql(query: string, variables: Record<string, any> = {}): Promise<{ ok: boolean; data?: any; error?: string }> {
-  const token = authToken();
+  const token = await freshToken();
   if (!token) return { ok: false, error: 'Kein Login-Token gefunden — bitte im CMS neu anmelden.' };
   try {
     const res = await fetch(CONTENT_API_URL, {

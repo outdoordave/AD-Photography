@@ -8,7 +8,7 @@
 //
 // ⚠️ Der Browser-PUT auf die signierte Fremd-URL ist CORS-abhängig; offline nicht testbar. Falls das
 // im echten CMS scheitert, ist das der mit David abgestimmte „zurückmelden"-Fall (kein Auto-Fallback).
-import { authToken, CONTENT_API_URL, tinaGql } from './tinaAdmin';
+import { authToken, freshToken, CONTENT_API_URL, tinaGql } from './tinaAdmin';
 import { toLocalMedia, dedupeUploads } from '../../tina/fields/mediaPath';
 
 // CONTENT_API_URL = https://content.tinajs.io/1.6/content/<clientId>/github/<branch>
@@ -51,7 +51,7 @@ export type CloudResult = { ok: boolean; path?: string; error?: string };
 
 // Datei hochladen -> gibt den gespeicherten /uploads-Pfad zurück (für Manifest/Anzeige/Zuordnung).
 export async function uploadToCloud(file: File, directory: string): Promise<CloudResult> {
-  const token = authToken();
+  const token = await freshToken(); // ggf. erneuern + zurückschreiben, damit auth() gleich frisch liest
   if (!token) return { ok: false, error: 'Kein Login-Token — bitte im CMS anmelden.' };
   const { assetsBase, requestStatusBase } = parts();
   const path = joinPath(directory, file.name);
@@ -188,7 +188,7 @@ export async function assignImage(
 
 // Datei löschen (Pfad wie „/uploads/<dir>/<file>" ODER „<dir>/<file>").
 export async function deleteFromCloud(uploadsPath: string): Promise<CloudResult> {
-  const token = authToken();
+  const token = await freshToken(); // ggf. erneuern + zurückschreiben, damit auth() gleich frisch liest
   if (!token) return { ok: false, error: 'Kein Login-Token — bitte im CMS anmelden.' };
   const { assetsBase, requestStatusBase } = parts();
   const rel = uploadsPath.replace(/^\/?uploads\//, '').replace(/^\/+/, '');
