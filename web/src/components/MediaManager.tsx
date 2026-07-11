@@ -451,7 +451,9 @@ export default function MediaManager() {
 
       {/* Detail-Panel */}
       {sel ? (
-        <div className="ww-mm-detail">
+        <>
+        <div className="ww-mm-detail-backdrop" onClick={() => setSel(null)} />
+        <div className="ww-mm-detail" role="dialog" aria-label="Bild-Details">
           <button type="button" className="ww-mm-detail-close" onClick={() => setSel(null)} aria-label="Schließen">✕</button>
           <img className="ww-mm-detail-img" src={previewOf(sel)} alt="" />
           <div className="ww-mm-detail-name">{sel.split('/').pop()}</div>
@@ -476,6 +478,7 @@ export default function MediaManager() {
             <button type="button" className="btn ww-mm-delbtn" onClick={() => setDel(sel)} disabled={busy}>Löschen</button>
           </div>
         </div>
+        </>
       ) : null}
 
       {/* Lösch-Nachfrage */}
