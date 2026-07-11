@@ -41,6 +41,13 @@
 > Zuschnitt speichert Crop als Koordinaten im Feld (`{original,crop:{x,y,w,h}}`) → **keine zweite Datei**,
 > Original bleibt in Gebrauch und wird korrekt als „verwendet" erkannt; `a7406523-/a7406566-crop*.webp` sind
 > verwaiste Alt-Zuschnitte (nirgends referenziert → „nicht verwendet" korrekt, löschbar).
+> **Löschbug „Load failed" behoben (`e8c13e1`):** Nach DELETE/Upload pollt der Client den Request-Status; Tina
+> baut diese URL **ohne** Versions-Segment (`content.tinajs.io/request-status/<id>/<req>`), unser `parts()`
+> hatte fälschlich `/1.6/` drin → Poll scheiterte NACH dem DELETE mit „Load failed" (deshalb schlug Löschen fehl
+> UND das Verschieben ließ die alte Datei liegen). Poll-URL korrigiert; `assetsBase`/DELETE/`upload_url` waren
+> korrekt. **Toolbar sticky + Mülleimer je Kachel (`423b391`):** obere Leiste bleibt beim Scrollen sichtbar
+> (`sticky top:132px`, mobil static; Bulk-Leiste war schon `fixed`); je Kachel ein 🗑 oben rechts → direkte
+> Lösch-Nachfrage (in der Mehrfachauswahl ausgeblendet). ⚠️ Der URL-Fix ist nur im echten CMS voll prüfbar.
 > ⚠️ **Nur im echten CMS prüfbar:** Hochladen/Löschen/**Verschieben+Umschreiben**/**Bulk-Löschen** (Assets-API,
 > **CORS-Risiko** beim Signed-PUT → falls unzuverlässig: mit David abgestimmter Rückmelde-Fall, KEIN
 > Auto-Wechsel auf Custom-Screen), „Verwendet in"-Treffer, Zuweisen, korrektes Ordner-Landen. Offline

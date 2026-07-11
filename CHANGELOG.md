@@ -17,6 +17,21 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-11 — Medien-Manager: „Load failed"-Löschbug behoben + Toolbar sticky + Mülleimer je Kachel (`e8c13e1`, `423b391`)
+- **Echter Bug „Löschen: Load failed" (`e8c13e1`)**: Nach dem DELETE (und dem Upload-Abschluss) pollt der Client
+  den Request-Status. Tina baut diese URL **ohne** Versions-Segment (`content.tinajs.io/request-status/<id>/<req>`);
+  unser `parts()` hatte fälschlich ein `/1.6/` drin → der Poll-Fetch scheiterte **nach** dem eigentlichen DELETE
+  mit „Load failed". Deshalb schlug Löschen fehl **und** beim Verschieben blieb die alte Datei liegen (das
+  Duplikat aus dem Vor-Commit). `assetsBase`/DELETE/`upload_url` waren korrekt — nur die Poll-URL war falsch.
+- **Toolbar bleibt sichtbar (`423b391`)**: Obere Leiste (Suche/Sortierung/Auswählen/Hochladen) ist jetzt
+  `position:sticky; top:132px` (klebt unter der Kopfleiste, deckender Hintergrund); auf Mobil `static`. Die
+  Bulk-Auswahl-Leiste war schon `position:fixed` unten.
+- **Mülleimer je Kachel (`423b391`)**: kleines 🗑 oben rechts öffnet direkt die Lösch-Nachfrage (ohne erst die
+  Mehrfachauswahl). `span role="button"` (kein Button im Button), `stopPropagation` → keine Lightbox/Auswahl;
+  in der Mehrfachauswahl ausgeblendet. Verifiziert (lokaler Browser: 🗑 rendert, Klick öffnet „Bild löschen?"
+  für die richtige Datei, Lightbox bleibt zu; Toolbar sticky top:132 < Header-Ende 127).
+- Dateien: `web/src/lib/mediaCloud.ts`, `web/src/components/MediaManager.tsx`, `web/src/styles/global.css`.
+
 ## 2026-07-11 — Medien-Manager: Move-Teilfehler sichtbar + „Verwendet in" ohne Roh-Slug (`e9c764e`)
 Zwei Korrekturen nach Davids Rückmeldung:
 - **Verschieben ließ eine zweite Datei zurück, ohne Hinweis**: `moveInCloud` liefert bei geglücktem
