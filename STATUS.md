@@ -31,7 +31,16 @@
 > Lightbox (`e2249c0`):** Klick auf ein Bild öffnet eine Lightbox (Bild + Info-Panel: Name/Pfad/Verwendet-in/
 > Aktionen) mit Durchblättern (Pfeile + ←/→). **Ordner-Leiste sticky** unter der Kopfleiste (immer als
 > Drop-Ziel erreichbar). **DnD-Fix** `onDragEnter/preventDefault`. ⚠️ Verschieben braucht einen Zielordner
-> (sonst nur uploads-Wurzel = „identisch") + Cloud-Test im echten CMS.
+> (sonst nur uploads-Wurzel = „identisch") + Cloud-Test im echten CMS. **Move-Teilfehler + Badge-Klartext
+> (`e9c764e`):** Beim Verschieben wird ein Teil-Erfolg (kopiert + Verweise umgeschrieben, aber altes Löschen
+> gescheitert) jetzt als **Warnung** gezeigt und die alte Kachel bleibt sichtbar (nachlöschbar) — vorher
+> stilles grünes „verschoben" + ausgeblendet → nach Rebuild lag das Bild doppelt da. **Duplikat nach Move =
+> Zeichen, dass der Cloud-DELETE scheitert** (dessen echte Fehlermeldung wird nun sichtbar → ggf. Rückmelde-
+> Fall). „Verwendet in" zeigt bei Einzel-Seiten ohne Titelfeld (Startseite/Highlights) **keinen Roh-Slug**
+> mehr (`home-settings`), nur echte Titel als Klartext (`u.label !== u.filename`). **Crop-Hinweis:** aktueller
+> Zuschnitt speichert Crop als Koordinaten im Feld (`{original,crop:{x,y,w,h}}`) → **keine zweite Datei**,
+> Original bleibt in Gebrauch und wird korrekt als „verwendet" erkannt; `a7406523-/a7406566-crop*.webp` sind
+> verwaiste Alt-Zuschnitte (nirgends referenziert → „nicht verwendet" korrekt, löschbar).
 > ⚠️ **Nur im echten CMS prüfbar:** Hochladen/Löschen/**Verschieben+Umschreiben**/**Bulk-Löschen** (Assets-API,
 > **CORS-Risiko** beim Signed-PUT → falls unzuverlässig: mit David abgestimmter Rückmelde-Fall, KEIN
 > Auto-Wechsel auf Custom-Screen), „Verwendet in"-Treffer, Zuweisen, korrektes Ordner-Landen. Offline

@@ -17,6 +17,24 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-11 — Medien-Manager: Move-Teilfehler sichtbar + „Verwendet in" ohne Roh-Slug (`e9c764e`)
+Zwei Korrekturen nach Davids Rückmeldung:
+- **Verschieben ließ eine zweite Datei zurück, ohne Hinweis**: `moveInCloud` liefert bei geglücktem
+  Kopieren + Referenz-Umschreiben, aber gescheitertem Löschen der ALTEN Datei, `ok:true` **mit** einer
+  `error`-Warnung. `moveMany` hat diese Warnung bisher verschluckt (grünes „verschoben") und die alte
+  Kachel trotzdem ausgeblendet → nach Reload/Rebuild lag das Bild doppelt da (alt + neu), ohne Grund.
+  Jetzt: bei Teil-Erfolg **Warnung anzeigen** und die alte Kachel **sichtbar lassen** (manuell nachlöschbar);
+  nur bei echtem Voll-Erfolg wird die alte ausgeblendet. (Ein sauberer Move löscht die alte Datei weiterhin —
+  Duplikat = Zeichen, dass der Cloud-DELETE scheitert; dessen echte Fehlermeldung wird nun sichtbar.)
+- **„Verwendet in" zeigte Roh-Slugs**: Bei Einzel-Seiten ohne Titelfeld (Startseite → `home-settings`,
+  Highlights → `highlights`) fiel der Text auf den Datei-Slug zurück. Dieser wird nicht mehr angezeigt —
+  die Bereichs-Pille allein reicht; nur echte Titel (Album „USA 2023") stehen als Klartext dahinter
+  (Vergleich `u.label !== u.filename`).
+- Nebenbefund (kein Code): Die 4 Dateien `a7406523-crop*.webp` / `a7406566-crop*.webp` sind **verwaiste
+  Alt-Zuschnitte** (nirgends referenziert → „nicht verwendet" korrekt). Der aktuelle Zuschnitt speichert
+  Crop als Koordinaten im Feld (`{original,crop:{x,y,w,h}}`) → **keine zweite Datei**, Original bleibt in Gebrauch.
+- Datei: `web/src/components/MediaManager.tsx`. Commit: `e9c764e`.
+
 ## 2026-07-11 — Medien-Manager: Klick-Lightbox mit Infos + fixe Ordner-Leiste + DnD-Fix (`e2249c0`)
 Drei Wünsche in einem Rutsch:
 - **Klick-Lightbox**: Klick auf ein Bild öffnet jetzt eine **Lightbox** (großes Bild links, Info-Panel
