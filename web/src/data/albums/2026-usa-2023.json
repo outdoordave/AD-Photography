@@ -2,6 +2,8 @@
   "editor_language": "de",
   "name": "USA 2023",
   "name_en": "",
+  "note_de": "",
+  "note_en": "",
   "date": "2023-09-28",
   "linked_trip": "",
   "pin": {
@@ -13,8 +15,7 @@
     "/uploads/IMG_5936.webp",
     "/uploads/IMG_6001.webp",
     "/uploads/IMG_6502-2.webp",
-    "/uploads/IMG_6654-2.webp"
-  ],
-  "note_de": "",
-  "note_en": ""
+    "/uploads/IMG_6654-2.webp",
+    "/uploads/uploads/IMG_5312.webp"
+  ]
 }
