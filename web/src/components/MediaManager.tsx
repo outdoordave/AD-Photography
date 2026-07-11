@@ -297,20 +297,24 @@ export default function MediaManager() {
     const target = (targetDir || '').replace(/^\/+|\/+$/g, '');
     if (!paths.length || bulkBusy) return;
     setBulkBusy(true);
-    let okN = 0; let refsN = 0; let lastErr = '';
+    let okN = 0; let refsN = 0; let lastErr = ''; let warn = '';
     for (let i = 0; i < paths.length; i++) {
       setProgress(`Verschiebe ${i + 1}/${paths.length} …`);
       const r = await moveInCloud(paths[i], target);
       if (r.ok && r.newPath) {
         const np = r.newPath;
-        setGone((g) => new Set(g).add(paths[i]));
         setFresh((prev) => [{ path: np, url: np }, ...prev.filter((x) => x.path !== np)]);
         okN++; refsN += r.refs || 0;
+        // Teil-Erfolg: kopiert + Verweise umgeschrieben, aber die ALTE Datei blieb liegen (Löschen scheiterte).
+        // Dann die alte Kachel NICHT ausblenden — so kann man sie sehen und ggf. manuell löschen. Warnung zeigen.
+        if (r.error) warn = r.error;
+        else setGone((g) => new Set(g).add(paths[i]));
       } else { lastErr = r.error || 'Verschieben fehlgeschlagen'; break; }
     }
     if (sel && paths.indexOf(sel) !== -1) setSel(null);
     setBulkBusy(false); setProgress(''); setPicked(new Set());
     if (okN) showToast(`${okN} verschoben${refsN ? ` · ${refsN} Verweise angepasst` : ''} → ${target || 'uploads'}/`, 'success');
+    if (warn) showToast(warn, 'error');
     if (lastErr) showToast(lastErr, 'error');
   }
 
@@ -472,7 +476,13 @@ export default function MediaManager() {
                   : usage.items && usage.items.length ? (
                     <ul className="ww-mm-usage-list">
                       {usage.items.map((u, i) => (
-                        <li key={i}><span className="ww-mm-usage-coll">{COLL_LABEL[u.collection] || u.collection}</span> {u.label}</li>
+                        // Bei Einzel-Seiten (Startseite/Highlights/…) gibt es kein Titelfeld -> label fällt auf den
+                        // Datei-Slug zurück (z. B. „home-settings"). Diesen Roh-Slug NICHT anzeigen — die Bereichs-
+                        // Pille allein reicht. Nur echte Titel (z. B. Album „USA 2023") als Klartext dahinter zeigen.
+                        <li key={i}>
+                          <span className="ww-mm-usage-coll">{COLL_LABEL[u.collection] || u.collection}</span>
+                          {u.label && u.label !== u.filename ? <> {u.label}</> : null}
+                        </li>
                       ))}
                     </ul>
                   ) : <div className="ww-mm-usage-note ww-mm-usage-free">Unbenutzt — wird nirgends verwendet.</div>}
