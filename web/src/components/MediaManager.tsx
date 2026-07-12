@@ -18,7 +18,7 @@ type Fresh = { path: string; url: string };
 type PhotoExif = { aperture?: string; shutter?: string; iso?: string; focal?: string; lens?: string; taken?: string };
 type Meta = Record<string, { size: number; added: string; camera?: string; exif?: PhotoExif }>;
 type View = 'grid' | 'list' | 'details';
-type SortKey = 'name' | 'size' | 'date' | 'type' | 'camera' | 'unused';
+type SortKey = 'name' | 'size' | 'date' | 'type' | 'camera' | 'views' | 'unused';
 type SortDir = 'asc' | 'desc';
 
 const COLL_LABEL: Record<string, string> = {
@@ -27,7 +27,7 @@ const COLL_LABEL: Record<string, string> = {
 };
 
 const SORT_LABEL: Record<SortKey, string> = {
-  name: 'Name', size: 'Größe', date: 'Upload-Datum', type: 'Datei-Typ', camera: 'Kamera', unused: 'Unbenutzt zuerst',
+  name: 'Name', size: 'Größe', date: 'Upload-Datum', type: 'Datei-Typ', camera: 'Kamera', views: 'Am meisten angesehen', unused: 'Unbenutzt zuerst',
 };
 
 function relOf(p: string): string { return p.replace(/^\/uploads\//, ''); }
@@ -85,6 +85,7 @@ export default function MediaManager() {
   const [show, setShow] = React.useState<null | boolean>(null);
   const [manifest, setManifest] = React.useState<string[] | null>(null);
   const [meta, setMeta] = React.useState<Meta>({});
+  const [views, setViews] = React.useState<Record<string, number>>({}); // Dateiname -> Aufrufe (Umami)
   const [loadErr, setLoadErr] = React.useState('');
   const [folder, setFolder] = React.useState('');
   const [search, setSearch] = React.useState('');
@@ -211,6 +212,7 @@ export default function MediaManager() {
       .then((l: string[]) => setManifest(Array.isArray(l) ? l : []))
       .catch((e) => setLoadErr(e?.message || 'Mediathek nicht ladbar'));
     fetch('/uploads-meta.json', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : {})).then((m) => setMeta(m || {})).catch(() => {});
+    fetch('/uploads-views.json', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : {})).then((v) => setViews(v || {})).catch(() => {});
     // Alben für Upload-Ziel + „Nach Alben ordnen" (nur eingeloggt, best effort).
     listAlbumsForOrganize().then((r) => { if (r.ok) setAlbums(r.albums || []); }).catch(() => {});
   }, [show]);
@@ -244,6 +246,7 @@ export default function MediaManager() {
     else if (sortKey === 'date') d = (meta[a]?.added || '').localeCompare(meta[b]?.added || '');
     else if (sortKey === 'type') d = extOf(a).localeCompare(extOf(b)) || baseOf(a).localeCompare(baseOf(b));
     else if (sortKey === 'camera') d = (meta[a]?.camera || '￿').localeCompare(meta[b]?.camera || '￿') || baseOf(a).localeCompare(baseOf(b));
+    else if (sortKey === 'views') d = (views[baseOf(b)] || 0) - (views[baseOf(a)] || 0) || baseOf(a).localeCompare(baseOf(b)); // meiste zuerst bei „aufsteigend"
     else if (sortKey === 'unused') d = (isUsed(a) ? 1 : 0) - (isUsed(b) ? 1 : 0) || baseOf(a).localeCompare(baseOf(b));
     return d;
   };
@@ -562,6 +565,7 @@ export default function MediaManager() {
       <div className="ww-mm-lb-facts">
         <span>{fmtSize(meta[p]?.size)}</span><span>·</span><span>{extOf(p).toUpperCase() || '—'}</span><span>·</span><span>{fmtDate(meta[p]?.added)}</span>
         {meta[p]?.camera ? <><span>·</span><span className="ww-mm-fact-cam">📷 {meta[p]!.camera}</span></> : null}
+        {views[baseOf(p)] ? <><span>·</span><span className="ww-mm-fact-views">👁 {views[baseOf(p)]}×</span></> : null}
       </div>
       {(() => { const ex = meta[p]?.exif; if (!ex) return null; return (
         <dl className="ww-mm-exif">

@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "tinacms dev -c \"astro dev\"",
-    "build": "node scripts/gen-uploads-manifest.mjs && node scripts/fetch-social-thumbs.mjs && tinacms build -c \"astro build\" && node scripts/optimize-uploads.mjs",
+    "build": "node scripts/gen-uploads-manifest.mjs && node scripts/gen-uploads-views.mjs && node scripts/fetch-social-thumbs.mjs && tinacms build -c \"astro build\" && node scripts/optimize-uploads.mjs",
     "social:thumbs": "node scripts/fetch-social-thumbs.mjs",
     "astro:dev": "astro dev",
     "astro:build": "astro build",
