@@ -17,6 +17,25 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-12 — Medien-Manager: Finder-Ansichten + Sortierung + Auto-Ordner (`0da48f0`, `a5457b2`)
+Großer UX-Ausbau nach Absprache (Ansichten „voll", Sortierung inkl. Datum via Git, Auto-Ordner „beides",
+Master = Alben/Portfolio; „am meisten angesehen" bewusst aufgeschoben — s. u.).
+- **Metadaten-Manifest (`0da48f0`)**: `gen-uploads-manifest.mjs` schreibt zusätzlich `public/uploads-meta.json`
+  = `{ pfad: { size, added } }`. `size` = Bytes, `added` = ISO des ERST-Commits via `git log --diff-filter=A`
+  (echtes Upload-Datum; Fallback mtime). `uploads-manifest.json` (string[]) unverändert → Foto-Picker laufen weiter.
+- **mediaCloud (`0da48f0`)**: `findAllUsed()` (Bulk-„verwendet" für Unbenutzt-Sortierung) + `listAlbumsForOrganize()`.
+- **Drei Ansichten (`a5457b2`)**: Kacheln / Liste (Name/Typ/Größe/Datum) / Details (Liste + feste Vorschau-Leiste
+  rechts). In Details öffnet Klick nur die Vorschau (keine Lightbox), ←/→ blättert.
+- **Sortierung (`a5457b2`)**: Name / Größe / Upload-Datum / Datei-Typ / „Unbenutzt zuerst" + Richtung ↑/↓.
+- **Marquee-Fix (`a5457b2`)**: keine Text-Auswahl mehr (Body-Klasse `user-select:none`), Hit-Test über den
+  ganzen Inhalt, **Auto-Scroll** am Rand (Anker in Seiten-Koordinaten). DnD-Upload: ganzer Bereich sichtbar gerahmt.
+- **Auto-Ordner (`a5457b2`)**: „Nach Alben ordnen" (alben/<slug>/, Vorschau zuerst, Referenzen ziehen mit,
+  Journal außen vor) + Upload-Ziel-Auswahl „Album". **Master = Alben/Portfolio** (Storys/Reisen verweisen darauf).
+- **Aufgeschoben**: „Am meisten angesehen"-Sortierung. Datenlage steht (Lightbox sendet pro Bild `foto`-Events an
+  Umami), aber es fehlt die Datenleitung zurück → braucht Umami-Cloud-API-Abruf (API-Key, als Build-Schritt).
+- Dateien: `web/scripts/gen-uploads-manifest.mjs`, `web/public/uploads-meta.json`, `web/src/lib/mediaCloud.ts`,
+  `web/src/components/MediaManager.tsx`, `web/src/styles/global.css`.
+
 ## 2026-07-11 — Medien-Manager: „HTTP 401" bei manchen Bildern (Token-Refresh) + Rest-Sliver zu (`f8ba234`, `ee819b9`)
 - **„Verwendet in: Fehler (HTTP 401)" bei manchen Bildern (`f8ba234`)**: /medien-manager läuft ohne Tina-Client,
   der den Login-Token erneuert; der id_token lebt ~1h → erste Abfragen klappen, spätere geben 401 (daher „manche").

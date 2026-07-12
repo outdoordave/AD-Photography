@@ -65,6 +65,17 @@
 > Cognito `REFRESH_TOKEN_AUTH` und schreibt `tinacms-auth` zurück; `tinaGql` + Upload/Delete nutzen ihn.
 > **Rest-Sliver über der Toolbar (`ee819b9`):** Toolbar+Baum auf `top:118` + opaker `::before`-Deckstreifen
 > (14px) → durchgehende Deckung ab ~104px, robust gegen die Header-Höhe.
+> **Finder-Ausbau (12.07., `0da48f0`+`a5457b2`):** (a) **Metadaten-Manifest** `uploads-meta.json`
+> `{pfad:{size,added}}` (Größe + echtes Git-Upload-Datum; `uploads-manifest.json` bleibt string[] für die
+> Picker). (b) **Drei Ansichten** Kacheln/Liste/Details (Details = Liste + feste Vorschau-Leiste rechts; Klick
+> öffnet dort nur die Vorschau, keine Lightbox). (c) **Sortierung** Name/Größe/Datum/Typ/**Unbenutzt** (nutzt
+> `findAllUsed`) + Richtung ↑/↓. (d) **Marquee-Fix**: keine Text-Auswahl (`user-select:none`), Auto-Scroll am
+> Rand, Anker in Seiten-Koordinaten. (e) **DnD-Upload**: ganzer Bereich sichtbar gerahmt. (f) **Auto-Ordner**
+> „Nach Alben ordnen" (alben/<slug>/, Vorschau zuerst, Referenzen ziehen mit; Journal außen vor) + Upload-Ziel
+> „Album". **Master = Alben/Portfolio** (Storys/Reisen verweisen darauf). ⚠️ Nur im echten CMS prüfbar:
+> findAllUsed/„Verwendet in", Auto-Ordner-Verschieben, Album-Upload; Marquee-Auto-Scroll im echten Browser.
+> **Offen (Idee):** „Am meisten angesehen"-Sortierung — Daten existieren (Lightbox sendet `foto`-Events an
+> Umami), braucht aber Umami-Cloud-API-Abruf (API-Key, Build-Schritt). Noch nicht gebaut.
 > ⚠️ **Nur im echten CMS prüfbar:** Hochladen/Löschen/**Verschieben+Umschreiben**/**Bulk-Löschen** (Assets-API,
 > **CORS-Risiko** beim Signed-PUT → falls unzuverlässig: mit David abgestimmter Rückmelde-Fall, KEIN
 > Auto-Wechsel auf Custom-Screen), „Verwendet in"-Treffer, Zuweisen, korrektes Ordner-Landen. Offline
