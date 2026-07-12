@@ -212,7 +212,12 @@ export default function MediaManager() {
       .then((l: string[]) => setManifest(Array.isArray(l) ? l : []))
       .catch((e) => setLoadErr(e?.message || 'Mediathek nicht ladbar'));
     fetch('/uploads-meta.json', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : {})).then((m) => setMeta(m || {})).catch(() => {});
-    fetch('/uploads-views.json', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : {})).then((v) => setViews(v || {})).catch(() => {});
+    // Aufrufe LIVE aus dem KV-Zähler (/api/view); Fallback auf die statische Datei (lokaler Dev ohne Function).
+    fetch('/api/view', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .catch(() => fetch('/uploads-views.json', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : {})))
+      .then((v) => setViews(v && typeof v === 'object' ? v : {}))
+      .catch(() => {});
     // Alben für Upload-Ziel + „Nach Alben ordnen" (nur eingeloggt, best effort).
     listAlbumsForOrganize().then((r) => { if (r.ok) setAlbums(r.albums || []); }).catch(() => {});
   }, [show]);

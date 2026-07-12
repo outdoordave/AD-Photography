@@ -9,6 +9,20 @@ export function track(event: string, data?: Record<string, any>): void {
   }
 }
 
+// Eigener, cookieloser Bild-Aufruf-Zähler (Cloudflare KV via /api/view). Non-blocking, wirft nie.
+// Speist die Sortierung „Am meisten angesehen" im Medien-Manager — unabhängig von Umami (kein Bezahlplan).
+export function countView(name: string): void {
+  if (!name || typeof fetch === 'undefined') return;
+  try {
+    fetch('/api/view', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ img: name }),
+      keepalive: true,
+    }).catch(() => { /* Analyse darf die Seite nie stören */ });
+  } catch { /* egal */ }
+}
+
 // Dateiname aus einem /uploads-Pfad (für lesbare Event-Daten, ohne Query/Ordner).
 export function fileLabel(path: string): string {
   if (!path) return '';

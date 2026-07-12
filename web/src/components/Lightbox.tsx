@@ -1,6 +1,6 @@
 import React from 'react';
 import { normalizePath } from '../lib/stories';
-import { track, fileLabel } from '../lib/track';
+import { track, countView, fileLabel } from '../lib/track';
 
 // Wiederverwendbare Lightbox + Filmstreifen — 1:1-Port aus index.html
 // (openLightboxGallery/buildLbTrack/buildFilmstrip/observeLbSlides/setLbCurrent/
@@ -129,7 +129,9 @@ export default function Lightbox({ photos, startIndex, albumName = '', photoAlt 
     const readyT = setTimeout(() => { readyRef.current = true; }, 350);
 
     // Cookieloses Event: welches Bild wurde geöffnet (= angeklickt)? Album als Kontext.
-    track('foto', { bild: fileLabel(photos[startIndex]?.photo || ''), album: albumName || '—' });
+    const openedFile = fileLabel(photos[startIndex]?.photo || '');
+    track('foto', { bild: openedFile, album: albumName || '—' });
+    countView(openedFile); // eigener KV-Zähler für „Am meisten angesehen" (Medien-Manager)
 
     // IntersectionObserver: mittige Slide -> aktiv
     // (DOM-Element heißt bewusst trackEl — NICHT track, sonst überschattet es die
