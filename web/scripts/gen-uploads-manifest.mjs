@@ -9,14 +9,37 @@
 // publicFolder 'public'; von Astro als /uploads/ ausgeliefert). Ausgabeformat bleibt eine
 // flache Liste von „/uploads/<pfad>"-Strings (nur eben jetzt mit Unterordner-Pfaden) — die
 // bestehenden Picker funktionieren unverändert weiter.
+//
+// ZUSÄTZLICH: public/uploads-meta.json = { "/uploads/<pfad>": { size, added } } für den Medien-
+// Manager (Sortierung nach Größe/Datum). `size` = Dateigröße in Bytes. `added` = ISO-Datum des
+// ERST-Commits der Datei (echtes Upload-Datum) via Git; Fallback = Dateisystem-mtime (z. B. bei
+// noch nicht committeten Dateien oder Shallow-Clone). Der bestehende `uploads-manifest.json` bleibt
+// UNVERÄNDERT (string[]) — die Foto-Picker funktionieren weiter; die Meta-Datei ist rein additiv.
 import { existsSync, readdirSync, statSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, join, posix } from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 const IMG = /\.(jpe?g|png|webp|gif|avif)$/i;
 const root = resolve('public', 'uploads');
 
+// Erst-Commit-Datum (ISO) einer Datei aus der Git-Historie — echtes „hochgeladen am". Leerer String,
+// wenn nicht ermittelbar (uncommitted / Shallow-Clone / kein Git); der Aufrufer nimmt dann die mtime.
+function gitAddedISO(relFromCwd) {
+  try {
+    const out = execFileSync(
+      'git',
+      ['log', '--diff-filter=A', '--follow', '--format=%aI', '-1', '--', relFromCwd],
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] },
+    ).trim();
+    return out || '';
+  } catch { return ''; }
+}
+
+const list = [];
+const meta = {};
+
 /** Alle Bild-Dateien unter `dir` einsammeln, rel = Pfad relativ zu public/uploads (mit /). */
-function walk(dir, rel, out) {
+function walk(dir, rel) {
   let entries;
   try { entries = readdirSync(dir); } catch { return; }
   for (const name of entries) {
@@ -26,19 +49,23 @@ function walk(dir, rel, out) {
     try { st = statSync(abs); } catch { continue; }
     const relPath = rel ? posix.join(rel, name) : name;
     if (st.isDirectory()) {
-      walk(abs, relPath, out);
+      walk(abs, relPath);
     } else if (IMG.test(name)) {
-      out.push('/uploads/' + relPath);
+      const pub = '/uploads/' + relPath;
+      list.push(pub);
+      const added = gitAddedISO(posix.join('public/uploads', relPath)) || new Date(st.mtimeMs).toISOString();
+      meta[pub] = { size: st.size, added };
     }
   }
 }
 
-const list = [];
-if (existsSync(root)) walk(root, '', list);
+if (existsSync(root)) walk(root, '');
 list.sort((a, b) => a.localeCompare(b));
 
 const outDir = resolve('public');
-const out = resolve(outDir, 'uploads-manifest.json');
 mkdirSync(outDir, { recursive: true });
+const out = resolve(outDir, 'uploads-manifest.json');
 writeFileSync(out, JSON.stringify(list));
-console.log('[uploads-manifest]', list.length, 'Bilder (rekursiv) ->', out);
+const outMeta = resolve(outDir, 'uploads-meta.json');
+writeFileSync(outMeta, JSON.stringify(meta));
+console.log('[uploads-manifest]', list.length, 'Bilder (rekursiv) ->', out, '+ meta ->', outMeta);

@@ -123,6 +123,48 @@ export async function findUsage(uploadsPath: string): Promise<UsageResult> {
   return { ok: true, items };
 }
 
+// --- Bulk-„verwendet": ALLE referenzierten Bildpfade auf einmal (für die „Unbenutzt"-Sortierung) ----
+// Eine Abfrage über alle Sammlungen, alle Strings einsammeln und kanonisieren, zu einem großen Blob
+// zusammenfügen. Der Aufrufer prüft pro Bild `usedBlob.includes(pfad)` — deckt direkte Felder, Arrays
+// UND eingebettete Rich-Text-Bilder ab (wie findUsage, nur einmal für alles statt pro Bild).
+export async function findAllUsed(): Promise<{ ok: boolean; usedBlob?: string; error?: string }> {
+  if (!authToken()) return { ok: false, error: 'Kein Login-Token — bitte im CMS anmelden.' };
+  const q = 'query{ ' + USAGE_COLLECTIONS.map((c) => `${c}: ${c}Connection(first: 1000){ edges{ node{ _values } } }`).join(' ') + ' }';
+  const r = await tinaGql(q);
+  if (!r.ok || !r.data) return { ok: false, error: r.error || 'Nutzungs-Abfrage fehlgeschlagen.' };
+  const parts: string[] = [];
+  for (const c of USAGE_COLLECTIONS) {
+    const edges = (r.data[c] && r.data[c].edges) || [];
+    for (const e of edges) {
+      const node = e && e.node; if (!node || !node._values) continue;
+      const strs: string[] = []; collectStrings(node._values, strs);
+      for (const s of strs) parts.push(canonMedia(s));
+    }
+  }
+  return { ok: true, usedBlob: parts.join('\n') };
+}
+
+// --- Alben für „Nach Alben ordnen" -------------------------------------------------------------
+// Jedes Album mit slug (=Dateiname), Anzeigename und ALLEN referenzierten /uploads-Pfaden (aus dem
+// gesamten _values eingesammelt — deckt photos[] + evtl. Titelbilder ab).
+export type AlbumForOrganize = { slug: string; name: string; photos: string[] };
+export async function listAlbumsForOrganize(): Promise<{ ok: boolean; albums?: AlbumForOrganize[]; error?: string }> {
+  if (!authToken()) return { ok: false, error: 'Kein Login-Token — bitte im CMS anmelden.' };
+  const r = await tinaGql('query{ albenConnection(first: 1000){ edges{ node{ _sys{ filename } _values } } } }');
+  if (!r.ok || !r.data) return { ok: false, error: r.error || 'Album-Abfrage fehlgeschlagen.' };
+  const edges = (r.data.albenConnection && r.data.albenConnection.edges) || [];
+  const albums: AlbumForOrganize[] = [];
+  for (const e of edges) {
+    const n = e && e.node; const v = (n && n._values) || {};
+    const slug = (n && n._sys && n._sys.filename) || '';
+    if (!slug) continue;
+    const strs: string[] = []; collectStrings(v, strs);
+    const photos = Array.from(new Set(strs.map(canonMedia).filter((s) => s.indexOf('/uploads/') !== -1)));
+    albums.push({ slug, name: v.name || v.title_de || v.title || slug, photos });
+  }
+  return { ok: true, albums };
+}
+
 // --- „Diesem Inhalt zuweisen": Bild einem Feld eines Dokuments zuordnen -------------------------
 // Zuweisbare TOP-LEVEL-Bildfelder je Sammlung (Einzelwert = ersetzen, Liste = anhängen). Verschachtelte
 // Array-Felder (reisen.stops[], ueber_uns.persons[], reisen.gallery[]) und Rich-Text-Bilder sind hier
