@@ -17,6 +17,11 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-12 — Medien-Manager: „Nach Alben ordnen"-Button lädt Alben beim Klick (Fix)
+- Der Button war  bis die Cloud-Album-Abfrage zurückkam; scheiterte/hing sie, blieb er stumm deaktiviert.
+  Jetzt lädt der Klick die Alben on-demand (Spinner „Lade Alben …"), öffnet dann die Vorschau, und zeigt bei
+  Fehler einen Toast. Datei: .
+
 ## 2026-07-12 — Medien-Manager: Foto-EXIF (Blende/ISO/…) + „Am meisten angesehen" (`1e22a77`, `f2558a5`)
 - **Foto-EXIF (`1e22a77`)**: Kamera-Erkennung erweitert um **Blende, Belichtungszeit, ISO, Brennweite
   (+ KB-Äquiv.), Objektiv, Aufnahmedatum**. Build liest die ExifIFD-Tags (`exifCamera.mjs` → `exif` in

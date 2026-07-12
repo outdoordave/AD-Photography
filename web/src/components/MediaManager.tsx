@@ -127,6 +127,7 @@ export default function MediaManager() {
   const [newName, setNewName] = React.useState('');
   // Alben (für Upload-Ziel + „Nach Alben ordnen").
   const [albums, setAlbums] = React.useState<AlbumForOrganize[] | null>(null);
+  const [albumsLoading, setAlbumsLoading] = React.useState(false);
   const [organizeOpen, setOrganizeOpen] = React.useState(false);
   // Upload-Fenster (eigenes Modal mit Drop-Feld + Zielwahl statt allem in der Toolbar).
   const [uploadOpen, setUploadOpen] = React.useState(false);
@@ -435,6 +436,16 @@ export default function MediaManager() {
   })).filter((a) => a.photos.length);
   const organizeCount = organizePlan.reduce((n, a) => n + a.photos.length, 0);
 
+  // Button-Klick: Alben ggf. erst jetzt laden (mit Spinner + Fehler-Hinweis), dann Vorschau öffnen.
+  async function openOrganize() {
+    if (albums) { setOrganizeOpen(true); return; }
+    setAlbumsLoading(true);
+    const r = await listAlbumsForOrganize();
+    setAlbumsLoading(false);
+    if (r.ok) { setAlbums(r.albums || []); setOrganizeOpen(true); }
+    else showToast(r.error || 'Alben konnten nicht geladen werden — im CMS angemeldet?', 'error');
+  }
+
   async function doOrganize() {
     setOrganizeOpen(false);
     const flat = organizePlan.flatMap((a) => a.photos.map((ph) => ({ ph, target: `alben/${a.slug}` })));
@@ -647,8 +658,8 @@ export default function MediaManager() {
             ＋ Neuer Ordner{folder ? ` in ${folder}/` : ''}
           </button>
         )}
-        <button type="button" className="ww-mm-tree-organize" onClick={() => setOrganizeOpen(true)} disabled={bulkBusy || !albums} title="Fotos jedes Albums in alben/<slug>/ einsortieren">
-          🗃️ Nach Alben ordnen{organizeCount ? ` (${organizeCount})` : ''}
+        <button type="button" className="ww-mm-tree-organize" onClick={openOrganize} disabled={bulkBusy || albumsLoading} title="Fotos jedes Albums in alben/<slug>/ einsortieren">
+          {albumsLoading ? <><span className="ww-spinner" />Lade Alben …</> : <>🗃️ Nach Alben ordnen{organizeCount ? ` (${organizeCount})` : ''}</>}
         </button>
       </aside>
 
