@@ -100,4 +100,62 @@ export function readCamera(buf) {
   return cameraName(make, model);
 }
 
+// --- Fotografen-Werte (Blende/Belichtung/ISO/Brennweite/Objektiv/Aufnahmedatum) -----------------
+// Generischer IFD-Leser (IFD0 + ExifIFD). Rationals als [Zähler, Nenner].
+function readTiffPhoto(t) {
+  if (!t || t.length < 8) return {};
+  const le = t[0] === 0x49 && t[1] === 0x49;
+  if (!le && !(t[0] === 0x4d && t[1] === 0x4d)) return {};
+  const u16 = (o) => (le ? t[o] | (t[o + 1] << 8) : (t[o] << 8) | t[o + 1]);
+  const u32 = (o) => (le ? (t[o] | (t[o + 1] << 8) | (t[o + 2] << 16) | (t[o + 3] << 24)) : ((t[o] << 24) | (t[o + 1] << 16) | (t[o + 2] << 8) | t[o + 3])) >>> 0;
+  if (u16(2) !== 0x2a) return {};
+  const readIFD = (off, want) => {
+    const res = {};
+    if (off + 2 > t.length) return res;
+    const n = u16(off);
+    for (let i = 0; i < n; i++) {
+      const e = off + 2 + i * 12;
+      if (e + 12 > t.length) break;
+      const tag = u16(e); const key = want[tag]; if (!key) continue;
+      const type = u16(e + 2); const count = u32(e + 4);
+      const elSize = type === 3 ? 2 : type === 4 ? 4 : type === 5 ? 8 : 1;
+      const total = elSize * count;
+      const vo = total <= 4 ? e + 8 : u32(e + 8);
+      if (type === 2) { let s = ''; for (let j = 0; j < count; j++) { const c = t[vo + j]; if (c === 0) break; s += String.fromCharCode(c); } res[key] = s.trim(); }
+      else if (vo + elSize > t.length) continue;
+      else if (type === 3) res[key] = u16(vo);
+      else if (type === 4) res[key] = u32(vo);
+      else if (type === 5) res[key] = [u32(vo), u32(vo + 4)];
+    }
+    return res;
+  };
+  const ifd0 = readIFD(u32(4), { 0x010f: 'make', 0x0110: 'model', 0x8769: 'exifPtr' });
+  const out = { make: ifd0.make, model: ifd0.model, exif: {} };
+  if (ifd0.exifPtr) out.exif = readIFD(ifd0.exifPtr, { 0x829a: 'exposure', 0x829d: 'fnum', 0x8827: 'iso', 0x9003: 'taken', 0x920a: 'focal', 0xa405: 'focal35', 0xa434: 'lens' });
+  return out;
+}
+
+const num = (r) => (Array.isArray(r) && r[1] ? r[0] / r[1] : null);
+function fmtExif(ex) {
+  const out = {};
+  const f = num(ex.fnum); if (f) out.aperture = 'f/' + (Math.round(f * 10) / 10).toString().replace(/\.0$/, '');
+  const s = num(ex.exposure); if (s) out.shutter = s >= 1 ? (Math.round(s * 10) / 10) + ' s' : '1/' + Math.round(1 / s) + ' s';
+  if (ex.iso != null) out.iso = 'ISO ' + ex.iso;
+  const fl = num(ex.focal); if (fl) out.focal = Math.round(fl) + ' mm' + (ex.focal35 ? ` (KB ${ex.focal35} mm)` : '');
+  if (ex.lens) out.lens = ex.lens;
+  if (ex.taken && /^\d{4}:\d{2}:\d{2}/.test(ex.taken)) { const [d] = ex.taken.split(' '); const [y, mo, da] = d.split(':'); out.taken = `${da}.${mo}.${y}`; }
+  return out;
+}
+
+// Öffentlich: Kamera + formatierte Fotografen-Werte. { camera?, exif?: {aperture,shutter,iso,focal,lens,taken} }.
+export function readPhotoInfo(buf) {
+  const tiff = tiffFromJpeg(buf) || tiffFromWebp(buf);
+  if (!tiff) return {};
+  const info = readTiffPhoto(tiff);
+  const res = {};
+  const cam = cameraName(info.make, info.model); if (cam) res.camera = cam;
+  const ex = fmtExif(info.exif || {}); if (Object.keys(ex).length) res.exif = ex;
+  return res;
+}
+
 export { tiffFromJpeg, tiffFromWebp, readMakeModel };

@@ -15,7 +15,8 @@ import { detectEncoder, toOptimized, type EncoderMode } from '../../tina/fields/
 // „Nach Alben ordnen". Nur bei Login sichtbar. iPad-tauglich (Tap + Datei-Dialog).
 
 type Fresh = { path: string; url: string };
-type Meta = Record<string, { size: number; added: string; camera?: string }>;
+type PhotoExif = { aperture?: string; shutter?: string; iso?: string; focal?: string; lens?: string; taken?: string };
+type Meta = Record<string, { size: number; added: string; camera?: string; exif?: PhotoExif }>;
 type View = 'grid' | 'list' | 'details';
 type SortKey = 'name' | 'size' | 'date' | 'type' | 'camera' | 'unused';
 type SortDir = 'asc' | 'desc';
@@ -562,6 +563,16 @@ export default function MediaManager() {
         <span>{fmtSize(meta[p]?.size)}</span><span>·</span><span>{extOf(p).toUpperCase() || '—'}</span><span>·</span><span>{fmtDate(meta[p]?.added)}</span>
         {meta[p]?.camera ? <><span>·</span><span className="ww-mm-fact-cam">📷 {meta[p]!.camera}</span></> : null}
       </div>
+      {(() => { const ex = meta[p]?.exif; if (!ex) return null; return (
+        <dl className="ww-mm-exif">
+          {ex.aperture ? <><dt>Blende</dt><dd>{ex.aperture}</dd></> : null}
+          {ex.shutter ? <><dt>Belichtung</dt><dd>{ex.shutter}</dd></> : null}
+          {ex.iso ? <><dt>ISO</dt><dd>{ex.iso.replace(/^ISO /, '')}</dd></> : null}
+          {ex.focal ? <><dt>Brennweite</dt><dd>{ex.focal}</dd></> : null}
+          {ex.taken ? <><dt>Aufnahme</dt><dd>{ex.taken}</dd></> : null}
+          {ex.lens ? <><dt>Objektiv</dt><dd>{ex.lens}</dd></> : null}
+        </dl>
+      ); })()}
       <div className="ww-mm-usage">
         <div className="ww-mm-usage-title">Verwendet in</div>
         {usage.loading ? <div className="ww-mm-usage-note">wird geprüft …</div>

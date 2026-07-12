@@ -4,13 +4,20 @@
 // (die mit Maker-Note + Thumbnail schnell 50 KB groß wird und das WebP aufblähen würde).
 // Reine Uint8Array-Logik (kein DOM), damit sie auch in Node round-trip-getestet werden kann.
 
-// Bequem-Helfer: aus der Quelldatei einen schlanken EXIF-Block (nur Kamera) bauen. null = keine Kamera.
+// Roh-Foto-EXIF (Kamera + Fotografen-Werte als Rohdaten). Rationals als [Zähler, Nenner].
+export type PhotoTags = {
+  make?: string; model?: string;
+  exif?: { exposure?: [number, number]; fnum?: [number, number]; iso?: number; taken?: string; focal?: [number, number]; focal35?: number; lens?: string };
+};
+
+// Bequem-Helfer: aus der Quelldatei einen SCHLANKEN EXIF-Block (Kamera + Foto-Werte, ~150 B, ohne Thumbnail/
+// Maker-Note) bauen — zum Wieder-Einmuxen ins WebP. null = keine EXIF/Kamera.
 export function slimExifForWebp(srcBytes: Uint8Array): Uint8Array | null {
   const full = extractExifTiff(srcBytes);
   if (!full) return null;
-  const { make, model } = readMakeModel(full);
-  if (!make && !model) return null;
-  return buildMinimalExifTiff(make || '', model || '');
+  const info = readTiffPhoto(full);
+  if (!info.make && !info.model && (!info.exif || !Object.keys(info.exif).length)) return null;
+  return buildExifTiff(info);
 }
 
 // --- EXIF-TIFF aus der Quelle extrahieren (JPEG-APP1 oder WebP-EXIF-Chunk) ----------------------
@@ -18,59 +25,85 @@ export function extractExifTiff(bytes: Uint8Array): Uint8Array | null {
   return tiffFromJpeg(bytes) || tiffFromWebp(bytes);
 }
 
-// Make (0x010F) + Model (0x0110) aus einem TIFF-Block lesen (nur IFD0, ASCII).
-export function readMakeModel(tiff: Uint8Array): { make?: string; model?: string } {
-  if (!tiff || tiff.length < 8) return {};
-  const le = tiff[0] === 0x49 && tiff[1] === 0x49;
-  if (!le && !(tiff[0] === 0x4d && tiff[1] === 0x4d)) return {};
-  const u16 = (o: number) => (le ? tiff[o] | (tiff[o + 1] << 8) : (tiff[o] << 8) | tiff[o + 1]);
-  const u32 = (o: number) => (le ? (tiff[o] | (tiff[o + 1] << 8) | (tiff[o + 2] << 16) | (tiff[o + 3] << 24)) >>> 0
-    : ((tiff[o] << 24) | (tiff[o + 1] << 16) | (tiff[o + 2] << 8) | tiff[o + 3]) >>> 0);
+// Foto-Tags aus einem TIFF-Block lesen: IFD0 (Make/Model + ExifIFD-Zeiger) und die ExifIFD (Belichtung,
+// Blende, ISO, Aufnahmedatum, Brennweite, KB-Äquiv., Objektiv). Rationals als [Zähler, Nenner].
+export function readTiffPhoto(t: Uint8Array): PhotoTags {
+  if (!t || t.length < 8) return {};
+  const le = t[0] === 0x49 && t[1] === 0x49;
+  if (!le && !(t[0] === 0x4d && t[1] === 0x4d)) return {};
+  const u16 = (o: number) => (le ? t[o] | (t[o + 1] << 8) : (t[o] << 8) | t[o + 1]);
+  const u32 = (o: number) => (le ? (t[o] | (t[o + 1] << 8) | (t[o + 2] << 16) | (t[o + 3] << 24)) : ((t[o] << 24) | (t[o + 1] << 16) | (t[o + 2] << 8) | t[o + 3])) >>> 0;
   if (u16(2) !== 0x2a) return {};
-  const ifd = u32(4);
-  if (ifd + 2 > tiff.length) return {};
-  const n = u16(ifd);
-  const out: { make?: string; model?: string } = {};
-  for (let i = 0; i < n; i++) {
-    const e = ifd + 2 + i * 12;
-    if (e + 12 > tiff.length) break;
-    const tag = u16(e);
-    if (tag !== 0x010f && tag !== 0x0110) continue;
-    const count = u32(e + 4);
-    const off = count <= 4 ? e + 8 : u32(e + 8);
-    if (off + count > tiff.length) continue;
-    let s = '';
-    for (let j = 0; j < count; j++) { const c = tiff[off + j]; if (c === 0) break; s += String.fromCharCode(c); }
-    s = s.trim();
-    if (tag === 0x010f) out.make = s; else out.model = s;
-  }
+  const readIFD = (off: number, want: Record<number, string>): Record<string, any> => {
+    const res: Record<string, any> = {};
+    if (off + 2 > t.length) return res;
+    const n = u16(off);
+    for (let i = 0; i < n; i++) {
+      const e = off + 2 + i * 12;
+      if (e + 12 > t.length) break;
+      const tag = u16(e); const key = want[tag]; if (!key) continue;
+      const type = u16(e + 2); const count = u32(e + 4);
+      const elSize = type === 3 ? 2 : type === 4 ? 4 : type === 5 ? 8 : 1;
+      const total = elSize * count;
+      const vo = total <= 4 ? e + 8 : u32(e + 8);
+      if (type === 2) { let s = ''; for (let j = 0; j < count; j++) { const c = t[vo + j]; if (c === 0) break; s += String.fromCharCode(c); } res[key] = s.trim(); }
+      else if (vo + elSize > t.length) continue;
+      else if (type === 3) res[key] = u16(vo);
+      else if (type === 4) res[key] = u32(vo);
+      else if (type === 5) res[key] = [u32(vo), u32(vo + 4)];
+    }
+    return res;
+  };
+  const ifd0 = readIFD(u32(4), { 0x010f: 'make', 0x0110: 'model', 0x8769: 'exifPtr' });
+  const out: PhotoTags = { make: ifd0.make, model: ifd0.model, exif: {} };
+  if (ifd0.exifPtr) out.exif = readIFD(ifd0.exifPtr, { 0x829a: 'exposure', 0x829d: 'fnum', 0x8827: 'iso', 0x9003: 'taken', 0x920a: 'focal', 0xa405: 'focal35', 0xa434: 'lens' });
   return out;
 }
 
-// Minimalen little-endian TIFF-Block mit NUR Make+Model bauen. Kurze Strings (<=4 Byte inkl. NUL) MÜSSEN
-// inline stehen (so liest sie auch readMakeModel) — sonst per Offset in den Datenbereich.
-export function buildMinimalExifTiff(make: string, model: string): Uint8Array {
-  const enc = (s: string) => { const a = Array.from(s).map((c) => c.charCodeAt(0) & 0xff); a.push(0); return a; };
-  const tags: { tag: number; bytes: number[] }[] = [];
-  if (make) tags.push({ tag: 0x010f, bytes: enc(make) });
-  if (model) tags.push({ tag: 0x0110, bytes: enc(model) });
-  const n = tags.length;
-  const headerLen = 8;              // "II" + 0x2A + IFD0-Offset(8)
-  const ifdLen = 2 + n * 12 + 4;    // count + Einträge + next-IFD(0)
-  let dataOff = headerLen + ifdLen;  // Beginn des Datenbereichs
-  const dataParts: number[][] = [];
-  const b: number[] = [0x49, 0x49, 0x2a, 0x00, 0x08, 0x00, 0x00, 0x00, n & 255, (n >> 8) & 255];
-  let curData = dataOff;
-  for (const { tag, bytes } of tags) {
-    b.push(tag & 255, (tag >> 8) & 255, 0x02, 0x00);                 // tag + type(ASCII)
-    const cnt = bytes.length;
-    b.push(cnt & 255, (cnt >> 8) & 255, (cnt >> 16) & 255, (cnt >> 24) & 255);
-    if (cnt <= 4) { const v = [...bytes]; while (v.length < 4) v.push(0); b.push(v[0], v[1], v[2], v[3]); }
-    else { b.push(curData & 255, (curData >> 8) & 255, (curData >> 16) & 255, (curData >> 24) & 255); dataParts.push(bytes); curData += cnt; }
-  }
-  b.push(0, 0, 0, 0); // keine weitere IFD
-  for (const d of dataParts) b.push(...d);
-  return new Uint8Array(b);
+// Schlanken little-endian TIFF-Block bauen: IFD0 (Make, Model, ExifIFD-Zeiger) + ExifIFD (Foto-Werte).
+// Werte >4 Byte (Rationals, längere Strings) liegen im gemeinsamen Datenbereich; Offsets absolut ab TIFF-Start.
+export function buildExifTiff(info: PhotoTags): Uint8Array {
+  const le16 = (n: number) => [n & 255, (n >> 8) & 255];
+  const le32 = (n: number) => [n & 255, (n >> 8) & 255, (n >> 16) & 255, (n >> 24) & 255];
+  const ascii = (s: string) => { const a = Array.from(String(s)).map((c) => c.charCodeAt(0) & 255); a.push(0); return a; };
+  const rat = (r: [number, number]) => [...le32(r[0] >>> 0), ...le32(r[1] >>> 0)];
+  type Ent = { tag: number; type: number; count: number; val: number[] };
+  const mk = (tag: number, type: number, val: number[], count?: number): Ent => ({ tag, type, count: count ?? (type === 2 ? val.length : 1), val });
+  const E = info.exif || {};
+  const ifd0: Ent[] = [];
+  if (info.make) ifd0.push(mk(0x010f, 2, ascii(info.make)));
+  if (info.model) ifd0.push(mk(0x0110, 2, ascii(info.model)));
+  const ex: Ent[] = [];
+  if (E.exposure) ex.push(mk(0x829a, 5, rat(E.exposure)));
+  if (E.fnum) ex.push(mk(0x829d, 5, rat(E.fnum)));
+  if (E.iso != null) ex.push(mk(0x8827, 3, le16(E.iso)));
+  if (E.taken) ex.push(mk(0x9003, 2, ascii(E.taken)));
+  if (E.focal) ex.push(mk(0x920a, 5, rat(E.focal)));
+  if (E.focal35 != null) ex.push(mk(0xa405, 3, le16(E.focal35)));
+  if (E.lens) ex.push(mk(0xa434, 2, ascii(E.lens)));
+  const haveExif = ex.length > 0;
+  const ifd0Count = ifd0.length + (haveExif ? 1 : 0);
+  const ifd0Size = 2 + ifd0Count * 12 + 4;
+  const exifOff = 8 + ifd0Size;
+  const exifSize = haveExif ? 2 + ex.length * 12 + 4 : 0;
+  let dataOff = 8 + ifd0Size + exifSize; // Beginn Datenbereich (gerade, s. Größen)
+  const data: number[] = [];
+  const emit = (entries: Ent[], withExifPtr: boolean): number[] => {
+    const list = entries.slice();
+    if (withExifPtr) list.push(mk(0x8769, 4, le32(exifOff)));
+    list.sort((a, b) => a.tag - b.tag); // TIFF verlangt aufsteigende Tag-Reihenfolge
+    const out = [...le16(list.length)];
+    for (const e of list) {
+      out.push(...le16(e.tag), ...le16(e.type), ...le32(e.count));
+      if (e.val.length <= 4) { const v = [...e.val]; while (v.length < 4) v.push(0); out.push(...v.slice(0, 4)); }
+      else { out.push(...le32(dataOff)); data.push(...e.val); dataOff += e.val.length; if (dataOff & 1) { data.push(0); dataOff++; } }
+    }
+    out.push(...le32(0)); // keine weitere IFD
+    return out;
+  };
+  const ifd0Bytes = emit(ifd0, haveExif);
+  const exifBytes = haveExif ? emit(ex, false) : [];
+  return new Uint8Array([0x49, 0x49, 0x2a, 0x00, ...le32(8), ...ifd0Bytes, ...exifBytes, ...data]);
 }
 
 function tiffFromJpeg(buf: Uint8Array): Uint8Array | null {

@@ -18,7 +18,7 @@
 import { existsSync, readdirSync, statSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, join, posix } from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { readCamera } from './lib/exifCamera.mjs';
+import { readPhotoInfo } from './lib/exifCamera.mjs';
 
 const IMG = /\.(jpe?g|png|webp|gif|avif)$/i;
 const root = resolve('public', 'uploads');
@@ -56,8 +56,8 @@ function walk(dir, rel) {
       list.push(pub);
       const added = gitAddedISO(posix.join('public/uploads', relPath)) || new Date(st.mtimeMs).toISOString();
       const entry = { size: st.size, added };
-      // Kamera aus EXIF (JPG-APP1 ODER WebP-EXIF-Chunk); nur setzen, wenn erkannt.
-      try { const cam = readCamera(readFileSync(abs)); if (cam) entry.camera = cam; } catch { /* egal */ }
+      // Kamera + Fotografen-Werte aus EXIF (JPG-APP1 ODER WebP-EXIF-Chunk); nur setzen, wenn vorhanden.
+      try { const info = readPhotoInfo(readFileSync(abs)); if (info.camera) entry.camera = info.camera; if (info.exif) entry.exif = info.exif; } catch { /* egal */ }
       meta[pub] = entry;
     }
   }
