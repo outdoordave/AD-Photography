@@ -1,14 +1,14 @@
 {
+  "design": "luftig",
   "order": 5,
   "title": "Alaska 2026",
   "title_en": "Alaska 2026",
   "date": "2026-10-01",
   "meta_de": "Oktober–November 2026 · kommende Reise · Kalifornien & Alaska",
   "meta_en": "October–November 2026 · upcoming trip · California & Alaska",
-  "summary_de": "Unsere kommende große Reise: zuerst die liebgewonnenen Orte Kaliforniens wieder besuchen, dann hoch in den hohen Norden — Anchorage, Denali, Fairbanks bis hinauf nach Coldfoot am Polarkreis. Die Vorfreude ist riesig.",
-  "summary_en": "Our upcoming big trip: first revisiting our favorite places in California, then up to the far north — Anchorage, Denali, Fairbanks all the way up to Coldfoot near the Arctic Circle. We can hardly wait.",
+  "summary_de": "Unsere kommende große Reise: zuerst die liebgewonnenen Orte Kaliforniens wieder besuchen, dann hoch in den hohen Norden — Anchorage, Denali, Fairbanks bis hinauf nach Coldfoot am Polarkreis. Die Vorfreude ist riesig.\n",
+  "summary_en": "Our upcoming big trip: first revisiting our favorite places in California, then up to the far north — Anchorage, Denali, Fairbanks all the way up to Coldfoot near the Arctic Circle. We can hardly wait.\n",
   "upcoming": true,
-  "design": "luftig",
   "stops": [
     {
       "name": "Dresden",
@@ -17,14 +17,17 @@
       "location": "{\"type\":\"Point\",\"coordinates\":[13.769481,51.134299]}",
       "title_de": "DRS Flughafen ",
       "date_de": "23.10.",
-      "text_de": "Los geht mal wieder in den lang ersehnten Urlaub. Auf auf ins Land der unbegrenzten Möglichkeiten!! USA"
+      "text_de": "Los geht mal wieder in den lang ersehnten Urlaub. Auf auf ins Land der unbegrenzten Möglichkeiten!! USA\n",
+      "text_en": ""
     },
     {
       "name": "FRA- Airport",
       "kind": "intermediate",
       "arriveBy": "flight",
       "location": "{\"type\":\"Point\",\"coordinates\":[8.5552,50.024413]}",
-      "title_de": "FRA - Airport"
+      "title_de": "FRA - Airport",
+      "text_de": "",
+      "text_en": ""
     },
     {
       "name": "San Francisco",
@@ -35,11 +38,11 @@
       "title_en": "San Francisco",
       "date_de": "23.–25. Okt",
       "date_en": "Oct 23–25",
-      "text_de": "Der Start unserer Best-of-Runde: zwei Tage in San Francisco, bevor es die Küste hinunter geht.",
-      "text_en": "The start of our best-of loop: two days in San Francisco before heading down the coast.",
-      "photo": "/uploads/img_0206.jpg",
+      "text_de": "Der Start unserer Best-of-Runde: zwei Tage in San Francisco, bevor es die Küste hinunter geht.\n",
+      "text_en": "The start of our best-of loop: two days in San Francisco before heading down the coast.\n",
+      "photo": "/uploads/alben/2024-erste-fotos/img_0206.jpg",
       "photos": [
-        "/uploads/img_5273.jpg",
+        "/uploads/uploads/alben/2024-erste-fotos/img_5273.jpg",
         "/uploads/img_1418-2.jpg"
       ],
       "video": "",
@@ -52,8 +55,8 @@
       "title_en": "Morro Bay",
       "date_de": "25.–26. Okt",
       "date_en": "Oct 25–26",
-      "text_de": "Wieder die Ottern beim Spielen beobachten und ein Stück Highway 1 genießen.",
-      "text_en": "Watching the otters play again and enjoying a stretch of Highway 1.",
+      "text_de": "Wieder die Ottern beim Spielen beobachten und ein Stück Highway 1 genießen.\n",
+      "text_en": "Watching the otters play again and enjoying a stretch of Highway 1.\n",
       "photos": [],
       "video": "",
       "youtube": ""
@@ -65,8 +68,8 @@
       "title_en": "Los Angeles",
       "date_de": "26.–28. Okt",
       "date_en": "Oct 26–28",
-      "text_de": "Ein Wiedersehen mit der Stadt der Engel, bevor wir ins Yosemite-Hochland aufbrechen.",
-      "text_en": "A reunion with the City of Angels before we set off for the Yosemite highlands.",
+      "text_de": "Ein Wiedersehen mit der Stadt der Engel, bevor wir ins Yosemite-Hochland aufbrechen.\n",
+      "text_en": "A reunion with the City of Angels before we set off for the Yosemite highlands.\n",
       "photos": [],
       "video": "",
       "youtube": ""
@@ -78,8 +81,8 @@
       "title_en": "Yosemite",
       "date_de": "28.–30. Okt",
       "date_en": "Oct 28–30",
-      "text_de": "Zurück zu unserem Lieblings-Nationalpark, diesmal mit mehr Zeit.",
-      "text_en": "Back to our favorite national park, this time with more time.",
+      "text_de": "Zurück zu unserem Lieblings-Nationalpark, diesmal mit mehr Zeit.\n",
+      "text_en": "Back to our favorite national park, this time with more time.\n",
       "photos": [],
       "video": "",
       "youtube": ""
@@ -91,8 +94,8 @@
       "title_en": "Lake Tahoe",
       "date_de": "30. Okt – 01. Nov",
       "date_en": "Oct 30 – Nov 1",
-      "text_de": "Ein paar ruhige Tage am Bergsee, bevor der Flug in den hohen Norden geht.",
-      "text_en": "A few quiet days at the mountain lake before flying up to the far north.",
+      "text_de": "Ein paar ruhige Tage am Bergsee, bevor der Flug in den hohen Norden geht.\n",
+      "text_en": "A few quiet days at the mountain lake before flying up to the far north.\n",
       "photos": [],
       "video": "",
       "youtube": ""
@@ -105,8 +108,8 @@
       "title_en": "Anchorage",
       "date_de": "01.–04. Nov",
       "date_en": "Nov 1–4",
-      "text_de": "Ankunft in Alaska. Anchorage als Basislager für die großen Wildnis-Etappen.",
-      "text_en": "Arrival in Alaska. Anchorage as a base camp for the great wilderness legs.",
+      "text_de": "Ankunft in Alaska. Anchorage als Basislager für die großen Wildnis-Etappen.\n",
+      "text_en": "Arrival in Alaska. Anchorage as a base camp for the great wilderness legs.\n",
       "photos": [],
       "video": "",
       "youtube": ""
@@ -118,8 +121,8 @@
       "title_en": "Denali",
       "date_de": "04.–05. Nov",
       "date_en": "Nov 4–5",
-      "text_de": "Der höchste Berg Nordamerikas — Wildnis, Weite und hoffentlich klare Sicht.",
-      "text_en": "The highest mountain in North America — wilderness, vastness and hopefully a clear view.",
+      "text_de": "Der höchste Berg Nordamerikas — Wildnis, Weite und hoffentlich klare Sicht.\n",
+      "text_en": "The highest mountain in North America — wilderness, vastness and hopefully a clear view.\n",
       "photos": [],
       "video": "",
       "youtube": ""
@@ -131,8 +134,8 @@
       "title_en": "Fairbanks",
       "date_de": "05.–06. & 09.–11. Nov",
       "date_en": "Nov 5–6 & 9–11",
-      "text_de": "Tor zur Arktis und Basis für die Polarlichter.",
-      "text_en": "Gateway to the Arctic and base for the northern lights.",
+      "text_de": "Tor zur Arktis und Basis für die Polarlichter.\n",
+      "text_en": "Gateway to the Arctic and base for the northern lights.\n",
       "photos": [],
       "video": "",
       "youtube": ""
@@ -144,8 +147,8 @@
       "title_en": "Coldfoot",
       "date_de": "07.–09. Nov",
       "date_en": "Nov 7–9",
-      "text_de": "Der nördlichste Punkt jenseits des Polarkreises am Dalton Highway — das große Ziel.",
-      "text_en": "The northernmost point beyond the Arctic Circle on the Dalton Highway — the grand goal.",
+      "text_de": "Der nördlichste Punkt jenseits des Polarkreises am Dalton Highway — das große Ziel.\n",
+      "text_en": "The northernmost point beyond the Arctic Circle on the Dalton Highway — the grand goal.\n",
       "photos": [],
       "video": "",
       "youtube": ""
@@ -157,8 +160,8 @@
       "title_en": "Tok",
       "date_de": "11.–13. Nov",
       "date_en": "Nov 11–13",
-      "text_de": "Letzter Halt im Landesinneren auf dem Rückweg nach Anchorage.",
-      "text_en": "Last stop inland on the way back to Anchorage.",
+      "text_de": "Letzter Halt im Landesinneren auf dem Rückweg nach Anchorage.\n",
+      "text_en": "Last stop inland on the way back to Anchorage.\n",
       "photos": [],
       "video": "",
       "youtube": ""
@@ -167,13 +170,17 @@
       "name": "ANC - Airport",
       "kind": "main",
       "arriveBy": "drive",
-      "location": "{\"type\":\"Point\",\"coordinates\":[-149.980156,61.174513]}"
+      "location": "{\"type\":\"Point\",\"coordinates\":[-149.980156,61.174513]}",
+      "text_de": "",
+      "text_en": ""
     },
     {
       "name": "FRA - Airport",
       "kind": "intermediate",
       "arriveBy": "flight",
-      "location": "{\"type\":\"Point\",\"coordinates\":[8.5552,50.024413]}"
+      "location": "{\"type\":\"Point\",\"coordinates\":[8.5552,50.024413]}",
+      "text_de": "",
+      "text_en": ""
     }
   ],
   "gallery": []

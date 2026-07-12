@@ -2,6 +2,8 @@
   "editor_language": "de",
   "name": "Firsts",
   "name_en": "",
+  "note_de": "Erstes Album, mit einigen unserer Werke",
+  "note_en": "Our first album, with a few of our works",
   "date": "2024-01-01",
   "linked_trip": "",
   "pin": {
@@ -9,15 +11,13 @@
     "highlight_order": 1
   },
   "photos": [
-    "/uploads/a7406420.jpg",
-    "/uploads/img_5916-3.jpg",
-    "/uploads/img_5666.jpg",
-    "/uploads/img_5273.jpg",
-    "/uploads/img_0206.jpg",
-    "/uploads/img_6039.jpg",
-    "/uploads/img_4101.jpg",
-    "/uploads/dji_0136_edit.jpeg"
-  ],
-  "note_de": "Erstes Album, mit einigen unserer Werke",
-  "note_en": "Our first album, with a few of our works"
+    "/uploads/uploads/alben/2024-erste-fotos/a7406420.jpg",
+    "/uploads/uploads/alben/2024-erste-fotos/img_5916-3.jpg",
+    "/uploads/uploads/alben/2024-erste-fotos/img_5666.jpg",
+    "/uploads/uploads/alben/2024-erste-fotos/img_5273.jpg",
+    "/uploads/uploads/alben/2024-erste-fotos/img_0206.jpg",
+    "/uploads/uploads/alben/2024-erste-fotos/img_6039.jpg",
+    "/uploads/uploads/alben/2024-erste-fotos/img_4101.jpg",
+    "/uploads/uploads/alben/2024-erste-fotos/dji_0136_edit.jpeg"
+  ]
 }
