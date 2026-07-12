@@ -85,6 +85,13 @@
 > ein minimaler EXIF-Block in die WebP-Datei gemuxt (`src/lib/exifWebp.ts` + `webpEncode.ts`), damit auch neue
 > Uploads die Kamera behalten. UI: Kamera-Spalte (Liste/Details) + Fakt (📷) + Sortier-Option. ⚠️ Alt-WebPs
 > ohne EXIF bleiben „—"; echter Upload-EXIF-Erhalt nur im echten CMS/Deploy prüfbar (Node-Round-Trip bestanden).
+> **Foto-EXIF + Meistgesehen (12.07., `1e22a77`/`f2558a5`):** Kamera-Erkennung erweitert um **Blende,
+> Belichtungszeit, ISO, Brennweite (+KB-Äquiv.), Objektiv, Aufnahmedatum** — Build liest ExifIFD (`exif` in
+> `uploads-meta.json`), Upload muxt sie mit in die WebP (`exifWebp.ts` `buildExifTiff`, ~180–260 B; Round-Trip
+> ok). UI: Foto-Daten-Block in der Vorschau. **„Am meisten angesehen"**: Build-Schritt `gen-uploads-views.mjs`
+> zieht Aufrufe je Bild aus der Umami-Cloud-API (`foto`-Events, `bild`=Dateiname) → `uploads-views.json`;
+> Sortierung + 👁 N× in der Vorschau. Fehlertolerant (ohne Key leer). 🟡 **Offen (David):** Umami-API-Key als
+> Cloudflare-Secret `UMAMI_API_KEY` anlegen; exakter Umami-Endpunkt nach 1. Deploy per Build-Log verifizieren.
 > ⚠️ **Nur im echten CMS prüfbar:** Hochladen/Löschen/**Verschieben+Umschreiben**/**Bulk-Löschen** (Assets-API,
 > **CORS-Risiko** beim Signed-PUT → falls unzuverlässig: mit David abgestimmter Rückmelde-Fall, KEIN
 > Auto-Wechsel auf Custom-Screen), „Verwendet in"-Treffer, Zuweisen, korrektes Ordner-Landen. Offline

@@ -17,6 +17,21 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-12 — Medien-Manager: Foto-EXIF (Blende/ISO/…) + „Am meisten angesehen" (`1e22a77`, `f2558a5`)
+- **Foto-EXIF (`1e22a77`)**: Kamera-Erkennung erweitert um **Blende, Belichtungszeit, ISO, Brennweite
+  (+ KB-Äquiv.), Objektiv, Aufnahmedatum**. Build liest die ExifIFD-Tags (`exifCamera.mjs` → `exif` in
+  `uploads-meta.json`); beim Upload wird ein schlanker TIFF mit IFD0 + ExifIFD gemuxt (`exifWebp.ts`:
+  `readTiffPhoto`+`buildExifTiff`, ~180–260 B), damit neue WebP-Uploads die Werte behalten. Node-Round-Trip
+  bestätigt (Sony A7 IV / DJI Air 2S / iPhone: alle Werte erhalten). UI: Foto-Daten-Block in der Vorschau.
+- **„Am meisten angesehen" (`f2558a5`)**: neuer Build-Schritt `gen-uploads-views.mjs` holt die Aufruf-Zahlen
+  je Bild aus der **Umami-Cloud-API** (die Lightbox sendet `foto`-Events mit `bild`=Dateiname) → `uploads-
+  views.json`; Sortierung „Am meisten angesehen" + 👁 N× in der Vorschau. Fehlertolerant (ohne Key leere Liste,
+  Build bricht nie ab). ⚠️ **Einrichtung durch David:** Umami-API-Key als Cloudflare-Secret `UMAMI_API_KEY`;
+  exakter Endpunkt offline nicht testbar → nach Deploy Build-Log prüfen.
+- Dateien: `scripts/lib/exifCamera.mjs`, `src/lib/exifWebp.ts`, `tina/fields/webpEncode.ts`,
+  `scripts/gen-uploads-manifest.mjs`, `scripts/gen-uploads-views.mjs`, `package.json`, `public/uploads-meta.json`,
+  `public/uploads-views.json`, `src/components/MediaManager.tsx`, `src/styles/global.css`.
+
 ## 2026-07-12 — Medien-Manager: Upload-Fenster, Vorschau-Layout, Fade, Kamera-Erkennung (`fa4294e`, `8e3f553`, `9e630ed`)
 Geplant (Plan-Modus) + freigegeben, am Vorbild Finder/Drive. Offline verifiziert (EXIF per Node-Round-Trip, UI im Browser).
 - **Kamera aus EXIF beim Build (`fa4294e`)**: neuer Node-Parser `scripts/lib/exifCamera.mjs` liest Make/Model
