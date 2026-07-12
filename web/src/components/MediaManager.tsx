@@ -429,12 +429,19 @@ export default function MediaManager() {
     await moveMany(Array.from(picked), target);
   }
 
-  // „Nach Alben ordnen": pro Album die noch nicht einsortierten Fotos in alben/<slug>/ verschieben.
-  const organizePlan = (albums || []).map((a) => ({
-    slug: a.slug, name: a.name,
-    photos: a.photos.filter((ph) => all.includes(ph) && !relOf(ph).startsWith(`alben/${a.slug}/`)),
-  })).filter((a) => a.photos.length);
+  // Ordnername aus dem Album-NAMEN (nicht dem Datei-slug): „USA 2023" -> „USA-2023". Leerzeichen -> Bindestrich,
+  // Slashes/Sonderzeichen raus, Groß-/Kleinschreibung bleibt. Fallback: der Datei-slug.
+  const albumFolder = (a: AlbumForOrganize): string => {
+    const s = (a.name || '').trim().replace(/[\/\\]+/g, '-').replace(/\s+/g, '-').replace(/[^\wäöüÄÖÜß.\-]+/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '');
+    return s || a.slug;
+  };
+  // „Nach Alben ordnen": pro Album die noch nicht einsortierten Fotos in alben/<Album-Name>/ verschieben.
+  const organizePlan = (albums || []).map((a) => {
+    const folder = albumFolder(a);
+    return { slug: a.slug, name: a.name, folder, photos: a.photos.filter((ph) => all.includes(ph) && !relOf(ph).startsWith(`alben/${folder}/`)) };
+  }).filter((a) => a.photos.length);
   const organizeCount = organizePlan.reduce((n, a) => n + a.photos.length, 0);
+  const orgPct = (() => { const m = /(\d+)\s*\/\s*(\d+)/.exec(progress || ''); return m && +m[2] ? Math.round((+m[1] / +m[2]) * 100) : 5; })();
 
   // Button-Klick: Alben ggf. erst jetzt laden (mit Spinner + Fehler-Hinweis), dann Vorschau öffnen.
   async function openOrganize() {
@@ -447,8 +454,8 @@ export default function MediaManager() {
   }
 
   async function doOrganize() {
-    setOrganizeOpen(false);
-    const flat = organizePlan.flatMap((a) => a.photos.map((ph) => ({ ph, target: `alben/${a.slug}` })));
+    // Modal bleibt OFFEN und zeigt den Fortschritt (Balken) — erst am Ende schließen.
+    const flat = organizePlan.flatMap((a) => a.photos.map((ph) => ({ ph, target: `alben/${a.folder}` })));
     if (!flat.length || bulkBusy) return;
     setBulkBusy(true);
     let okN = 0; let refsN = 0; let lastErr = ''; let warn = '';
@@ -462,7 +469,7 @@ export default function MediaManager() {
         if (r.error) warn = r.error; else setGone((g) => new Set(g).add(flat[i].ph));
       } else { lastErr = r.error || 'Ordnen fehlgeschlagen'; break; }
     }
-    setBulkBusy(false); setProgress('');
+    setBulkBusy(false); setProgress(''); setOrganizeOpen(false);
     if (okN) showToast(`${okN} nach Alben geordnet${refsN ? ` · ${refsN} Verweise angepasst` : ''}`, 'success');
     if (warn) showToast(warn, 'error');
     if (lastErr) showToast(lastErr, 'error');
@@ -616,6 +623,16 @@ export default function MediaManager() {
     </>
   );
 
+  // Klick auf eine Spaltenüberschrift: nach dieser Spalte sortieren; erneuter Klick dreht die Richtung.
+  const setSort = (k: SortKey) => { if (k === sortKey) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc')); else { setSortKey(k); setSortDir('asc'); } };
+  const headCell = (k: SortKey, label: string, cls: string) => (
+    <span className={`${cls} ww-mm-th${sortKey === k ? ' is-on' : ''}`} role="button" tabIndex={0}
+      onClick={() => setSort(k)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSort(k); } }}
+      title="Nach dieser Spalte sortieren">
+      {label}{sortKey === k ? <span className="ww-mm-th-arr">{sortDir === 'asc' ? '↑' : '↓'}</span> : null}
+    </span>
+  );
+
   return (
     <div className="ww-mm">
       <div className="page-title ww-mm-head">
@@ -708,10 +725,13 @@ export default function MediaManager() {
             </div>
           ) : (
             <div className="ww-mm-list">
-              <div className="ww-mm-row ww-mm-row-head" aria-hidden="true">
-                <span className="ww-mm-row-thumb" /><span className="ww-mm-row-name">Name</span>
-                <span className="ww-mm-row-meta ww-mm-row-cam">Kamera</span>
-                <span className="ww-mm-row-meta ww-mm-row-type">Typ</span><span className="ww-mm-row-meta ww-mm-row-size">Größe</span><span className="ww-mm-row-meta ww-mm-row-date">Hochgeladen</span>
+              <div className="ww-mm-row ww-mm-row-head">
+                <span className="ww-mm-row-thumb" />
+                {headCell('name', 'Name', 'ww-mm-row-name')}
+                {headCell('camera', 'Kamera', 'ww-mm-row-meta ww-mm-row-cam')}
+                {headCell('type', 'Typ', 'ww-mm-row-meta ww-mm-row-type')}
+                {headCell('size', 'Größe', 'ww-mm-row-meta ww-mm-row-size')}
+                {headCell('date', 'Hochgeladen', 'ww-mm-row-meta ww-mm-row-date')}
               </div>
               {!searching && allSubdirs.map((d) => folderRow(d))}
               {visible.map((p, i) => fileRow(p, i))}
@@ -858,20 +878,27 @@ export default function MediaManager() {
         <div className="ww-dt-overlay" role="dialog" aria-modal="true" onClick={() => { if (!bulkBusy) setOrganizeOpen(false); }}>
           <div className="ww-dt-modal ww-mm-organize" onClick={(e) => e.stopPropagation()}>
             <h3>Nach Alben ordnen</h3>
-            {organizeCount === 0 ? (
+            {bulkBusy ? (
+              <div className="ww-mm-org-run">
+                <div className="ww-mm-org-bar"><div style={{ width: `${orgPct}%` }} /></div>
+                <p className="ww-dt-note ww-mm-org-status"><span className="ww-spinner" />{progress || 'Ordne …'} · Referenzen ziehen automatisch mit</p>
+              </div>
+            ) : organizeCount === 0 ? (
               <p className="ww-dt-note">Alles bereits einsortiert — es gibt nichts zu verschieben. (Portfolio/Alben ist der Master; Storys &amp; Reisen verweisen auf dieselben Bilder und werden automatisch mitgezogen. Journal bleibt außen vor.)</p>
             ) : (
               <>
-                <p className="ww-dt-note">Fotos jedes Albums werden nach <code>alben/&lt;slug&gt;/</code> verschoben — Referenzen in Storys &amp; Reisen ziehen automatisch mit. Nur bereits vorhandene, noch nicht einsortierte Bilder:</p>
+                <p className="ww-dt-note">Fotos jedes Albums werden nach <code>alben/&lt;Album-Name&gt;/</code> verschoben — Referenzen in Storys &amp; Reisen ziehen automatisch mit. Nur bereits vorhandene, noch nicht einsortierte Bilder:</p>
                 <ul className="ww-mm-organize-list">
-                  {organizePlan.map((a) => <li key={a.slug}><strong>{a.name}</strong> <span>→ alben/{a.slug}/</span> <em>{a.photos.length}</em></li>)}
+                  {organizePlan.map((a) => <li key={a.slug}><strong>{a.name}</strong> <span>→ alben/{a.folder}/</span> <em>{a.photos.length}</em></li>)}
                 </ul>
               </>
             )}
-            <div className="ww-dt-actions">
-              {organizeCount > 0 ? <button type="button" className="btn" onClick={doOrganize} disabled={bulkBusy}>{bulkBusy ? <><span className="ww-spinner" />{progress || 'Ordne …'}</> : `${organizeCount} verschieben`}</button> : null}
-              <button type="button" className="ww-dt-cancel" onClick={() => setOrganizeOpen(false)} disabled={bulkBusy}>{organizeCount > 0 ? 'Abbrechen' : 'Schließen'}</button>
-            </div>
+            {!bulkBusy ? (
+              <div className="ww-dt-actions">
+                {organizeCount > 0 ? <button type="button" className="btn" onClick={doOrganize}>{`${organizeCount} verschieben`}</button> : null}
+                <button type="button" className="ww-dt-cancel" onClick={() => setOrganizeOpen(false)}>{organizeCount > 0 ? 'Abbrechen' : 'Schließen'}</button>
+              </div>
+            ) : null}
           </div>
         </div>
       ) : null}

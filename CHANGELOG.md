@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-12 — Medien-Manager: klickbare Sortier-Spalten + Ordnen-Fortschritt + sinnvolle Ordnernamen
+- **Klickbare Spaltenköpfe (Liste/Details)**: Klick auf Name/Kamera/Typ/Größe/Hochgeladen sortiert danach,
+  erneuter Klick dreht die Richtung; aktive Spalte hervorgehoben + ↑/↓-Pfeil. Synchron mit dem Dropdown
+  (das für die Kachel-Ansicht + „Am meisten angesehen"/„Unbenutzt" bleibt). Verifiziert im Browser.
+- **„Nach Alben ordnen"-Fortschritt**: das Vorschau-Modal bleibt jetzt während des Verschiebens OFFEN und
+  zeigt einen **Fortschrittsbalken** + „Ordne X/Y …" (vorher schloss es sofort, nur die Zahl im Button lief).
+- **Sinnvolle Ordnernamen**: Ziel ist jetzt `alben/<Album-Name>/` (aus dem Album-Namen, Leerzeichen→Bindestrich)
+  statt dem Datei-slug — z. B. `alben/USA-2023/` statt `alben/2026-usa-2023/`. Node-getestet.
+- Dateien: `web/src/components/MediaManager.tsx`, `web/src/styles/global.css`.
+
 ## 2026-07-12 — Medien-Manager: „Nach Alben ordnen"-Button lädt Alben beim Klick (Fix)
 - Der Button war  bis die Cloud-Album-Abfrage zurückkam; scheiterte/hing sie, blieb er stumm deaktiviert.
   Jetzt lädt der Klick die Alben on-demand (Spinner „Lade Alben …"), öffnet dann die Vorschau, und zeigt bei
