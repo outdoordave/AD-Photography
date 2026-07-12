@@ -1,24 +1,48 @@
 import React from 'react';
 import { loggedIn } from '../lib/tinaAdmin';
-import { uploadToCloud, deleteFromCloud, moveInCloud, findUsage, type UsageItem, ASSIGN_TARGETS, listAssignDocs, assignImage, type AssignTarget } from '../lib/mediaCloud';
+import {
+  uploadToCloud, deleteFromCloud, moveInCloud, findUsage, type UsageItem,
+  ASSIGN_TARGETS, listAssignDocs, assignImage, type AssignTarget,
+  findAllUsed, listAlbumsForOrganize, type AlbumForOrganize,
+} from '../lib/mediaCloud';
 import { showToast } from '../lib/tinaAdmin';
 import { detectEncoder, toOptimized, type EncoderMode } from '../../tina/fields/webpEncode';
 
 // Medien-Manager — eigenständige, login-geschützte Seite (/medien-manager) im Website-Look mit
-// Finder/Explorer-Logik: Ordner (aus dem rekursiven uploads-manifest.json abgeleitet), Breadcrumbs,
-// Kachel-Grid mit Thumbnails, ordnerübergreifende Namens-Suche, Drag&Drop- + Datei-Dialog-Upload
-// (WebP via webpEncode -> Assets-Client in den AKTUELLEN Ordner), Löschen mit Nachfrage. „Verwendet in"
-// (Nutzungs-Check) + Rechtsklick-Zuweisung folgen in eigenen Commits. Nur bei Login sichtbar.
-// iPad-tauglich: Tap statt Klick, Datei-Dialog als vollwertige Alternative zu Drag&Drop.
+// Finder/Explorer-Logik: Ordnerbaum, Breadcrumbs, drei Ansichten (Kacheln/Liste/Details mit Vorschau),
+// Sortierung (Name/Größe/Datum/Typ/Unbenutzt), ordnerübergreifende Suche, Drag&Drop-/Dialog-Upload
+// (WebP via webpEncode), Löschen, Verschieben mit Referenz-Umschreiben, „Verwendet in", Zuweisen,
+// „Nach Alben ordnen". Nur bei Login sichtbar. iPad-tauglich (Tap + Datei-Dialog).
 
 type Fresh = { path: string; url: string };
+type Meta = Record<string, { size: number; added: string }>;
+type View = 'grid' | 'list' | 'details';
+type SortKey = 'name' | 'size' | 'date' | 'type' | 'unused';
+type SortDir = 'asc' | 'desc';
 
 const COLL_LABEL: Record<string, string> = {
   startseite: 'Startseite', journal: 'Journal', alben: 'Album', story: 'Story',
   reisen: 'Reise', ueber_uns: 'Über uns', highlights: 'Highlights', darstellung: 'Darstellung',
 };
 
+const SORT_LABEL: Record<SortKey, string> = {
+  name: 'Name', size: 'Größe', date: 'Upload-Datum', type: 'Datei-Typ', unused: 'Unbenutzt zuerst',
+};
+
 function relOf(p: string): string { return p.replace(/^\/uploads\//, ''); }
+function baseOf(p: string): string { return p.split('/').pop() || p; }
+function extOf(p: string): string { const b = baseOf(p); const i = b.lastIndexOf('.'); return i >= 0 ? b.slice(i + 1).toLowerCase() : ''; }
+function fmtSize(b?: number): string {
+  if (!b && b !== 0) return '—';
+  if (b < 1024) return `${b} B`;
+  if (b < 1024 * 1024) return `${(b / 1024).toFixed(0)} KB`;
+  return `${(b / (1024 * 1024)).toFixed(1)} MB`;
+}
+function fmtDate(iso?: string): string {
+  if (!iso) return '—';
+  const d = new Date(iso); if (isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' });
+}
 
 // Alle vorhandenen Ordnerpfade (inkl. Zwischenebenen) aus der Dateiliste ableiten — für die Ziel-Auswahl.
 function allFolders(paths: string[]): string[] {
@@ -45,16 +69,26 @@ function viewOf(all: string[], folder: string): { subdirs: string[]; files: stri
     if (slash >= 0) subdirs.add(rest.slice(0, slash));
     else files.push(p);
   }
-  return { subdirs: Array.from(subdirs).sort((a, b) => a.localeCompare(b)), files: files.sort((a, b) => a.localeCompare(b)) };
+  return { subdirs: Array.from(subdirs).sort((a, b) => a.localeCompare(b)), files };
+}
+
+// Aktuelle Scroll-Position bzw. Scrollen — robust gegen „wer ist der Scroll-Container" (body ODER html).
+function getScrollY(): number { return window.scrollY || document.documentElement.scrollTop || (document.body ? document.body.scrollTop : 0) || 0; }
+function scrollByY(dy: number): void {
+  const se = (document.scrollingElement || document.documentElement) as HTMLElement;
+  se.scrollTop += dy;
+  if (document.body && document.body !== se) document.body.scrollTop += dy;
 }
 
 export default function MediaManager() {
   const [show, setShow] = React.useState<null | boolean>(null);
   const [manifest, setManifest] = React.useState<string[] | null>(null);
+  const [meta, setMeta] = React.useState<Meta>({});
   const [loadErr, setLoadErr] = React.useState('');
   const [folder, setFolder] = React.useState('');
   const [search, setSearch] = React.useState('');
   const [sel, setSel] = React.useState<string | null>(null);
+  const [lbOpen, setLbOpen] = React.useState(false); // Lightbox offen (Kacheln/Liste). Details zeigt sel in der Leiste.
   const [fresh, setFresh] = React.useState<Fresh[]>([]);
   const [gone, setGone] = React.useState<Set<string>>(new Set());
   const [busy, setBusy] = React.useState(false);
@@ -63,6 +97,12 @@ export default function MediaManager() {
   const [encoder, setEncoder] = React.useState<EncoderMode>('checking');
   const [del, setDel] = React.useState<string | null>(null);
   const [usage, setUsage] = React.useState<{ loading: boolean; items?: UsageItem[]; err?: string }>({ loading: false });
+  // Ansicht + Sortierung.
+  const [view, setView] = React.useState<View>('grid');
+  const [sortKey, setSortKey] = React.useState<SortKey>('name');
+  const [sortDir, setSortDir] = React.useState<SortDir>('asc');
+  const [usedBlob, setUsedBlob] = React.useState<string | null>(null); // für „Unbenutzt"-Sortierung (lazy)
+  const [usedLoading, setUsedLoading] = React.useState(false);
   // Zuweisen-Modal
   const [assignFor, setAssignFor] = React.useState<string | null>(null);
   const [aColl, setAColl] = React.useState('');
@@ -70,44 +110,46 @@ export default function MediaManager() {
   const [aDoc, setADoc] = React.useState('');
   const [aFieldPath, setAFieldPath] = React.useState('');
   const [aBusy, setABusy] = React.useState(false);
-  const [aConfirm, setAConfirm] = React.useState<string | null>(null); // aktueller Wert bei set-Überschreibung
-  // Mehrfachauswahl (Finder-artig) + Bulk-Aktionen.
+  const [aConfirm, setAConfirm] = React.useState<string | null>(null);
+  // Mehrfachauswahl + Bulk-Aktionen.
   const [selMode, setSelMode] = React.useState(false);
   const [picked, setPicked] = React.useState<Set<string>>(new Set());
   const [bulkDel, setBulkDel] = React.useState(false);
   const [bulkBusy, setBulkBusy] = React.useState(false);
   const [moveOpen, setMoveOpen] = React.useState(false);
-  const [moveTarget, setMoveTarget] = React.useState(''); // vorhandener Ordner (Select)
-  const [moveNew, setMoveNew] = React.useState('');        // ODER neuer Ordnername (Eingabe)
-  // Frisch angelegte (noch leere) Ordner — nur Session; werden erst durch ein hineingelegtes Bild dauerhaft.
+  const [moveTarget, setMoveTarget] = React.useState('');
+  const [moveNew, setMoveNew] = React.useState('');
+  // Frisch angelegte (noch leere) Ordner — nur Session.
   const [newFolders, setNewFolders] = React.useState<Set<string>>(new Set());
   const [creating, setCreating] = React.useState(false);
   const [newName, setNewName] = React.useState('');
-  // Desktop-Auswahl-Gesten + Ansicht.
-  const [anchor, setAnchor] = React.useState<number | null>(null); // Index für Shift-Bereichsauswahl
-  const [sortDesc, setSortDesc] = React.useState(false);           // Name Z–A statt A–Z
-  // Für den (mount-once) Tastatur-Handler: aktueller Zustand in einem Ref, damit keine veralteten Closures.
+  // Alben (für Upload-Ziel + „Nach Alben ordnen").
+  const [albums, setAlbums] = React.useState<AlbumForOrganize[] | null>(null);
+  const [uploadAlbum, setUploadAlbum] = React.useState(''); // slug oder '' (= aktueller Ordner)
+  const [organizeOpen, setOrganizeOpen] = React.useState(false);
+  // Desktop-Auswahl-Gesten.
+  const [anchor, setAnchor] = React.useState<number | null>(null);
   const stateRef = React.useRef<any>({});
-  // Drag & Drop: aktuelles Ziel (Ordnerpfad) beim Drüberziehen + Nutzlast (gezogene Bildpfade).
+  // Drag & Drop zwischen Ordnern.
   const [dropTarget, setDropTarget] = React.useState<string | null>(null);
   const dragRef = React.useRef<string[]>([]);
-  // Gummiband-Auswahl (Marquee): das aufgezogene Rechteck (Viewport-Koordinaten) + „hat sich bewegt?".
+  // Marquee (Gummiband) — Rechteck in VIEWPORT-Koordinaten (fürs Rendern); die Rechen-Anker liegen in
+  // Seiten-Koordinaten (pageX/Y), damit Auto-Scroll nicht verrutscht.
   const [marquee, setMarquee] = React.useState<null | { x0: number; y0: number; x1: number; y1: number }>(null);
   const marqueeMovedRef = React.useRef(false);
 
   React.useEffect(() => { try { setShow(loggedIn()); } catch { setShow(false); } }, []);
-  // Ordnerwechsel -> Auswahl leeren (sonst blieben unsichtbare Dateien ausgewählt).
   React.useEffect(() => { setPicked(new Set()); }, [folder]);
-  // Tastatur-Gesten (mount-once, Zustand über stateRef): Cmd/Strg+A = alle, Entf = löschen, Esc = abwählen/
-  // Lightbox schließen, ←/→ = Lightbox blättern. In Eingabefeldern nichts abfangen.
+
+  // Tastatur: Lightbox blättern/schließen; in Details ←/→ = Vorschau blättern; Cmd+A / Entf / Esc.
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const s = stateRef.current;
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT')) return;
-      if (s.sel) { // Lightbox offen: ←/→ blättert, Esc schließt
-        if (s.anyModal) return; // Zuweisen/Löschen-Dialog offen -> Tasten dort lassen
-        if (e.key === 'Escape') { setSel(null); return; }
+      if (s.lbOpen) {
+        if (s.anyModal) return;
+        if (e.key === 'Escape') { setLbOpen(false); return; }
         if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
           const v: string[] = s.visible || []; const i = v.indexOf(s.sel);
           if (i >= 0) { const ni = e.key === 'ArrowRight' ? Math.min(v.length - 1, i + 1) : Math.max(0, i - 1); setSel(v[ni]); }
@@ -115,16 +157,20 @@ export default function MediaManager() {
         }
         return;
       }
-      if ((e.metaKey || e.ctrlKey) && (e.key === 'a' || e.key === 'A')) {
-        e.preventDefault(); setPicked(new Set(s.visible || [])); setSelMode(true); return;
+      if (s.view === 'details' && s.sel && !s.anyModal && (e.key === 'ArrowRight' || e.key === 'ArrowLeft' || e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+        const v: string[] = s.visible || []; const i = v.indexOf(s.sel);
+        if (i >= 0) { e.preventDefault(); const fwd = e.key === 'ArrowRight' || e.key === 'ArrowDown'; const ni = fwd ? Math.min(v.length - 1, i + 1) : Math.max(0, i - 1); setSel(v[ni]); }
+        return;
       }
+      if ((e.metaKey || e.ctrlKey) && (e.key === 'a' || e.key === 'A')) { e.preventDefault(); setPicked(new Set(s.visible || [])); setSelMode(true); return; }
       if (e.key === 'Escape' && s.selMode && !s.anyModal) { setSelMode(false); setPicked(new Set()); return; }
       if ((e.key === 'Delete' || e.key === 'Backspace') && s.pickedSize > 0 && !s.anyModal) { e.preventDefault(); setBulkDel(true); return; }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
-  // „Verwendet in" für die aktuell gewählte Datei laden.
+
+  // „Verwendet in" für die aktuell gewählte Datei (Lightbox ODER Details-Vorschau).
   React.useEffect(() => {
     if (!sel) { setUsage({ loading: false }); return; }
     let alive = true;
@@ -133,9 +179,16 @@ export default function MediaManager() {
       .catch((e) => { if (alive) setUsage({ loading: false, err: String(e?.message || e) }); });
     return () => { alive = false; };
   }, [sel]);
-  // Zuweisen-Modal öffnen -> Auswahl zurücksetzen.
+
+  // „Unbenutzt"-Sortierung gewählt und noch nicht geladen -> Bulk-Nutzung einmal holen.
+  React.useEffect(() => {
+    if (sortKey !== 'unused' || usedBlob !== null || usedLoading || !show) return;
+    setUsedLoading(true);
+    findAllUsed().then((r) => { setUsedBlob(r.ok ? (r.usedBlob || '') : ''); if (!r.ok) showToast(r.error || 'Nutzungs-Abfrage fehlgeschlagen', 'error'); })
+      .catch(() => setUsedBlob('')).finally(() => setUsedLoading(false));
+  }, [sortKey, usedBlob, usedLoading, show]);
+
   React.useEffect(() => { if (assignFor) { setAColl(''); setADocs(null); setADoc(''); setAFieldPath(''); setAConfirm(null); } }, [assignFor]);
-  // Sammlung gewählt -> Dokumentliste laden + erstes Feld vorwählen.
   React.useEffect(() => {
     if (!assignFor || !aColl) { setADocs(null); return; }
     const tgt = ASSIGN_TARGETS.find((t) => t.collection === aColl);
@@ -144,6 +197,7 @@ export default function MediaManager() {
     listAssignDocs(tgt as AssignTarget).then((r) => { if (alive) setADocs(r.ok ? (r.docs || []) : []); }).catch(() => { if (alive) setADocs([]); });
     return () => { alive = false; };
   }, [assignFor, aColl]);
+
   React.useEffect(() => {
     if (!show) return;
     detectEncoder().then(setEncoder).catch(() => {});
@@ -151,84 +205,119 @@ export default function MediaManager() {
       .then((r) => { if (!r.ok) throw new Error('Manifest ' + r.status); return r.json(); })
       .then((l: string[]) => setManifest(Array.isArray(l) ? l : []))
       .catch((e) => setLoadErr(e?.message || 'Mediathek nicht ladbar'));
+    fetch('/uploads-meta.json', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : {})).then((m) => setMeta(m || {})).catch(() => {});
+    // Alben für Upload-Ziel + „Nach Alben ordnen" (nur eingeloggt, best effort).
+    listAlbumsForOrganize().then((r) => { if (r.ok) setAlbums(r.albums || []); }).catch(() => {});
   }, [show]);
 
   if (show === null) return null;
   if (!show) return <p className="ww-mm-note">Bitte im CMS anmelden, um die Mediathek zu verwalten.</p>;
 
-  // Gesamtliste = Manifest + frisch Hochgeladene, ohne gelöschte.
   const freshPaths = fresh.map((f) => f.path);
   const all = Array.from(new Set([...(manifest || []), ...freshPaths])).filter((p) => !gone.has(p));
   const previewOf = (p: string) => { const f = fresh.find((x) => x.path === p); return f ? f.url : p; };
+  const isUsed = (p: string) => (usedBlob ? usedBlob.indexOf(p) !== -1 : false);
 
   const crumbs = folder ? folder.split('/') : [];
-  const goTo = (i: number) => { setSel(null); setFolder(crumbs.slice(0, i + 1).join('/')); };
+  const goTo = (i: number) => { closePreview(); setFolder(crumbs.slice(0, i + 1).join('/')); };
 
   const searching = search.trim().length > 0;
-  const searchHits = searching
-    ? all.filter((p) => relOf(p).toLowerCase().includes(search.trim().toLowerCase())).sort((a, b) => a.localeCompare(b))
-    : [];
+  const searchHits = searching ? all.filter((p) => relOf(p).toLowerCase().includes(search.trim().toLowerCase())) : [];
   const { subdirs, files } = viewOf(all, folder);
 
-  // Vollständige Ordnerliste (aus Dateien abgeleitet + frisch angelegte leere) — für Baum-Leiste + Verschieben.
   const folderList = Array.from(new Set([...allFolders(all), ...Array.from(newFolders)])).sort((a, b) => a.localeCompare(b));
-  // Frisch angelegte, noch leere Unterordner des aktuellen Ordners mit ins Grid aufnehmen.
   const newSubs = Array.from(newFolders)
     .filter((f) => (f.includes('/') ? f.slice(0, f.lastIndexOf('/')) : '') === folder)
     .map((f) => f.split('/').pop() as string);
   const allSubdirs = Array.from(new Set([...subdirs, ...newSubs])).sort((a, b) => a.localeCompare(b));
 
-  // Sichtbare Datei-Reihenfolge (für Shift-Bereich, Cmd+A, Lightbox-Blättern) — nach Name A–Z bzw. Z–A.
-  const visible = (searching ? searchHits : files).slice().sort((a, b) => (sortDesc ? b.localeCompare(a) : a.localeCompare(b)));
-  stateRef.current = {
-    visible, selMode, sel, pickedSize: picked.size,
-    anyModal: !!(del || bulkDel || moveOpen || assignFor || creating),
+  // Sortierung anwenden.
+  const cmp = (a: string, b: string): number => {
+    let d = 0;
+    if (sortKey === 'name') d = baseOf(a).localeCompare(baseOf(b));
+    else if (sortKey === 'size') d = (meta[a]?.size || 0) - (meta[b]?.size || 0);
+    else if (sortKey === 'date') d = (meta[a]?.added || '').localeCompare(meta[b]?.added || '');
+    else if (sortKey === 'type') d = extOf(a).localeCompare(extOf(b)) || baseOf(a).localeCompare(baseOf(b));
+    else if (sortKey === 'unused') d = (isUsed(a) ? 1 : 0) - (isUsed(b) ? 1 : 0) || baseOf(a).localeCompare(baseOf(b));
+    return d;
   };
-  // Lightbox weiterblättern (Pfeil-Knöpfe): zum vorigen/nächsten sichtbaren Bild.
+  const visible = (searching ? searchHits : files).slice().sort((a, b) => (sortDir === 'desc' ? -cmp(a, b) : cmp(a, b)));
+
+  stateRef.current = {
+    visible, selMode, sel, lbOpen, view, pickedSize: picked.size,
+    anyModal: !!(del || bulkDel || moveOpen || assignFor || creating || organizeOpen),
+  };
+
   const navSel = (dir: 1 | -1) => {
     if (!sel) return; const i = visible.indexOf(sel); if (i < 0) return;
     const ni = Math.min(visible.length - 1, Math.max(0, i + dir)); setSel(visible[ni]);
   };
+  const closePreview = () => { setSel(null); setLbOpen(false); };
 
-  // Klick auf eine Kachel — mit Standard-Desktop-Modifiern: Shift = Bereich ab Anker, Cmd/Strg = einzeln
-  // dazu/weg, sonst im Auswahl-Modus umschalten bzw. normal das Detail-Panel öffnen.
-  const onTileClick = (e: React.MouseEvent, p: string, idx: number) => {
+  // Ein Bild „öffnen": in Details nur die Vorschau-Leiste, sonst die Lightbox.
+  const openItem = (p: string) => { setSel(p); setLbOpen(view !== 'details'); };
+
+  // Klick auf Kachel/Zeile — Standard-Desktop-Modifier: Shift = Bereich, Cmd/Strg = einzeln, sonst öffnen/wählen.
+  const onItemClick = (e: React.MouseEvent, p: string, idx: number) => {
     if (e.shiftKey && anchor !== null) {
       const [lo, hi] = anchor < idx ? [anchor, idx] : [idx, anchor];
       setPicked(new Set(visible.slice(lo, hi + 1))); setSelMode(true); return;
     }
     if (e.metaKey || e.ctrlKey) { togglePick(p); setAnchor(idx); setSelMode(true); return; }
     if (selMode) { togglePick(p); setAnchor(idx); return; }
-    setSel(p); setAnchor(idx);
+    openItem(p); setAnchor(idx);
   };
 
-  // Gummiband-Auswahl: auf leerer Grid-Fläche mit der linken Maustaste ein Rechteck aufziehen -> alle
-  // Kacheln darin markieren (live). Startet nur auf Leerraum (nicht auf Kachel/Ordner/Knopf).
+  // Marquee (Gummiband) mit Text-Auswahl-Sperre + Auto-Scroll am Rand. Der Anker liegt in SEITEN-
+  // Koordinaten (pageX/Y), das aktuelle Zeigerende wird jedes Mal aus clientX/Y + aktuellem Scroll
+  // berechnet — so verrutscht die Auswahl beim Auto-Scrollen nicht.
   const onGridMouseDown = (e: React.MouseEvent) => {
-    if (e.button !== 0) return;
+    if (e.button !== 0 || view === 'details') return;
     const el = e.target as HTMLElement;
-    if (el.closest('.ww-mm-file, .ww-mm-folder, button, a, input, .ww-mm-detail')) return;
+    if (el.closest('.ww-mm-file, .ww-mm-folder, button, a, input, select, .ww-mm-row')) return;
     e.preventDefault();
-    const sx = e.clientX, sy = e.clientY;
+    document.body.classList.add('ww-mm-marqueeing'); // user-select: none -> markiert keinen Text mehr
+    const sx = e.pageX, sy = e.pageY;
+    let lastClientX = e.clientX, lastClientY = e.clientY;
     marqueeMovedRef.current = false;
-    const onMove = (me: MouseEvent) => {
-      const x0 = Math.min(sx, me.clientX), y0 = Math.min(sy, me.clientY), x1 = Math.max(sx, me.clientX), y1 = Math.max(sy, me.clientY);
-      if (Math.abs(me.clientX - sx) + Math.abs(me.clientY - sy) > 4) marqueeMovedRef.current = true;
-      setMarquee({ x0, y0, x1, y1 });
+
+    const update = () => {
+      const scX = window.scrollX || 0, scY = getScrollY();
+      const px = lastClientX + scX, py = lastClientY + scY;
+      const pgx0 = Math.min(sx, px), pgy0 = Math.min(sy, py), pgx1 = Math.max(sx, px), pgy1 = Math.max(sy, py);
+      if (Math.abs(px - sx) + Math.abs(py - sy) > 4) marqueeMovedRef.current = true;
+      setMarquee({ x0: pgx0 - scX, y0: pgy0 - scY, x1: pgx1 - scX, y1: pgy1 - scY }); // Render in Viewport-Koord.
       const hit = new Set<string>();
-      document.querySelectorAll('.ww-mm-grid .ww-mm-file').forEach((node) => {
+      document.querySelectorAll('.ww-mm-content [data-path]').forEach((node) => {
         const r = (node as HTMLElement).getBoundingClientRect();
-        if (r.left < x1 && r.right > x0 && r.top < y1 && r.bottom > y0) { const p = (node as HTMLElement).getAttribute('data-path'); if (p) hit.add(p); }
+        const l = r.left + scX, rr = r.right + scX, t = r.top + scY, b = r.bottom + scY;
+        if (l < pgx1 && rr > pgx0 && t < pgy1 && b > pgy0) { const p = (node as HTMLElement).getAttribute('data-path'); if (p) hit.add(p); }
       });
       setPicked(hit);
       if (hit.size) setSelMode(true);
     };
-    const onUp = () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); setMarquee(null); };
+
+    const onMove = (me: MouseEvent) => { lastClientX = me.clientX; lastClientY = me.clientY; update(); };
+    // Auto-Scroll, solange der Zeiger nahe der Ober-/Unterkante gehalten wird (auch ohne Bewegung).
+    const timer = window.setInterval(() => {
+      const top = 150, bottom = window.innerHeight - 70;
+      let dy = 0;
+      if (lastClientY < top) dy = -Math.min(26, (top - lastClientY) / 3 + 4);
+      else if (lastClientY > bottom) dy = Math.min(26, (lastClientY - bottom) / 3 + 4);
+      if (dy) { scrollByY(dy); update(); }
+    }, 30);
+
+    const onUp = () => {
+      window.clearInterval(timer);
+      window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp);
+      document.body.classList.remove('ww-mm-marqueeing');
+      setMarquee(null);
+    };
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
   };
 
-  const uploadTarget = folder || 'allgemein';
+  const uploadTarget = uploadAlbum ? `alben/${uploadAlbum}` : (folder || 'allgemein');
 
   async function handleFiles(list: FileList | File[] | null) {
     if (!list) return;
@@ -258,23 +347,20 @@ export default function MediaManager() {
     setBusy(true);
     const r = await deleteFromCloud(path);
     setBusy(false); setDel(null);
-    if (r.ok) { setGone((g) => new Set(g).add(path)); if (sel === path) setSel(null); showToast('Gelöscht', 'success'); }
+    if (r.ok) { setGone((g) => new Set(g).add(path)); if (sel === path) closePreview(); showToast('Gelöscht', 'success'); }
     else showToast(r.error || 'Löschen fehlgeschlagen', 'error');
   }
 
-  // --- Mehrfachauswahl ---
   const togglePick = (p: string) => setPicked((s) => { const n = new Set(s); if (n.has(p)) n.delete(p); else n.add(p); return n; });
   const exitSel = () => { setSelMode(false); setPicked(new Set()); };
 
-  // Neuen (leeren) Ordner IM AKTUELLEN Ordner anlegen und hineinwechseln. Persistiert erst, sobald ein
-  // Bild darin liegt (Upload/Verschieben) — leere Ordner gibt es im statischen Repo nicht.
   function createFolder() {
     const raw = newName.trim().replace(/^\/+|\/+$/g, '').replace(/\s+/g, '-');
     setCreating(false); setNewName('');
     if (!raw) return;
     const full = folder ? `${folder}/${raw}` : raw;
     setNewFolders((s) => new Set(s).add(full));
-    setSel(null); setFolder(full);
+    closePreview(); setFolder(full);
   }
 
   async function doBulkDelete() {
@@ -286,13 +372,13 @@ export default function MediaManager() {
       const r = await deleteFromCloud(p);
       if (r.ok) { setGone((g) => new Set(g).add(p)); okN++; } else { lastErr = r.error || 'Löschen fehlgeschlagen'; break; }
     }
-    if (sel && items.indexOf(sel) !== -1) setSel(null);
+    if (sel && items.indexOf(sel) !== -1) closePreview();
     setBulkBusy(false); setBulkDel(false); setPicked(new Set());
     if (okN) showToast(`${okN} gelöscht`, 'success');
     if (lastErr) showToast(lastErr, 'error');
   }
 
-  // Kern: mehrere Bilder in einen Zielordner verschieben (aus Modal ODER per Drag&Drop).
+  // Kern: mehrere Bilder in EINEN Zielordner verschieben (Modal/DnD).
   async function moveMany(paths: string[], targetDir: string) {
     const target = (targetDir || '').replace(/^\/+|\/+$/g, '');
     if (!paths.length || bulkBusy) return;
@@ -305,13 +391,10 @@ export default function MediaManager() {
         const np = r.newPath;
         setFresh((prev) => [{ path: np, url: np }, ...prev.filter((x) => x.path !== np)]);
         okN++; refsN += r.refs || 0;
-        // Teil-Erfolg: kopiert + Verweise umgeschrieben, aber die ALTE Datei blieb liegen (Löschen scheiterte).
-        // Dann die alte Kachel NICHT ausblenden — so kann man sie sehen und ggf. manuell löschen. Warnung zeigen.
-        if (r.error) warn = r.error;
-        else setGone((g) => new Set(g).add(paths[i]));
+        if (r.error) warn = r.error; else setGone((g) => new Set(g).add(paths[i]));
       } else { lastErr = r.error || 'Verschieben fehlgeschlagen'; break; }
     }
-    if (sel && paths.indexOf(sel) !== -1) setSel(null);
+    if (sel && paths.indexOf(sel) !== -1) closePreview();
     setBulkBusy(false); setProgress(''); setPicked(new Set());
     if (okN) showToast(`${okN} verschoben${refsN ? ` · ${refsN} Verweise angepasst` : ''} → ${target || 'uploads'}/`, 'success');
     if (warn) showToast(warn, 'error');
@@ -324,7 +407,35 @@ export default function MediaManager() {
     await moveMany(Array.from(picked), target);
   }
 
-  // Ordner als Drop-Ziel: Drüberziehen hebt hervor, Loslassen verschiebt die gezogenen Bilder dorthin.
+  // „Nach Alben ordnen": pro Album die noch nicht einsortierten Fotos in alben/<slug>/ verschieben.
+  const organizePlan = (albums || []).map((a) => ({
+    slug: a.slug, name: a.name,
+    photos: a.photos.filter((ph) => all.includes(ph) && !relOf(ph).startsWith(`alben/${a.slug}/`)),
+  })).filter((a) => a.photos.length);
+  const organizeCount = organizePlan.reduce((n, a) => n + a.photos.length, 0);
+
+  async function doOrganize() {
+    setOrganizeOpen(false);
+    const flat = organizePlan.flatMap((a) => a.photos.map((ph) => ({ ph, target: `alben/${a.slug}` })));
+    if (!flat.length || bulkBusy) return;
+    setBulkBusy(true);
+    let okN = 0; let refsN = 0; let lastErr = ''; let warn = '';
+    for (let i = 0; i < flat.length; i++) {
+      setProgress(`Ordne ${i + 1}/${flat.length} …`);
+      const r = await moveInCloud(flat[i].ph, flat[i].target);
+      if (r.ok && r.newPath) {
+        const np = r.newPath;
+        setFresh((prev) => [{ path: np, url: np }, ...prev.filter((x) => x.path !== np)]);
+        okN++; refsN += r.refs || 0;
+        if (r.error) warn = r.error; else setGone((g) => new Set(g).add(flat[i].ph));
+      } else { lastErr = r.error || 'Ordnen fehlgeschlagen'; break; }
+    }
+    setBulkBusy(false); setProgress('');
+    if (okN) showToast(`${okN} nach Alben geordnet${refsN ? ` · ${refsN} Verweise angepasst` : ''}`, 'success');
+    if (warn) showToast(warn, 'error');
+    if (lastErr) showToast(lastErr, 'error');
+  }
+
   const folderDropProps = (targetFolder: string) => ({
     onDragEnter: (e: React.DragEvent) => { if (dragRef.current.length) { e.preventDefault(); e.stopPropagation(); setDropTarget(targetFolder); } },
     onDragOver: (e: React.DragEvent) => { if (dragRef.current.length) { e.preventDefault(); e.stopPropagation(); e.dataTransfer.dropEffect = 'move'; setDropTarget(targetFolder); } },
@@ -344,34 +455,120 @@ export default function MediaManager() {
     else showToast(r.error || 'Zuweisen fehlgeschlagen', 'error');
   }
 
+  // gemeinsame Drag-Props einer Datei (Kachel & Zeile).
+  const dragProps = (p: string, isPicked: boolean) => ({
+    draggable: true,
+    onDragStart: (e: React.DragEvent) => { const payload = isPicked && picked.size > 0 ? Array.from(picked) : [p]; dragRef.current = payload; e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', payload.join('\n')); } catch (err) { /* egal */ } },
+    onDragEnd: () => { dragRef.current = []; setDropTarget(null); },
+  });
+
   const fileTile = (p: string, idx: number) => {
     const isPicked = picked.has(p);
     return (
-      <button key={p} type="button" draggable data-path={p}
+      <button key={p} type="button" data-path={p}
         className={`ww-mm-file${sel === p ? ' is-sel' : ''}${isPicked ? ' is-picked' : ''}`}
-        onClick={(e) => onTileClick(e, p, idx)}
-        onDoubleClick={(e) => { e.preventDefault(); setSel(p); }}
-        onDragStart={(e) => { const payload = isPicked && picked.size > 0 ? Array.from(picked) : [p]; dragRef.current = payload; e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', payload.join('\n')); } catch (err) { /* egal */ } }}
-        onDragEnd={() => { dragRef.current = []; setDropTarget(null); }}
+        onClick={(e) => onItemClick(e, p, idx)}
+        onDoubleClick={(e) => { e.preventDefault(); setSel(p); setLbOpen(true); }}
+        {...dragProps(p, isPicked)}
         onContextMenu={(e) => { e.preventDefault(); if (!selMode) { setSel(p); setAssignFor(p); } }}
         title={`${relOf(p)}\n(Doppelklick: groß · Shift/Strg-Klick: mehrfach · auf einen Ordner ziehen: verschieben)`}>
         {selMode ? <span className={`ww-mm-check${isPicked ? ' is-on' : ''}`} aria-hidden="true">{isPicked ? '✓' : ''}</span> : null}
         {!selMode ? (
-          // Direkt-Löschen je Kachel (mit Nachfrage). Kein <button> im <button> -> span mit role. stopPropagation
-          // verhindert das Öffnen der Lightbox/Auswahl. In der Mehrfachauswahl ausgeblendet (dort löscht die Leiste).
           <span className="ww-mm-tiledel" role="button" tabIndex={-1} aria-label="Löschen" title="Löschen"
             onMouseDown={(e) => e.stopPropagation()}
-            onClick={(e) => { e.stopPropagation(); e.preventDefault(); setSel(null); setDel(p); }}>
+            onClick={(e) => { e.stopPropagation(); e.preventDefault(); closePreview(); setDel(p); }}>
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0v13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V7" />
             </svg>
           </span>
         ) : null}
         <img src={previewOf(p)} alt="" loading="lazy" draggable={false} />
-        <span className="ww-mm-fname">{p.split('/').pop()}</span>
+        <span className="ww-mm-fname">{baseOf(p)}</span>
       </button>
     );
   };
+
+  const fileRow = (p: string, idx: number) => {
+    const isPicked = picked.has(p);
+    return (
+      <div key={p} data-path={p} role="button" tabIndex={0}
+        className={`ww-mm-row${sel === p ? ' is-sel' : ''}${isPicked ? ' is-picked' : ''}`}
+        onClick={(e) => onItemClick(e, p, idx)}
+        onDoubleClick={(e) => { e.preventDefault(); setSel(p); setLbOpen(true); }}
+        {...dragProps(p, isPicked)}
+        onContextMenu={(e) => { e.preventDefault(); if (!selMode) { setSel(p); setAssignFor(p); } }}
+        title={relOf(p)}>
+        {selMode ? <span className={`ww-mm-check-row${isPicked ? ' is-on' : ''}`} aria-hidden="true">{isPicked ? '✓' : ''}</span> : null}
+        <img className="ww-mm-row-thumb" src={previewOf(p)} alt="" loading="lazy" draggable={false} />
+        <span className="ww-mm-row-name">{baseOf(p)}</span>
+        <span className="ww-mm-row-meta ww-mm-row-type">{extOf(p) || '—'}</span>
+        <span className="ww-mm-row-meta ww-mm-row-size">{fmtSize(meta[p]?.size)}</span>
+        <span className="ww-mm-row-meta ww-mm-row-date">{fmtDate(meta[p]?.added)}</span>
+        {!selMode ? (
+          <span className="ww-mm-rowdel" role="button" tabIndex={-1} aria-label="Löschen" title="Löschen"
+            onClick={(e) => { e.stopPropagation(); e.preventDefault(); closePreview(); setDel(p); }}>
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0v13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V7" />
+            </svg>
+          </span>
+        ) : null}
+      </div>
+    );
+  };
+
+  const folderTile = (d: string) => {
+    const dPath = folder ? `${folder}/${d}` : d;
+    return (
+      <button key={'d:' + d} type="button" className={`ww-mm-folder${dropTarget === dPath ? ' is-drop' : ''}`} onClick={() => { closePreview(); setFolder(dPath); }} title={d} {...folderDropProps(dPath)}>
+        <span className="ww-mm-foldericon" aria-hidden="true">📁</span>
+        <span className="ww-mm-fname">{d}</span>
+      </button>
+    );
+  };
+  const folderRow = (d: string) => {
+    const dPath = folder ? `${folder}/${d}` : d;
+    return (
+      <div key={'d:' + d} role="button" tabIndex={0} className={`ww-mm-row ww-mm-row-folder${dropTarget === dPath ? ' is-drop' : ''}`} onClick={() => { closePreview(); setFolder(dPath); }} title={d} {...folderDropProps(dPath)}>
+        <span className="ww-mm-row-thumb ww-mm-row-foldericon" aria-hidden="true">📁</span>
+        <span className="ww-mm-row-name">{d}</span>
+        <span className="ww-mm-row-meta ww-mm-row-type">Ordner</span>
+        <span className="ww-mm-row-meta ww-mm-row-size" /><span className="ww-mm-row-meta ww-mm-row-date" />
+      </div>
+    );
+  };
+
+  const emptyNote = <p className="ww-mm-empty">{searching ? `Keine Treffer für „${search}".` : 'Dieser Ordner ist leer. Zieh Bilder hierher oder nutze „Hochladen".'}</p>;
+
+  // Vorschau-Inhalt (für Lightbox UND Details-Leiste): Bild + Infos + Aktionen.
+  const previewInfo = (p: string) => (
+    <>
+      <div className="ww-mm-lb-name">{baseOf(p)}</div>
+      <div className="ww-mm-lb-path">{p}</div>
+      <div className="ww-mm-lb-facts">
+        <span>{fmtSize(meta[p]?.size)}</span><span>·</span><span>{extOf(p).toUpperCase() || '—'}</span><span>·</span><span>{fmtDate(meta[p]?.added)}</span>
+      </div>
+      <div className="ww-mm-usage">
+        <div className="ww-mm-usage-title">Verwendet in</div>
+        {usage.loading ? <div className="ww-mm-usage-note">wird geprüft …</div>
+          : usage.err ? <div className="ww-mm-usage-err">{usage.err}</div>
+          : usage.items && usage.items.length ? (
+            <ul className="ww-mm-usage-list">
+              {usage.items.map((u, i) => (
+                <li key={i}>
+                  <span className="ww-mm-usage-coll">{COLL_LABEL[u.collection] || u.collection}</span>
+                  {u.label && u.label !== u.filename ? <> {u.label}</> : null}
+                </li>
+              ))}
+            </ul>
+          ) : <div className="ww-mm-usage-note ww-mm-usage-free">Unbenutzt — wird nirgends verwendet.</div>}
+      </div>
+      <div className="ww-mm-detail-actions">
+        <button type="button" className="btn" onClick={() => setAssignFor(p)}>Einem Inhalt zuweisen</button>
+        <a className="btn ghost" href={p} target="_blank" rel="noopener">Original öffnen</a>
+        <button type="button" className="btn ww-mm-delbtn" onClick={() => setDel(p)} disabled={busy}>Löschen</button>
+      </div>
+    </>
+  );
 
   return (
     <div className="ww-mm">
@@ -381,9 +578,8 @@ export default function MediaManager() {
         <p>Bilder durchsuchen, ordnen, hochladen und löschen — direkt im Repo, ohne GitHub.</p>
       </div>
 
-      {/* Breadcrumbs */}
       <div className="ww-mm-crumbs">
-        <button type="button" onClick={() => { setSel(null); setFolder(''); }} className={folder ? '' : 'is-here'}>uploads</button>
+        <button type="button" onClick={() => { closePreview(); setFolder(''); }} className={folder ? '' : 'is-here'}>uploads</button>
         {crumbs.map((c, i) => (
           <React.Fragment key={i}><span className="sep">/</span>
             <button type="button" onClick={() => goTo(i)} className={i === crumbs.length - 1 ? 'is-here' : ''}>{c}</button>
@@ -392,16 +588,15 @@ export default function MediaManager() {
       </div>
 
       <div className="ww-mm-body">
-      {/* Ordner-Baum-Leiste (Explorer-Optik) */}
       <aside className="ww-mm-tree" aria-label="Ordner">
         <div className="ww-mm-tree-head">Ordner</div>
-        <button type="button" className={`ww-mm-treeitem${folder === '' ? ' is-here' : ''}${dropTarget === '' ? ' is-drop' : ''}`} onClick={() => { setSel(null); setFolder(''); }} title="uploads" {...folderDropProps('')}>
+        <button type="button" className={`ww-mm-treeitem${folder === '' ? ' is-here' : ''}${dropTarget === '' ? ' is-drop' : ''}`} onClick={() => { closePreview(); setFolder(''); }} title="uploads" {...folderDropProps('')}>
           <span className="ww-mm-treeicon" aria-hidden="true">🗂️</span> uploads
         </button>
         {folderList.map((f) => (
           <button key={f} type="button" className={`ww-mm-treeitem${folder === f ? ' is-here' : ''}${dropTarget === f ? ' is-drop' : ''}`}
             style={{ paddingLeft: `${12 + f.split('/').length * 15}px` }}
-            onClick={() => { setSel(null); setFolder(f); }} title={f} {...folderDropProps(f)}>
+            onClick={() => { closePreview(); setFolder(f); }} title={f} {...folderDropProps(f)}>
             <span className="ww-mm-treeicon" aria-hidden="true">📁</span> {f.split('/').pop()}
           </button>
         ))}
@@ -417,18 +612,35 @@ export default function MediaManager() {
             ＋ Neuer Ordner{folder ? ` in ${folder}/` : ''}
           </button>
         )}
+        <button type="button" className="ww-mm-tree-organize" onClick={() => setOrganizeOpen(true)} disabled={bulkBusy || !albums} title="Fotos jedes Albums in alben/<slug>/ einsortieren">
+          🗃️ Nach Alben ordnen{organizeCount ? ` (${organizeCount})` : ''}
+        </button>
       </aside>
 
       <div className="ww-mm-main">
-      {/* Toolbar */}
       <div className="ww-mm-toolbar">
         <input type="search" className="ww-mm-search" placeholder="Dateiname suchen (ordnerübergreifend) …" value={search} onChange={(e) => setSearch(e.target.value)} />
-        <button type="button" className="ww-mm-sort" onClick={() => setSortDesc((s) => !s)} title="Sortierung umschalten">
-          {sortDesc ? 'Name Z–A' : 'Name A–Z'}
+        {/* Ansicht */}
+        <div className="ww-mm-viewtoggle" role="group" aria-label="Ansicht">
+          <button type="button" className={view === 'grid' ? 'is-on' : ''} onClick={() => setView('grid')} title="Kacheln" aria-label="Kacheln">▦</button>
+          <button type="button" className={view === 'list' ? 'is-on' : ''} onClick={() => setView('list')} title="Liste" aria-label="Liste">≣</button>
+          <button type="button" className={view === 'details' ? 'is-on' : ''} onClick={() => setView('details')} title="Details mit Vorschau" aria-label="Details">◫</button>
+        </div>
+        {/* Sortierung */}
+        <select className="ww-mm-sortsel" value={sortKey} onChange={(e) => setSortKey(e.target.value as SortKey)} title="Sortieren nach">
+          {(Object.keys(SORT_LABEL) as SortKey[]).map((k) => <option key={k} value={k}>{SORT_LABEL[k]}{k === 'unused' && usedLoading ? ' …' : ''}</option>)}
+        </select>
+        <button type="button" className="ww-mm-sortdir" onClick={() => setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))} title="Richtung umschalten" aria-label="Sortierrichtung">
+          {sortDir === 'asc' ? '↑' : '↓'}
         </button>
         <button type="button" className={`ww-mm-selmode${selMode ? ' is-active' : ''}`} onClick={() => (selMode ? exitSel() : setSelMode(true))}>
           {selMode ? 'Auswahl beenden' : 'Auswählen'}
         </button>
+        {/* Upload-Ziel (Album) + Hochladen */}
+        <select className="ww-mm-uploadalbum" value={uploadAlbum} onChange={(e) => setUploadAlbum(e.target.value)} title="Upload-Ziel" disabled={busy}>
+          <option value="">Ziel: {folder || 'allgemein'}/</option>
+          {(albums || []).map((a) => <option key={a.slug} value={a.slug}>Album: {a.name}</option>)}
+        </select>
         <label className={`btn ww-mm-upload${busy ? ' is-busy' : ''}`}>
           {busy ? <><span className="ww-spinner" />{progress || 'Arbeite …'}</> : `+ Hochladen (→ ${uploadTarget}/)`}
           <input type="file" accept="image/*" multiple disabled={busy} onChange={(e) => handleFiles(e.target.files)} hidden />
@@ -437,32 +649,46 @@ export default function MediaManager() {
 
       {loadErr ? <p className="ww-mm-err">Mediathek nicht ladbar: {loadErr}</p> : null}
 
-      {/* Grid / Drop-Zone */}
+      {/* Inhalt / Drop-Zone (ganzer Bereich nimmt Uploads per Drag&Drop an). */}
       <div
-        className={`ww-mm-grid-wrap${dragOver ? ' is-drag' : ''}`}
+        className={`ww-mm-content ww-mm-content--${view}${dragOver ? ' is-drag' : ''}`}
         onMouseDown={onGridMouseDown}
-        onClick={(e) => { if (marqueeMovedRef.current) { marqueeMovedRef.current = false; return; } const el = e.target as HTMLElement; if (el.closest('.ww-mm-file, .ww-mm-folder, button, a, input')) return; if (picked.size) setPicked(new Set()); }}
+        onClick={(e) => { if (marqueeMovedRef.current) { marqueeMovedRef.current = false; return; } const el = e.target as HTMLElement; if (el.closest('.ww-mm-file, .ww-mm-folder, .ww-mm-row, button, a, input, select, .ww-mm-details-pane')) return; if (picked.size) setPicked(new Set()); }}
         onDragOver={(e) => { if (dragRef.current.length) return; e.preventDefault(); if (!busy) setDragOver(true); }}
-        onDragLeave={() => setDragOver(false)}
+        onDragLeave={(e) => { if (e.currentTarget === e.target) setDragOver(false); }}
         onDrop={(e) => { if (dragRef.current.length) return; e.preventDefault(); setDragOver(false); if (!busy) handleFiles(e.dataTransfer.files); }}
       >
-        {searching ? (
+        {view === 'grid' ? (
           <div className="ww-mm-grid">
-            {visible.length ? visible.map((p, i) => fileTile(p, i)) : <p className="ww-mm-empty">Keine Treffer für „{search}".</p>}
+            {!searching && allSubdirs.map((d) => folderTile(d))}
+            {visible.map((p, i) => fileTile(p, i))}
+            {(!allSubdirs.length || searching) && !visible.length ? emptyNote : null}
+          </div>
+        ) : view === 'list' ? (
+          <div className="ww-mm-list">
+            <div className="ww-mm-row ww-mm-row-head" aria-hidden="true">
+              <span className="ww-mm-row-thumb" /><span className="ww-mm-row-name">Name</span>
+              <span className="ww-mm-row-meta ww-mm-row-type">Typ</span><span className="ww-mm-row-meta ww-mm-row-size">Größe</span><span className="ww-mm-row-meta ww-mm-row-date">Hochgeladen</span>
+            </div>
+            {!searching && allSubdirs.map((d) => folderRow(d))}
+            {visible.map((p, i) => fileRow(p, i))}
+            {(!allSubdirs.length || searching) && !visible.length ? emptyNote : null}
           </div>
         ) : (
-          <div className="ww-mm-grid">
-            {allSubdirs.map((d) => {
-              const dPath = folder ? `${folder}/${d}` : d;
-              return (
-                <button key={'d:' + d} type="button" className={`ww-mm-folder${dropTarget === dPath ? ' is-drop' : ''}`} onClick={() => { setSel(null); setFolder(dPath); }} title={d} {...folderDropProps(dPath)}>
-                  <span className="ww-mm-foldericon" aria-hidden="true">📁</span>
-                  <span className="ww-mm-fname">{d}</span>
-                </button>
-              );
-            })}
-            {visible.map((p, i) => fileTile(p, i))}
-            {!allSubdirs.length && !visible.length ? <p className="ww-mm-empty">Dieser Ordner ist leer. Zieh Bilder hierher oder nutze „Hochladen".</p> : null}
+          <div className="ww-mm-details">
+            <div className="ww-mm-details-list">
+              {!searching && allSubdirs.map((d) => folderRow(d))}
+              {visible.map((p, i) => fileRow(p, i))}
+              {(!allSubdirs.length || searching) && !visible.length ? emptyNote : null}
+            </div>
+            <div className="ww-mm-details-pane">
+              {sel ? (
+                <>
+                  <div className="ww-mm-details-imgwrap"><img src={previewOf(sel)} alt={baseOf(sel)} /></div>
+                  <div className="ww-mm-lb-info">{previewInfo(sel)}</div>
+                </>
+              ) : <div className="ww-mm-details-hint">Ein Bild links wählen für die Vorschau.</div>}
+            </div>
           </div>
         )}
         {dragOver ? <div className="ww-mm-dropnote">Loslassen zum Hochladen → {uploadTarget}/</div> : null}
@@ -470,40 +696,14 @@ export default function MediaManager() {
       </div>{/* .ww-mm-main */}
       </div>{/* .ww-mm-body */}
 
-      {/* Lightbox mit Infos — Klick auf ein Bild öffnet groß; ←/→ blättert; Esc/Backdrop/✕ schließt. */}
-      {sel ? (
-        <div className="ww-mm-lb" role="dialog" aria-modal="true" aria-label="Bild-Ansicht" onClick={() => setSel(null)}>
-          <button type="button" className="ww-mm-lb-close" onClick={() => setSel(null)} aria-label="Schließen">✕</button>
+      {/* Lightbox (Kacheln/Liste) */}
+      {lbOpen && sel ? (
+        <div className="ww-mm-lb" role="dialog" aria-modal="true" aria-label="Bild-Ansicht" onClick={() => setLbOpen(false)}>
+          <button type="button" className="ww-mm-lb-close" onClick={() => setLbOpen(false)} aria-label="Schließen">✕</button>
           {visible.length > 1 ? <button type="button" className="ww-mm-lb-nav prev" onClick={(e) => { e.stopPropagation(); navSel(-1); }} aria-label="Vorheriges">‹</button> : null}
           <div className="ww-mm-lb-stage" onClick={(e) => e.stopPropagation()}>
-            <div className="ww-mm-lb-imgwrap"><img src={previewOf(sel)} alt={sel.split('/').pop() || ''} /></div>
-            <div className="ww-mm-lb-info">
-              <div className="ww-mm-lb-name">{sel.split('/').pop()}</div>
-              <div className="ww-mm-lb-path">{sel}</div>
-              <div className="ww-mm-usage">
-                <div className="ww-mm-usage-title">Verwendet in</div>
-                {usage.loading ? <div className="ww-mm-usage-note">wird geprüft …</div>
-                  : usage.err ? <div className="ww-mm-usage-err">{usage.err}</div>
-                  : usage.items && usage.items.length ? (
-                    <ul className="ww-mm-usage-list">
-                      {usage.items.map((u, i) => (
-                        // Bei Einzel-Seiten (Startseite/Highlights/…) gibt es kein Titelfeld -> label fällt auf den
-                        // Datei-Slug zurück (z. B. „home-settings"). Diesen Roh-Slug NICHT anzeigen — die Bereichs-
-                        // Pille allein reicht. Nur echte Titel (z. B. Album „USA 2023") als Klartext dahinter zeigen.
-                        <li key={i}>
-                          <span className="ww-mm-usage-coll">{COLL_LABEL[u.collection] || u.collection}</span>
-                          {u.label && u.label !== u.filename ? <> {u.label}</> : null}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : <div className="ww-mm-usage-note ww-mm-usage-free">Unbenutzt — wird nirgends verwendet.</div>}
-              </div>
-              <div className="ww-mm-detail-actions">
-                <button type="button" className="btn" onClick={() => setAssignFor(sel)}>Einem Inhalt zuweisen</button>
-                <a className="btn ghost" href={sel} target="_blank" rel="noopener">Original öffnen</a>
-                <button type="button" className="btn ww-mm-delbtn" onClick={() => setDel(sel)} disabled={busy}>Löschen</button>
-              </div>
-            </div>
+            <div className="ww-mm-lb-imgwrap"><img src={previewOf(sel)} alt={baseOf(sel)} /></div>
+            <div className="ww-mm-lb-info">{previewInfo(sel)}</div>
           </div>
           {visible.length > 1 ? <button type="button" className="ww-mm-lb-nav next" onClick={(e) => { e.stopPropagation(); navSel(1); }} aria-label="Nächstes">›</button> : null}
         </div>
@@ -514,7 +714,7 @@ export default function MediaManager() {
         <div className="ww-dt-overlay" role="dialog" aria-modal="true" onClick={() => { if (!busy) setDel(null); }}>
           <div className="ww-dt-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Bild löschen?</h3>
-            <p className="ww-dt-note">„{del.split('/').pop()}" wird dauerhaft aus dem Repo entfernt. Falls es noch irgendwo verwendet wird, bricht dort das Bild.</p>
+            <p className="ww-dt-note">„{baseOf(del)}" wird dauerhaft aus dem Repo entfernt. Falls es noch irgendwo verwendet wird, bricht dort das Bild.</p>
             <div className="ww-dt-actions">
               <button type="button" className="btn ww-dt-danger" onClick={() => doDelete(del)} disabled={busy}>{busy ? <><span className="ww-spinner" />Lösche …</> : 'Endgültig löschen'}</button>
               <button type="button" className="ww-dt-cancel" onClick={() => setDel(null)} disabled={busy}>Abbrechen</button>
@@ -531,7 +731,7 @@ export default function MediaManager() {
             <img className="ww-mm-assign-img" src={previewOf(assignFor)} alt="" />
             {aConfirm !== null ? (
               <>
-                <p className="ww-dt-note">Dieses Feld hat bereits ein Bild (<code>{aConfirm.split('/').pop()}</code>). Ersetzen?</p>
+                <p className="ww-dt-note">Dieses Feld hat bereits ein Bild (<code>{baseOf(aConfirm)}</code>). Ersetzen?</p>
                 <div className="ww-dt-actions">
                   <button type="button" className="btn ww-dt-danger" onClick={() => doAssign(true)} disabled={aBusy}>{aBusy ? <><span className="ww-spinner" />Ersetze …</> : 'Ersetzen'}</button>
                   <button type="button" className="ww-dt-cancel" onClick={() => setAConfirm(null)} disabled={aBusy}>Abbrechen</button>
@@ -566,11 +766,11 @@ export default function MediaManager() {
         </div>
       ) : null}
 
-      {/* Fixe Auswahl-Leiste (bleibt beim Scrollen unten stehen) */}
+      {/* Fixe Auswahl-Leiste */}
       {selMode ? (
         <div className="ww-bulkbar ww-mm-bulkbar" role="region" aria-label="Auswahl-Aktionen">
           <span className="ww-bulkbar-count">{picked.size} ausgewählt</span>
-          <button type="button" className="ww-mm-selall" onClick={() => setPicked(new Set(searching ? searchHits : files))} disabled={bulkBusy}>Alle im Ordner</button>
+          <button type="button" className="ww-mm-selall" onClick={() => setPicked(new Set(visible))} disabled={bulkBusy}>Alle im Ordner</button>
           <button type="button" className="btn ww-bulkbar-move" onClick={() => { setMoveTarget(''); setMoveNew(''); setMoveOpen(true); }} disabled={bulkBusy || picked.size === 0}>Verschieben nach …</button>
           <button type="button" className="btn ww-dt-danger" onClick={() => setBulkDel(true)} disabled={bulkBusy || picked.size === 0}>{picked.size} löschen</button>
           <button type="button" className="ww-dt-cancel" onClick={exitSel} disabled={bulkBusy}>Fertig</button>
@@ -591,7 +791,7 @@ export default function MediaManager() {
         </div>
       ) : null}
 
-      {/* Verschieben-nach-Ordner-Modal */}
+      {/* Verschieben-Modal */}
       {moveOpen ? (
         <div className="ww-dt-overlay" role="dialog" aria-modal="true" onClick={() => { if (!bulkBusy) setMoveOpen(false); }}>
           <div className="ww-dt-modal ww-mm-move" onClick={(e) => e.stopPropagation()}>
@@ -610,6 +810,29 @@ export default function MediaManager() {
             <div className="ww-dt-actions">
               <button type="button" className="btn" onClick={doBulkMove} disabled={bulkBusy}>{bulkBusy ? <><span className="ww-spinner" />{progress || 'Verschiebe …'}</> : 'Verschieben'}</button>
               <button type="button" className="ww-dt-cancel" onClick={() => setMoveOpen(false)} disabled={bulkBusy}>Abbrechen</button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {/* „Nach Alben ordnen"-Vorschau */}
+      {organizeOpen ? (
+        <div className="ww-dt-overlay" role="dialog" aria-modal="true" onClick={() => { if (!bulkBusy) setOrganizeOpen(false); }}>
+          <div className="ww-dt-modal ww-mm-organize" onClick={(e) => e.stopPropagation()}>
+            <h3>Nach Alben ordnen</h3>
+            {organizeCount === 0 ? (
+              <p className="ww-dt-note">Alles bereits einsortiert — es gibt nichts zu verschieben. (Portfolio/Alben ist der Master; Storys &amp; Reisen verweisen auf dieselben Bilder und werden automatisch mitgezogen. Journal bleibt außen vor.)</p>
+            ) : (
+              <>
+                <p className="ww-dt-note">Fotos jedes Albums werden nach <code>alben/&lt;slug&gt;/</code> verschoben — Referenzen in Storys &amp; Reisen ziehen automatisch mit. Nur bereits vorhandene, noch nicht einsortierte Bilder:</p>
+                <ul className="ww-mm-organize-list">
+                  {organizePlan.map((a) => <li key={a.slug}><strong>{a.name}</strong> <span>→ alben/{a.slug}/</span> <em>{a.photos.length}</em></li>)}
+                </ul>
+              </>
+            )}
+            <div className="ww-dt-actions">
+              {organizeCount > 0 ? <button type="button" className="btn" onClick={doOrganize} disabled={bulkBusy}>{bulkBusy ? <><span className="ww-spinner" />{progress || 'Ordne …'}</> : `${organizeCount} verschieben`}</button> : null}
+              <button type="button" className="ww-dt-cancel" onClick={() => setOrganizeOpen(false)} disabled={bulkBusy}>{organizeCount > 0 ? 'Abbrechen' : 'Schließen'}</button>
             </div>
           </div>
         </div>
