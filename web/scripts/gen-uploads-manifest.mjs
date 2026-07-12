@@ -15,9 +15,10 @@
 // ERST-Commits der Datei (echtes Upload-Datum) via Git; Fallback = Dateisystem-mtime (z. B. bei
 // noch nicht committeten Dateien oder Shallow-Clone). Der bestehende `uploads-manifest.json` bleibt
 // UNVERÄNDERT (string[]) — die Foto-Picker funktionieren weiter; die Meta-Datei ist rein additiv.
-import { existsSync, readdirSync, statSync, writeFileSync, mkdirSync } from 'node:fs';
+import { existsSync, readdirSync, statSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, join, posix } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { readCamera } from './lib/exifCamera.mjs';
 
 const IMG = /\.(jpe?g|png|webp|gif|avif)$/i;
 const root = resolve('public', 'uploads');
@@ -54,7 +55,10 @@ function walk(dir, rel) {
       const pub = '/uploads/' + relPath;
       list.push(pub);
       const added = gitAddedISO(posix.join('public/uploads', relPath)) || new Date(st.mtimeMs).toISOString();
-      meta[pub] = { size: st.size, added };
+      const entry = { size: st.size, added };
+      // Kamera aus EXIF (JPG-APP1 ODER WebP-EXIF-Chunk); nur setzen, wenn erkannt.
+      try { const cam = readCamera(readFileSync(abs)); if (cam) entry.camera = cam; } catch { /* egal */ }
+      meta[pub] = entry;
     }
   }
 }
