@@ -3,6 +3,8 @@
 // jSquash-WASM wird vom CDN (unpkg) geladen -> WebP in JEDEM Browser inkl. Safari
 // (genau wie Sveltia). Fallback: natives canvas-WebP -> sonst JPEG (nie PNG).
 
+import { slimExifForWebp, muxExifIntoWebp } from '../../src/lib/exifWebp';
+
 export const MAX_WIDTH = 2400;
 export const WEBP_QUALITY = 85; // jSquash: 0..100
 export const CANVAS_WEBP_Q = 0.85;
@@ -76,7 +78,17 @@ export async function detectEncoder(): Promise<EncoderMode> {
 }
 
 // Ein File -> optimiertes File (WebP wo moeglich, sonst JPEG). Breite <= 2400.
+// Encoded WebP-Blob + schlanke EXIF (Kamera) aus der Quelle -> WebP-File MIT EXIF-Chunk (falls Kamera da).
+async function webpFileWithExif(blob: Blob, base: string, slimExif: Uint8Array | null, w: number, h: number): Promise<File> {
+  if (!slimExif) return new File([blob], `${base}.webp`, { type: 'image/webp' });
+  const bytes = new Uint8Array(await blob.arrayBuffer());
+  const out = muxExifIntoWebp(bytes, slimExif, w, h);
+  return new File([out], `${base}.webp`, { type: 'image/webp' });
+}
+
 export async function toOptimized(file: File, mode: EncoderMode): Promise<{ file: File; format: 'webp' | 'jpeg' }> {
+  const srcBytes = new Uint8Array(await file.arrayBuffer());
+  const slimExif = slimExifForWebp(srcBytes); // Kamera-EXIF aus der Originaldatei (oder null)
   const dataUrl = await readAsDataURL(file);
   const img = await loadImage(dataUrl);
   let w = img.naturalWidth || img.width;
@@ -101,7 +113,7 @@ export async function toOptimized(file: File, mode: EncoderMode): Promise<{ file
     try {
       const imageData = ctx.getImageData(0, 0, w, h);
       const blob = await jsquashWebp(imageData);
-      return { file: new File([blob], `${base}.webp`, { type: 'image/webp' }), format: 'webp' };
+      return { file: await webpFileWithExif(blob, base, slimExif, w, h), format: 'webp' };
     } catch {
       /* faellt auf canvas/jpeg zurueck */
     }
@@ -110,7 +122,7 @@ export async function toOptimized(file: File, mode: EncoderMode): Promise<{ file
   if (mode !== 'jpeg') {
     const blob = await toBlobAsync(canvas, 'image/webp', CANVAS_WEBP_Q);
     if (blob && blob.type === 'image/webp') {
-      return { file: new File([blob], `${base}.webp`, { type: 'image/webp' }), format: 'webp' };
+      return { file: await webpFileWithExif(blob, base, slimExif, w, h), format: 'webp' };
     }
   }
   // 3) JPEG-Fallback (klein, nicht PNG)
