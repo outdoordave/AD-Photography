@@ -5,15 +5,14 @@
   "title_en": "Who's behind the logo",
   "intro_de": "Zwei Menschen, eine gemeinsame Leidenschaft,  Fernweh — und zwei sehr unterschiedliche Arten, sie einzufangen.",
   "intro_en": "Two people, one shared love for wide open spaces — and two very different ways of capturing it.",
-  "person_hover": true,
   "persons": [
     {
       "name": "Alexandra Apostel",
-      "photo": "{\"original\":\"/uploads/img_0206.jpg\",\"display\":\"/uploads/img_0206.jpg\",\"crop\":{\"x\":0.07815217511653184,\"y\":0.23541543567914333,\"w\":0.7036224194481961,\"h\":0.7042253521126761}}",
+      "photo": "{\"original\":\"/uploads/alben/2024-erste-fotos/img_0206.jpg\",\"display\":\"/uploads/alben/2024-erste-fotos/img_0206.jpg\",\"crop\":{\"x\":0.07815217511653184,\"y\":0.23541543567914333,\"w\":0.7036224194481961,\"h\":0.7042253521126761}}",
       "role_de": "Landschaft & Wildlife",
       "role_en": "Landscape & Wildlife",
-      "bio_de": "Frisch verliebt in die Fotografie und schon nicht mehr zu bremsen. Alexandra hat das Auge für Tiere und Licht — und die Geduld, die beides braucht.",
-      "bio_en": "Freshly in love with photography and already unstoppable. Alexandra has the eye for animals and light — and the patience both demand.",
+      "bio_de": "Frisch verliebt in die Fotografie und schon nicht mehr zu bremsen. Alexandra hat das Auge für Tiere und Licht — und die Geduld, die beides braucht.\n",
+      "bio_en": "Freshly in love with photography and already unstoppable. Alexandra has the eye for animals and light — and the patience both demand.\n",
       "gear_de": "Ausrüstung: Sony A7 IV · Tamron 28-75mm · Tamron 150-500mm · Peak Design Stativ",
       "gear_en": "Gear: Sony A7 IV · Tamron 28-75mm · Tamron 150-500mm · Peak Design tripod"
     },
@@ -23,11 +22,12 @@
       "role_de": "Aus der Luft & Bewegung",
       "role_en": "Aerial & Motion",
       "bio_de": "Der Mann für die andere Perspektive. David schickt die Drohne hoch, hält mit der Action-Cam drauf und findet Blickwinkel, an die sonst keiner denkt.\n",
-      "bio_en": "The man for the other angle. David sends the drone up, rolls the action cam, and finds perspectives nobody else thinks of.",
+      "bio_en": "The man for the other angle. David sends the drone up, rolls the action cam, and finds perspectives nobody else thinks of.\n",
       "gear_de": "Ausrüstung: DJI Air 2S · DJI Osmo Action 4 · iPhone",
       "gear_en": "Gear: DJI Air 2S · DJI Osmo Action 4 · iPhone"
     }
   ],
+  "person_hover": true,
   "why_title_de": "Warum die USA?",
   "why_title_en": "Why the USA?",
   "why_text_de": "Weil kein anderes Land so viel Vielfalt auf einer einzigen Reise bietet: Wüsten, Canyons, Küsten, Wälder, Berge — und dazwischen Tiere, die man sonst nur aus Dokus kennt. Jede Tour ist anders, jedes Licht neu. Genau das hält uns draußen.",
