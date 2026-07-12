@@ -76,6 +76,15 @@
 > findAllUsed/„Verwendet in", Auto-Ordner-Verschieben, Album-Upload; Marquee-Auto-Scroll im echten Browser.
 > **Offen (Idee):** „Am meisten angesehen"-Sortierung — Daten existieren (Lightbox sendet `foto`-Events an
 > Umami), braucht aber Umami-Cloud-API-Abruf (API-Key, Build-Schritt). Noch nicht gebaut.
+> **Upload-Fenster + Vorschau + Kamera (12.07., `fa4294e`/`8e3f553`/`9e630ed`):** (a) **Upload-Modal**
+> („+ Hochladen" öffnet Fenster mit Drop-Feld + Ziel aktueller Ordner/Album/neuer Ordner; „Ziel"-Select
+> raus aus der Toolbar; schneller Drop in die Ansicht bleibt). (b) **Details-Vorschau** liegt außerhalb des
+> Drop-Felds in einem Viewport mit fester Höhe → Liste scrollt intern, Vorschau bleibt stehen (Finder-Spalten-
+> ansicht). (c) **Fade** unter der Sticky-Toolbar. (d) **Kamera-Erkennung** aus EXIF: Build liest Make/Model
+> (JPEG+WebP) → `camera` in `uploads-meta.json` (Klarnamen: Sony A7 IV/DJI Air 2S/iPhone …); beim Upload wird
+> ein minimaler EXIF-Block in die WebP-Datei gemuxt (`src/lib/exifWebp.ts` + `webpEncode.ts`), damit auch neue
+> Uploads die Kamera behalten. UI: Kamera-Spalte (Liste/Details) + Fakt (📷) + Sortier-Option. ⚠️ Alt-WebPs
+> ohne EXIF bleiben „—"; echter Upload-EXIF-Erhalt nur im echten CMS/Deploy prüfbar (Node-Round-Trip bestanden).
 > ⚠️ **Nur im echten CMS prüfbar:** Hochladen/Löschen/**Verschieben+Umschreiben**/**Bulk-Löschen** (Assets-API,
 > **CORS-Risiko** beim Signed-PUT → falls unzuverlässig: mit David abgestimmter Rückmelde-Fall, KEIN
 > Auto-Wechsel auf Custom-Screen), „Verwendet in"-Treffer, Zuweisen, korrektes Ordner-Landen. Offline

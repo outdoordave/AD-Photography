@@ -17,6 +17,25 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-12 — Medien-Manager: Upload-Fenster, Vorschau-Layout, Fade, Kamera-Erkennung (`fa4294e`, `8e3f553`, `9e630ed`)
+Geplant (Plan-Modus) + freigegeben, am Vorbild Finder/Drive. Offline verifiziert (EXIF per Node-Round-Trip, UI im Browser).
+- **Kamera aus EXIF beim Build (`fa4294e`)**: neuer Node-Parser `scripts/lib/exifCamera.mjs` liest Make/Model
+  aus JPEG-APP1 **und** WebP-EXIF-Chunk, mappt auf Klarnamen (ILCE-7M4→Sony A7 IV, FC3411→DJI Air 2S, Apple→
+  iPhone-Modell). `gen-uploads-manifest.mjs` schreibt `camera` in `uploads-meta.json`. Alle 11 JPGs erkannt.
+- **EXIF beim Upload erhalten (`8e3f553`)**: `src/lib/exifWebp.ts` zieht Make/Model aus der Originaldatei,
+  baut einen MINIMALEN EXIF-TIFF (~50 B, nicht die 50-KB-Original-EXIF) und muxt ihn nach dem Encode als
+  EXIF-Chunk in den WebP-Container (VP8X). `webpEncode.toOptimized` ruft das auf. Round-Trip: Kamera bleibt,
+  +~80 B/Bild. → Auch neue WebP-Uploads haben ab jetzt die Kamera.
+- **Upload-Fenster (`9e630ed`)**: „+ Hochladen" öffnet ein Modal (Drop-Feld, Ziel = aktueller Ordner/Album/
+  neuer Ordner, Ziel-Vorschau). „Ziel"-Select raus aus der Toolbar → schlanker. Schneller Drop in die Ansicht bleibt.
+- **Details-Vorschau (`9e630ed`)**: liegt jetzt AUSSERHALB des Drop-Felds; Viewport mit fester Höhe → Liste
+  scrollt intern, Vorschau bleibt beim Durchscrollen stehen (Finder-Spaltenansicht), geht erst mit beim Verlassen
+  der Sektion. Ersetzt das zu früh lösende `position:sticky`.
+- **Fade (`9e630ed`)**: weiche Kante unter der Sticky-Toolbar (`::after`-Verlauf).
+- **Kamera in der UI (`9e630ed`)**: Spalte in Liste/Details, Fakt (📷) in der Vorschau, Sortier-Option „Kamera".
+- Dateien: `scripts/lib/exifCamera.mjs`, `gen-uploads-manifest.mjs`, `src/lib/exifWebp.ts`, `tina/fields/webpEncode.ts`,
+  `src/components/MediaManager.tsx`, `src/styles/global.css`, `public/uploads-meta.json`.
+
 ## 2026-07-12 — Medien-Manager: Finder-Ansichten + Sortierung + Auto-Ordner (`0da48f0`, `a5457b2`)
 Großer UX-Ausbau nach Absprache (Ansichten „voll", Sortierung inkl. Datum via Git, Auto-Ordner „beides",
 Master = Alben/Portfolio; „am meisten angesehen" bewusst aufgeschoben — s. u.).
