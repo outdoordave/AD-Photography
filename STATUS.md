@@ -90,8 +90,11 @@
 > `uploads-meta.json`), Upload muxt sie mit in die WebP (`exifWebp.ts` `buildExifTiff`, ~180–260 B; Round-Trip
 > ok). UI: Foto-Daten-Block in der Vorschau. **„Am meisten angesehen"**: Build-Schritt `gen-uploads-views.mjs`
 > zieht Aufrufe je Bild aus der Umami-Cloud-API (`foto`-Events, `bild`=Dateiname) → `uploads-views.json`;
-> Sortierung + 👁 N× in der Vorschau. Fehlertolerant (ohne Key leer). 🟡 **Offen (David):** Umami-API-Key als
-> Cloudflare-Secret `UMAMI_API_KEY` anlegen; exakter Umami-Endpunkt nach 1. Deploy per Build-Log verifizieren.
+> Sortierung + 👁 N× in der Vorschau. **Datenquelle = eigener Cloudflare-KV-Zähler** (`functions/api/view.js`;
+> Lightbox pingt via `track.countView`, Medien-Manager liest LIVE aus `/api/view`, Fallback statische Datei).
+> Umami-Weg verworfen: freier Share weist Event-Daten mit 401 ab, API-Key nur im 20-USD-Plan. 🟡 **Offen
+> (David, einmalig):** in Cloudflare ein KV-Namespace anlegen und im Pages-Projekt (Settings → Functions →
+> KV namespace bindings) als **`VIEWS`** binden (Production + Preview). Ohne Binding zählt nichts (kein Fehler).
 > ⚠️ **Nur im echten CMS prüfbar:** Hochladen/Löschen/**Verschieben+Umschreiben**/**Bulk-Löschen** (Assets-API,
 > **CORS-Risiko** beim Signed-PUT → falls unzuverlässig: mit David abgestimmter Rückmelde-Fall, KEIN
 > Auto-Wechsel auf Custom-Screen), „Verwendet in"-Treffer, Zuweisen, korrektes Ordner-Landen. Offline

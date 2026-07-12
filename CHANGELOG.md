@@ -23,11 +23,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
   `uploads-meta.json`); beim Upload wird ein schlanker TIFF mit IFD0 + ExifIFD gemuxt (`exifWebp.ts`:
   `readTiffPhoto`+`buildExifTiff`, ~180–260 B), damit neue WebP-Uploads die Werte behalten. Node-Round-Trip
   bestätigt (Sony A7 IV / DJI Air 2S / iPhone: alle Werte erhalten). UI: Foto-Daten-Block in der Vorschau.
-- **„Am meisten angesehen" (`f2558a5`)**: neuer Build-Schritt `gen-uploads-views.mjs` holt die Aufruf-Zahlen
-  je Bild aus der **Umami-Cloud-API** (die Lightbox sendet `foto`-Events mit `bild`=Dateiname) → `uploads-
-  views.json`; Sortierung „Am meisten angesehen" + 👁 N× in der Vorschau. Fehlertolerant (ohne Key leere Liste,
-  Build bricht nie ab). ⚠️ **Einrichtung durch David:** Umami-API-Key als Cloudflare-Secret `UMAMI_API_KEY`;
-  exakter Endpunkt offline nicht testbar → nach Deploy Build-Log prüfen.
+- **„Am meisten angesehen" (`f2558a5`→`63a30e0`→`571463f`)**: Sortierung + 👁 N× in der Vorschau gebaut.
+  Datenquelle: erst über **Umami** versucht (`gen-uploads-views.mjs`) — per Live-Browser-Analyse die echten
+  Endpunkte gefunden (`cloud.umami.is/analytics/eu/api/…`), **aber der freie öffentliche Share weist den
+  Event-Daten-Endpunkt mit 401 ab** (Event-Eigenschaften nur im 20-USD-Plan). **Lösung ohne Bezahlplan
+  (`571463f`): eigener Cloudflare-KV-Zähler.** `functions/api/view.js` (POST zählt +1, GET liefert
+  `{datei:anzahl}`); die Lightbox pingt es beim Bild-Öffnen (`track.countView`); der Medien-Manager liest LIVE
+  aus `/api/view` (Fallback statische Datei). Umami-Build-Schritt aus dem Build entfernt (Skript bleibt für den
+  Key-Fall). ⚠️ **Einrichtung durch David:** in Cloudflare ein KV-Namespace anlegen und im Pages-Projekt unter
+  Settings → Functions als `VIEWS` binden (Production + Preview).
 - Dateien: `scripts/lib/exifCamera.mjs`, `src/lib/exifWebp.ts`, `tina/fields/webpEncode.ts`,
   `scripts/gen-uploads-manifest.mjs`, `scripts/gen-uploads-views.mjs`, `package.json`, `public/uploads-meta.json`,
   `public/uploads-views.json`, `src/components/MediaManager.tsx`, `src/styles/global.css`.
