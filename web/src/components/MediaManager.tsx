@@ -15,9 +15,9 @@ import { detectEncoder, toOptimized, type EncoderMode } from '../../tina/fields/
 // „Nach Alben ordnen". Nur bei Login sichtbar. iPad-tauglich (Tap + Datei-Dialog).
 
 type Fresh = { path: string; url: string };
-type Meta = Record<string, { size: number; added: string }>;
+type Meta = Record<string, { size: number; added: string; camera?: string }>;
 type View = 'grid' | 'list' | 'details';
-type SortKey = 'name' | 'size' | 'date' | 'type' | 'unused';
+type SortKey = 'name' | 'size' | 'date' | 'type' | 'camera' | 'unused';
 type SortDir = 'asc' | 'desc';
 
 const COLL_LABEL: Record<string, string> = {
@@ -26,7 +26,7 @@ const COLL_LABEL: Record<string, string> = {
 };
 
 const SORT_LABEL: Record<SortKey, string> = {
-  name: 'Name', size: 'Größe', date: 'Upload-Datum', type: 'Datei-Typ', unused: 'Unbenutzt zuerst',
+  name: 'Name', size: 'Größe', date: 'Upload-Datum', type: 'Datei-Typ', camera: 'Kamera', unused: 'Unbenutzt zuerst',
 };
 
 function relOf(p: string): string { return p.replace(/^\/uploads\//, ''); }
@@ -125,8 +125,12 @@ export default function MediaManager() {
   const [newName, setNewName] = React.useState('');
   // Alben (für Upload-Ziel + „Nach Alben ordnen").
   const [albums, setAlbums] = React.useState<AlbumForOrganize[] | null>(null);
-  const [uploadAlbum, setUploadAlbum] = React.useState(''); // slug oder '' (= aktueller Ordner)
   const [organizeOpen, setOrganizeOpen] = React.useState(false);
+  // Upload-Fenster (eigenes Modal mit Drop-Feld + Zielwahl statt allem in der Toolbar).
+  const [uploadOpen, setUploadOpen] = React.useState(false);
+  const [upDest, setUpDest] = React.useState<'current' | 'album' | 'new'>('current');
+  const [upAlbum, setUpAlbum] = React.useState(''); // Album-slug bei upDest==='album'
+  const [upNew, setUpNew] = React.useState('');      // neuer Ordnername bei upDest==='new'
   // Desktop-Auswahl-Gesten.
   const [anchor, setAnchor] = React.useState<number | null>(null);
   const stateRef = React.useRef<any>({});
@@ -238,6 +242,7 @@ export default function MediaManager() {
     else if (sortKey === 'size') d = (meta[a]?.size || 0) - (meta[b]?.size || 0);
     else if (sortKey === 'date') d = (meta[a]?.added || '').localeCompare(meta[b]?.added || '');
     else if (sortKey === 'type') d = extOf(a).localeCompare(extOf(b)) || baseOf(a).localeCompare(baseOf(b));
+    else if (sortKey === 'camera') d = (meta[a]?.camera || '￿').localeCompare(meta[b]?.camera || '￿') || baseOf(a).localeCompare(baseOf(b));
     else if (sortKey === 'unused') d = (isUsed(a) ? 1 : 0) - (isUsed(b) ? 1 : 0) || baseOf(a).localeCompare(baseOf(b));
     return d;
   };
@@ -245,7 +250,7 @@ export default function MediaManager() {
 
   stateRef.current = {
     visible, selMode, sel, lbOpen, view, pickedSize: picked.size,
-    anyModal: !!(del || bulkDel || moveOpen || assignFor || creating || organizeOpen),
+    anyModal: !!(del || bulkDel || moveOpen || assignFor || creating || organizeOpen || uploadOpen),
   };
 
   const navSel = (dir: 1 | -1) => {
@@ -317,9 +322,16 @@ export default function MediaManager() {
     window.addEventListener('mouseup', onUp);
   };
 
-  const uploadTarget = uploadAlbum ? `alben/${uploadAlbum}` : (folder || 'allgemein');
+  const quickTarget = folder || 'allgemein'; // Schnell-Drop in die Ansicht: aktueller Ordner
+  const slugify = (s: string) => s.trim().replace(/^\/+|\/+$/g, '').replace(/\s+/g, '-');
+  // Ziel aus der Modal-Auswahl (aktueller Ordner / Album / neuer Ordner unter dem aktuellen).
+  const uploadModalTarget = (): string => {
+    if (upDest === 'album' && upAlbum) return `alben/${upAlbum}`;
+    if (upDest === 'new' && upNew.trim()) { const s = slugify(upNew); return folder ? `${folder}/${s}` : s; }
+    return quickTarget;
+  };
 
-  async function handleFiles(list: FileList | File[] | null) {
+  async function handleFiles(list: FileList | File[] | null, target: string) {
     if (!list) return;
     const imgs = Array.from(list).filter((f) => f.type.startsWith('image/'));
     if (!imgs.length) return;
@@ -330,7 +342,7 @@ export default function MediaManager() {
       setProgress(`Konvertiere & lade ${i + 1}/${imgs.length} …`);
       try {
         const { file } = await toOptimized(imgs[i], mode);
-        const r = await uploadToCloud(file, uploadTarget);
+        const r = await uploadToCloud(file, target);
         if (r.ok && r.path) {
           const url = URL.createObjectURL(file);
           setFresh((prev) => [{ path: r.path as string, url }, ...prev.filter((x) => x.path !== r.path)]);
@@ -339,7 +351,7 @@ export default function MediaManager() {
       } catch (e: any) { lastErr = e?.message || 'Upload fehlgeschlagen'; }
     }
     setBusy(false); setProgress('');
-    if (okCount) showToast(`${okCount} hochgeladen → ${uploadTarget}/`, 'success');
+    if (okCount) showToast(`${okCount} hochgeladen → ${target}/`, 'success');
     if (lastErr) showToast(lastErr, 'error');
   }
 
@@ -501,6 +513,7 @@ export default function MediaManager() {
         {selMode ? <span className={`ww-mm-check-row${isPicked ? ' is-on' : ''}`} aria-hidden="true">{isPicked ? '✓' : ''}</span> : null}
         <img className="ww-mm-row-thumb" src={previewOf(p)} alt="" loading="lazy" draggable={false} />
         <span className="ww-mm-row-name">{baseOf(p)}</span>
+        <span className="ww-mm-row-meta ww-mm-row-cam">{meta[p]?.camera || '—'}</span>
         <span className="ww-mm-row-meta ww-mm-row-type">{extOf(p) || '—'}</span>
         <span className="ww-mm-row-meta ww-mm-row-size">{fmtSize(meta[p]?.size)}</span>
         <span className="ww-mm-row-meta ww-mm-row-date">{fmtDate(meta[p]?.added)}</span>
@@ -531,6 +544,7 @@ export default function MediaManager() {
       <div key={'d:' + d} role="button" tabIndex={0} className={`ww-mm-row ww-mm-row-folder${dropTarget === dPath ? ' is-drop' : ''}`} onClick={() => { closePreview(); setFolder(dPath); }} title={d} {...folderDropProps(dPath)}>
         <span className="ww-mm-row-thumb ww-mm-row-foldericon" aria-hidden="true">📁</span>
         <span className="ww-mm-row-name">{d}</span>
+        <span className="ww-mm-row-meta ww-mm-row-cam" />
         <span className="ww-mm-row-meta ww-mm-row-type">Ordner</span>
         <span className="ww-mm-row-meta ww-mm-row-size" /><span className="ww-mm-row-meta ww-mm-row-date" />
       </div>
@@ -546,6 +560,7 @@ export default function MediaManager() {
       <div className="ww-mm-lb-path">{p}</div>
       <div className="ww-mm-lb-facts">
         <span>{fmtSize(meta[p]?.size)}</span><span>·</span><span>{extOf(p).toUpperCase() || '—'}</span><span>·</span><span>{fmtDate(meta[p]?.added)}</span>
+        {meta[p]?.camera ? <><span>·</span><span className="ww-mm-fact-cam">📷 {meta[p]!.camera}</span></> : null}
       </div>
       <div className="ww-mm-usage">
         <div className="ww-mm-usage-title">Verwendet in</div>
@@ -636,62 +651,54 @@ export default function MediaManager() {
         <button type="button" className={`ww-mm-selmode${selMode ? ' is-active' : ''}`} onClick={() => (selMode ? exitSel() : setSelMode(true))}>
           {selMode ? 'Auswahl beenden' : 'Auswählen'}
         </button>
-        {/* Upload-Ziel (Album) + Hochladen */}
-        <select className="ww-mm-uploadalbum" value={uploadAlbum} onChange={(e) => setUploadAlbum(e.target.value)} title="Upload-Ziel" disabled={busy}>
-          <option value="">Ziel: {folder || 'allgemein'}/</option>
-          {(albums || []).map((a) => <option key={a.slug} value={a.slug}>Album: {a.name}</option>)}
-        </select>
-        <label className={`btn ww-mm-upload${busy ? ' is-busy' : ''}`}>
-          {busy ? <><span className="ww-spinner" />{progress || 'Arbeite …'}</> : `+ Hochladen (→ ${uploadTarget}/)`}
-          <input type="file" accept="image/*" multiple disabled={busy} onChange={(e) => handleFiles(e.target.files)} hidden />
-        </label>
+        <button type="button" className={`btn ww-mm-upload${busy ? ' is-busy' : ''}`} onClick={() => { setUpDest('current'); setUpNew(''); setUploadOpen(true); }} disabled={busy}>
+          {busy ? <><span className="ww-spinner" />{progress || 'Arbeite …'}</> : '+ Hochladen'}
+        </button>
       </div>
 
       {loadErr ? <p className="ww-mm-err">Mediathek nicht ladbar: {loadErr}</p> : null}
 
-      {/* Inhalt / Drop-Zone (ganzer Bereich nimmt Uploads per Drag&Drop an). */}
-      <div
-        className={`ww-mm-content ww-mm-content--${view}${dragOver ? ' is-drag' : ''}`}
-        onMouseDown={onGridMouseDown}
-        onClick={(e) => { if (marqueeMovedRef.current) { marqueeMovedRef.current = false; return; } const el = e.target as HTMLElement; if (el.closest('.ww-mm-file, .ww-mm-folder, .ww-mm-row, button, a, input, select, .ww-mm-details-pane')) return; if (picked.size) setPicked(new Set()); }}
-        onDragOver={(e) => { if (dragRef.current.length) return; e.preventDefault(); if (!busy) setDragOver(true); }}
-        onDragLeave={(e) => { if (e.currentTarget === e.target) setDragOver(false); }}
-        onDrop={(e) => { if (dragRef.current.length) return; e.preventDefault(); setDragOver(false); if (!busy) handleFiles(e.dataTransfer.files); }}
-      >
-        {view === 'grid' ? (
-          <div className="ww-mm-grid">
-            {!searching && allSubdirs.map((d) => folderTile(d))}
-            {visible.map((p, i) => fileTile(p, i))}
-            {(!allSubdirs.length || searching) && !visible.length ? emptyNote : null}
-          </div>
-        ) : view === 'list' ? (
-          <div className="ww-mm-list">
-            <div className="ww-mm-row ww-mm-row-head" aria-hidden="true">
-              <span className="ww-mm-row-thumb" /><span className="ww-mm-row-name">Name</span>
-              <span className="ww-mm-row-meta ww-mm-row-type">Typ</span><span className="ww-mm-row-meta ww-mm-row-size">Größe</span><span className="ww-mm-row-meta ww-mm-row-date">Hochgeladen</span>
+      {/* Inhalt: Kacheln/Liste im Drop-Feld; in der Details-Ansicht liegt die Vorschau-Leiste DANEBEN
+          (außerhalb des Drop-Felds) und der Block hat feste Höhe -> Liste scrollt intern, Vorschau bleibt. */}
+      <div className={`ww-mm-viewport ww-mm-viewport--${view}`}>
+        <div
+          className={`ww-mm-content ww-mm-content--${view}${dragOver ? ' is-drag' : ''}`}
+          onMouseDown={onGridMouseDown}
+          onClick={(e) => { if (marqueeMovedRef.current) { marqueeMovedRef.current = false; return; } const el = e.target as HTMLElement; if (el.closest('.ww-mm-file, .ww-mm-folder, .ww-mm-row, button, a, input, select')) return; if (picked.size) setPicked(new Set()); }}
+          onDragOver={(e) => { if (dragRef.current.length) return; e.preventDefault(); if (!busy) setDragOver(true); }}
+          onDragLeave={(e) => { if (e.currentTarget === e.target) setDragOver(false); }}
+          onDrop={(e) => { if (dragRef.current.length) return; e.preventDefault(); setDragOver(false); if (!busy) handleFiles(e.dataTransfer.files, quickTarget); }}
+        >
+          {view === 'grid' ? (
+            <div className="ww-mm-grid">
+              {!searching && allSubdirs.map((d) => folderTile(d))}
+              {visible.map((p, i) => fileTile(p, i))}
+              {(!allSubdirs.length || searching) && !visible.length ? emptyNote : null}
             </div>
-            {!searching && allSubdirs.map((d) => folderRow(d))}
-            {visible.map((p, i) => fileRow(p, i))}
-            {(!allSubdirs.length || searching) && !visible.length ? emptyNote : null}
-          </div>
-        ) : (
-          <div className="ww-mm-details">
-            <div className="ww-mm-details-list">
+          ) : (
+            <div className="ww-mm-list">
+              <div className="ww-mm-row ww-mm-row-head" aria-hidden="true">
+                <span className="ww-mm-row-thumb" /><span className="ww-mm-row-name">Name</span>
+                <span className="ww-mm-row-meta ww-mm-row-cam">Kamera</span>
+                <span className="ww-mm-row-meta ww-mm-row-type">Typ</span><span className="ww-mm-row-meta ww-mm-row-size">Größe</span><span className="ww-mm-row-meta ww-mm-row-date">Hochgeladen</span>
+              </div>
               {!searching && allSubdirs.map((d) => folderRow(d))}
               {visible.map((p, i) => fileRow(p, i))}
               {(!allSubdirs.length || searching) && !visible.length ? emptyNote : null}
             </div>
-            <div className="ww-mm-details-pane">
-              {sel ? (
-                <>
-                  <div className="ww-mm-details-imgwrap"><img src={previewOf(sel)} alt={baseOf(sel)} /></div>
-                  <div className="ww-mm-lb-info">{previewInfo(sel)}</div>
-                </>
-              ) : <div className="ww-mm-details-hint">Ein Bild links wählen für die Vorschau.</div>}
-            </div>
+          )}
+          {dragOver ? <div className="ww-mm-dropnote">Loslassen zum Hochladen → {quickTarget}/</div> : null}
+        </div>
+        {view === 'details' ? (
+          <div className="ww-mm-details-pane">
+            {sel ? (
+              <>
+                <div className="ww-mm-details-imgwrap"><img src={previewOf(sel)} alt={baseOf(sel)} /></div>
+                <div className="ww-mm-lb-info">{previewInfo(sel)}</div>
+              </>
+            ) : <div className="ww-mm-details-hint">Ein Bild links wählen für die Vorschau.</div>}
           </div>
-        )}
-        {dragOver ? <div className="ww-mm-dropnote">Loslassen zum Hochladen → {uploadTarget}/</div> : null}
+        ) : null}
       </div>
       </div>{/* .ww-mm-main */}
       </div>{/* .ww-mm-body */}
@@ -833,6 +840,45 @@ export default function MediaManager() {
             <div className="ww-dt-actions">
               {organizeCount > 0 ? <button type="button" className="btn" onClick={doOrganize} disabled={bulkBusy}>{bulkBusy ? <><span className="ww-spinner" />{progress || 'Ordne …'}</> : `${organizeCount} verschieben`}</button> : null}
               <button type="button" className="ww-dt-cancel" onClick={() => setOrganizeOpen(false)} disabled={bulkBusy}>{organizeCount > 0 ? 'Abbrechen' : 'Schließen'}</button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {/* Upload-Fenster (Drop-Feld + Zielwahl + neuer Ordner) */}
+      {uploadOpen ? (
+        <div className="ww-dt-overlay" role="dialog" aria-modal="true" onClick={() => { if (!busy) setUploadOpen(false); }}>
+          <div className="ww-dt-modal ww-mm-uploadmodal" onClick={(e) => e.stopPropagation()}>
+            <h3>Bilder hochladen</h3>
+            <div className="ww-mm-up-dest">
+              <label className={upDest === 'current' ? 'is-on' : ''}>
+                <input type="radio" name="updest" checked={upDest === 'current'} onChange={() => setUpDest('current')} disabled={busy} />
+                <span>Aktueller Ordner (<code>{quickTarget}/</code>)</span>
+              </label>
+              <label className={upDest === 'album' ? 'is-on' : ''}>
+                <input type="radio" name="updest" checked={upDest === 'album'} onChange={() => setUpDest('album')} disabled={busy || !(albums && albums.length)} />
+                <span>Album</span>
+                <select value={upAlbum} onChange={(e) => { setUpAlbum(e.target.value); setUpDest('album'); }} disabled={busy || !(albums && albums.length)}>
+                  <option value="">— wählen —</option>
+                  {(albums || []).map((a) => <option key={a.slug} value={a.slug}>{a.name}</option>)}
+                </select>
+              </label>
+              <label className={upDest === 'new' ? 'is-on' : ''}>
+                <input type="radio" name="updest" checked={upDest === 'new'} onChange={() => setUpDest('new')} disabled={busy} />
+                <span>Neuer Ordner</span>
+                <input type="text" placeholder={`z. B. tiere${folder ? ` (in ${folder}/)` : ''}`} value={upNew} onChange={(e) => { setUpNew(e.target.value); setUpDest('new'); }} disabled={busy} />
+              </label>
+            </div>
+            <div className="ww-mm-up-target">Ziel: <code>uploads/{uploadModalTarget()}/</code></div>
+            <label className={`ww-mm-up-drop${busy ? ' is-busy' : ''}`}
+              onDragOver={(e) => { e.preventDefault(); }}
+              onDrop={(e) => { e.preventDefault(); if (!busy) handleFiles(e.dataTransfer.files, uploadModalTarget()); }}>
+              <input type="file" accept="image/*" multiple disabled={busy} onChange={(e) => handleFiles(e.target.files, uploadModalTarget())} hidden />
+              {busy ? <><span className="ww-spinner" />{progress || 'Arbeite …'}</>
+                : <><strong>Bilder hierher ziehen</strong><span>oder klicken zum Auswählen · werden automatisch zu WebP optimiert (Kamera-Info bleibt erhalten)</span></>}
+            </label>
+            <div className="ww-dt-actions">
+              <button type="button" className="ww-dt-cancel" onClick={() => setUploadOpen(false)} disabled={busy}>Schließen</button>
             </div>
           </div>
         </div>
