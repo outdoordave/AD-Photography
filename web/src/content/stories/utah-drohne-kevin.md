@@ -3,7 +3,7 @@ gallery: []
 title_de: Taco in der Wildniss
 category_de: Yosemite
 date: '2024-09-25'
-cover: /uploads/alben/2024-erste-fotos/img_5666.jpg
+cover: /uploads/alben/Firsts/img_5666.jpg
 excerpt_de: 'Ein Wilder Taco wurde gesichtet! '
 body_de: |
   Manche Orte sieht man erst richtig, wenn man sie verlässt — nach oben. Über den roten Felsen von Utah ließ David die Drohne steigen, und plötzlich ergab das Chaos aus Schluchten und Graten ein Muster, das vom Boden aus unsichtbar war.
