@@ -143,6 +143,9 @@ const num = (r) => (Array.isArray(r) && r[1] ? r[0] / r[1] : null);
 function lensName(make, model) {
   let m = String(model || '').trim();
   if (!m) return undefined;
+  // Handy-Objektive (Apple/Samsung/…): den verbosen Präfix „… back triple/dual camera" wegwerfen, damit egal
+  // ist WELCHES Handy / wie viele Kameras — es bleibt die eigentliche Optik übrig (z. B. „6.765mm f/1.78").
+  m = m.replace(/^.*\bback\s+(?:dual|triple|wide|tele|ultra\s*-?\s*wide)?\s*camera\s*/i, '').trim() || m;
   let brand = String(make || '').trim();
   const code = (m.match(/\b([A-Z]\d{3}[A-Z]?)\s*$/) || [])[1] || '';
   if (!brand) {
@@ -163,7 +166,12 @@ function fmtExif(ex) {
   const f = num(ex.fnum); if (f) out.aperture = 'f/' + (Math.round(f * 10) / 10).toString().replace(/\.0$/, '');
   const s = num(ex.exposure); if (s) out.shutter = s >= 1 ? (Math.round(s * 10) / 10) + ' s' : '1/' + Math.round(1 / s) + ' s';
   if (ex.iso != null) out.iso = 'ISO ' + ex.iso;
-  const fl = num(ex.focal); if (fl) out.focal = Math.round(fl) + ' mm'; // reine Brennweite (kein KB-Äquivalent)
+  // Brennweite: bei kleinem Sensor (Handy/Drohne) ist die reale Brennweite (z. B. 7 mm) irreführend — dann das
+  // Kleinbild-Äquivalent zeigen (das gewohnte, vergleichbare Maß). Bei Systemkameras real == Äquiv -> reale.
+  // Nur bei echtem Kleinsensor (Cropfaktor > 2.5×, also Handy/Drohne) das KB-Äquivalent zeigen; Systemkameras
+  // (auch APS-C ~1.5×) behalten die reale Brennweite (z. B. Sony 28 mm statt 42 mm).
+  const fl = num(ex.focal);
+  if (fl) { const eq = ex.focal35; out.focal = (eq && eq >= Math.round(fl) * 2.5) ? `${eq} mm` : `${Math.round(fl)} mm`; }
   if (ex.lens) out.lens = lensName(ex.lensMake, ex.lens);
   if (ex.taken && /^\d{4}:\d{2}:\d{2}/.test(ex.taken)) { const [d] = ex.taken.split(' '); const [y, mo, da] = d.split(':'); out.taken = `${da}.${mo}.${y}`; }
   return out;

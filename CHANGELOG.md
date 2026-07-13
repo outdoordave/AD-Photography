@@ -17,6 +17,12 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-13 — Medien-Manager: Vorschau bleibt stehen (Safari-Fix) + iPhone-EXIF
+- **Vorschau scrollt nicht mehr weg**: Ursache war Astros display:contents-Wrapper, der position:sticky in Safari bricht. Umgestellt auf festen Höhen-Block mit intern scrollender Liste (kein Page-Sticky) -> Vorschau + Kopf bleiben zuverlässig in allen Browsern. Verifiziert (interne Liste scrollt, Vorschau bleibt).
+- **iPhone-Objektiv aufgeräumt**: verboser Präfix „… back triple/dual camera" entfernt -> nur die Optik bleibt (z. B. „6.765mm f/1.78"), egal welches iPhone / wie viele Kameras.
+- **Brennweite bei Kleinsensoren**: Handy/Drohne (Cropfaktor >2.5×) zeigen jetzt das Kleinbild-Äquivalent (z. B. 48 mm statt irreführender 7 mm); Systemkameras behalten die reale Brennweite (Sony 28 mm).
+- Dateien: web/src/styles/global.css, web/scripts/lib/exifCamera.mjs, web/public/uploads-meta.json.
+
 ## 2026-07-12 — Medien-Manager: Objektiv-Marke, EXIF-Feinschliff, idempotentes Ordnen, Layout-Fixes
 - **Objektiv-Marke erkannt**: `lensName()` leitet den Hersteller aus `LensMake` ODER dem Modell-Code ab
   (Tamron `A0xx`, Sigma …) und stellt ihn voran, Code entfällt: „E 150-500mm F5-6.7 A057" → „Tamron E 150-500mm

@@ -1011,11 +1011,15 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 /* Details-Ansicht (Finder-Spaltenansicht): Viewport mit fester Höhe -> die LISTE scrollt intern, die
    Vorschau rechts bleibt stehen und liegt AUSSERHALB des Drop-Felds. Erst wenn man die ganze Seite unter
    die Sektion scrollt, geht der Block mit. */
-/* Details: Sticky-Sidebar — die Liste fließt mit der Seite, die Vorschau rechts klebt unter der Toolbar
-   und bleibt beim Durchscrollen stehen; erst am Ende der Liste scrollt sie mit. */
-.ww-mm-viewport--details { display: flex; gap: 16px; align-items: flex-start; }
-.ww-mm-viewport--details .ww-mm-content { flex: 1 1 auto; min-width: 0; }
-.ww-mm-details-pane { flex: 0 0 320px; position: sticky; top: 185px; align-self: flex-start; max-height: calc(100vh - 205px); overflow-y: auto; border: 1px solid var(--c-line); border-radius: var(--radius-sm); background: var(--c-bg-alt); }
+/* Details: Block mit FESTER Höhe — die LISTE scrollt IN SICH (overflow), die Vorschau rechts bleibt dabei
+   stehen. Bewusst KEIN Page-Sticky für die Vorschau (Astros display:contents-Wrapper bricht sticky in Safari);
+   die interne Liste ist ein eigener Scroll-Container -> zuverlässig in allen Browsern. Der Block selbst klebt
+   zusätzlich unter der Toolbar (in Chrome), fällt in Safari auf normalen Fluss zurück — die Vorschau bleibt so
+   oder so, weil die Liste intern scrollt. */
+.ww-mm-viewport--details { display: flex; gap: 16px; position: sticky; top: 185px; height: calc(100vh - 205px); }
+.ww-mm-viewport--details .ww-mm-content { flex: 1 1 auto; min-width: 0; height: 100%; overflow-y: auto; }
+.ww-mm-viewport--details .ww-mm-row-head { top: 0; } /* Kopf klebt am oberen Rand der internen Liste */
+.ww-mm-details-pane { flex: 0 0 320px; height: 100%; overflow-y: auto; border: 1px solid var(--c-line); border-radius: var(--radius-sm); background: var(--c-bg-alt); }
 .ww-mm-details-imgwrap { background: #1c1812; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
 .ww-mm-details-imgwrap img { max-width: 100%; max-height: 320px; object-fit: contain; display: block; }
 .ww-mm-details-pane .ww-mm-lb-info { flex: none; max-width: none; max-height: none; padding: 16px 16px 20px; }
@@ -1028,7 +1032,7 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 .ww-mm-exif dd { margin: 0; color: var(--c-ink); font-weight: var(--fw-bold); overflow-wrap: anywhere; }
 .ww-mm-row-cam { width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (max-width: 860px) { .ww-mm-row-cam { display: none; } }
-@media (max-width: 900px) { .ww-mm-viewport--details { flex-direction: column; } .ww-mm-details-pane { flex: none; width: 100%; position: static; max-height: none; } }
+@media (max-width: 900px) { .ww-mm-viewport--details { flex-direction: column; position: static; height: auto; } .ww-mm-viewport--details .ww-mm-content { height: auto; max-height: 55vh; } .ww-mm-details-pane { flex: none; width: 100%; height: auto; } }
 
 /* Fade unter der Sticky-Toolbar (weiche Kante statt harter Schnitt). */
 .ww-mm-toolbar::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 18px; background: linear-gradient(var(--c-bg), rgba(244,237,225,0)); pointer-events: none; }
