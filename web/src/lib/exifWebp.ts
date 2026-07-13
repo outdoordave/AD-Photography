@@ -7,7 +7,7 @@
 // Roh-Foto-EXIF (Kamera + Fotografen-Werte als Rohdaten). Rationals als [Zähler, Nenner].
 export type PhotoTags = {
   make?: string; model?: string;
-  exif?: { exposure?: [number, number]; fnum?: [number, number]; iso?: number; taken?: string; focal?: [number, number]; focal35?: number; lens?: string };
+  exif?: { exposure?: [number, number]; fnum?: [number, number]; iso?: number; taken?: string; focal?: [number, number]; focal35?: number; lensMake?: string; lens?: string };
 };
 
 // Bequem-Helfer: aus der Quelldatei einen SCHLANKEN EXIF-Block (Kamera + Foto-Werte, ~150 B, ohne Thumbnail/
@@ -56,7 +56,7 @@ export function readTiffPhoto(t: Uint8Array): PhotoTags {
   };
   const ifd0 = readIFD(u32(4), { 0x010f: 'make', 0x0110: 'model', 0x8769: 'exifPtr' });
   const out: PhotoTags = { make: ifd0.make, model: ifd0.model, exif: {} };
-  if (ifd0.exifPtr) out.exif = readIFD(ifd0.exifPtr, { 0x829a: 'exposure', 0x829d: 'fnum', 0x8827: 'iso', 0x9003: 'taken', 0x920a: 'focal', 0xa405: 'focal35', 0xa434: 'lens' });
+  if (ifd0.exifPtr) out.exif = readIFD(ifd0.exifPtr, { 0x829a: 'exposure', 0x829d: 'fnum', 0x8827: 'iso', 0x9003: 'taken', 0x920a: 'focal', 0xa405: 'focal35', 0xa433: 'lensMake', 0xa434: 'lens' });
   return out;
 }
 
@@ -80,6 +80,7 @@ export function buildExifTiff(info: PhotoTags): Uint8Array {
   if (E.taken) ex.push(mk(0x9003, 2, ascii(E.taken)));
   if (E.focal) ex.push(mk(0x920a, 5, rat(E.focal)));
   if (E.focal35 != null) ex.push(mk(0xa405, 3, le16(E.focal35)));
+  if (E.lensMake) ex.push(mk(0xa433, 2, ascii(E.lensMake)));
   if (E.lens) ex.push(mk(0xa434, 2, ascii(E.lens)));
   const haveExif = ex.length > 0;
   const ifd0Count = ifd0.length + (haveExif ? 1 : 0);

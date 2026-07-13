@@ -324,14 +324,18 @@ export async function moveInCloud(oldPath: string, targetDir: string): Promise<M
     const blob = await res.blob();
     file = new File([blob], filename, { type: blob.type || 'application/octet-stream' });
   } catch (e: any) { return { ok: false, error: 'Datei nicht ladbar: ' + String(e?.message || e) }; }
-  // 2) an den neuen Pfad hochladen (Kopie)
+  // 2) an den neuen Pfad hochladen (Kopie). IDEMPOTENT: liegt die Datei am Ziel schon („File already
+  //    exists"), ist das kein Fehler — weiter mit Referenzen + alte löschen (so ist erneutes „Nach Alben
+  //    ordnen" gefahrlos wiederholbar und erzeugt keine Doppel-Fehler).
   const up = await uploadToCloud(file, targetDir);
-  if (!up.ok || !up.path) return { ok: false, error: up.error || 'Kopieren fehlgeschlagen.' };
+  const alreadyThere = !up.ok && /already exists/i.test(up.error || '');
+  if (!up.ok && !alreadyThere) return { ok: false, error: up.error || 'Kopieren fehlgeschlagen.' };
+  const finalNew = up.path || newPath;
   // 3) alle Referenzen umbiegen
-  const rw = await rewriteReferences(oldPath, up.path);
-  if (!rw.ok) return { ok: false, newPath: up.path, error: 'Kopiert, aber Referenzen umschreiben fehlgeschlagen: ' + rw.error };
+  const rw = await rewriteReferences(oldPath, finalNew);
+  if (!rw.ok) return { ok: false, newPath: finalNew, error: 'Kopiert, aber Referenzen umschreiben fehlgeschlagen: ' + rw.error };
   // 4) alte Datei löschen
   const del = await deleteFromCloud(oldPath);
-  if (!del.ok) return { ok: true, newPath: up.path, refs: rw.count, error: 'Verschoben, aber die alte Datei blieb liegen: ' + del.error };
-  return { ok: true, newPath: up.path, refs: rw.count };
+  if (!del.ok) return { ok: true, newPath: finalNew, refs: rw.count, error: 'Verschoben, aber die alte Datei blieb liegen: ' + del.error };
+  return { ok: true, newPath: finalNew, refs: rw.count };
 }

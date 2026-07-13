@@ -131,18 +131,40 @@ function readTiffPhoto(t) {
   };
   const ifd0 = readIFD(u32(4), { 0x010f: 'make', 0x0110: 'model', 0x8769: 'exifPtr' });
   const out = { make: ifd0.make, model: ifd0.model, exif: {} };
-  if (ifd0.exifPtr) out.exif = readIFD(ifd0.exifPtr, { 0x829a: 'exposure', 0x829d: 'fnum', 0x8827: 'iso', 0x9003: 'taken', 0x920a: 'focal', 0xa405: 'focal35', 0xa434: 'lens' });
+  if (ifd0.exifPtr) out.exif = readIFD(ifd0.exifPtr, { 0x829a: 'exposure', 0x829d: 'fnum', 0x8827: 'iso', 0x9003: 'taken', 0x920a: 'focal', 0xa405: 'focal35', 0xa433: 'lensMake', 0xa434: 'lens' });
   return out;
 }
 
 const num = (r) => (Array.isArray(r) && r[1] ? r[0] / r[1] : null);
+// Objektiv-Namen aufbereiten: Hersteller erkennen (aus LensMake ODER dem Modell-Code am Ende, z. B. Tamron
+// „A057"/„A063"), den kryptischen Code entfernen und die Marke voranstellen. Fallback = reiner Name.
+// „E 150-500mm F5-6.7 A057" -> „Tamron E 150-500mm F5-6.7". Universell NICHT möglich (EXIF trägt den Hersteller
+// meist nicht) — daher gepflegte Marken-Tabelle; unbekannte Marken bleiben ohne Präfix.
+function lensName(make, model) {
+  let m = String(model || '').trim();
+  if (!m) return undefined;
+  let brand = String(make || '').trim();
+  const code = (m.match(/\b([A-Z]\d{3}[A-Z]?)\s*$/) || [])[1] || '';
+  if (!brand) {
+    if (/tamron/i.test(m) || /^[AF]\d{3}$/.test(code)) brand = 'Tamron';
+    else if (/sigma/i.test(m) || /\|\s*(Art|Contemporary|Sports)\b/i.test(m)) brand = 'Sigma';
+    else if (/samyang|rokinon/i.test(m)) brand = 'Samyang';
+    else if (/viltrox/i.test(m)) brand = 'Viltrox';
+    else if (/zeiss/i.test(m)) brand = 'Zeiss';
+  }
+  if (brand) brand = brand.charAt(0).toUpperCase() + brand.slice(1).toLowerCase(); // „SONY" -> „Sony"
+  m = m.replace(/\s+[A-Z]\d{3,}[A-Z]?$/, '').replace(/\s{2,}/g, ' ').trim(); // Modell-Code weg
+  // Marke voranstellen — außer bei Apple (iPhone-Name sagt die Marke schon) oder wenn schon enthalten.
+  if (brand && brand.toLowerCase() !== 'apple' && !new RegExp('^' + brand, 'i').test(m)) m = brand + ' ' + m;
+  return m;
+}
 function fmtExif(ex) {
   const out = {};
   const f = num(ex.fnum); if (f) out.aperture = 'f/' + (Math.round(f * 10) / 10).toString().replace(/\.0$/, '');
   const s = num(ex.exposure); if (s) out.shutter = s >= 1 ? (Math.round(s * 10) / 10) + ' s' : '1/' + Math.round(1 / s) + ' s';
   if (ex.iso != null) out.iso = 'ISO ' + ex.iso;
-  const fl = num(ex.focal); if (fl) out.focal = Math.round(fl) + ' mm' + (ex.focal35 ? ` (KB ${ex.focal35} mm)` : '');
-  if (ex.lens) out.lens = ex.lens;
+  const fl = num(ex.focal); if (fl) out.focal = Math.round(fl) + ' mm'; // reine Brennweite (kein KB-Äquivalent)
+  if (ex.lens) out.lens = lensName(ex.lensMake, ex.lens);
   if (ex.taken && /^\d{4}:\d{2}:\d{2}/.test(ex.taken)) { const [d] = ex.taken.split(' '); const [y, mo, da] = d.split(':'); out.taken = `${da}.${mo}.${y}`; }
   return out;
 }

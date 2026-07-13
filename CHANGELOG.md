@@ -17,6 +17,21 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-12 — Medien-Manager: Objektiv-Marke, EXIF-Feinschliff, idempotentes Ordnen, Layout-Fixes
+- **Objektiv-Marke erkannt**: `lensName()` leitet den Hersteller aus `LensMake` ODER dem Modell-Code ab
+  (Tamron `A0xx`, Sigma …) und stellt ihn voran, Code entfällt: „E 150-500mm F5-6.7 A057" → „Tamron E 150-500mm
+  F5-6.7"; „FE 24-70mm F2.8 GM" (LensMake=SONY) → „Sony …"; iPhone ohne redundantes „Apple". `LensMake` (0xA433)
+  wird gelesen + beim Upload in die WebP erhalten. Gepflegte Marken-Tabelle (kein Universal-Erkennen möglich,
+  da EXIF den Hersteller meist nicht trägt).
+- **Brennweite** ohne „(KB …)"-Zusatz — nur die reine Brennweite (z. B. „444 mm").
+- **Idempotentes „Nach Alben ordnen"**: `moveInCloud` behandelt „File already exists" am Ziel als Erfolg
+  (weiter mit Referenzen + alte löschen) → erneutes Ordnen ist gefahrlos wiederholbar, keine Doppel-Fehler.
+- **Layout**: Toolbar passt in EINE Zeile (Suche schmaler, Upload kompakt); Schatten auf der Medien-Seite aus
+  (wurden abgeschnitten); Detail-**Vorschau + Spaltenköpfe kleben** jetzt unter der Toolbar (Sticky-Sidebar) und
+  bleiben beim Scrollen stehen; Kopf-Ausrichtung = Spalten-Ausrichtung.
+- Dateien: `web/src/lib/mediaCloud.ts`, `web/scripts/lib/exifCamera.mjs`, `web/src/lib/exifWebp.ts`,
+  `web/public/uploads-meta.json`, `web/src/styles/global.css`.
+
 ## 2026-07-12 — Medien-Manager: klickbare Sortier-Spalten + Ordnen-Fortschritt + sinnvolle Ordnernamen
 - **Klickbare Spaltenköpfe (Liste/Details)**: Klick auf Name/Kamera/Typ/Größe/Hochgeladen sortiert danach,
   erneuter Klick dreht die Richtung; aktive Spalte hervorgehoben + ↑/↓-Pfeil. Synchron mit dem Dropdown
