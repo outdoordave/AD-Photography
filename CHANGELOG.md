@@ -17,6 +17,11 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-13 — Medien-Manager: Vorschau klebt wie die Baum-Leiste + iPhone-Objektiv
+- **Vorschau bleibt jetzt stehen**: Ursache war nicht Safari, sondern der Klebe-Spielraum: der feste Höhen-Block gab der Vorschau nur ~65px, dann löste sie. Jetzt sticky im HOHEN Container (der Liste, ~1036px) — exakt wie die funktionierende Baum-Leiste links. Baum + Vorschau ein paar px runter (top 138/190), damit sie nicht unter dem Header verschwinden.
+- **iPhone-Objektiv**: „6.765mm f/1.78" (kryptisch, wiederholte die Blende) -> Brennweiten-Typ „Weitwinkel/Standard/Tele" aus dem KB-Äquivalent. iPhone-Bild zeigt jetzt „Standard".
+- Dateien: web/src/styles/global.css, web/scripts/lib/exifCamera.mjs, web/public/uploads-meta.json.
+
 ## 2026-07-13 — Medien-Manager: Vorschau bleibt stehen (Safari-Fix) + iPhone-EXIF
 - **Vorschau scrollt nicht mehr weg**: Ursache war Astros display:contents-Wrapper, der position:sticky in Safari bricht. Umgestellt auf festen Höhen-Block mit intern scrollender Liste (kein Page-Sticky) -> Vorschau + Kopf bleiben zuverlässig in allen Browsern. Verifiziert (interne Liste scrollt, Vorschau bleibt).
 - **iPhone-Objektiv aufgeräumt**: verboser Präfix „… back triple/dual camera" entfernt -> nur die Optik bleibt (z. B. „6.765mm f/1.78"), egal welches iPhone / wie viele Kameras.

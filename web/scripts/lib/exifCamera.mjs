@@ -172,7 +172,16 @@ function fmtExif(ex) {
   // (auch APS-C ~1.5×) behalten die reale Brennweite (z. B. Sony 28 mm statt 42 mm).
   const fl = num(ex.focal);
   if (fl) { const eq = ex.focal35; out.focal = (eq && eq >= Math.round(fl) * 2.5) ? `${eq} mm` : `${Math.round(fl)} mm`; }
-  if (ex.lens) out.lens = lensName(ex.lensMake, ex.lens);
+  if (ex.lens) {
+    let ln = lensName(ex.lensMake, ex.lens);
+    // Handy-„Objektiv" ist nach dem Aufräumen nur noch „Nmm f/x" (fest verbaut, kein Objektivname) — das ist
+    // wenig aussagekräftig und wiederholt die Blende. Stattdessen den Brennweiten-Typ (aus dem KB-Äquivalent).
+    if (/^[\d.]+\s*mm\s+f\/[\d.]+$/i.test(ln || '')) {
+      const eq = ex.focal35 || (num(ex.focal) ? Math.round(num(ex.focal)) : 0);
+      ln = !eq ? ln : eq < 18 ? 'Ultraweitwinkel' : eq < 35 ? 'Weitwinkel' : eq < 70 ? 'Standard' : eq < 135 ? 'Teleobjektiv' : 'Supertele';
+    }
+    out.lens = ln;
+  }
   if (ex.taken && /^\d{4}:\d{2}:\d{2}/.test(ex.taken)) { const [d] = ex.taken.split(' '); const [y, mo, da] = d.split(':'); out.taken = `${da}.${mo}.${y}`; }
   return out;
 }
