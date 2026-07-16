@@ -6,7 +6,22 @@
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
 > Session überschrieben). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
 >
-> **🆕 Medien-Manager: fester Finder — Vorschau/Toolbar stehen endgültig fest (16.07., `e2a483e`).**
+> **🆕 EXIF-Build-Fix + Bild-Referenzen repariert + Move-Ursache gefixt (16.07., `0d80b91`,`10b634e`,`b388f2c`,`e516fd6`).**
+> (1) **Build erhielt kein EXIF:** `optimize-uploads.mjs` (sharp) verwarf Metadaten bei JEDEM Build →
+> Kamera/Brennweite gingen verloren. Jetzt wird für WebP die schlanke, **GPS-sichere** Whitelist-EXIF nach
+> dem Re-Encode wieder eingemuxt (`buildExifTiff`/`muxExifIntoWebp`/`slimExifTiff` nach `exifCamera.mjs`
+> portiert; an iPhone-Foto MIT GPS verifiziert: Kamera bleibt, GPS/Orientierung raus, WebP valide).
+> (2) **28 kaputte Bild-Referenzen repariert** (Logo + Galerie waren weg): 24× doppelter Präfix
+> `/uploads/uploads/…`, Logo nach `Logo/` verschoben (Verweis blieb auf Wurzel), `IMG_6654-2.webp` gelöscht
+> (aus Git wiederhergestellt). 0 kaputte Referenzen mehr; Logo lädt (im Browser verifiziert).
+> (3) **Ursache gefixt:** `moveInCloud`/`uploadToCloud` normalisieren den Zielordner + `dedupeUploads` →
+> **nie wieder** `/uploads/uploads/…`; „Nach Alben ordnen" gefahrlos wiederholbar (unit-geprüft).
+> (4) **Seite scrollt nicht mehr mit:** Footer + Section-Padding auf der Medien-Seite (≥721px) entfernt →
+> `docScrolls=false`, linke Leiste + Vorschau stehen fest. 🟡 **Offen (EXIF Teil 2, pausiert):** einmaliges
+> Skript, das die verbleibenden 11 Repo-JPEGs zu WebP (inkl. EXIF) wandelt + Referenzen umschreibt — vom
+> Nutzer unterbrochen, um obige Bugs zu melden; wieder aufnehmen nach seiner Rückmeldung.
+>
+> **Medien-Manager: fester Finder — Vorschau/Toolbar stehen endgültig fest (16.07., `e2a483e`).**
 > Die wiederholten Sticky-Versuche (07-13) sind **abgelöst**: statt Page-Scroll + `position:sticky`
 > jetzt ein Finder mit **fester Höhe**. `.ww-mm-body` füllt ab >=721px vom Oberrand bis kurz vor den
 > Viewport-Boden (JS setzt `--mm-h`), **jede Spalte scrollt intern** (Ordner-Baum · Bilderliste ·

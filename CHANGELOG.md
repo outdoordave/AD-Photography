@@ -17,6 +17,13 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-16 — EXIF-Erhalt im Build + Bild-Referenzen repariert + Move-Ursache gefixt
+- **Build erhält Kamera-EXIF (GPS-sicher):** `optimize-uploads.mjs` verwarf per sharp alle Metadaten → jedes Bild verlor beim Build sein EXIF. Fix: schlanke Whitelist-EXIF (Make/Model + Blende/Belichtung/ISO/Datum/Brennweite/KB-Äquiv./Objektiv) wird für WebP nach dem Re-Encode wieder eingemuxt — **ohne GPS/Orientierung**. `buildExifTiff`/`muxExifIntoWebp`/`slimExifTiff` aus `exifWebp.ts` nach `exifCamera.mjs` portiert. Verifiziert an iPhone-Foto (MIT GPS): Kamera bleibt, GPS raus, WebP valide. Commit: `0d80b91`.
+- **28 kaputte Bild-Referenzen repariert:** Der Move-/Ordnen-Vorgang hatte Verweise zerschossen — 24× doppelter Präfix `/uploads/uploads/…`, das Logo (nach `Logo/` verschoben, Verweis blieb auf Wurzel), und `IMG_6654-2.webp` (in Tina-Commit gelöscht, 3 Verweise verwaist → aus Git wiederhergestellt). Logo + Galerie wieder sichtbar; 0 kaputte Referenzen. Commit: `b388f2c`.
+- **Ursache des Referenz-Schadens gefixt:** `moveInCloud`/`uploadToCloud` normalisieren den Zielordner jetzt (führende Slashes + `uploads/`-Präfix raus) + finaler Pfad durch `dedupeUploads` → nie wieder `/uploads/uploads/…`. „Nach Alben ordnen" wieder gefahrlos wiederholbar. Commit: `e516fd6`.
+- **Seite scrollt nicht mehr mit:** der fixe Finder blieb nur stehen, wenn die Seite selbst nicht scrollt; Footer + 84px Section-Padding zogen sie doch scrollbar → beide auf der Medien-Seite (≥721px) entfernt. `docScrolls=false`, linke Leiste + Vorschau stehen fest. Commit: `10b634e`.
+- Dateien: web/scripts/optimize-uploads.mjs, web/scripts/lib/exifCamera.mjs, web/src/lib/mediaCloud.ts, web/src/styles/global.css, web/src/data/* + web/src/content/journal/*, web/public/uploads/IMG_6654-2.webp.
+
 ## 2026-07-16 — Medien-Manager: fester Finder (Vorschau/Toolbar stehen endgültig fest)
 - **Layout final umgestellt**: weg vom Page-Scroll + `position:sticky` (fragil, in Headless nicht verifizierbar) hin zu einem echten Finder mit **fester Höhe**. Der `.ww-mm-body` füllt ab Tablet (>=721px) vom eigenen Oberrand bis kurz vor den Viewport-Boden (per JS gesetzte `--mm-h`), **jede Spalte scrollt IN SICH** (Ordner-Baum, Bilderliste, Vorschau). Dadurch bleibt die Detail-Vorschau **zuverlässig stehen** und die Spaltenüberschrift klebt oben in der Liste — in allen Browsern. Verifiziert im Browser: Liste scrollt intern (scrollTop 1→400), Vorschau bleibt bei top=226.
 - **Bündige Ausrichtung**: linke Ordner-Leiste und mittige Toolbar (Suche/Ansicht/Sortierung/Buttons) starten oben auf gleicher Höhe.
