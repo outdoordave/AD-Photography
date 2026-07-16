@@ -177,9 +177,10 @@ function fmtExif(ex) {
     // Handy-„Objektiv" ist nach dem Aufräumen nur noch „Nmm f/x" (fest verbaut, kein Objektivname) — das ist
     // wenig aussagekräftig und wiederholt die Blende. Stattdessen den Brennweiten-Typ (aus dem KB-Äquivalent).
     if (/^[\d.]+\s*mm\s+f\/[\d.]+$/i.test(ln || '')) {
-      // Apples eigene Modul-Bezeichnungen (wie in der iPhone-Galerie), abgeleitet aus dem KB-Äquivalent.
+      // Brennweiten-Typ aus dem KB-Äquivalent (Buckets nach Vorgabe): <20 Ultraweitwinkel · 20–45 Standard ·
+      // 45–85 Porträt · >85 Tele. So heißt z. B. das iPhone bei 48 mm „Porträt" (nicht „Weitwinkel").
       const eq = ex.focal35 || (num(ex.focal) ? Math.round(num(ex.focal)) : 0);
-      ln = !eq ? ln : eq < 18 ? 'Ultraweitwinkel' : eq < 70 ? 'Weitwinkel' : eq < 200 ? 'Teleobjektiv' : 'Supertele';
+      ln = !eq ? ln : eq < 20 ? 'Ultraweitwinkel' : eq <= 45 ? 'Standard' : eq <= 85 ? 'Porträt' : 'Teleobjektiv';
     }
     out.lens = ln;
   }
