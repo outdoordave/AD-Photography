@@ -54,7 +54,10 @@ export async function uploadToCloud(file: File, directory: string): Promise<Clou
   const token = await freshToken(); // ggf. erneuern + zurückschreiben, damit auth() gleich frisch liest
   if (!token) return { ok: false, error: 'Kein Login-Token — bitte im CMS anmelden.' };
   const { assetsBase, requestStatusBase } = parts();
-  const path = joinPath(directory, file.name);
+  // Ziel-Ordner robust normalisieren: führende Slashes UND einen versehentlichen „uploads/"-Präfix
+  // entfernen, sonst entsteht /uploads/uploads/… (das hat Referenzen zerschossen und kaskadierte).
+  const dir = (directory || '').replace(/^\/+/, '').replace(/^(?:uploads\/)+/i, '');
+  const path = joinPath(dir, file.name);
   try {
     // 1) signierte Upload-URL holen
     const urlRes = await fetch(`${assetsBase}/upload_url/${path}`, { method: 'GET', headers: auth() });
@@ -314,7 +317,9 @@ export async function moveInCloud(oldPath: string, targetDir: string): Promise<M
   if (!authToken()) return { ok: false, error: 'Kein Login-Token — bitte im CMS anmelden.' };
   const filename = (oldPath.split('/').pop() || '').trim();
   if (!filename) return { ok: false, error: 'Ungültiger Pfad.' };
-  const newPath = `/uploads/${joinPath(targetDir, filename)}`;
+  // targetDir defensiv säubern (führende Slashes + „uploads/"-Präfix), damit NIE /uploads/uploads/… entsteht.
+  const cleanDir = (targetDir || '').replace(/^\/+/, '').replace(/^(?:uploads\/)+/i, '');
+  const newPath = dedupeUploads(`/uploads/${joinPath(cleanDir, filename)}`);
   if (canonMedia(newPath) === canonMedia(oldPath)) return { ok: false, error: 'Quelle und Ziel sind identisch.' };
   // 1) Bytes der alten Datei holen
   let file: File;
@@ -327,10 +332,10 @@ export async function moveInCloud(oldPath: string, targetDir: string): Promise<M
   // 2) an den neuen Pfad hochladen (Kopie). IDEMPOTENT: liegt die Datei am Ziel schon („File already
   //    exists"), ist das kein Fehler — weiter mit Referenzen + alte löschen (so ist erneutes „Nach Alben
   //    ordnen" gefahrlos wiederholbar und erzeugt keine Doppel-Fehler).
-  const up = await uploadToCloud(file, targetDir);
+  const up = await uploadToCloud(file, cleanDir);
   const alreadyThere = !up.ok && /already exists/i.test(up.error || '');
   if (!up.ok && !alreadyThere) return { ok: false, error: up.error || 'Kopieren fehlgeschlagen.' };
-  const finalNew = up.path || newPath;
+  const finalNew = dedupeUploads(up.path || newPath);
   // 3) alle Referenzen umbiegen
   const rw = await rewriteReferences(oldPath, finalNew);
   if (!rw.ok) return { ok: false, newPath: finalNew, error: 'Kopiert, aber Referenzen umschreiben fehlgeschlagen: ' + rw.error };
