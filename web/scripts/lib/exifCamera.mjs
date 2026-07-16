@@ -198,4 +198,114 @@ export function readPhotoInfo(buf) {
   return res;
 }
 
-export { tiffFromJpeg, tiffFromWebp, readMakeModel };
+// --- SCHLANKER EXIF-TIFF bauen (Build-Zeit, GPS-SICHER) -----------------------------------------
+// Portiert 1:1 aus src/lib/exifWebp.ts (dort für den Browser-Upload). Hier für Build-Skripte, die
+// EXIF nach einem metadaten-verwerfenden sharp-Schritt WIEDER einmuxen müssen. Es wird bewusst NUR
+// eine feste Whitelist geschrieben (Make/Model + Blende/Belichtung/ISO/Datum/Brennweite/KB-Äquiv./
+// Objektiv) — NIE GPS (0x8825), NIE Orientierung (0x0112, würde nach sharp .rotate() doppelt drehen).
+export function buildExifTiff(info) {
+  const le16 = (n) => [n & 255, (n >> 8) & 255];
+  const le32 = (n) => [n & 255, (n >> 8) & 255, (n >> 16) & 255, (n >> 24) & 255];
+  const ascii = (s) => { const a = Array.from(String(s)).map((c) => c.charCodeAt(0) & 255); a.push(0); return a; };
+  const rat = (r) => [...le32(r[0] >>> 0), ...le32(r[1] >>> 0)];
+  const mk = (tag, type, val, count) => ({ tag, type, count: count ?? (type === 2 ? val.length : 1), val });
+  const E = info.exif || {};
+  const ifd0 = [];
+  if (info.make) ifd0.push(mk(0x010f, 2, ascii(info.make)));
+  if (info.model) ifd0.push(mk(0x0110, 2, ascii(info.model)));
+  const ex = [];
+  if (E.exposure) ex.push(mk(0x829a, 5, rat(E.exposure)));
+  if (E.fnum) ex.push(mk(0x829d, 5, rat(E.fnum)));
+  if (E.iso != null) ex.push(mk(0x8827, 3, le16(E.iso)));
+  if (E.taken) ex.push(mk(0x9003, 2, ascii(E.taken)));
+  if (E.focal) ex.push(mk(0x920a, 5, rat(E.focal)));
+  if (E.focal35 != null) ex.push(mk(0xa405, 3, le16(E.focal35)));
+  if (E.lensMake) ex.push(mk(0xa433, 2, ascii(E.lensMake)));
+  if (E.lens) ex.push(mk(0xa434, 2, ascii(E.lens)));
+  const haveExif = ex.length > 0;
+  const ifd0Count = ifd0.length + (haveExif ? 1 : 0);
+  const ifd0Size = 2 + ifd0Count * 12 + 4;
+  const exifOff = 8 + ifd0Size;
+  const exifSize = haveExif ? 2 + ex.length * 12 + 4 : 0;
+  let dataOff = 8 + ifd0Size + exifSize;
+  const data = [];
+  const emit = (entries, withExifPtr) => {
+    const list = entries.slice();
+    if (withExifPtr) list.push(mk(0x8769, 4, le32(exifOff)));
+    list.sort((a, b) => a.tag - b.tag); // TIFF verlangt aufsteigende Tag-Reihenfolge
+    const out = [...le16(list.length)];
+    for (const e of list) {
+      out.push(...le16(e.tag), ...le16(e.type), ...le32(e.count));
+      if (e.val.length <= 4) { const v = [...e.val]; while (v.length < 4) v.push(0); out.push(...v.slice(0, 4)); }
+      else { out.push(...le32(dataOff)); data.push(...e.val); dataOff += e.val.length; if (dataOff & 1) { data.push(0); dataOff++; } }
+    }
+    out.push(...le32(0));
+    return out;
+  };
+  const ifd0Bytes = emit(ifd0, haveExif);
+  const exifBytes = haveExif ? emit(ex, false) : [];
+  return new Uint8Array([0x49, 0x49, 0x2a, 0x00, ...le32(8), ...ifd0Bytes, ...exifBytes, ...data]);
+}
+
+// Bequem: aus Datei-Bytes (JPEG/WebP) den schlanken EXIF-TIFF bauen. null = nichts Erhaltenswertes.
+export function slimExifTiff(bytes) {
+  const tiff = tiffFromJpeg(bytes) || tiffFromWebp(bytes);
+  if (!tiff) return null;
+  const info = readTiffPhoto(tiff);
+  if (!info.make && !info.model && (!info.exif || !Object.keys(info.exif).length)) return null;
+  return buildExifTiff(info);
+}
+
+// --- WebP-Muxer: TIFF als „EXIF"-Chunk einsetzen (Container ggf. auf Extended/VP8X anheben) -------
+// Portiert 1:1 aus src/lib/exifWebp.ts.
+function u32le(n) { return new Uint8Array([n & 255, (n >> 8) & 255, (n >> 16) & 255, (n >> 24) & 255]); }
+function ccBytes(cc) { return [cc.charCodeAt(0), cc.charCodeAt(1), cc.charCodeAt(2), cc.charCodeAt(3)]; }
+function chunkOf(cc, data) {
+  const pad = data.length & 1;
+  const b = new Uint8Array(8 + data.length + pad);
+  b.set(ccBytes(cc), 0); b.set(u32le(data.length), 4); b.set(data, 8);
+  return b;
+}
+function parseChunks(bytes) {
+  const out = [];
+  let o = 12;
+  while (o + 8 <= bytes.length) {
+    const cc = String.fromCharCode(bytes[o], bytes[o + 1], bytes[o + 2], bytes[o + 3]);
+    const size = (bytes[o + 4] | (bytes[o + 5] << 8) | (bytes[o + 6] << 16) | (bytes[o + 7] << 24)) >>> 0;
+    out.push({ cc, data: bytes.subarray(o + 8, o + 8 + size) });
+    o = o + 8 + size + (size & 1);
+  }
+  return out;
+}
+function vp8xPayload(w, h, flags) {
+  const b = new Uint8Array(10);
+  b[0] = flags;
+  const cw = w - 1, ch = h - 1;
+  b[4] = cw & 255; b[5] = (cw >> 8) & 255; b[6] = (cw >> 16) & 255;
+  b[7] = ch & 255; b[8] = (ch >> 8) & 255; b[9] = (ch >> 16) & 255;
+  return b;
+}
+export function muxExifIntoWebp(webp, tiff, width, height) {
+  if (!tiff || !tiff.length) return webp;
+  const asc = (i, n) => String.fromCharCode(...Array.from(webp.subarray(i, i + n)));
+  if (webp.length < 12 || asc(0, 4) !== 'RIFF' || asc(8, 4) !== 'WEBP') return webp;
+  const chunks = parseChunks(webp);
+  const vp8x = chunks.find((c) => c.cc === 'VP8X');
+  const others = chunks.filter((c) => c.cc !== 'VP8X' && c.cc !== 'EXIF');
+  const flags = (vp8x ? vp8x.data[0] : 0) | 0x08; // EXIF-Flag (Bit 3)
+  let w = width, h = height;
+  if (vp8x && vp8x.data.length >= 10) {
+    w = 1 + ((vp8x.data[4]) | (vp8x.data[5] << 8) | (vp8x.data[6] << 16));
+    h = 1 + ((vp8x.data[7]) | (vp8x.data[8] << 8) | (vp8x.data[9] << 16));
+  }
+  const parts = [chunkOf('VP8X', vp8xPayload(w, h, flags))];
+  for (const c of others) parts.push(chunkOf(c.cc, c.data));
+  parts.push(chunkOf('EXIF', tiff));
+  let bodyLen = 0; for (const p of parts) bodyLen += p.length;
+  const file = new Uint8Array(12 + bodyLen);
+  file.set(ccBytes('RIFF'), 0); file.set(u32le(4 + bodyLen), 4); file.set(ccBytes('WEBP'), 8);
+  let off = 12; for (const p of parts) { file.set(p, off); off += p.length; }
+  return file;
+}
+
+export { tiffFromJpeg, tiffFromWebp, readMakeModel, readTiffPhoto };

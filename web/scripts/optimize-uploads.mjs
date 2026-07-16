@@ -8,9 +8,10 @@
 // Qualitaetsverlust ueber mehrere Builds (jeder Build startet von den Originalen).
 // Spiegelt die Idee der alten Sveltia-Seite (WebP/Resize, q85/2400px) fuer ALLE Bilder,
 // auch die als Roh-JPG ins Repo gelegten.
-import { existsSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, readdirSync, statSync, writeFileSync, readFileSync } from 'node:fs';
 import { resolve, join, extname } from 'node:path';
 import sharp from 'sharp';
+import { slimExifTiff, muxExifIntoWebp } from './lib/exifCamera.mjs';
 
 const dir = resolve('dist', 'uploads');
 const MAX = 2400; // laengste Kante
@@ -41,13 +42,20 @@ collect(dir, allFiles);
 for (const file of allFiles) {
   const ext = extname(file).toLowerCase();
   try {
-    const before = statSync(file).size;
-    const pipe = sharp(file, { failOn: 'none' })
+    const src = readFileSync(file);
+    const before = src.length;
+    const pipe = sharp(src, { failOn: 'none' })
       .rotate() // EXIF-Orientierung anwenden (sonst koennte das Bild kippen)
       .resize({ width: MAX, height: MAX, fit: 'inside', withoutEnlargement: true });
     let out;
     if (ext === '.png') out = await pipe.png({ compressionLevel: 9 }).toBuffer();
-    else if (ext === '.webp') out = await pipe.webp({ quality: Q }).toBuffer();
+    else if (ext === '.webp') {
+      // sharp verwirft EXIF -> die schlanke, GPS-sichere Kamera-EXIF aus der Quelle wieder einmuxen,
+      // damit die ausgelieferte WebP dieselbe Kamera/Brennweite trägt wie das Repo-Original.
+      const enc = await pipe.webp({ quality: Q }).toBuffer({ resolveWithObject: true });
+      const slim = slimExifTiff(new Uint8Array(src));
+      out = slim ? Buffer.from(muxExifIntoWebp(new Uint8Array(enc.data), slim, enc.info.width, enc.info.height)) : enc.data;
+    }
     else out = await pipe.jpeg({ quality: Q, mozjpeg: true }).toBuffer();
     if (out.length < before) {
       writeFileSync(file, out);
