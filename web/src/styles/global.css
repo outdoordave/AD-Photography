@@ -922,17 +922,24 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 .ww-trash-err { color: #a3231d; font-weight: var(--fw-semibold); font-size: var(--fs-ui); text-align: center; margin: 0 0 16px; }
 
 /* --- Medien-Manager (/medien-manager) — Finder-Look im Website-Stil --- */
-.ww-mm { padding: 20px 0 60px; }
+.ww-mm { padding: 16px 0 40px; }
 .ww-mm-note { color: var(--c-ink-soft); font-size: var(--fs-ui); text-align: center; padding: 60px 0; }
-.ww-mm-head { margin-bottom: 20px; }
+/* Kompakter, linksbündiger Kopf statt Magazin-Hero — der Finder darunter braucht die Viewport-Höhe. */
+.ww-mm-head { text-align: left; padding: 0; margin-bottom: 12px; }
+.ww-mm-head .kicker { margin-bottom: 4px; }
+.ww-mm-head h1 { font-size: clamp(1.6rem, 3.2vw, 2.3rem); line-height: 1.1; }
+.ww-mm-head p { margin: 6px 0 0; max-width: none; font-size: var(--fs-ui); }
 .ww-mm-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-bottom: 14px; font-size: var(--fs-ui); }
 .ww-mm-crumbs button { background: none; border: none; color: var(--c-accent); font-weight: var(--fw-bold); cursor: pointer; padding: 2px 4px; font-size: inherit; }
 .ww-mm-crumbs button.is-here { color: var(--c-ink); cursor: default; }
 .ww-mm-crumbs .sep { color: var(--c-ink-soft); }
-/* Zwei-Spalten-Layout: linke Ordner-Baum-Leiste (Explorer) + Hauptbereich */
-.ww-mm-body { display: flex; gap: 20px; align-items: flex-start; }
+/* Drei-Spalten-Finder: Ordner-Baum links · Haupt (Toolbar + Liste) mitte · Vorschau rechts.
+   Ab Tablet (>=721px, s. Block weiter unten) bekommt der Body eine FESTE Höhe (= Viewport minus Kopf)
+   und jede Spalte scrollt IN SICH -> Toolbar und Vorschau bleiben zuverlässig stehen, ohne Page-Sticky.
+   Mobil (<721px) bleibt es normaler Dokumentfluss (Spalten stapeln, Seite scrollt). */
+.ww-mm-body { display: flex; gap: 20px; align-items: stretch; }
 .ww-mm-main { flex: 1 1 auto; min-width: 0; }
-.ww-mm-tree { flex: 0 0 210px; position: sticky; top: 138px; align-self: flex-start; border: 1px solid var(--c-line); border-radius: var(--radius-sm); background: var(--c-bg-alt); padding: 10px; max-height: calc(100vh - 158px); overflow-y: auto; }
+.ww-mm-tree { flex: 0 0 210px; border: 1px solid var(--c-line); border-radius: var(--radius-sm); background: var(--c-bg-alt); padding: 10px; }
 .ww-mm-tree-head { font-size: var(--fs-label); font-weight: var(--fw-bold); letter-spacing: var(--tracking-slight); text-transform: uppercase; color: var(--c-ink-soft); padding: 4px 8px 8px; }
 .ww-mm-treeitem { display: flex; align-items: center; gap: 6px; width: 100%; text-align: left; padding: 7px 10px; border: none; background: transparent; border-radius: var(--radius-sm); color: var(--c-ink); font-size: var(--fs-label); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ww-mm-treeitem:hover { background: rgba(46,36,24,0.06); }
@@ -955,12 +962,8 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
   .ww-mm-tree-add { width: auto; margin-top: 0; }
   .ww-mm-toolbar { position: static; }
 }
-/* Toolbar bleibt beim Scrollen sichtbar. top:118 lässt die Oberkante ein paar px unter die Kopfleiste gleiten.
-   Der ::before-Streifen verlängert die deckende Fläche nach OBEN (14px) und fängt jede Rest-Lücke zwischen
-   Kopfleisten-Unterkante und Toolbar ab — er liegt im Leerraum über der Toolbar bzw. hinter dem (frosted)
-   Header, ist also unsichtbar, deckt aber durchscrollenden Inhalt zuverlässig ab (robust gegen Header-Höhe). */
-.ww-mm-toolbar { position: sticky; top: 118px; z-index: 30; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; padding: 12px 0 10px; background: var(--c-bg); }
-.ww-mm-toolbar::before { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: 14px; background: var(--c-bg); }
+/* Toolbar = feste Kopfzeile der Mittelspalte (die Liste darunter scrollt intern) — kein Sticky mehr nötig. */
+.ww-mm-toolbar { flex: 0 0 auto; z-index: 30; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; padding: 0 0 2px; background: var(--c-bg); }
 .ww-mm-search { flex: 1 1 150px; min-width: 120px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--c-line); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: var(--fs-ui); background: #fff; color: var(--c-ink); }
 .ww-mm-upload { cursor: pointer; padding: 11px 18px; }
 /* Schatten auf der Medien-Seite aus (wurden von Sticky-/Scroll-Containern abgeschnitten). */
@@ -992,7 +995,7 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 .ww-mm-row.is-sel { background: var(--c-bg-alt); border-color: var(--c-accent); }
 .ww-mm-row.is-picked { background: rgba(176,125,28,0.12); border-color: var(--c-accent); }
 .ww-mm-row.is-drop { border-color: var(--c-accent); background: var(--c-bg-alt); }
-.ww-mm-row-head { position: sticky; top: 185px; font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--tracking-slight); color: var(--c-ink-soft); font-weight: var(--fw-bold); cursor: default; background: var(--c-bg); z-index: 2; }
+.ww-mm-row-head { position: sticky; top: 0; font-size: var(--fs-label); text-transform: uppercase; letter-spacing: var(--tracking-slight); color: var(--c-ink-soft); font-weight: var(--fw-bold); cursor: default; background: var(--c-bg); z-index: 2; }
 .ww-mm-row-head:hover { background: var(--c-bg); }
 .ww-mm-row-thumb { flex: 0 0 auto; width: 40px; height: 40px; object-fit: cover; border-radius: 6px; background: #efe7d9; }
 .ww-mm-row-foldericon { display: flex; align-items: center; justify-content: center; font-size: 22px; }
@@ -1008,19 +1011,13 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 .ww-mm-check-row.is-on { background: var(--c-accent); border-color: var(--c-accent); }
 @media (max-width: 720px) { .ww-mm-row-date { display: none; } }
 
-/* Details-Ansicht (Finder-Spaltenansicht): Viewport mit fester Höhe -> die LISTE scrollt intern, die
-   Vorschau rechts bleibt stehen und liegt AUSSERHALB des Drop-Felds. Erst wenn man die ganze Seite unter
-   die Sektion scrollt, geht der Block mit. */
-/* Details: Block mit FESTER Höhe — die LISTE scrollt IN SICH (overflow), die Vorschau rechts bleibt dabei
-   stehen. Bewusst KEIN Page-Sticky für die Vorschau (Astros display:contents-Wrapper bricht sticky in Safari);
-   die interne Liste ist ein eigener Scroll-Container -> zuverlässig in allen Browsern. Der Block selbst klebt
-   zusätzlich unter der Toolbar (in Chrome), fällt in Safari auf normalen Fluss zurück — die Vorschau bleibt so
-   oder so, weil die Liste intern scrollt. */
-.ww-mm-viewport--details { display: flex; gap: 16px; align-items: flex-start; }
+/* Ansichts-Container (Kacheln/Liste/Details). Ab Tablet füllt er den Rest der Mittelspalte und scrollt
+   intern (s. Desktop-Block unten). In der Details-Ansicht liegt die Vorschau als eigene Spalte DANEBEN
+   (außerhalb des Drop-Felds) und scrollt getrennt — Finder-Spaltenansicht. */
+.ww-mm-viewport { display: flex; }
+.ww-mm-viewport--details { gap: 16px; }
 .ww-mm-viewport--details .ww-mm-content { flex: 1 1 auto; min-width: 0; }
-/* Vorschau EXAKT wie die Baum-Leiste links: sticky im hohen Container (der Liste) -> großer Klebe-Spielraum,
-   bleibt beim Scrollen stehen, eigener Scrollbereich. */
-.ww-mm-details-pane { flex: 0 0 320px; position: sticky; top: 190px; align-self: flex-start; max-height: calc(100vh - 210px); overflow-y: auto; border: 1px solid var(--c-line); border-radius: var(--radius-sm); background: var(--c-bg-alt); }
+.ww-mm-details-pane { flex: 0 0 320px; border: 1px solid var(--c-line); border-radius: var(--radius-sm); background: var(--c-bg-alt); }
 .ww-mm-details-imgwrap { background: #1c1812; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
 .ww-mm-details-imgwrap img { max-width: 100%; max-height: 320px; object-fit: contain; display: block; }
 .ww-mm-details-pane .ww-mm-lb-info { flex: none; max-width: none; max-height: none; padding: 16px 16px 20px; }
@@ -1033,10 +1030,20 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
 .ww-mm-exif dd { margin: 0; color: var(--c-ink); font-weight: var(--fw-bold); overflow-wrap: anywhere; }
 .ww-mm-row-cam { width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (max-width: 860px) { .ww-mm-row-cam { display: none; } }
-@media (max-width: 900px) { .ww-mm-viewport--details { flex-direction: column; } .ww-mm-details-pane { flex: none; width: 100%; position: static; max-height: none; } }
+@media (max-width: 900px) { .ww-mm-viewport--details { flex-direction: column; } .ww-mm-details-pane { flex: none; width: 100%; } }
 
-/* Fade unter der Sticky-Toolbar (weiche Kante statt harter Schnitt). */
-.ww-mm-toolbar::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 18px; background: linear-gradient(var(--c-bg), rgba(244,237,225,0)); pointer-events: none; }
+/* Ab Tablet: Finder mit FESTER Höhe — jede Spalte scrollt intern; Toolbar (Kopfzeile) und Vorschau
+   stehen fest, nur Ordnerliste bzw. Bilderliste bewegen sich. --mm-h wird per JS gesetzt (Body-Oberkante
+   bis kurz vor den Viewport-Boden). Der weiche Übergang oben liegt als Maske auf der scrollenden Liste. */
+@media (min-width: 721px) {
+  .ww-mm { padding-bottom: 0; }
+  .ww-mm-body { height: var(--mm-h, 62vh); min-height: 380px; }
+  .ww-mm-tree { align-self: stretch; overflow-y: auto; }
+  .ww-mm-main { display: flex; flex-direction: column; min-height: 0; }
+  .ww-mm-viewport { flex: 1 1 auto; min-height: 0; }
+  .ww-mm-content { flex: 1 1 auto; min-width: 0; min-height: 0; overflow-y: auto; }
+  .ww-mm-details-pane { align-self: stretch; overflow-y: auto; }
+}
 
 /* Upload-Fenster. */
 .ww-mm-uploadmodal { max-width: 460px; }
