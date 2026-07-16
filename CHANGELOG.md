@@ -17,6 +17,14 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-16 — Medien-Manager: fester Finder (Vorschau/Toolbar stehen endgültig fest)
+- **Layout final umgestellt**: weg vom Page-Scroll + `position:sticky` (fragil, in Headless nicht verifizierbar) hin zu einem echten Finder mit **fester Höhe**. Der `.ww-mm-body` füllt ab Tablet (>=721px) vom eigenen Oberrand bis kurz vor den Viewport-Boden (per JS gesetzte `--mm-h`), **jede Spalte scrollt IN SICH** (Ordner-Baum, Bilderliste, Vorschau). Dadurch bleibt die Detail-Vorschau **zuverlässig stehen** und die Spaltenüberschrift klebt oben in der Liste — in allen Browsern. Verifiziert im Browser: Liste scrollt intern (scrollTop 1→400), Vorschau bleibt bei top=226.
+- **Bündige Ausrichtung**: linke Ordner-Leiste und mittige Toolbar (Suche/Ansicht/Sortierung/Buttons) starten oben auf gleicher Höhe.
+- **Kompakter Seitenkopf** statt Magazin-Hero (linksbündig, kleinere H1) — der Finder braucht die Viewport-Höhe, sonst schob der Hero ihn nach unten und die ganze Seite scrollte (Ursache des „Vorschau scrollt mit").
+- **Marquee** (Gummiband-Auswahl) auf den internen Scroll-Container umgestellt (Anker im Inhalts-Raum statt Seiten-Koordinaten).
+- Dateien: web/src/components/MediaManager.tsx, web/src/styles/global.css.
+- Commit: e2a483e
+
 ## 2026-07-13 — Medien-Manager: Vorschau klebt wie die Baum-Leiste + iPhone-Objektiv
 - **Vorschau bleibt jetzt stehen**: Ursache war nicht Safari, sondern der Klebe-Spielraum: der feste Höhen-Block gab der Vorschau nur ~65px, dann löste sie. Jetzt sticky im HOHEN Container (der Liste, ~1036px) — exakt wie die funktionierende Baum-Leiste links. Baum + Vorschau ein paar px runter (top 138/190), damit sie nicht unter dem Header verschwinden.
 - **iPhone-Objektiv**: „6.765mm f/1.78" (kryptisch, wiederholte die Blende) -> Brennweiten-Typ „Weitwinkel/Standard/Tele" aus dem KB-Äquivalent. iPhone-Bild zeigt jetzt „Standard".

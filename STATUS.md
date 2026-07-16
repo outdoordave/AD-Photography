@@ -1,10 +1,24 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-07-08** · Live-Branch `main`. Seite **live**, Cutover durch. SEO-Grundlage steht
+> **Stand: 2026-07-16** · Live-Branch `main`. Seite **live**, Cutover durch. SEO-Grundlage steht
 > (Sitemap, JSON-LD, Google Search Console bestätigt + Sitemap gelesen), Datenschutz **vollständig**
 > (inkl. Web3Forms), Performance ok, A11y-Basics drin, Security-Header + CSP gesetzt. **Keine offenen
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
 > Session überschrieben). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
+>
+> **🆕 Medien-Manager: fester Finder — Vorschau/Toolbar stehen endgültig fest (16.07., `e2a483e`).**
+> Die wiederholten Sticky-Versuche (07-13) sind **abgelöst**: statt Page-Scroll + `position:sticky`
+> jetzt ein Finder mit **fester Höhe**. `.ww-mm-body` füllt ab >=721px vom Oberrand bis kurz vor den
+> Viewport-Boden (JS setzt `--mm-h`), **jede Spalte scrollt intern** (Ordner-Baum · Bilderliste ·
+> Vorschau). Die Detail-Vorschau bleibt damit zuverlässig stehen (im Browser verifiziert: interner
+> Scroll 1→400, Vorschau top=226 unverändert), die Spaltenüberschrift klebt oben in der Liste, links
+> (Ordner) + Mitte (Toolbar/Suche) sind oben bündig. Kompakter, linksbündiger Seitenkopf statt
+> Magazin-Hero (der Hero schob den Finder sonst nach unten → ganze Seite scrollte = Ursache des
+> „Vorschau scrollt mit"). Marquee auf den internen Scroll-Container umgestellt. ⚠️ Im echten
+> Safari/CMS gegenprüfen (Cutover-Regel). 🟡 **Offen (EXIF, wartet auf Entscheidung):** herstellerneutrale
+> Brennweiten-Kette (FocalLengthIn35mmFormat → LensModel → FocalLength → Make/Model) analysiert und mit
+> 3 echten Fotos belegt — **Konflikt** mit früher gewünschtem Verhalten (Sony real 28mm statt äquiv. 42mm;
+> „Tamron"-Präfix; iPhone „Weitwinkel" statt roher Lens-String). Noch NICHT umgesetzt; David entscheidet.
 >
 > **🆕 Medien-Manager `/medien-manager` (10.07., neuester Stand — Commits `6640d32`…`32b5b67`).** Eigene
 > login-geschützte Finder-Seite im Website-Look (wie /statistik, noindex) zum Durchsuchen/Ordnen/Verwalten
