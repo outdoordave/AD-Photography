@@ -23,7 +23,14 @@
 > 0 kaputte Referenzen. 🟡 **Offen (Entscheidung Nutzer):** EXIF-**Anzeige**-Kette (Sony 28 vs. 42 mm, „Tamron"-
 > Präfix, iPhone „Weitwinkel") — die 5 Fragen stehen weiter zur Klärung, dann wird die Anzeige-Logik angepasst.
 >
-> **Medien-Manager: fester Finder — Vorschau/Toolbar stehen endgültig fest (16.07., `e2a483e`).**
+> **🆕 Medien-Manager Layout FINAL (16.07., `15f3a3b`): Seiten-Scroll + Vorschau klebt wie die Baum-Leiste.**
+> Der Fixe-Höhe-Ansatz (`e2a483e`/`10b634e`) ist **abgelöst** (kostete zu viel Platz). Jetzt normaler
+> Seiten-Scroll (volle Höhe); **Baum links UND Vorschau rechts** sind zwei gleichartige `position:sticky`-Spalten
+> der `.ww-mm-body` (`top:138`) → sie scrollen erst mit und docken dann oben an, **identisch**. Vorschau =
+> echte dritte Spalte (Geschwister von Baum + Haupt). Toolbar sticky `top:118`, Spaltenkopf `top:185`. Footer
+> wieder da. Verifiziert (beide sticky/selber Container/selber top). Frühere Fixe-Höhe-Notiz gilt nicht mehr.
+>
+> **(historisch) Medien-Manager: fester Finder (16.07., `e2a483e`) — durch `15f3a3b` abgelöst.**
 > Die wiederholten Sticky-Versuche (07-13) sind **abgelöst**: statt Page-Scroll + `position:sticky`
 > jetzt ein Finder mit **fester Höhe**. `.ww-mm-body` füllt ab >=721px vom Oberrand bis kurz vor den
 > Viewport-Boden (JS setzt `--mm-h`), **jede Spalte scrollt intern** (Ordner-Baum · Bilderliste ·

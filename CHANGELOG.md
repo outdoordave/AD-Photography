@@ -17,6 +17,10 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-16 — Medien-Manager: zurück zu Seiten-Scroll, Vorschau klebt wie die Baum-Leiste
+- Nach Nutzer-Feedback („feste Höhe kostet zu viel Platz; die Info-Box soll sich genau wie die linke Leiste verhalten"): den Fixe-Höhe-Umbau (`e2a483e`/`10b634e`) **rückgängig** gemacht. Wieder **normaler Seiten-Scroll** (volle Höhe); **Baum UND Vorschau** kleben per `position:sticky` im hohen `.ww-mm-body` und docken beim Scrollen oben an.
+- **Schlüssel:** die Vorschau ist jetzt eine echte **dritte Spalte** (Geschwister von Baum + Haupt statt im Haupt verschachtelt) mit identischem `sticky`/`top:138` wie der Baum → **exakt gleiches Klebe-Verhalten** für beide. Footer/Section-Padding-Ausblendung + `--mm-h`-Höhe + interner Spalten-Scroll entfernt; Marquee wieder auf Seiten-Scroll. Verifiziert: beide `position:sticky`, selber Container, `top` identisch; Seite scrollt normal, Footer zurück. Commit: `15f3a3b`.
+
 ## 2026-07-16 — EXIF-Erhalt im Build + Bild-Referenzen repariert + Move-Ursache gefixt
 - **Build erhält Kamera-EXIF (GPS-sicher):** `optimize-uploads.mjs` verwarf per sharp alle Metadaten → jedes Bild verlor beim Build sein EXIF. Fix: schlanke Whitelist-EXIF (Make/Model + Blende/Belichtung/ISO/Datum/Brennweite/KB-Äquiv./Objektiv) wird für WebP nach dem Re-Encode wieder eingemuxt — **ohne GPS/Orientierung**. `buildExifTiff`/`muxExifIntoWebp`/`slimExifTiff` aus `exifWebp.ts` nach `exifCamera.mjs` portiert. Verifiziert an iPhone-Foto (MIT GPS): Kamera bleibt, GPS raus, WebP valide. Commit: `0d80b91`.
 - **28 kaputte Bild-Referenzen repariert:** Der Move-/Ordnen-Vorgang hatte Verweise zerschossen — 24× doppelter Präfix `/uploads/uploads/…`, das Logo (nach `Logo/` verschoben, Verweis blieb auf Wurzel), und `IMG_6654-2.webp` (in Tina-Commit gelöscht, 3 Verweise verwaist → aus Git wiederhergestellt). Logo + Galerie wieder sichtbar; 0 kaputte Referenzen. Commit: `b388f2c`.
