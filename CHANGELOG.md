@@ -17,6 +17,12 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-16 — Medien-Manager: Vorschau klebt durch die ganze Liste, bündig, breiter + iPhone „Porträt"
+- **Vorschau bleibt jetzt über die GANZE Liste fest** (vorher löste sie vor dem Listenende): Höhe auf `calc(100vh - 380px)` gekappt + interner Scroll. Eine sticky-Leiste, die höher als „Viewport − Startpunkt" ist, dockt nicht durch — mit der Kappung klebt sie wie die Baum-Leiste und scrollt bei zu viel Inhalt in sich. Verifiziert (`paneSticksThroughList=true`).
+- **Suchleiste bündig** mit Ordner-Leiste + Vorschau (Toolbar `top:118→138`, oberes Padding weg → alle drei `top=369`).
+- **Medien-Seite breiter** als der 1180px-Textrahmen (`.wrap:has(.ww-mm)` → `min(1800px,94vw)`): sonst quetschte die 3-Spalten-Ansicht die Mitte und die Toolbar brach um. Jetzt einzeilige Toolbar, volle Dateinamen. `row-head top:185→200`.
+- **iPhone-Objektiv 48 mm = „Porträt"** (statt „Weitwinkel"): Buckets nach Vorgabe `<20 Ultraweitwinkel · 20–45 Standard · 45–85 Porträt · >85 Teleobjektiv`. Commits: `1ac021b`, `1b5a141`.
+
 ## 2026-07-16 — Medien-Manager: zurück zu Seiten-Scroll, Vorschau klebt wie die Baum-Leiste
 - Nach Nutzer-Feedback („feste Höhe kostet zu viel Platz; die Info-Box soll sich genau wie die linke Leiste verhalten"): den Fixe-Höhe-Umbau (`e2a483e`/`10b634e`) **rückgängig** gemacht. Wieder **normaler Seiten-Scroll** (volle Höhe); **Baum UND Vorschau** kleben per `position:sticky` im hohen `.ww-mm-body` und docken beim Scrollen oben an.
 - **Schlüssel:** die Vorschau ist jetzt eine echte **dritte Spalte** (Geschwister von Baum + Haupt statt im Haupt verschachtelt) mit identischem `sticky`/`top:138` wie der Baum → **exakt gleiches Klebe-Verhalten** für beide. Footer/Section-Padding-Ausblendung + `--mm-h`-Höhe + interner Spalten-Scroll entfernt; Marquee wieder auf Seiten-Scroll. Verifiziert: beide `position:sticky`, selber Container, `top` identisch; Seite scrollt normal, Footer zurück. Commit: `15f3a3b`.
