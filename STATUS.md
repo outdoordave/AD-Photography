@@ -17,9 +17,11 @@
 > (3) **Ursache gefixt:** `moveInCloud`/`uploadToCloud` normalisieren den Zielordner + `dedupeUploads` →
 > **nie wieder** `/uploads/uploads/…`; „Nach Alben ordnen" gefahrlos wiederholbar (unit-geprüft).
 > (4) **Seite scrollt nicht mehr mit:** Footer + Section-Padding auf der Medien-Seite (≥721px) entfernt →
-> `docScrolls=false`, linke Leiste + Vorschau stehen fest. 🟡 **Offen (EXIF Teil 2, pausiert):** einmaliges
-> Skript, das die verbleibenden 11 Repo-JPEGs zu WebP (inkl. EXIF) wandelt + Referenzen umschreibt — vom
-> Nutzer unterbrochen, um obige Bugs zu melden; wieder aufnehmen nach seiner Rückmeldung.
+> `docScrolls=false`, linke Leiste + Vorschau stehen fest (Footer nur auf der Medien-Seite aus).
+> (5) **11 Repo-JPEGs zu WebP migriert** (`153c073`): Einmal-Skript `scripts/migrate-jpeg-to-webp.mjs`
+> (Q85/≤2400px, GPS-sicherer EXIF-Erhalt) + 21 Referenzen umgeschrieben; Originale bleiben als Sicherheitsnetz;
+> 0 kaputte Referenzen. 🟡 **Offen (Entscheidung Nutzer):** EXIF-**Anzeige**-Kette (Sony 28 vs. 42 mm, „Tamron"-
+> Präfix, iPhone „Weitwinkel") — die 5 Fragen stehen weiter zur Klärung, dann wird die Anzeige-Logik angepasst.
 >
 > **Medien-Manager: fester Finder — Vorschau/Toolbar stehen endgültig fest (16.07., `e2a483e`).**
 > Die wiederholten Sticky-Versuche (07-13) sind **abgelöst**: statt Page-Scroll + `position:sticky`
