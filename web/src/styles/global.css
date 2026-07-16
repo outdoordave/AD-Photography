@@ -1037,7 +1037,12 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
    bis kurz vor den Viewport-Boden). Der weiche Übergang oben liegt als Maske auf der scrollenden Liste. */
 @media (min-width: 721px) {
   .ww-mm { padding-bottom: 0; }
-  .ww-mm-body { height: var(--mm-h, 62vh); min-height: 380px; }
+  /* Der Marketing-Footer unter dem fixen Finder würde die GANZE Seite scrollbar machen (und den Finder
+     mit hochziehen). Auf dieser login-internen Werkzeug-Seite ist er überflüssig -> ausblenden, damit die
+     Seite selbst NICHT scrollt und der Finder (inkl. linker Leiste + Vorschau) wirklich fest steht. */
+  body:has(.ww-mm) footer { display: none; }
+  body:has(.ww-mm) main > section { padding-bottom: 0; } /* globales Section-Padding sonst -> Seite scrollt */
+  .ww-mm-body { height: var(--mm-h, 62vh); min-height: 320px; }
   .ww-mm-tree { align-self: stretch; overflow-y: auto; }
   .ww-mm-main { display: flex; flex-direction: column; min-height: 0; }
   .ww-mm-viewport { flex: 1 1 auto; min-height: 0; }
