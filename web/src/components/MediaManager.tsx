@@ -73,6 +73,14 @@ function viewOf(all: string[], folder: string): { subdirs: string[]; files: stri
   return { subdirs: Array.from(subdirs).sort((a, b) => a.localeCompare(b)), files };
 }
 
+// Aktuelle Scroll-Position bzw. Scrollen — robust gegen „wer ist der Scroll-Container" (body ODER html).
+function getScrollY(): number { return window.scrollY || document.documentElement.scrollTop || (document.body ? document.body.scrollTop : 0) || 0; }
+function scrollByY(dy: number): void {
+  const se = (document.scrollingElement || document.documentElement) as HTMLElement;
+  se.scrollTop += dy;
+  if (document.body && document.body !== se) document.body.scrollTop += dy;
+}
+
 export default function MediaManager() {
   const [show, setShow] = React.useState<null | boolean>(null);
   const [manifest, setManifest] = React.useState<string[] | null>(null);
@@ -132,25 +140,12 @@ export default function MediaManager() {
   // Drag & Drop zwischen Ordnern.
   const [dropTarget, setDropTarget] = React.useState<string | null>(null);
   const dragRef = React.useRef<string[]>([]);
-  // Marquee (Gummiband) — Rechteck in VIEWPORT-Koordinaten (position:fixed); der Anker liegt im
-  // Inhalts-Raum des internen Scroll-Containers, damit Auto-Scroll nicht verrutscht (s. onGridMouseDown).
+  // Marquee (Gummiband) — Rechteck in VIEWPORT-Koordinaten (fürs Rendern); die Rechen-Anker liegen in
+  // Seiten-Koordinaten (pageX/Y), damit Auto-Scroll (Seite scrollt) nicht verrutscht.
   const [marquee, setMarquee] = React.useState<null | { x0: number; y0: number; x1: number; y1: number }>(null);
   const marqueeMovedRef = React.useRef(false);
-  const bodyRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => { try { setShow(loggedIn()); } catch { setShow(false); } }, []);
-
-  // Finder-Höhe: der Body füllt vom eigenen Oberrand bis kurz vor den Viewport-Boden -> jede Spalte
-  // (Ordner, Liste, Vorschau) scrollt IN SICH; Toolbar und Vorschau bleiben dadurch fest stehen.
-  React.useEffect(() => {
-    if (!show) return;
-    const el = bodyRef.current; if (!el) return;
-    const set = () => { const top = el.getBoundingClientRect().top; el.style.setProperty('--mm-h', `${Math.max(380, window.innerHeight - top - 24)}px`); };
-    set();
-    const t = window.setTimeout(set, 120); // nach Bild-/Font-Layout nachjustieren
-    window.addEventListener('resize', set);
-    return () => { window.removeEventListener('resize', set); window.clearTimeout(t); };
-  }, [show, view, folder]);
   React.useEffect(() => { setPicked(new Set()); }, [folder]);
 
   // Tastatur: Lightbox blättern/schließen; in Details ←/→ = Vorschau blättern; Cmd+A / Entf / Esc.
@@ -288,44 +283,43 @@ export default function MediaManager() {
     openItem(p); setAnchor(idx);
   };
 
-  // Marquee (Gummiband) mit Text-Auswahl-Sperre + Auto-Scroll am Rand. Scroll-Container ist die interne
-  // Liste (.ww-mm-content). Der Anker liegt im INHALTS-Raum (clientY + scrollTop) — so verrutscht die
-  // Auswahl beim Auto-Scrollen nicht. Rechteck + Trefferprüfung laufen in Viewport-Koordinaten.
+  // Marquee (Gummiband) mit Text-Auswahl-Sperre + Auto-Scroll am Rand. Der Anker liegt in SEITEN-
+  // Koordinaten (pageX/Y), das aktuelle Zeigerende wird jedes Mal aus clientX/Y + aktuellem Scroll
+  // berechnet — so verrutscht die Auswahl beim Auto-Scrollen (Seite scrollt) nicht.
   const onGridMouseDown = (e: React.MouseEvent) => {
     if (e.button !== 0 || view === 'details') return;
     const el = e.target as HTMLElement;
     if (el.closest('.ww-mm-file, .ww-mm-folder, button, a, input, select, .ww-mm-row')) return;
     e.preventDefault();
-    const container = e.currentTarget as HTMLElement; // .ww-mm-content = interner Scroll-Container
     document.body.classList.add('ww-mm-marqueeing'); // user-select: none -> markiert keinen Text mehr
-    const startX = e.clientX;
-    const anchorY = e.clientY + container.scrollTop;
-    let lastX = e.clientX, lastY = e.clientY;
+    const sx = e.pageX, sy = e.pageY;
+    let lastClientX = e.clientX, lastClientY = e.clientY;
     marqueeMovedRef.current = false;
 
     const update = () => {
-      const aY = anchorY - container.scrollTop; // aktuelle Bildschirm-Y des Ankers
-      const x0 = Math.min(startX, lastX), x1 = Math.max(startX, lastX);
-      const y0 = Math.min(aY, lastY), y1 = Math.max(aY, lastY);
-      if (Math.abs(lastX - startX) + Math.abs(lastY - aY) > 4) marqueeMovedRef.current = true;
-      setMarquee({ x0, y0, x1, y1 }); // Viewport-Koordinaten (Rechteck ist position:fixed)
+      const scX = window.scrollX || 0, scY = getScrollY();
+      const px = lastClientX + scX, py = lastClientY + scY;
+      const pgx0 = Math.min(sx, px), pgy0 = Math.min(sy, py), pgx1 = Math.max(sx, px), pgy1 = Math.max(sy, py);
+      if (Math.abs(px - sx) + Math.abs(py - sy) > 4) marqueeMovedRef.current = true;
+      setMarquee({ x0: pgx0 - scX, y0: pgy0 - scY, x1: pgx1 - scX, y1: pgy1 - scY }); // Render in Viewport-Koord.
       const hit = new Set<string>();
-      container.querySelectorAll('[data-path]').forEach((node) => {
+      document.querySelectorAll('.ww-mm-content [data-path]').forEach((node) => {
         const r = (node as HTMLElement).getBoundingClientRect();
-        if (r.left < x1 && r.right > x0 && r.top < y1 && r.bottom > y0) { const p = (node as HTMLElement).getAttribute('data-path'); if (p) hit.add(p); }
+        const l = r.left + scX, rr = r.right + scX, t = r.top + scY, b = r.bottom + scY;
+        if (l < pgx1 && rr > pgx0 && t < pgy1 && b > pgy0) { const p = (node as HTMLElement).getAttribute('data-path'); if (p) hit.add(p); }
       });
       setPicked(hit);
       if (hit.size) setSelMode(true);
     };
 
-    const onMove = (me: MouseEvent) => { lastX = me.clientX; lastY = me.clientY; update(); };
-    // Auto-Scroll, solange der Zeiger nahe der Ober-/Unterkante des Containers gehalten wird.
+    const onMove = (me: MouseEvent) => { lastClientX = me.clientX; lastClientY = me.clientY; update(); };
+    // Auto-Scroll, solange der Zeiger nahe der Ober-/Unterkante gehalten wird (auch ohne Bewegung).
     const timer = window.setInterval(() => {
-      const rc = container.getBoundingClientRect();
+      const top = 150, bottom = window.innerHeight - 70;
       let dy = 0;
-      if (lastY < rc.top + 24) dy = -Math.min(26, (rc.top + 24 - lastY) / 3 + 4);
-      else if (lastY > rc.bottom - 24) dy = Math.min(26, (lastY - (rc.bottom - 24)) / 3 + 4);
-      if (dy) { container.scrollTop += dy; update(); }
+      if (lastClientY < top) dy = -Math.min(26, (top - lastClientY) / 3 + 4);
+      else if (lastClientY > bottom) dy = Math.min(26, (lastClientY - bottom) / 3 + 4);
+      if (dy) { scrollByY(dy); update(); }
     }, 30);
 
     const onUp = () => {
@@ -656,7 +650,7 @@ export default function MediaManager() {
         ))}
       </div>
 
-      <div className="ww-mm-body" ref={bodyRef}>
+      <div className="ww-mm-body">
       <aside className="ww-mm-tree" aria-label="Ordner">
         <div className="ww-mm-tree-head">Ordner</div>
         <button type="button" className={`ww-mm-treeitem${folder === '' ? ' is-here' : ''}${dropTarget === '' ? ' is-drop' : ''}`} onClick={() => { closePreview(); setFolder(''); }} title="uploads" {...folderDropProps('')}>
@@ -712,8 +706,8 @@ export default function MediaManager() {
 
       {loadErr ? <p className="ww-mm-err">Mediathek nicht ladbar: {loadErr}</p> : null}
 
-      {/* Inhalt: Kacheln/Liste im Drop-Feld; in der Details-Ansicht liegt die Vorschau-Leiste DANEBEN
-          (außerhalb des Drop-Felds) und der Block hat feste Höhe -> Liste scrollt intern, Vorschau bleibt. */}
+      {/* Inhalt: Kacheln/Liste im Drop-Feld. Die Details-Vorschau liegt NICHT hier drin, sondern als eigene
+          dritte Spalte der .ww-mm-body (Geschwister von Baum + Haupt) -> sie klebt EXAKT wie die Baum-Leiste. */}
       <div className={`ww-mm-viewport ww-mm-viewport--${view}`}>
         <div
           className={`ww-mm-content ww-mm-content--${view}${dragOver ? ' is-drag' : ''}`}
@@ -746,18 +740,19 @@ export default function MediaManager() {
           )}
           {dragOver ? <div className="ww-mm-dropnote">Loslassen zum Hochladen → {quickTarget}/</div> : null}
         </div>
-        {view === 'details' ? (
-          <div className="ww-mm-details-pane">
-            {sel ? (
-              <>
-                <div className="ww-mm-details-imgwrap"><img src={previewOf(sel)} alt={baseOf(sel)} /></div>
-                <div className="ww-mm-lb-info">{previewInfo(sel)}</div>
-              </>
-            ) : <div className="ww-mm-details-hint">Ein Bild links wählen für die Vorschau.</div>}
-          </div>
-        ) : null}
       </div>
       </div>{/* .ww-mm-main */}
+      {/* Vorschau-Leiste = dritte Spalte, klebt beim Scrollen wie die Baum-Leiste (position:sticky). */}
+      {view === 'details' ? (
+        <aside className="ww-mm-details-pane" aria-label="Vorschau">
+          {sel ? (
+            <>
+              <div className="ww-mm-details-imgwrap"><img src={previewOf(sel)} alt={baseOf(sel)} /></div>
+              <div className="ww-mm-lb-info">{previewInfo(sel)}</div>
+            </>
+          ) : <div className="ww-mm-details-hint">Ein Bild links wählen für die Vorschau.</div>}
+        </aside>
+      ) : null}
       </div>{/* .ww-mm-body */}
 
       {/* Lightbox (Kacheln/Liste) */}
