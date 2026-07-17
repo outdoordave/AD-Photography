@@ -574,6 +574,7 @@ export default function MediaManager() {
         <span className="ww-mm-row-meta ww-mm-row-cam" />
         <span className="ww-mm-row-meta ww-mm-row-type">Ordner</span>
         <span className="ww-mm-row-meta ww-mm-row-size" /><span className="ww-mm-row-meta ww-mm-row-date" />
+        <span className="ww-mm-row-endcap" aria-hidden="true" />
       </div>
     );
   };
@@ -732,6 +733,7 @@ export default function MediaManager() {
                 {headCell('type', 'Typ', 'ww-mm-row-meta ww-mm-row-type')}
                 {headCell('size', 'Größe', 'ww-mm-row-meta ww-mm-row-size')}
                 {headCell('date', 'Hochgeladen', 'ww-mm-row-meta ww-mm-row-date')}
+                <span className="ww-mm-row-endcap" aria-hidden="true" />
               </div>
               {!searching && allSubdirs.map((d) => folderRow(d))}
               {visible.map((p, i) => fileRow(p, i))}
