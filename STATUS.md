@@ -6,6 +6,15 @@
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
 > Session überschrieben). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
 >
+> **🚧 In Arbeit (Branch `editorial-redesign`, NICHT auf main/live): dunkles Editorial-Redesign, CMS-umschaltbar.**
+> Ziel: die GANZE Seite ins dunkle Editorial-Design (Quelle: Claude-Design „Wide & Wild Startseite V1.1"),
+> per Schalter „Darstellung → design (klassisch|editorial)" umschaltbar, echte CMS-Inhalte, bestehende
+> Funktionen (Hero-Video/Slideshow, Lightbox) erhalten. **Phase 0 fertig (`ada8a5f`):** Schalter (Schema →
+> Re-Index nötig) + `data-design`-Umschaltung in BaseLayout + lokale Fonts (Archivo/Space Mono) + `editorial.css`
+> (Token-Override → bestehendes Markup wird dunkel, verifiziert). **Offen:** Phase 1 Startseiten-Markup,
+> Phase 2 Nav/Footer, Phase 3 übrige Seiten (David liefert je Claude-Design-Entwurf). Tina Cloud indexiert
+> `main` → der Schalter erscheint im echten CMS erst nach Merge + Re-Index; bis dahin lokal/Preview testen.
+>
 > **🆕 EXIF-Build-Fix + Bild-Referenzen repariert + Move-Ursache gefixt (16.07., `0d80b91`,`10b634e`,`b388f2c`,`e516fd6`).**
 > (1) **Build erhielt kein EXIF:** `optimize-uploads.mjs` (sharp) verwarf Metadaten bei JEDEM Build →
 > Kamera/Brennweite gingen verloren. Jetzt wird für WebP die schlanke, **GPS-sichere** Whitelist-EXIF nach

@@ -17,6 +17,12 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-16 — Editorial-Design (dunkel), Phase 0: Fundament [Branch `editorial-redesign`]
+- Start des CMS-umschaltbaren dunklen Editorial-Redesigns (Quelle: Claude-Design „Wide & Wild Startseite V1.1"). **Auf eigenem Branch**, kommt gebündelt auf main, wenn es rund ist.
+- **Schalter** `design` (klassisch|editorial) in „Darstellung" (Schema → Re-Index nötig; Default klassisch). BaseLayout setzt `<html data-design>` und lädt Editorial-Fonts (Archivo Variable, Space Mono, **lokal**) + `editorial.css`, beides nur unter `data-design="editorial"`.
+- `editorial.css`: dunkle Design-Tokens (bg #0d0e0c, Text #edeae3, Gold #d4a45a) überschreiben die `--c-*`/`--font-*`-Tokens → bestehendes Markup re-skint automatisch (im Browser verifiziert; Nav-Kopf bleibt hell → Phase 2). Commit: `ada8a5f`.
+- Nächste Phasen: 1) Startseite-Editorial-Markup (Hero/Portfolio/Stories/Journal, echte Daten, Lightbox/Hero-Modi erhalten), 2) Nav+Footer dunkel, 3) übrige Seiten je Claude-Design-Entwurf.
+
 ## 2026-07-16 — Medien-Manager: Vorschau klebt endgültig durch (Footer weg) + Spaltenköpfe bündig
 - **Vorschau rutschte ab einem Punkt doch mit** — Ursache gefunden: der Marketing-**Footer** unter dem Finder erzeugt ~360px Extra-Scroll, in denen die (hohe) sticky-Leiste löst (der kurzen Baum-Leiste fällt das nicht auf). **Footer auf der Medien-Seite (≥721px) ausgeblendet** → Seite endet am Listenende, Vorschau + Baum kleben bis ganz unten durch. Nachgerechnet: Löse-Punkt (Scroll 636) liegt HINTER dem max. Scroll (613) → unerreichbar, Sicherheitsabstand ~22px konstant je Bildschirm. Vorschau bleibt **voll**, scrollt nur bei kleinem Bildschirm intern (`max-height: calc(100vh - 200px)`).
 - **Spaltenköpfe bündig:** Datei-Zeilen haben einen Mülleimer am Ende, Kopf-/Ordnerzeilen nicht → alle Meta-Spalten waren um 28px versetzt. 28px-Platzhalter ergänzt → Kamera/Typ/Größe/Hochgeladen sitzen exakt über den Daten (nachgemessen).
