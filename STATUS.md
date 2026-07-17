@@ -33,6 +33,11 @@
 > Medien-Seite darf breiter sein (`.wrap:has(.ww-mm)` → `min(1800px,94vw)`) → einzeilige Toolbar, volle Namen;
 > `row-head top:200`. **EXIF-Anzeige (`1ac021b`):** Handy-Brennweiten-Buckets `<20 Ultraweit · 20–45 Standard ·
 > 45–85 Porträt · >85 Tele` → iPhone @48 mm = „Porträt". Kamera-Brennweite bleibt real (Sony 28 mm), Tamron-Marke bleibt.
+> **Vorschau klebt endgültig durch (`0c6a04b`):** Ursache des Rest-Mitscrollens war der **Footer** (~360px
+> Extra-Scroll darunter). Footer auf der Medien-Seite (≥721px) ausgeblendet → Vorschau + Baum kleben bis
+> ganz unten (Löse-Punkt hinter dem max. Scroll, ~22px Reserve). Vorschau bleibt voll, scrollt nur bei kleinem
+> Bildschirm intern (`max-height: calc(100vh-200px)`). Spaltenköpfe bündig (28px-Platzhalter für den Mülleimer),
+> Lücke Toolbar↔Spaltenkopf mit `::before` gedeckt. ⚠️ Footer ist auf dieser Werkzeug-Seite bewusst weg.
 >
 > **(historisch) Medien-Manager: fester Finder (16.07., `e2a483e`) — durch `15f3a3b` abgelöst.**
 > Die wiederholten Sticky-Versuche (07-13) sind **abgelöst**: statt Page-Scroll + `position:sticky`

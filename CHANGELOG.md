@@ -17,6 +17,11 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-16 — Medien-Manager: Vorschau klebt endgültig durch (Footer weg) + Spaltenköpfe bündig
+- **Vorschau rutschte ab einem Punkt doch mit** — Ursache gefunden: der Marketing-**Footer** unter dem Finder erzeugt ~360px Extra-Scroll, in denen die (hohe) sticky-Leiste löst (der kurzen Baum-Leiste fällt das nicht auf). **Footer auf der Medien-Seite (≥721px) ausgeblendet** → Seite endet am Listenende, Vorschau + Baum kleben bis ganz unten durch. Nachgerechnet: Löse-Punkt (Scroll 636) liegt HINTER dem max. Scroll (613) → unerreichbar, Sicherheitsabstand ~22px konstant je Bildschirm. Vorschau bleibt **voll**, scrollt nur bei kleinem Bildschirm intern (`max-height: calc(100vh - 200px)`).
+- **Spaltenköpfe bündig:** Datei-Zeilen haben einen Mülleimer am Ende, Kopf-/Ordnerzeilen nicht → alle Meta-Spalten waren um 28px versetzt. 28px-Platzhalter ergänzt → Kamera/Typ/Größe/Hochgeladen sitzen exakt über den Daten (nachgemessen).
+- **Lücke zwischen Toolbar und Spaltenkopf** (Bilder scrollten durch) mit opakem `::before` gedeckt. Commit: `0c6a04b`.
+
 ## 2026-07-16 — Medien-Manager: Vorschau klebt durch die ganze Liste, bündig, breiter + iPhone „Porträt"
 - **Vorschau bleibt jetzt über die GANZE Liste fest** (vorher löste sie vor dem Listenende): Höhe auf `calc(100vh - 380px)` gekappt + interner Scroll. Eine sticky-Leiste, die höher als „Viewport − Startpunkt" ist, dockt nicht durch — mit der Kappung klebt sie wie die Baum-Leiste und scrollt bei zu viel Inhalt in sich. Verifiziert (`paneSticksThroughList=true`).
 - **Suchleiste bündig** mit Ordner-Leiste + Vorschau (Toolbar `top:118→138`, oberes Padding weg → alle drei `top=369`).
