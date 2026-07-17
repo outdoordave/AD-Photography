@@ -1,0 +1,63 @@
+/* =====================================================================
+   Editorial-Design (dunkel) — Theme-Layer.
+   Wird nur geladen/aktiv, wenn in „Darstellung" design = "editorial" gewählt ist
+   (BaseLayout setzt <html data-design="editorial"> und importiert diese Datei).
+   Ansatz: die globalen Design-Tokens (--c-*, --font-*) auf die dunklen Editorial-Werte
+   umbiegen -> vorhandenes Markup re-skint automatisch. Layout-/Motion-spezifische Teile
+   der einzelnen Bereiche kommen als eigene .ed-* Regeln dazu (phasenweise).
+   Quelle der Werte: Claude-Design „Wide & Wild Startseite V1.1".
+   ===================================================================== */
+:root[data-design="editorial"] {
+  /* Farbwelt: fast-schwarz + heller Text + Gold-Akzent */
+  --c-bg:        #0d0e0c;
+  --c-bg-alt:    #131410;   /* Karten/Flächen */
+  --c-ink:       #edeae3;
+  --c-ink-soft:  #8a8778;   /* gedämpft (Meta/Labels) */
+  --c-line:      rgba(237, 234, 227, 0.12);
+  --c-accent:    #d4a45a;   /* Gold */
+  --c-accent-dk: #c1904a;
+  --c-gold:      #d4a45a;
+  --c-dark:      #0a0b09;   /* Footer/tiefste Fläche */
+  --c-dark-alt:  #131410;
+  --c-dark-ink:  #edeae3;
+
+  /* Typografie: Archivo (breit/variabel) für alles, Space Mono für Labels/Kicker */
+  --font-display: 'Archivo Variable', 'Archivo', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body:    'Archivo Variable', 'Archivo', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono:    'Space Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  color-scheme: dark;
+}
+
+/* Grundfläche + Auswahlfarbe + Links */
+:root[data-design="editorial"] body { background: var(--c-bg); color: var(--c-ink); -webkit-font-smoothing: antialiased; }
+:root[data-design="editorial"] ::selection { background: var(--c-accent); color: var(--c-bg); }
+:root[data-design="editorial"] a { color: var(--c-ink); }
+:root[data-design="editorial"] a:hover { color: var(--c-accent); }
+
+/* Editorial-Überschriften: breite Archivo-Achse, straffe Höhe (wie im Entwurf).
+   Greift auf die vorhandenen Display-Überschriften, ohne das klassische Design zu berühren. */
+:root[data-design="editorial"] h1,
+:root[data-design="editorial"] h2,
+:root[data-design="editorial"] h3,
+:root[data-design="editorial"] .page-title h1,
+:root[data-design="editorial"] .section-head h2 {
+  font-family: var(--font-display);
+  font-variation-settings: 'wdth' 118;
+  letter-spacing: 0.005em;
+}
+
+/* Kicker/Labels als Space-Mono-Versalien mit Sperrung (Editorial-Signatur). */
+:root[data-design="editorial"] .kicker,
+:root[data-design="editorial"] .section-head .kicker,
+:root[data-design="editorial"] .page-title .kicker {
+  font-family: var(--font-mono);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+}
+
+/* Dezente dunkle Scrollbar (WebKit) — nur im Editorial-Design. */
+:root[data-design="editorial"] ::-webkit-scrollbar { width: 11px; height: 11px; }
+:root[data-design="editorial"] ::-webkit-scrollbar-thumb { background: #2a2b26; border-radius: 999px; border: 3px solid var(--c-bg); }
+:root[data-design="editorial"] ::-webkit-scrollbar-track { background: transparent; }
