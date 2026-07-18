@@ -10,6 +10,7 @@ import HomeJournalCards from '../components/HomeJournalCards.astro';
 import '../styles/journal.css';
 import HomeSectionHead from '../components/HomeSectionHead.tsx';
 import HomeMoments from '../components/HomeMoments.tsx';
+import EditorialMoments from '../components/editorial/EditorialMoments.tsx';
 import HomeLatest from '../components/HomeLatest.astro';
 import HomeDiscover from '../components/HomeDiscover.tsx';
 import { buildMoments, buildLatest, buildDiscover } from '../lib/home';
@@ -66,14 +67,24 @@ if (heroJournal) {
 
   <HomeIntroLive client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="de" />
 
-  {moments.length > 0 && (
+  {moments.length > 0 && (design === 'editorial' ? (
+    <section id="portfolio" class="ed-section">
+      <div class="ed-section-head" data-reveal>
+        <span class="ed-index">02 — Portfolio</span>
+        <span class="ed-rule"></span>
+        <a class="ed-more" href="/portfolio">Alle Alben →</a>
+      </div>
+      <h2 class="ed-h2" data-reveal>Momentaufnahmen</h2>
+      <EditorialMoments client:load moments={moments} lang="de" />
+    </section>
+  ) : (
     <section style="padding-top:0;">
       <div class="wrap">
         <HomeSectionHead client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="de" sectionKey="gallery" />
         <HomeMoments client:load moments={moments} lang="de" />
       </div>
     </section>
-  )}
+  ))}
 
   {latest.length > 0 && (
     <section style="padding-top:0;">
