@@ -16,6 +16,7 @@ import '@fontsource-variable/archivo/wdth.css';
 import '@fontsource/space-mono/400.css';
 import '@fontsource/space-mono/700.css';
 import '../styles/editorial.css';
+import EditorialMotion from '../components/editorial/EditorialMotion.astro';
 import SiteNav from '../components/SiteNav.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import SiteAdminBar from '../components/SiteAdminBar.astro';
@@ -171,6 +172,7 @@ const jsonLdString = JSON.stringify({ '@context': 'https://schema.org', '@graph'
       <slot />
     </main>
     <SiteFooter lang={lang} logo={logo} showStories={showStories} showJournal={showJournal} showContact={showContact} social={footerSocial} showSocial={showFooterSocial} logoQuery={apRes.query} logoVariables={apRes.variables} logoData={apRes.data} />
+    {design === 'editorial' && <EditorialMotion />}
     {/* Nach-oben-Button (global). Erscheint erst nach Scrollen; sanftes Hochscrollen, respektiert reduced-motion. */}
     <button id="wwToTop" class="ww-totop" type="button" aria-label="Nach oben scrollen" title="Nach oben">
       <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14 L12 8 L18 14" /></svg>

@@ -25,6 +25,7 @@ const ap = appearance as any;
 const showStories = ap.show_stories === true;
 const showJournal = ap.show_journal === true;
 const showDiscover = ap.show_discover !== false;
+const design = ap.design === 'editorial' ? 'editorial' : 'klassisch';
 const lang = 'de';
 
 const stRes = await client.queries.startseite({ relativePath: 'home-settings.json' });
@@ -61,7 +62,7 @@ if (heroJournal) {
 }
 ---
 <BaseLayout title="Wide & Wild — Travel & Outdoor Photography" lang="de" preloadImage={heroPreload} description="Reise- & Outdoor-Fotografie von Alexandra & David — Roadtrips durch wilde Landschaften, mit Karten, Foto-Alben und Geschichten von unterwegs.">
-  <HomeHeroLive client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="de" logo={ap.logo} showHeroLogo={ap.show_hero_logo !== false} showStories={showStories} logoQuery={apRes.query} logoVariables={apRes.variables} logoData={apRes.data} heroJournal={heroJournal} journalLatest={journalLatest} />
+  <HomeHeroLive client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="de" logo={ap.logo} showHeroLogo={ap.show_hero_logo !== false} showStories={showStories} logoQuery={apRes.query} logoVariables={apRes.variables} logoData={apRes.data} heroJournal={heroJournal} journalLatest={journalLatest} design={design} />
 
   <HomeIntroLive client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="de" />
 

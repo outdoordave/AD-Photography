@@ -20,6 +20,7 @@ type Props = {
   logoQuery?: string; logoVariables?: object; logoData?: any;
   // Neuester Journal-Eintrag statt der Hero-Tagline (nur wenn Journal + Schalter an).
   heroJournal?: boolean; journalLatest?: any;
+  design?: string; // 'editorial' -> dunkles Design-Layout, sonst klassisch
 };
 
 export default function HomeHeroLive(props: Props) {
@@ -92,21 +93,48 @@ export default function HomeHeroLive(props: Props) {
     return () => window.clearInterval(t);
   }, [mode, slides.length]);
 
+  // Hero-Medium (Bild / Diashow / Video) — für klassisches UND Editorial-Layout identisch.
+  const media = (
+    mode === 'video' && hero.video ? (
+      <video className="hero-vid" src={normalizePath(hero.video)} autoPlay loop muted playsInline preload="auto"
+        poster={hero.video_poster ? normalizePath(hero.video_poster) : undefined} />
+    ) : mode === 'random' && slides.length ? (
+      slides.map((s: string, i: number) => (
+        <img className={`hero-slide${i === 0 ? ' is-active' : ''}`} src={s} alt="" key={i} fetchPriority={i === 0 ? 'high' : undefined} decoding="async" />
+      ))
+    ) : mode === 'image' && hero.image ? (
+      <img className="hero-img" src={normalizePath(hero.image)} alt="" fetchPriority="high" decoding="async" />
+    ) : null
+  );
+
+  // ---- Editorial-Layout (dunkel, 1:1 aus dem Claude-Design) — gleiche Daten/Modi/Tina-Felder ----
+  if (props.design === 'editorial') {
+    return (
+      <section className="ed-hero">
+        <div className="ed-hero-media" ref={mediaRef} data-ed-hero-img>{media}</div>
+        <div className="ed-hero-scrim" aria-hidden="true" />
+        <div className="ed-hero-content" data-ed-hero-content>
+          <div className="ed-hero-lead">
+            <p className="ed-kicker">Travel &amp; Outdoor Photography</p>
+            <h1 className="ed-hero-title">Wide<br />&amp; Wild</h1>
+            {headline ? <p className="ed-hero-sub" data-tina-field={tf(hero, 'headline')}>{headline}</p> : null}
+          </div>
+          {jHero ? (
+            <a className="ed-hero-journal" href={jHref}>
+              <span className="ed-hero-journal-kicker">{(isEn ? 'From the journal' : 'Aus dem Journal') + ' · ' + formatFullDate(jl.date, lang)}</span>
+              <span className="ed-hero-journal-text">{journalHasTitle(jl, lang) ? journalHeading(jl, lang) : jSnippet}</span>
+            </a>
+          ) : null}
+        </div>
+        <div className="ed-hero-cue" aria-hidden="true" />
+      </section>
+    );
+  }
+
   return (
     <div className={heroClass}>
       <PaperRip idp="heroTopRip" className="band-rip band-rip-top" />
-      <div className="hero-media" ref={mediaRef}>
-        {mode === 'video' && hero.video ? (
-          <video className="hero-vid" src={normalizePath(hero.video)} autoPlay loop muted playsInline preload="auto"
-            poster={hero.video_poster ? normalizePath(hero.video_poster) : undefined} />
-        ) : mode === 'random' && slides.length ? (
-          slides.map((s: string, i: number) => (
-            <img className={`hero-slide${i === 0 ? ' is-active' : ''}`} src={s} alt="" key={i} fetchPriority={i === 0 ? 'high' : undefined} decoding="async" />
-          ))
-        ) : mode === 'image' && hero.image ? (
-          <img className="hero-img" src={normalizePath(hero.image)} alt="" fetchPriority="high" decoding="async" />
-        ) : null}
-      </div>
+      <div className="hero-media" ref={mediaRef}>{media}</div>
 
       {showHeroLogo ? (
         props.logoData ? (
