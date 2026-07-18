@@ -118,6 +118,10 @@ export default function HomeHeroLive(props: Props) {
             <p className="ed-kicker">Travel &amp; Outdoor Photography</p>
             <h1 className="ed-hero-title">Wide<br />&amp; Wild</h1>
             {headline ? <p className="ed-hero-sub" data-tina-field={tf(hero, 'headline')}>{headline}</p> : null}
+            <div className="ed-hero-cta">
+              <a href={`${prefix}/portfolio`} data-tina-field={tf(hero, 'cta_portfolio')}>{ctaP} <span aria-hidden="true">→</span></a>
+              {showStories ? <a href={`${prefix}/stories`} data-tina-field={tf(hero, 'cta_stories')}>{ctaS} <span aria-hidden="true">→</span></a> : null}
+            </div>
           </div>
           {jHero ? (
             <a className="ed-hero-journal" href={jHref}>

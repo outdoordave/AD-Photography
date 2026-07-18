@@ -125,3 +125,9 @@
   :root[data-design="editorial"] .ed-hero-journal { animation: none; }
   :root[data-design="editorial"] .ed-hero-cue { animation: none; }
 }
+
+/* Hero-CTAs als dezente Shortcut-Links (statt Pillen) — Editierbarkeit (Tina) bleibt. */
+:root[data-design="editorial"] .ed-hero-cta { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 28px; }
+:root[data-design="editorial"] .ed-hero-cta a { font-family: var(--font-mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: rgba(237,234,227,.9); padding-bottom: 3px; border-bottom: 1px solid rgba(237,234,227,.25); transition: color .3s, border-color .3s; }
+:root[data-design="editorial"] .ed-hero-cta a span { color: var(--c-accent); }
+:root[data-design="editorial"] .ed-hero-cta a:hover { color: var(--c-accent); border-color: var(--c-accent); }
