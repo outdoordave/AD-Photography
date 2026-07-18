@@ -6,12 +6,36 @@ import GalleryContent from '../components/GalleryContent.tsx';
 import SettingsHeader from '../components/SettingsHeader.tsx';
 import AdminSectionBar from '../components/AdminSectionBar.astro';
 import { tl } from '../lib/albums';
+import { photoDisplay } from '../lib/trips';
+import { normalizePath } from '../lib/stories';
 import settings from '../data/gallery-settings.json';
+import appearance from '../data/appearance-settings.json';
 import { client } from '../../tina/__generated__/client';
 
 const res = await client.queries.albenConnection({ first: 1000 });
 const setRes = await client.queries.galerie_settings({ relativePath: 'gallery-settings.json' });
 const s = settings as any;
+const ap = appearance as any;
+const design = ap.design === 'editorial' ? 'editorial' : 'klassisch';
+
+// --- Editorial: Album-Collage (12-Spalten, 1:1) aus echten, nicht-archivierten Alben ---
+const SEASON = (m: number) => (m <= 2 || m === 12 ? 'Winter' : m <= 5 ? 'Frühling' : m <= 8 ? 'Sommer' : 'Herbst');
+const ALBUM_SPANS = [
+  { col: '1 / span 7', row: 'span 6' }, { col: '8 / span 5', row: 'span 6' },
+  { col: '1 / span 5', row: 'span 5' }, { col: '6 / span 7', row: 'span 5' },
+  { col: '1 / span 7', row: 'span 5' }, { col: '8 / span 5', row: 'span 5' },
+];
+const albNodes = (res.data.albenConnection?.edges || []).filter(Boolean).map((e: any) => e.node).filter((n: any) => n && !n.archived);
+const edAlbums = design === 'editorial' ? albNodes.map((n: any, i: number) => {
+  const cover = normalizePath(photoDisplay((Array.isArray(n.photos) ? n.photos : []).find((p: any) => p) || ''));
+  const d = String(n.date || ''); const mm = parseInt(d.slice(5, 7), 10);
+  const meta = d ? (d.slice(0, 4) + (mm ? ' · ' + SEASON(mm) : '')) : (n.note_de || '');
+  const sp = ALBUM_SPANS[i % ALBUM_SPANS.length];
+  return { title: n.name || n._sys.filename, meta, cover, href: `/portfolio/${n._sys.filename}`, col: sp.col, row: sp.row };
+}).sort((a: any, b: any) => 0) : [];
+const edHeroImg = edAlbums[0]?.cover || '';
+const edTitle = s.title_de || 'Alben';
+const edSub = s.subtitle_de || s.intro_de || 'Jede Reise bekommt ihr eigenes Album. Vom Boden fotografiert, aus der Luft geflogen — neueste zuerst.';
 const modes = s.modes || { album: true, chronological: false, alphabetical: false };
 // Archivierte Alben für das Archiv-Panel (Ausblenden selbst passiert in GalleryContent).
 const archivedItems = (res.data.albenConnection?.edges || []).filter(Boolean)
@@ -19,18 +43,46 @@ const archivedItems = (res.data.albenConnection?.edges || []).filter(Boolean)
   .map((e: any) => ({ relativePath: `${e.node._sys.filename}.json`, title: e.node.name || e.node._sys.filename, date: e.node.date || '', teaser: e.node.note_de || '', href: `/portfolio/${e.node._sys.filename}` }));
 ---
 <BaseLayout title={`${s.title_de || 'Portfolio'} — Wide & Wild`} lang="de" description="Ausgewählte Aufnahmen von Wide & Wild — Landschaften, Wildlife und Reisemomente in Foto-Alben.">
-  <section>
-    <div class="wrap">
-      <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="galerie_settings" lang="de" />
-      <AdminSectionBar collection="alben" newLabel="Neues Album" archived={archivedItems} lang="de" />
-      <GalleryContent
-        client:load
-        query={res.query}
-        variables={res.variables}
-        data={res.data}
-        lang="de"
-        modes={modes}
-      />
-    </div>
-  </section>
+  {design === 'editorial' ? (
+    <Fragment>
+      <header class="ed-page-hero">
+        <div class="ed-page-hero-img" data-ed-hero-img>{edHeroImg && <img src={edHeroImg} alt="" fetchpriority="high" decoding="async" />}</div>
+        <div class="ed-page-hero-scrim" aria-hidden="true"></div>
+        <div class="ed-page-hero-content" data-ed-hero-content>
+          <p class="ed-kicker">Portfolio — Alle Alben</p>
+          <h1 class="ed-page-title">{edTitle}</h1>
+          <p class="ed-page-sub">{edSub}</p>
+        </div>
+      </header>
+      <section class="ed-section" style="padding-top:clamp(60px,9vw,96px)">
+        <div class="ed-collage ed-collage--albums">
+          {edAlbums.map((a: any) => (
+            <a class="ed-album-tile" href={a.href} data-reveal style={`grid-column:${a.col};grid-row:${a.row}`}>
+              {a.cover && <img src={a.cover} alt={a.title} data-zoom loading="lazy" decoding="async" />}
+              <span class="ed-collage-vignette" aria-hidden="true"></span>
+              <span class="ed-album-label">
+                <span class="ed-album-meta">{a.meta}</span>
+                <span class="ed-album-title">{a.title}</span>
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
+      <section class="ed-section" style="padding-top:clamp(80px,12vw,120px);padding-bottom:0">
+        <div class="ed-section-head" data-reveal>
+          <span class="ed-index">Nächstes Album</span>
+          <span class="ed-rule"></span>
+          <span class="ed-more">Alaska &amp; California · Herbst 2026</span>
+        </div>
+      </section>
+    </Fragment>
+  ) : (
+    <section>
+      <div class="wrap">
+        <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="galerie_settings" lang="de" />
+        <AdminSectionBar collection="alben" newLabel="Neues Album" archived={archivedItems} lang="de" />
+        <GalleryContent client:load query={res.query} variables={res.variables} data={res.data} lang="de" modes={modes} />
+      </div>
+    </section>
+  )}
 </BaseLayout>

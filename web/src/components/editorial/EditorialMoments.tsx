@@ -9,14 +9,13 @@ import type { Moment } from '../../lib/home';
 
 type Props = { moments: Moment[]; lang: 'de' | 'en' };
 
-// Collage-Raster (grid-column / grid-row / Drift) — 1:1 aus dem Claude-Design; wiederholt sich für mehr Bilder.
+// Collage-Raster (grid-column / grid-row / Drift) — 1:1 aus dem Claude-Design (Startseite 02, exakt 5 Kacheln).
 const SPANS = [
   { col: '1 / span 7', row: 'span 6', drift: 10 },
   { col: '8 / span 5', row: 'span 4', drift: -18 },
   { col: '8 / span 5', row: 'span 5', drift: -12 },
   { col: '1 / span 4', row: 'span 4', drift: 16 },
   { col: '5 / span 8', row: 'span 4', drift: 8 },
-  { col: '1 / span 5', row: 'span 5', drift: -10 },
 ];
 
 function shuffle<T>(arr: T[]): T[] {
