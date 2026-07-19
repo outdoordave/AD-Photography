@@ -363,3 +363,34 @@
 @media (max-width: 720px) {
   :root[data-design="editorial"] .ed-related-grid { grid-template-columns: 1fr; }
 }
+
+/* ===================== Reise-Detail: Hero + Fakten + Route (Legs + sticky Karte) (1:1) ===================== */
+:root[data-design="editorial"] .ed-trip-hero { height: 72vh; min-height: 480px; }
+:root[data-design="editorial"] .ed-trip-facts { max-width: 1360px; margin: 0 auto; padding: 72px clamp(20px,4vw,48px) 0; }
+:root[data-design="editorial"] .ed-trip-facts-grid { display: grid; grid-template-columns: repeat(var(--fact-cols,4), 1fr); gap: 24px; }
+:root[data-design="editorial"] .ed-fact { display: flex; flex-direction: column; gap: 8px; padding: 26px 24px; border: 1px solid rgba(237,234,227,.1); border-radius: 10px; }
+:root[data-design="editorial"] .ed-fact-k { font-family: var(--font-mono); font-size: 10px; letter-spacing: .24em; color: var(--c-ink-soft); text-transform: uppercase; }
+:root[data-design="editorial"] .ed-fact-v { font-family: var(--font-display); font-variation-settings: 'wdth' 120; font-weight: 650; font-size: 26px; color: var(--c-ink); }
+:root[data-design="editorial"] .ed-route { max-width: 1360px; margin: 0 auto; padding: clamp(90px,14vw,140px) clamp(20px,4vw,48px) 0; }
+:root[data-design="editorial"] .ed-route-grid { display: grid; grid-template-columns: 6fr 5fr; gap: 48px; align-items: start; }
+:root[data-design="editorial"] .ed-legs { display: flex; flex-direction: column; gap: 110px; }
+:root[data-design="editorial"] .ed-leg { transition: opacity .6s ease; }
+:root[data-design="editorial"] .ed-leg.dim { opacity: .22; }
+:root[data-design="editorial"] .ed-leg-kicker { margin: 0 0 12px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .18em; color: var(--c-accent); text-transform: uppercase; }
+:root[data-design="editorial"] .ed-leg-title { margin: 0; font-family: var(--font-display); font-variation-settings: 'wdth' 118; font-weight: 620; font-size: clamp(24px,2.8vw,34px); line-height: 1.15; color: var(--c-ink); }
+:root[data-design="editorial"] .ed-leg-text { margin: 14px 0 0; font-size: 15px; line-height: 1.7; font-weight: 300; color: rgba(237,234,227,.7); text-wrap: pretty; }
+:root[data-design="editorial"] .ed-leg-spot { margin: 14px 0 22px; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .16em; color: var(--c-ink-soft); text-transform: uppercase; }
+:root[data-design="editorial"] .ed-leg-photo { display: block; position: relative; aspect-ratio: 16/10; border-radius: 10px; overflow: hidden; background: #151613; cursor: zoom-in; padding: 0; border: 0; width: 100%; }
+:root[data-design="editorial"] .ed-leg-photo img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.05); transition: transform 1.2s cubic-bezier(.2,.6,.2,1); }
+:root[data-design="editorial"] .ed-leg-photo:hover img { transform: scale(1.02); }
+:root[data-design="editorial"] .ed-map-sticky { position: sticky; top: calc(50vh - 31vh); height: 62vh; min-height: 400px; }
+:root[data-design="editorial"] .ed-map { width: 100%; height: 100%; background: #131410; border-radius: 10px; overflow: hidden; }
+:root[data-design="editorial"] .ed-map .maplibregl-ctrl-attrib { background: rgba(13,14,12,.7); }
+:root[data-design="editorial"] .ed-map .maplibregl-ctrl-attrib a { color: var(--c-ink-soft); }
+:root[data-design="editorial"] .ed-map-marker { width: 16px; height: 16px; border-radius: 999px; background: #0d0e0c; border: 2px solid var(--c-accent); box-shadow: 0 0 0 4px rgba(212,164,90,.12); transition: transform .3s, box-shadow .3s; cursor: pointer; }
+:root[data-design="editorial"] .ed-map-marker.active { transform: scale(1.35); box-shadow: 0 0 0 6px rgba(212,164,90,.22); }
+@media (max-width: 900px) {
+  :root[data-design="editorial"] .ed-route-grid { grid-template-columns: 1fr; gap: 32px; }
+  :root[data-design="editorial"] .ed-map-sticky { position: relative; top: 0; height: 52vh; order: -1; }
+  :root[data-design="editorial"] .ed-legs { gap: 64px; }
+}
