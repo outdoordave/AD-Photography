@@ -104,7 +104,7 @@ const edJournal = journalItems.map((j: any) => ({
         <h2 class="ed-h2 ed-scrub" data-scrub set:html={edIntro.split(' ').filter(Boolean).map((w: string) => `<span data-word>${w} </span>`).join('')}></h2>
         <div class="ed-duo">
           {edPersons.map((p: any, i: number) => (
-            <a class="ed-duo-tile" href="/portfolio" data-reveal data-drift={16}>
+            <a class="ed-duo-tile" href="/portfolio" data-reveal data-drift={i === 0 ? 16 : -16}>
               <img src={p.photo} alt={p.name} data-zoom loading="lazy" decoding="async" />
               <span class="ed-collage-vignette" aria-hidden="true"></span>
               <span class="ed-duo-label">
