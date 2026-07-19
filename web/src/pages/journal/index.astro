@@ -6,6 +6,7 @@ import JournalArchive from '../../components/JournalArchive.tsx';
 import { client } from '../../../tina/__generated__/client';
 import appearance from '../../data/appearance-settings.json';
 import settings from '../../data/journal-settings.json';
+import { sortJournalNodes, journalFirstPhoto } from '../../lib/journal';
 import '../../styles/journal.css';
 
 // Journal komplett abschaltbar (🎨 Darstellung → „Journal zeigen?"). Aus = auch Direktaufruf sperren.
@@ -14,14 +15,42 @@ if ((appearance as any).show_journal !== true) return Astro.redirect('/');
 const res = await client.queries.journalConnection();
 const setRes = await client.queries.journal_settings({ relativePath: 'journal-settings.json' });
 const s = settings as any;
+const design = (appearance as any).design === 'editorial' ? 'editorial' : 'klassisch';
+
+// Editorial-Hero: Titelbild = erstes Foto des neuesten Eintrags (echte Daten).
+const edNodes = design === 'editorial'
+  ? sortJournalNodes((res.data.journalConnection?.edges || []).map((e: any) => e?.node).filter((n: any) => n && n.archived !== true))
+  : [];
+const edHeroImg = edNodes.map((n: any) => journalFirstPhoto(n)).find(Boolean) || '';
+const edKicker = `Journal — ${s.kicker_de || 'Kurze Notizen'}`;
+const edTitle = s.title_de || 'Journal';
+const edSub = s.intro_de || '';
 ---
 <BaseLayout title={`${s.title_de || 'Journal'} — Wide & Wild`} lang="de" description={s.intro_de || 'Journal — kurze Notizen zwischen den Reisen von Alexandra & David.'}>
-  <section>
-    <div class="wrap journal-archive">
+  {design === 'editorial' ? (
+    <Fragment>
+      <header class="ed-page-hero">
+        <div class="ed-page-hero-img" data-ed-hero-img>{edHeroImg && <img src={edHeroImg} alt="" fetchpriority="high" decoding="async" />}</div>
+        <div class="ed-page-hero-scrim" aria-hidden="true"></div>
+        <div class="ed-page-hero-content" data-ed-hero-content>
+          <p class="ed-kicker">{edKicker}</p>
+          <h1 class="ed-page-title">{edTitle}</h1>
+          {edSub && <p class="ed-page-sub">{edSub}</p>}
+        </div>
+      </header>
       <JournalArchive client:load
         query={res.query} variables={res.variables} data={res.data}
         setQuery={setRes.query} setVariables={setRes.variables} setData={setRes.data}
-        lang="de" prefix="" />
-    </div>
-  </section>
+        lang="de" prefix="" design="editorial" />
+    </Fragment>
+  ) : (
+    <section>
+      <div class="wrap journal-archive">
+        <JournalArchive client:load
+          query={res.query} variables={res.variables} data={res.data}
+          setQuery={setRes.query} setVariables={setRes.variables} setData={setRes.data}
+          lang="de" prefix="" />
+      </div>
+    </section>
+  )}
 </BaseLayout>
