@@ -197,8 +197,8 @@
 /* 04 — Journal: 3 Karten */
 :root[data-design="editorial"] .ed-section--journal { padding-bottom: clamp(120px,18vw,200px); }
 :root[data-design="editorial"] .ed-journal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-:root[data-design="editorial"] .ed-journal-card { display: flex; flex-direction: column; gap: 16px; padding: 32px 28px; background: #131410; border: 1px solid rgba(237,234,227,.08); border-radius: 10px; transition: border-color .35s, background .35s, transform .35s, box-shadow .35s; }
-:root[data-design="editorial"] .ed-journal-card:hover { border-color: rgba(212,164,90,.5); background: #16170f; transform: translateY(-4px); box-shadow: 0 18px 44px rgba(0,0,0,.5), 0 0 0 1px rgba(212,164,90,.12); }
+:root[data-design="editorial"] .ed-journal-card { display: flex; flex-direction: column; gap: 16px; padding: 32px 28px; background: #131410; border: 1px solid rgba(237,234,227,.08); border-radius: 10px; transition: border-color .35s, background .35s; }
+:root[data-design="editorial"] .ed-journal-card:hover { border-color: rgba(212,164,90,.5); background: #16170f; }
 :root[data-design="editorial"] .ed-journal-date { font-family: var(--font-mono); font-size: 11px; letter-spacing: .2em; color: var(--c-accent); }
 :root[data-design="editorial"] .ed-journal-text { font-size: 15px; line-height: 1.6; font-weight: 300; color: rgba(237,234,227,.85); text-wrap: pretty; }
 :root[data-design="editorial"] .ed-journal-card:hover .ed-journal-text { color: var(--c-accent); }
@@ -209,12 +209,13 @@
 }
 
 /* ===================== Unterseiten-Hero (Portfolio/Stories/Journal/Reisen/Equipment/Über uns, 1:1) ===================== */
-:root[data-design="editorial"] .ed-page-hero { position: relative; height: 78vh; min-height: 520px; overflow: hidden; }
+/* z-index 1: die Hero-<header> würden sonst die globale header{z-index:1100}-Regel erben und die Nav überdecken. */
+:root[data-design="editorial"] .ed-page-hero { position: relative; z-index: 1; height: 78vh; min-height: 520px; overflow: hidden; }
 :root[data-design="editorial"] .ed-page-hero-img { position: absolute; inset: 0; transform: scale(1.1); will-change: transform; }
 :root[data-design="editorial"] .ed-page-hero-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 :root[data-design="editorial"] .ed-page-hero-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13,14,12,.6) 0%, rgba(13,14,12,.25) 14%, rgba(13,14,12,.05) 26%, rgba(13,14,12,0) 45%, rgba(13,14,12,.12) 62%, rgba(13,14,12,.38) 76%, rgba(13,14,12,.7) 88%, #0d0e0c 100%); }
 :root[data-design="editorial"] .ed-page-hero-content { position: absolute; left: clamp(20px,4vw,48px); right: clamp(20px,4vw,48px); bottom: 56px; max-width: 1264px; margin: 0 auto; will-change: transform, opacity; }
-:root[data-design="editorial"] .ed-page-title { margin: 0; font-family: var(--font-display); font-variation-settings: 'wdth' 125; font-weight: 750; font-size: clamp(48px,7vw,104px); line-height: .94; letter-spacing: .01em; text-transform: uppercase; color: var(--c-ink); }
+:root[data-design="editorial"] .ed-page-title { margin: 0; font-family: var(--font-display); font-variation-settings: 'wdth' 125; font-weight: 750; font-size: clamp(38px,5.2vw,76px); line-height: .96; letter-spacing: .01em; text-transform: uppercase; color: var(--c-ink); }
 :root[data-design="editorial"] .ed-page-sub { margin: 26px 0 0; max-width: 520px; font-size: 16px; line-height: 1.6; color: rgba(237,234,227,.85); font-weight: 300; text-wrap: pretty; }
 
 /* Portfolio: Album-Collage (Label immer sichtbar, gap 32) */
@@ -336,7 +337,7 @@
 /* ===================== Story-Detail: Hero + Lesetext + Weiterführend (1:1) ===================== */
 :root[data-design="editorial"] .ed-reader-back { display: inline-block; position: relative; z-index: 20; margin: 0; padding: 96px clamp(20px,4vw,48px) 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--c-ink-soft); }
 :root[data-design="editorial"] .ed-reader-back:hover { color: var(--c-accent); }
-:root[data-design="editorial"] .ed-reader-hero { position: relative; height: 88vh; min-height: 560px; overflow: hidden; }
+:root[data-design="editorial"] .ed-reader-hero { position: relative; z-index: 1; height: 88vh; min-height: 560px; overflow: hidden; }
 :root[data-design="editorial"] .ed-reader-hero-img { position: absolute; inset: 0; transform: scale(1.08); will-change: transform; }
 :root[data-design="editorial"] .ed-reader-hero-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 :root[data-design="editorial"] .ed-reader-hero-img .ph { position: absolute; inset: 0; width: 100%; height: 100%; background-size: cover; background-position: center; }

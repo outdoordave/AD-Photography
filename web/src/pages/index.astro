@@ -167,7 +167,7 @@ const edJournal = journalItems.map((j: any) => ({
           </div>
           <div class="ed-journal-grid">
             {edJournal.map((j: any, i: number) => (
-              <a class="ed-journal-card" href={j.href} data-reveal data-card={i}>
+              <a class="ed-journal-card" href={j.href} data-reveal>
                 <span class="ed-journal-date">{j.date}</span>
                 <span class="ed-journal-text">{j.text}</span>
               </a>
