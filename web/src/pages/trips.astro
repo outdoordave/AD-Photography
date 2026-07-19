@@ -6,8 +6,9 @@ import SettingsHeader from '../components/SettingsHeader.tsx';
 import TripsOverview from '../components/TripsOverview.astro';
 import AdminSectionBar from '../components/AdminSectionBar.astro';
 import settings from '../data/trips-settings.json';
+import appearance from '../data/appearance-settings.json';
 import { client } from '../../tina/__generated__/client';
-import { sortTrips, type RawTrip } from '../lib/trips';
+import { sortTrips, tripTitle, tripCover, bi, viewStops, type RawTrip } from '../lib/trips';
 
 const res = await client.queries.reisenConnection({ first: 100 });
 const setRes = await client.queries.reisen_settings({ relativePath: 'trips-settings.json' });
@@ -18,13 +19,92 @@ const trips = sortTrips(edges.map((e: any) => ({ slug: e.node._sys.filename, dat
 const archivedItems = allEdges.filter((e: any) => e.node?.archived === true)
   .map((e: any) => ({ relativePath: `${e.node._sys.filename}.json`, title: e.node.title || e.node._sys.filename, date: e.node.date || '', teaser: e.node.meta_de || '', href: `/trips/${e.node._sys.filename}` }));
 const s = settings as any;
+const design = (appearance as any).design === 'editorial' ? 'editorial' : 'klassisch';
+
+// --- Editorial: alternierende Reihen (1:1 aus Reisen.dc.html) + Nächste-Reise-Band ---
+const SEASON = (m: number) => (m <= 2 || m === 12 ? 'Winter' : m <= 5 ? 'Frühling' : m <= 8 ? 'Sommer' : 'Herbst');
+const seasonYear = (d: string) => { const mm = parseInt(String(d).slice(5, 7), 10); const yy = String(d).slice(0, 4); return d ? (mm ? `${SEASON(mm)} ${yy}` : yy) : ''; };
+const activeTrips = design === 'editorial' ? trips.filter((t: any) => t.data.upcoming !== true) : [];
+const upcomingTrip = design === 'editorial' ? trips.find((t: any) => t.data.upcoming === true) : undefined;
+const edTrips = design === 'editorial' ? activeTrips.map((t: any, i: number) => {
+  const d = t.data as RawTrip;
+  const route = viewStops(d, 'de').map((v: any) => v.name).filter(Boolean).join(' → ');
+  return {
+    href: `/trips/${t.slug}`,
+    src: tripCover(d),
+    alt: tripTitle(d, 'de'),
+    meta: bi(d, 'meta', 'de') || seasonYear(d.date || ''),
+    status: 'Reise online', statusColor: '#8a8778', cta: 'Zur Reise',
+    title: tripTitle(d, 'de'),
+    teaser: bi(d, 'summary', 'de'),
+    route,
+    cols: i % 2 === 0 ? '7fr 5fr' : '5fr 7fr',
+    imgOrder: i % 2 === 0 ? 0 : 2,
+  };
+}) : [];
+const edHeroImg = (upcomingTrip && tripCover(upcomingTrip.data)) || edTrips[0]?.src || '';
+const edKicker = `Reisen — ${(s.kicker_de && s.kicker_de !== 'Reisen') ? s.kicker_de : 'Alle Routen'}`;
+const edTitle = s.title_de || 'Reisen';
+const edSub = s.intro_de || '';
+const edNextSeason = upcomingTrip ? seasonYear(upcomingTrip.data.date || '') : '';
+const edNext = upcomingTrip ? {
+  img: tripCover(upcomingTrip.data),
+  kicker: `Als Nächstes${edNextSeason ? ' · ' + edNextSeason : ''}`,
+  title: tripTitle(upcomingTrip.data, 'de'),
+  href: `/trips/${upcomingTrip.slug}`,
+} : null;
 ---
 <BaseLayout title={`${s.title_de || 'Reisen'} — Wide & Wild`} lang="de" description="Unsere Roadtrips — Reisen von Wide & Wild als Karten-Timeline mit Stationen, Fotos und Erlebnissen.">
-  <section>
-    <div class="wrap">
-      <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="reisen_settings" lang="de" />
-      <AdminSectionBar collection="reisen" newLabel="Neue Reise" archived={archivedItems} lang="de" />
-      <TripsOverview trips={trips} lang="de" />
-    </div>
-  </section>
+  {design === 'editorial' ? (
+    <Fragment>
+      <header class="ed-page-hero">
+        <div class="ed-page-hero-img" data-ed-hero-img>{edHeroImg && <img src={edHeroImg} alt="" fetchpriority="high" decoding="async" />}</div>
+        <div class="ed-page-hero-scrim" aria-hidden="true"></div>
+        <div class="ed-page-hero-content" data-ed-hero-content>
+          <p class="ed-kicker">{edKicker}</p>
+          <h1 class="ed-page-title">{edTitle}</h1>
+          {edSub && <p class="ed-page-sub">{edSub}</p>}
+        </div>
+      </header>
+      <section class="ed-section" style="padding-top:clamp(80px,12vw,120px);padding-bottom:0">
+        <div class="ed-sfeat-list">
+          {edTrips.map((t: any) => (
+            <a href={t.href} class="ed-sfeat" data-reveal style={`grid-template-columns:${t.cols}`}>
+              <span class="ed-sfeat-img" style={`order:${t.imgOrder}`}>
+                {t.src && <img src={t.src} alt={t.alt} data-zoom loading="lazy" decoding="async" />}
+              </span>
+              <span class="ed-sfeat-body">
+                <span class="ed-sfeat-metarow">
+                  {t.meta && <span class="ed-sfeat-meta">{t.meta}</span>}
+                  <span class="ed-sfeat-pill" style={`color:${t.statusColor}`}>{t.status}</span>
+                </span>
+                <span class="ed-sfeat-title">{t.title}</span>
+                {t.teaser && <span class="ed-sfeat-teaser">{t.teaser}</span>}
+                {t.route && <span class="ed-sfeat-route">{t.route}</span>}
+                <span class="ed-sfeat-link">{t.cta} →</span>
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
+      {edNext && (
+        <a class="ed-nexttrip" href={edNext.href} aria-label={edNext.title}>
+          {edNext.img && <img src={edNext.img} alt="" loading="lazy" decoding="async" />}
+          <span class="ed-nexttrip-scrim" aria-hidden="true"></span>
+          <span class="ed-nexttrip-content">
+            <p class="ed-nexttrip-kicker" data-reveal>{edNext.kicker}</p>
+            <p class="ed-nexttrip-title" data-reveal>{edNext.title}</p>
+          </span>
+        </a>
+      )}
+    </Fragment>
+  ) : (
+    <section>
+      <div class="wrap">
+        <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="reisen_settings" lang="de" />
+        <AdminSectionBar collection="reisen" newLabel="Neue Reise" archived={archivedItems} lang="de" />
+        <TripsOverview trips={trips} lang="de" />
+      </div>
+    </section>
+  )}
 </BaseLayout>
