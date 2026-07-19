@@ -6,7 +6,7 @@ import StoryCard from '../../components/StoryCard.astro';
 import AdminDocTools from '../../components/AdminDocTools.tsx';
 import AdminSectionBar from '../../components/AdminSectionBar.astro';
 import SettingsHeader from '../../components/SettingsHeader.tsx';
-import { toSortedStories } from '../../lib/stories';
+import { toSortedStories, normalizePath } from '../../lib/stories';
 import { groupByYear } from '../../lib/groupByYear';
 import { tl } from '../../lib/albums';
 import settings from '../../data/stories-settings.json';
@@ -26,25 +26,81 @@ const archivedItems = allEntries.filter((e) => (e.data as any).archived === true
   .map((e) => ({ relativePath: `${e.slug}.md`, title: (e.data as any).title_de || e.slug, date: (e.data as any).date || '', teaser: (e.data as any).excerpt_de || '', href: `/stories/${e.slug}` }));
 const setRes = await client.queries.stories_settings({ relativePath: 'stories-settings.json' });
 const s = settings as any;
+const design = (appearance as any).design === 'editorial' ? 'editorial' : 'klassisch';
+
+// --- Editorial: alternierende Bild/Text-Reihen (1:1 aus Stories.dc.html) aus echten Stories ---
+const edStories = design === 'editorial' ? stories.map((st, i) => ({
+  href: `/stories/${st.slug}`,
+  src: normalizePath(st.photo),
+  alt: st.de.title,
+  meta: st.de.dateLabel,
+  title: st.de.title,
+  teaser: st.de.excerpt,
+  cols: i % 2 === 0 ? '7fr 5fr' : '5fr 7fr',
+  imgOrder: i % 2 === 0 ? 0 : 2,
+})) : [];
+const edHeroImg = edStories[0]?.src || '';
+const edKicker = `Stories — ${s.kicker_de || 'Reiseberichte'}`;
+const edTitle = s.title_de || 'Stories';
+const edSub = s.intro_de || '';
+const yearFirst = stories.length ? String(stories[stories.length - 1].date || '').slice(0, 4) : '';
+const yearLast = stories.length ? String(stories[0].date || '').slice(0, 4) : '';
+const edRange = yearFirst && yearLast ? (yearFirst === yearLast ? yearFirst : `${yearFirst} — ${yearLast}`) : '';
 ---
 <BaseLayout title={`${s.title_de || 'Geschichten von unterwegs'} — Wide & Wild`} lang="de" description="Geschichten von unterwegs — Reiseberichte und Foto-Essays von Alexandra & David.">
-  <section>
-    <div class="wrap">
-      <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="stories_settings" lang="de" />
-      <AdminSectionBar collection="story" newLabel="Neue Story" archived={archivedItems} lang="de" />
-      {groupByYear(stories, (s) => s.date).map((g) => (
-        <div class="year-chapter">
-          <h2 class="year-head">{g.isArchive ? 'Archiv' : g.year}</h2>
-          <div class="stories-grid">
-            {g.items.map((s) => (
-              <div class="ww-card-wrap">
-                <StoryCard story={s} lang="de" base="" />
-                <AdminDocTools client:load collection="story" relativePath={`${s.slug}.md`} title={s.de.title} />
-              </div>
-            ))}
-          </div>
+  {design === 'editorial' ? (
+    <Fragment>
+      <header class="ed-page-hero">
+        <div class="ed-page-hero-img" data-ed-hero-img>{edHeroImg && <img src={edHeroImg} alt="" fetchpriority="high" decoding="async" />}</div>
+        <div class="ed-page-hero-scrim" aria-hidden="true"></div>
+        <div class="ed-page-hero-content" data-ed-hero-content>
+          <p class="ed-kicker">{edKicker}</p>
+          <h1 class="ed-page-title">{edTitle}</h1>
+          {edSub && <p class="ed-page-sub">{edSub}</p>}
         </div>
-      ))}
-    </div>
-  </section>
+      </header>
+      <section class="ed-section" style="padding-top:clamp(80px,12vw,120px);padding-bottom:0">
+        <div class="ed-section-head" data-reveal>
+          <span class="ed-index">Alle Stories</span>
+          <span class="ed-rule"></span>
+          {edRange && <span class="ed-more">{edRange}</span>}
+        </div>
+        <div class="ed-sfeat-list">
+          {edStories.map((st) => (
+            <a href={st.href} class="ed-sfeat" data-reveal style={`grid-template-columns:${st.cols}`}>
+              <span class="ed-sfeat-img" style={`order:${st.imgOrder}`}>
+                {st.src && <img src={st.src} alt={st.alt} data-zoom loading="lazy" decoding="async" />}
+              </span>
+              <span class="ed-sfeat-body">
+                <span class="ed-sfeat-meta">{st.meta}</span>
+                <span class="ed-sfeat-title">{st.title}</span>
+                {st.teaser && <span class="ed-sfeat-teaser">{st.teaser}</span>}
+                <span class="ed-sfeat-link">Story lesen →</span>
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
+    </Fragment>
+  ) : (
+    <section>
+      <div class="wrap">
+        <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="stories_settings" lang="de" />
+        <AdminSectionBar collection="story" newLabel="Neue Story" archived={archivedItems} lang="de" />
+        {groupByYear(stories, (s) => s.date).map((g) => (
+          <div class="year-chapter">
+            <h2 class="year-head">{g.isArchive ? 'Archiv' : g.year}</h2>
+            <div class="stories-grid">
+              {g.items.map((s) => (
+                <div class="ww-card-wrap">
+                  <StoryCard story={s} lang="de" base="" />
+                  <AdminDocTools client:load collection="story" relativePath={`${s.slug}.md`} title={s.de.title} />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
 </BaseLayout>
