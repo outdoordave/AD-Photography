@@ -25,6 +25,7 @@ type Props = {
   variables: object;
   data: any;
   lang: 'de' | 'en';
+  design?: string;
 };
 
 const ALBUM_MARKER = '[[album]]';
@@ -36,6 +37,7 @@ export default function StoryReaderContent(props: Props) {
     experimental___selectFormByFormId: () => selectActiveFormId(props.data),
   });
   const story = (data.story ?? {}) as StoryData & Record<string, any>;
+  const isEd = props.design === 'editorial';
 
   // CMS-Vorschau: Nach einem Frisch-Upload (Brücke via localStorage, s. freshMedia.ts) neu
   // rendern, damit das Cover sofort das frische Bild zeigt — auch wenn die data:-URL erst nach
@@ -130,6 +132,7 @@ export default function StoryReaderContent(props: Props) {
   const stPrevTRef = React.useRef(0);
   React.useEffect(() => {
     if (typeof window === 'undefined') return;
+    if (isEd) return; // Editorial-Design nutzt einen normalen Hero (kein Wander-Titel).
     const root = document.documentElement;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     // Glättung: frame-raten-unabhängig (echte Frame-Zeit dt) + Pro-Frame-k wächst mit dem Rückstand
@@ -247,6 +250,34 @@ export default function StoryReaderContent(props: Props) {
     });
     return () => cleanups.forEach((fn) => fn());
   }, [bodyAst, props.lang, albumPhotos.length]);
+
+  if (isEd) {
+    const kicker = ['Story', d.dateLabel].filter(Boolean).join(' · ');
+    // Kein Cover gesetzt -> auf das erste Foto des verknüpften Albums zurückfallen (sonst Platzhalter).
+    const edCover = cover || (albumPhotos[0] ? normalizePath(albumPhotos[0]) : '');
+    return (
+      <>
+        <header className="ed-reader-hero">
+          <div className="ed-reader-hero-img" data-ed-hero-img>
+            {edCover
+              ? <img src={edCover} alt={d.title} fetchPriority="high" decoding="async" data-tina-field={tinaField(story, 'cover')} />
+              : <div className="ph has-illus" data-ph="PLATZHALTER" data-tina-field={tinaField(story, 'cover')} style={phStyle} />}
+          </div>
+          <div className="ed-reader-hero-scrim" aria-hidden="true" />
+          <div className="ed-reader-hero-content" data-ed-hero-content>
+            {kicker ? <p className="ed-reader-kicker">{kicker}</p> : null}
+            <h1 className="ed-reader-title" data-tina-field={tinaField(story, fTitle)}>{d.title}</h1>
+            {d.cat ? <p className="ed-reader-meta" data-tina-field={tinaField(story, fCat)}>{d.cat}</p> : null}
+          </div>
+        </header>
+        <div className="ed-reader-body">
+          <div ref={bodyRef} data-tina-field={tinaField(story, fBody)}>{bodyChildren}</div>
+          {ytHtml ? <div data-tina-field={tinaField(story, 'youtube_url')} dangerouslySetInnerHTML={{ __html: ytHtml }} /> : null}
+        </div>
+        {lb ? <Lightbox photos={lb.photos} startIndex={lb.start} albumName={d.title || ''} onClose={() => setLb(null)} /> : null}
+      </>
+    );
+  }
 
   return (
     <>
