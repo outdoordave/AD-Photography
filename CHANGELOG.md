@@ -17,6 +17,20 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-19 — Editorial-Redesign: alle Unterseiten + Detailseiten 1:1 [Branch `editorial-redesign`]
+- **Grundsatz geschärft:** Nur der `design/`-Ordner (HTML) des Claude-Design-Handoffs ist maßgeblich, die mitgelieferten Screenshots sind teils falsch → alle Seiten strikt aus den `.dc.html`/`.html` nachgebaut, Funktion + Editierbarkeit wie die echte Seite.
+- **Startseiten-Collage korrigiert:** `EditorialMoments` jetzt exakt **4** Design-Kacheln mit den Original-Spans/Drifts (statt 5 falscher), Collage-`gap` 14→28, Hover-Reveal-Label (opacity 0→1) + `.ed-collage-by`; Story-Zeilen-Hover färbt alle Spans gold. Commit: `899554e`.
+- **Editorial-Footer:** große Ghost-Wortmarke „Wide & Wild", Mono-Uppercase-Links, Logo/PaperRip aus; alle Links/Social/Admin bleiben. Commit: `b0d44f2`.
+- **Stories-Seite** (`stories/index.astro`): Hero + alternierende Bild/Text-Reihen (7fr/5fr ↔ 5fr/7fr, gap 96, Zoom-Hover, Meta/Titel/Teaser/„Story lesen →"), echte Stories-Daten. Commit: `899554e`.
+- **Journal-Seite** (`journal/index.astro` + `JournalArchive` design=editorial): Hero + nach Jahren gruppierte Notiz-Zeilen (Ghost-Jahr, 170px/1fr/auto, Hover), Foto-Lightbox/Karten-Pin/Social/Verlinkung erhalten. Commit: `0e97a23`.
+- **Reisen-Seite** (`trips.astro`): alternierende Reihen + Status-Pille + Route (aus Stationsnamen) + „Nächste-Reise"-Vollbild-Band. Commit: `3601c24`.
+- **Equipment-Seite** (`gear.astro` + `GearContent` design=editorial): Hero + TOC-Sprungpillen + Kategorie-/Item-Zeilen (Name-Link | Marke | ↗), „Bald hier". Commit: `729842e`.
+- **Über-uns-Seite** (`about.astro` + `AboutContent` design=editorial): 2 Porträts (Rolle/Name-Label, Bio, Fakt-Boxen aus echter Gear-Liste, IG je Person via Namensmatch) + Statement (why_text) + Kontakt (contact.json). Commit: `7200077`.
+- **Story-Detail** (`stories/[slug].astro` + `StoryReaderContent` design=editorial): 88vh-Hero + Lesetext (Lead/Pullquote/Bild-Typo) + Weiterführend; Wander-Titel bleibt nur im klassischen Design; Inline-Bild-Lightbox + Album-Block erhalten; Cover-Fallback aufs verknüpfte Album. Commit: `8471f78`.
+- **Reise-Detail** (`trips/[slug].astro` + neue Insel `EditorialTrip`): 72vh-Hero + Fakt-Karten + „Die Route" (Etappen-Liste + sticky **MapLibre**-Karte mit Gold-Route/Markern/flyTo/Dimmen beim Scrollen, echte OpenFreeMap-Technik) + Weiterführend; klassische `TripTimeline` unverändert. Commit: `d43cc29`.
+- Neue CSS-Blöcke in `editorial.css` (`.ed-sfeat*`, `.ed-journal-page/.ed-jrow*`, `.ed-nexttrip*`, `.ed-hero-toc/.ed-gear-*`, `.ed-about-*/.ed-statement*/.ed-contact*`, `.ed-reader-*/.ed-related*`, `.ed-trip-*/.ed-route*/.ed-leg*/.ed-map*`).
+- **Offen/zu prüfen:** Karten-Kacheln extern → erst auf dem echten Deploy sichtbar (Headless-Preview blockt `tiles.openfreemap.org`); dunklerer Karten-Stil optional; Foto-genaue Urheber-Kürzel („by") in der Startseiten-Collage fehlen in den echten Daten; Equipment-„Notiz"/„wer" und Reise-„Foto-Spot"/„Dauer/Strecke" nur so weit befüllt, wie echte Felder existieren.
+
 ## 2026-07-16 — Editorial-Design (dunkel), Phase 0: Fundament [Branch `editorial-redesign`]
 - Start des CMS-umschaltbaren dunklen Editorial-Redesigns (Quelle: Claude-Design „Wide & Wild Startseite V1.1"). **Auf eigenem Branch**, kommt gebündelt auf main, wenn es rund ist.
 - **Schalter** `design` (klassisch|editorial) in „Darstellung" (Schema → Re-Index nötig; Default klassisch). BaseLayout setzt `<html data-design>` und lädt Editorial-Fonts (Archivo Variable, Space Mono, **lokal**) + `editorial.css`, beides nur unter `data-design="editorial"`.
