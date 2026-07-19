@@ -16,6 +16,8 @@ type Props = {
   variables: object;
   data: any;
   lang: 'de' | 'en';
+  design?: string;
+  channels?: { type?: string; label?: string; url?: string }[];
 };
 
 // Illustration + Platzhalterfarben nach Position (Eintrag 1 = desert, 2 = coast).
@@ -35,6 +37,70 @@ export default function AboutContent(props: Props) {
   // Flache Felder (base_de/base_en): EN fällt auf DE zurück.
   const t = (o: any, base: string) => { if (!o) return ''; const de = o[base + '_de'], en = o[base + '_en']; return lang === 'en' ? (en || de || '') : (de || ''); };
   const tf = (o: any, base: string) => tinaField(o, (lang === 'en' ? base + '_en' : base + '_de') as any);
+  const isEd = props.design === 'editorial';
+
+  // --- Editorial: 2 Porträt-Spalten (Bild + Bio + Fakten aus echter Gear-Liste + IG) + Statement, 1:1 aus Ueber uns.dc.html.
+  if (isEd) {
+    const persons = (Array.isArray(about.persons) ? about.persons : []) as any[];
+    const channels = props.channels || [];
+    const igFor = (name: string) => {
+      const key = String(name || '').trim().toLowerCase();
+      const hit = channels.find((c) => {
+        const s = `${c.label || ''} ${c.url || ''}`.toLowerCase();
+        return (key.length >= 4 && s.includes(key.slice(0, 4))) || (key.startsWith('alex') && s.includes('alx'));
+      });
+      return hit || null;
+    };
+    const gearFacts = (person: any) => {
+      const raw = String(t(person, 'gear') || '').replace(/^[^:]*:\s*/, '').trim();
+      return raw ? raw.split('·').map((x) => x.trim()).filter(Boolean) : [];
+    };
+    const whyKicker = t(about, 'why_title');
+    const whyText = t(about, 'why_text');
+    return (
+      <>
+        <section className="ed-section" style={{ paddingTop: 'clamp(70px,10vw,96px)', paddingBottom: 0 }}>
+          <div className="ed-about-grid">
+            {persons.map((person, idx) => {
+              const frame = photoFrame(person.photo);
+              const facts = gearFacts(person);
+              const ig = igFor(person.name);
+              return (
+                <div className="ed-about-person" data-reveal key={idx}>
+                  <span className="ed-about-photo" data-tina-field={tinaField(person, 'photo')}>
+                    {frame.src ? <img src={frame.src} alt={person.name || ''} data-zoom loading="lazy" decoding="async" /> : null}
+                    <span className="ed-collage-vignette" aria-hidden="true" />
+                    <span className="ed-duo-label">
+                      <span className="ed-duo-kicker" data-tina-field={tf(person, 'role')}>{t(person, 'role')}</span>
+                      <span className="ed-duo-name" data-tina-field={tinaField(person, 'name')}>{person.name}</span>
+                    </span>
+                  </span>
+                  <div className="ed-about-bio ww-rich" data-tina-field={tf(person, 'bio')}><RichText value={pickRich(person.bio_de, person.bio_en, lang === 'en')} /></div>
+                  {facts.length > 0 ? (
+                    <div className="ed-about-facts" data-tina-field={tf(person, 'gear')}>
+                      {facts.map((f, i) => (
+                        <span className="ed-about-fact" key={i}>
+                          <span className="ed-about-fact-k">{String(i + 1).padStart(2, '0')}</span>
+                          <span className="ed-about-fact-v">{f}</span>
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+                  {ig ? <a className="ed-about-ig" href={ig.url} target="_blank" rel="noopener">{ig.label} →</a> : null}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+        {whyText ? (
+          <section className="ed-statement">
+            {whyKicker ? <p className="ed-statement-kicker" data-reveal data-tina-field={tf(about, 'why_title')}>{whyKicker}</p> : null}
+            <p className="ed-statement-text" data-reveal data-tina-field={tf(about, 'why_text')}>{whyText}</p>
+          </section>
+        ) : null}
+      </>
+    );
+  }
 
   return (
     <>
