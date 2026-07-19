@@ -17,6 +17,17 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-19 — Editorial-Redesign: Feedback-Korrekturen (2 Runden) [Branch `editorial-redesign`]
+- **Runde 1 (`a517754`):** Nav war auf Unterseiten oben unsichtbar (Hero-`<header>` erbte `header{z-index:1100}` und überdeckte die fixe Nav) → Heroes `z-index:1`. Journal-Karten-Hover-Pop (translateY/Schatten) + `data-card`-Stagger entfernt. Unterseiten-Titel kleiner (`clamp(38–76px)` statt 48–104) — echte lange Titel brachen sonst überdimensioniert um.
+- **Runde 2 (`47a598a`):**
+  - **Hover site-weit nur Schrift gold** (kein Feld-/Rahmen-/Padding-Highlight): Startseite 03/04, Journal-Zeilen (ganze Zeile färbt Text), Equipment-Zeilen.
+  - **Startseite 01:** beide Porträt-Kacheln gleiche Drift-Richtung (David −16 → +16).
+  - **Reisen:** „Nächste-Reise"-Band raus; ALLE Reisen als alternierende Reihen (upcoming/neueste oben, älteste unten). Teaser `[object Object]` gefixt (`summary` ist Tina-Rich-Text → `richToPlain`). Fehlende Cover → verknüpftes Album, sonst Farbverlauf-Platzhalter (Daten haben für 3 Reisen keine Fotos).
+  - **Über uns:** Social-Link zwischen Bio und Fakten + Instagram-Icon.
+  - **Kontaktseite** editorial reskinnt (`#page-contact`: Hero-Typo, dunkles Formular, Kanäle) — Web3Forms-Logik unangetastet.
+  - **Nav-Logo:** Filter `invert(1) hue-rotate(180deg)` statt `brightness(0) invert(1)` — das Logo hat einen weißen Hintergrund und wurde sonst zum weißen Klotz; jetzt Hintergrund dunkel, Zeichnung/Farben sichtbar.
+- **Offen:** Reise-Detail-Karte extern (nur Deploy prüfbar); manche Reisen ohne echte Fotos (David: Fotos/Alben zuordnen).
+
 ## 2026-07-19 — Editorial-Redesign: alle Unterseiten + Detailseiten 1:1 [Branch `editorial-redesign`]
 - **Grundsatz geschärft:** Nur der `design/`-Ordner (HTML) des Claude-Design-Handoffs ist maßgeblich, die mitgelieferten Screenshots sind teils falsch → alle Seiten strikt aus den `.dc.html`/`.html` nachgebaut, Funktion + Editierbarkeit wie die echte Seite.
 - **Startseiten-Collage korrigiert:** `EditorialMoments` jetzt exakt **4** Design-Kacheln mit den Original-Spans/Drifts (statt 5 falscher), Collage-`gap` 14→28, Hover-Reveal-Label (opacity 0→1) + `.ed-collage-by`; Story-Zeilen-Hover färbt alle Spans gold. Commit: `899554e`.
