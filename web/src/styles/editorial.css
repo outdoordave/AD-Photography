@@ -91,11 +91,19 @@
 /* Logo (Linien-Illustration) auf dunklem Grund sichtbar machen. Wortmarke als Alternative offen. */
 :root[data-design="editorial"] .nav-logo img { filter: brightness(0) invert(1); opacity: 0.92; }
 
-/* ===================== Footer (re-skin) ===================== */
-:root[data-design="editorial"] footer { background: var(--c-dark); color: var(--c-ink-soft); border-top: 1px solid var(--c-line); }
+/* ===================== Footer (1:1: Ghost-Wortmarke + Links + Social) ===================== */
+:root[data-design="editorial"] footer { position: relative; background: var(--c-dark); color: var(--c-ink-soft); border-top: 1px solid rgba(237,234,227,.12); padding: 80px clamp(20px,4vw,48px) 48px; margin-top: clamp(90px,14vw,180px); text-align: left; }
+:root[data-design="editorial"] footer .band-rip, :root[data-design="editorial"] footer img { display: none; }
+:root[data-design="editorial"] footer::before { content: "Wide & Wild"; display: block; max-width: 1360px; margin: 0 auto 48px; font-family: var(--font-display); font-variation-settings: 'wdth' 125; font-weight: 750; font-size: clamp(40px,7vw,96px); line-height: .95; letter-spacing: .01em; text-transform: uppercase; color: rgba(237,234,227,.14); }
+:root[data-design="editorial"] footer > *:not(.fnote) { max-width: 1360px; margin-left: auto; margin-right: auto; }
+:root[data-design="editorial"] footer .footer-nav { display: flex; flex-wrap: wrap; gap: 28px; font-family: var(--font-body); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 22px; }
 :root[data-design="editorial"] footer a { color: var(--c-ink-soft); }
 :root[data-design="editorial"] footer a:hover { color: var(--c-accent); }
-:root[data-design="editorial"] footer .nav-logo img { filter: brightness(0) invert(1); opacity: 0.5; }
+:root[data-design="editorial"] footer .insta-row { justify-content: flex-start; }
+:root[data-design="editorial"] footer .insta-link { font-family: var(--font-mono); font-size: 11.5px; color: var(--c-ink-soft); }
+:root[data-design="editorial"] footer .footer-legal { display: flex; gap: 24px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
+:root[data-design="editorial"] footer .fnote { max-width: 1360px; margin: 40px auto 0; font-family: var(--font-mono); font-size: 10.5px; color: #5c5a4e; }
+:root[data-design="editorial"] footer .fnote a { color: #5c5a4e; }
 
 /* ===================== Startseite: Hero (1:1 aus dem Design, alle Modi/Tina erhalten) ===================== */
 :root[data-design="editorial"] .ed-hero { position: relative; height: 100vh; min-height: 640px; overflow: hidden; }
