@@ -433,3 +433,16 @@
 @media (max-width: 820px) {
   :root[data-design="editorial"] #page-contact .contact-grid { grid-template-columns: 1fr; gap: 40px; }
 }
+
+/* ===================== Reise-Timeline: helle Creme-Fades im Dunkel-Design überschreiben ===================== */
+/* trips-timeline.css codiert die Fade-/Deckband-Farbe hart als rgba(244,237,225,…) (Light-Theme).
+   Im Editorial müssen diese Übergänge die dunkle Hintergrundfarbe (#0d0e0c) nutzen. */
+:root[data-design="editorial"] .tl-topbar { background: rgba(13,14,12, var(--tl-p, 0)); }
+:root[data-design="editorial"] .tl-topbar::after { background: linear-gradient(to bottom, rgba(13,14,12, var(--tl-p, 0)), rgba(13,14,12, 0)); }
+:root[data-design="editorial"] .tl-fade-top { background: linear-gradient(var(--c-bg), rgba(13,14,12,0)); }
+:root[data-design="editorial"] .tl-fade-bottom { background: linear-gradient(rgba(13,14,12,0) 0%, rgba(13,14,12,0.45) 48%, rgba(13,14,12,0.82) 74%, var(--c-bg) 100%); }
+@media (max-width: 767px) {
+  :root[data-design="editorial"] .tl-topbar { background: rgba(13,14,12, var(--tl-m, 0)); }
+  :root[data-design="editorial"] .tl-topbar::after { background: linear-gradient(to bottom, rgba(13,14,12, var(--tl-m, 0)), rgba(13,14,12, 0)); }
+}
+:root[data-design="editorial"] .tl-map, :root[data-design="editorial"] .tl-map .maplibregl-map { background: var(--c-bg-alt); }
