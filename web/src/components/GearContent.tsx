@@ -13,6 +13,7 @@ type Props = {
   variables: object;
   data: any;
   lang: 'de' | 'en';
+  design?: string;
 };
 
 export default function GearContent(props: Props) {
@@ -30,6 +31,48 @@ export default function GearContent(props: Props) {
   const items: GearItem[] = Array.isArray(gear.items) ? gear.items : [];
   const categories = Array.isArray(gear.categories) ? gear.categories : [];
   const groups = groupGear(items, categories);
+  const isEd = props.design === 'editorial';
+
+  // --- Editorial: Kategorien mit Item-Zeilen (Name | Marke | ↗), 1:1 aus Equipment.dc.html.
+  if (isEd) {
+    return (
+      <div className="ed-gear-page">
+        {groups.map((g, gi) => {
+          const catObj = categories.find((c: any) => (c?.key || '').trim() === g.id);
+          const num = String(gi + 1).padStart(2, '0');
+          const count = `${g.items.length} ${g.items.length === 1 ? (lang === 'en' ? 'item' : 'Teil') : (lang === 'en' ? 'items' : 'Teile')}`;
+          return (
+            <div id={g.id} key={g.id}>
+              <div className="ed-gear-cathead" data-reveal>
+                <span className="ed-gear-catnum" data-tina-field={catObj ? tinaField(catObj as any) : undefined}>{num} — {lang === 'en' ? g.en : g.de}</span>
+                <span className="ed-rule" />
+                <span className="ed-gear-count">{count}</span>
+              </div>
+              {g.items.map((it, i) => {
+                const href = safeUrl(it.link);
+                return (
+                  <div className="ed-gear-row" key={i} data-reveal data-tina-field={tinaField(it as any)}>
+                    {href
+                      ? <a className="ed-gear-name" href={href} target="_blank" rel="noopener">{it.name}</a>
+                      : <span className="ed-gear-name">{it.name}</span>}
+                    <span className="ed-gear-note">{it.brand}</span>
+                    {href
+                      ? <a className="ed-gear-who" href={href} target="_blank" rel="noopener" aria-label={lang === 'en' ? 'Open link' : 'Link öffnen'}>↗</a>
+                      : <span className="ed-gear-who" aria-hidden="true"></span>}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
+        <div className="ed-gear-cathead" data-reveal style={{ marginBottom: 0 }}>
+          <span className="ed-gear-catnum">{lang === 'en' ? 'Coming soon' : 'Bald hier'}</span>
+          <span className="ed-rule" />
+          <span className="ed-gear-count">{lang === 'en' ? 'More gear on the next trip' : 'Was die nächste Reise braucht'}</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
