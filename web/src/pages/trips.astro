@@ -8,7 +8,10 @@ import AdminSectionBar from '../components/AdminSectionBar.astro';
 import settings from '../data/trips-settings.json';
 import appearance from '../data/appearance-settings.json';
 import { client } from '../../tina/__generated__/client';
-import { sortTrips, tripTitle, tripCover, bi, viewStops, type RawTrip } from '../lib/trips';
+import { sortTrips, tripTitle, tripCover, bi, viewStops, photoDisplay, type RawTrip } from '../lib/trips';
+import { normalizePath } from '../lib/stories';
+import { paletteFromString } from '../lib/albums';
+import { richToPlain } from '../components/RichText.tsx';
 
 const res = await client.queries.reisenConnection({ first: 100 });
 const setRes = await client.queries.reisen_settings({ relativePath: 'trips-settings.json' });
@@ -21,38 +24,48 @@ const archivedItems = allEdges.filter((e: any) => e.node?.archived === true)
 const s = settings as any;
 const design = (appearance as any).design === 'editorial' ? 'editorial' : 'klassisch';
 
-// --- Editorial: alternierende Reihen (1:1 aus Reisen.dc.html) + Nächste-Reise-Band ---
+// --- Editorial: alle Reisen als alternierende Reihen (upcoming/neueste oben, älteste unten) ---
 const SEASON = (m: number) => (m <= 2 || m === 12 ? 'Winter' : m <= 5 ? 'Frühling' : m <= 8 ? 'Sommer' : 'Herbst');
 const seasonYear = (d: string) => { const mm = parseInt(String(d).slice(5, 7), 10); const yy = String(d).slice(0, 4); return d ? (mm ? `${SEASON(mm)} ${yy}` : yy) : ''; };
-const activeTrips = design === 'editorial' ? trips.filter((t: any) => t.data.upcoming !== true) : [];
-const upcomingTrip = design === 'editorial' ? trips.find((t: any) => t.data.upcoming === true) : undefined;
-const edTrips = design === 'editorial' ? activeTrips.map((t: any, i: number) => {
+// Cover-Fallback: viele Reisen haben keine Stop-Fotos -> erstes Foto des verknüpften Albums.
+const albRes = design === 'editorial' ? await client.queries.albenConnection({ first: 1000 }) : null;
+const tripAlbumCover: Record<string, string> = {};
+if (albRes) {
+  for (const e of (albRes.data.albenConnection?.edges || [])) {
+    const n = e?.node; const lt = n?.linked_trip;
+    if (typeof lt === 'string' && lt) {
+      const first = (Array.isArray(n.photos) ? n.photos : []).find((p: any) => typeof p === 'string' && p);
+      if (first && !tripAlbumCover[lt]) tripAlbumCover[lt] = normalizePath(photoDisplay(first));
+    }
+  }
+}
+// Alle Reisen (inkl. upcoming) nach Datum absteigend: bevorstehende/neueste oben, älteste unten.
+const edSorted = design === 'editorial' ? [...trips].sort((a: any, b: any) => String(b.data.date || '').localeCompare(String(a.data.date || ''))) : [];
+const edTrips = edSorted.map((t: any, i: number) => {
   const d = t.data as RawTrip;
   const route = viewStops(d, 'de').map((v: any) => v.name).filter(Boolean).join(' → ');
+  const src = tripCover(d) || tripAlbumCover[t.slug] || '';
+  const pal = paletteFromString(src || t.slug);
   return {
     href: `/trips/${t.slug}`,
-    src: tripCover(d),
+    src,
+    grad: `linear-gradient(135deg, ${pal.c1}, ${pal.c2})`,
     alt: tripTitle(d, 'de'),
     meta: bi(d, 'meta', 'de') || seasonYear(d.date || ''),
-    status: 'Reise online', statusColor: '#8a8778', cta: 'Zur Reise',
+    status: d.upcoming ? 'In Planung' : 'Reise online',
+    statusColor: d.upcoming ? '#d4a45a' : '#8a8778',
+    cta: d.upcoming ? 'Zur Planung' : 'Zur Reise',
     title: tripTitle(d, 'de'),
-    teaser: bi(d, 'summary', 'de'),
+    teaser: richToPlain(bi(d, 'summary', 'de')),
     route,
     cols: i % 2 === 0 ? '7fr 5fr' : '5fr 7fr',
     imgOrder: i % 2 === 0 ? 0 : 2,
   };
-}) : [];
-const edHeroImg = (upcomingTrip && tripCover(upcomingTrip.data)) || edTrips[0]?.src || '';
+});
+const edHeroImg = edTrips[0]?.src || '';
 const edKicker = `Reisen — ${(s.kicker_de && s.kicker_de !== 'Reisen') ? s.kicker_de : 'Alle Routen'}`;
 const edTitle = s.title_de || 'Reisen';
 const edSub = s.intro_de || '';
-const edNextSeason = upcomingTrip ? seasonYear(upcomingTrip.data.date || '') : '';
-const edNext = upcomingTrip ? {
-  img: tripCover(upcomingTrip.data),
-  kicker: `Als Nächstes${edNextSeason ? ' · ' + edNextSeason : ''}`,
-  title: tripTitle(upcomingTrip.data, 'de'),
-  href: `/trips/${upcomingTrip.slug}`,
-} : null;
 ---
 <BaseLayout title={`${s.title_de || 'Reisen'} — Wide & Wild`} lang="de" description="Unsere Roadtrips — Reisen von Wide & Wild als Karten-Timeline mit Stationen, Fotos und Erlebnissen.">
   {design === 'editorial' ? (
@@ -70,7 +83,7 @@ const edNext = upcomingTrip ? {
         <div class="ed-sfeat-list">
           {edTrips.map((t: any) => (
             <a href={t.href} class="ed-sfeat" data-reveal style={`grid-template-columns:${t.cols}`}>
-              <span class="ed-sfeat-img" style={`order:${t.imgOrder}`}>
+              <span class="ed-sfeat-img" style={`order:${t.imgOrder}${t.src ? '' : ';background:' + t.grad}`}>
                 {t.src && <img src={t.src} alt={t.alt} data-zoom loading="lazy" decoding="async" />}
               </span>
               <span class="ed-sfeat-body">
@@ -87,16 +100,6 @@ const edNext = upcomingTrip ? {
           ))}
         </div>
       </section>
-      {edNext && (
-        <a class="ed-nexttrip" href={edNext.href} aria-label={edNext.title}>
-          {edNext.img && <img src={edNext.img} alt="" loading="lazy" decoding="async" />}
-          <span class="ed-nexttrip-scrim" aria-hidden="true"></span>
-          <span class="ed-nexttrip-content">
-            <p class="ed-nexttrip-kicker" data-reveal>{edNext.kicker}</p>
-            <p class="ed-nexttrip-title" data-reveal>{edNext.title}</p>
-          </span>
-        </a>
-      )}
     </Fragment>
   ) : (
     <section>

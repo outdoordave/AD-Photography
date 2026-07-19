@@ -3,6 +3,7 @@ import { selectActiveFormId } from '../lib/tinaForm';
 import { photoFrame } from '../lib/trips';
 import { ILLUS } from '../lib/illus';
 import RichText, { pickRich } from './RichText';
+import { socialIcon } from '../lib/socialIcons';
 import PaperRip from './PaperRip';
 
 // Über-uns als React-Insel (wie Stories/Gear): useTina = LIVE-Daten, data-tina-field
@@ -76,6 +77,12 @@ export default function AboutContent(props: Props) {
                     </span>
                   </span>
                   <div className="ed-about-bio ww-rich" data-tina-field={tf(person, 'bio')}><RichText value={pickRich(person.bio_de, person.bio_en, lang === 'en')} /></div>
+                  {ig ? (
+                    <a className="ed-about-ig" href={ig.url} target="_blank" rel="noopener">
+                      <span className="ed-about-ig-ic" aria-hidden="true" dangerouslySetInnerHTML={{ __html: socialIcon('instagram') }} />
+                      {ig.label}
+                    </a>
+                  ) : null}
                   {facts.length > 0 ? (
                     <div className="ed-about-facts" data-tina-field={tf(person, 'gear')}>
                       {facts.map((f, i) => (
@@ -86,7 +93,6 @@ export default function AboutContent(props: Props) {
                       ))}
                     </div>
                   ) : null}
-                  {ig ? <a className="ed-about-ig" href={ig.url} target="_blank" rel="noopener">{ig.label} →</a> : null}
                 </div>
               );
             })}
