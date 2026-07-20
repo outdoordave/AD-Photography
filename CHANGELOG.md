@@ -17,6 +17,10 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-19 — Editorial Reise-Detail „v2" + weitere Feedback-Korrekturen [Branch `editorial-redesign`]
+- **Reise-Detail v2** (`d9cfda0`): neues Design „Reise Tennessee Winter v2" (per claude_design-MCP importiert) als editoriale Reise-Detailseite umgesetzt — Hero + 4 Fakt-Karten + „Die Route" (Etappen links mit **Fade-in/-out** aktiv↔inaktiv, sticky Karte rechts + **Caption** „Station N/Gesamt + Name" + **Nummern-Dots** + **pulsierender Halo**). **Karte behält die bestehende MapLibre-Fahrzeug-Engine** (Auto fährt/Flugzeug fliegt, flyTo, mitwachsende Route): Geometrie-/Routen-Helfer aus `TripTimeline` exportiert (`buildRoute`/`buildPath`/`arcPoints`/`bearingDeg`/`setMapLanguage`/`prefersReduced`), Fahrzeug-Funktionen in `EditorialTripV2.tsx` portiert; Linien/Marker gold auf dunkel. Echte Stationen (CMS), `data-tina-field` bleibt. Klassische `TripTimeline` unverändert. **Nur auf echtem Deploy voll prüfbar** (Headless-Preview blockt externe Tiles → `load` feuert nie; programmatisches Scrollen greift nicht).
+- **Weitere Korrekturen** (`fe27bf8`, `4631194`): Hover-Grundsatz auch für Bild-Kacheln (Album-Name Startseite-02 + Portfolio wird gold), Insta-Icon Über uns (Kontur statt gefülltem Klotz), Timeline-Fades von Creme auf Dunkel. Hover-Grundsatz zusätzlich ins Projektgedächtnis geschrieben.
+
 ## 2026-07-19 — Editorial-Redesign: Feedback-Korrekturen (2 Runden) [Branch `editorial-redesign`]
 - **Runde 1 (`a517754`):** Nav war auf Unterseiten oben unsichtbar (Hero-`<header>` erbte `header{z-index:1100}` und überdeckte die fixe Nav) → Heroes `z-index:1`. Journal-Karten-Hover-Pop (translateY/Schatten) + `data-card`-Stagger entfernt. Unterseiten-Titel kleiner (`clamp(38–76px)` statt 48–104) — echte lange Titel brachen sonst überdimensioniert um.
 - **Runde 2 (`47a598a`):**
