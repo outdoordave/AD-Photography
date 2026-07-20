@@ -224,7 +224,10 @@ export default function EditorialTripV2(props: Props) {
 
   function scrollToLeg(i: number) {
     const el = legRefs.current[i]; if (!el) return;
-    window.scrollTo({ top: window.scrollY + el.getBoundingClientRect().top - window.innerHeight * 0.32, behavior: prefersReduced() ? 'auto' : 'smooth' });
+    const r = el.getBoundingClientRect();
+    // Etappe MITTIG ins Bild (Zentrum auf Viewport-Mitte) -> deckt sich mit der Aktiv-Erkennung.
+    const target = window.scrollY + r.top + r.height / 2 - window.innerHeight / 2;
+    window.scrollTo({ top: target, behavior: prefersReduced() ? 'auto' : 'smooth' });
   }
 
   // Auf eine Station wechseln: Karte + Fahrzeug + Marker + Halo + Caption + Dots + Dimmen.
@@ -240,9 +243,16 @@ export default function EditorialTripV2(props: Props) {
   }, [stops]);
 
   const sync = React.useCallback(() => {
-    const mid = window.innerHeight * 0.5;
-    let best = -1;
-    legRefs.current.forEach((el, i) => { if (!el) return; const r = el.getBoundingClientRect(); if (r.top < mid && r.bottom > mid * 0.4) best = i; });
+    const vh = window.innerHeight, mid = vh * 0.5;
+    // Aktiv = Etappe, deren MITTE der Viewport-Mitte am nächsten ist (nur sichtbare betrachten).
+    // Robust gegen unterschiedlich hohe Etappen -> kein Off-by-one.
+    let best = -1, bestDist = Infinity;
+    legRefs.current.forEach((el, i) => {
+      if (!el) return; const r = el.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > vh) return;
+      const d = Math.abs((r.top + r.height / 2) - mid);
+      if (d < bestDist) { bestDist = d; best = i; }
+    });
     legRefs.current.forEach((el, i) => { if (el) el.classList.toggle('dim', best !== -1 && i !== best); });
     if (best !== -1) goActive(best);
   }, [goActive]);
