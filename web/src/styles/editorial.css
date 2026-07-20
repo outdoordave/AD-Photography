@@ -446,3 +446,38 @@
   :root[data-design="editorial"] .tl-topbar::after { background: linear-gradient(to bottom, rgba(13,14,12, var(--tl-m, 0)), rgba(13,14,12, 0)); }
 }
 :root[data-design="editorial"] .tl-map, :root[data-design="editorial"] .tl-map .maplibregl-map { background: var(--c-bg-alt); }
+
+/* ===================== Reise-Detail v2: Etappen (Fade-in/-out) + sticky Karte + Caption + Dots + Halo ===================== */
+:root[data-design="editorial"] .ed-v2-grid { display: grid; grid-template-columns: 6fr 5fr; gap: 48px; align-items: start; max-width: 1360px; margin: 0 auto; padding: 0 clamp(20px,4vw,48px); }
+:root[data-design="editorial"] .ed-v2-legs { display: flex; flex-direction: column; gap: 96px; }
+:root[data-design="editorial"] .ed-v2-leg { transition: opacity .7s ease, filter .7s ease, transform .7s ease; }
+:root[data-design="editorial"] .ed-v2-leg.dim { opacity: .18; filter: saturate(.4); }
+:root[data-design="editorial"] .ed-v2-leg.dim .ed-v2-leg-photo img { filter: grayscale(.5) brightness(.8); }
+:root[data-design="editorial"] .ed-v2-leg-kicker { margin: 0 0 12px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .18em; color: var(--c-accent); text-transform: uppercase; }
+:root[data-design="editorial"] .ed-v2-leg-title { margin: 0; font-family: var(--font-display); font-variation-settings: 'wdth' 118; font-weight: 620; font-size: clamp(24px,2.8vw,34px); line-height: 1.15; color: var(--c-ink); }
+:root[data-design="editorial"] .ed-v2-leg-text { margin: 14px 0 0; font-size: 15px; line-height: 1.7; font-weight: 300; color: rgba(237,234,227,.7); text-wrap: pretty; }
+:root[data-design="editorial"] .ed-v2-leg-text p { margin: 0 0 10px; }
+:root[data-design="editorial"] .ed-v2-leg-spot { margin: 14px 0 22px; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .16em; color: var(--c-ink-soft); text-transform: uppercase; }
+:root[data-design="editorial"] .ed-v2-leg-photo { display: block; width: 100%; aspect-ratio: 16/10; border-radius: 10px; overflow: hidden; background: #131410; padding: 0; border: 0; cursor: zoom-in; }
+:root[data-design="editorial"] .ed-v2-leg-photo img { width: 100%; height: 100%; object-fit: cover; display: block; transition: filter .7s ease, transform 1.2s cubic-bezier(.2,.6,.2,1); }
+:root[data-design="editorial"] .ed-v2-leg-photo:hover img { transform: scale(1.03); }
+:root[data-design="editorial"] .ed-v2-mapcol { position: sticky; top: calc(50vh - 34vh); height: 68vh; min-height: 440px; display: flex; flex-direction: column; gap: 14px; }
+:root[data-design="editorial"] .ed-v2-map { flex: 1; width: 100%; background: #131410; border-radius: 10px; overflow: hidden; }
+:root[data-design="editorial"] .ed-v2-map .maplibregl-ctrl-attrib { background: rgba(13,14,12,.7); }
+:root[data-design="editorial"] .ed-v2-map .maplibregl-ctrl-attrib a { color: var(--c-ink-soft); }
+:root[data-design="editorial"] .ed-v2-caption { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+:root[data-design="editorial"] .ed-v2-cap-txt { min-width: 0; }
+:root[data-design="editorial"] .ed-v2-cap-idx { display: block; font-family: var(--font-mono); font-size: 10px; letter-spacing: .24em; color: var(--c-accent); text-transform: uppercase; }
+:root[data-design="editorial"] .ed-v2-cap-name { display: block; margin-top: 4px; font-family: var(--font-display); font-variation-settings: 'wdth' 118; font-weight: 620; font-size: 19px; color: var(--c-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+:root[data-design="editorial"] .ed-v2-dots { display: flex; gap: 8px; flex-shrink: 0; }
+:root[data-design="editorial"] .ed-v2-dot { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(237,234,227,.2); background: transparent; color: var(--c-ink-soft); font-family: var(--font-mono); font-size: 9.5px; cursor: pointer; transition: all .3s; padding: 0; }
+:root[data-design="editorial"] .ed-v2-dot:hover { border-color: var(--c-accent); color: var(--c-accent); }
+:root[data-design="editorial"] .ed-v2-dot.on { background: var(--c-accent); border-color: var(--c-accent); color: #0d0e0c; }
+:root[data-design="editorial"] .ed-v2-halo { width: 38px; height: 38px; border-radius: 50%; background: rgba(212,164,90,.35); animation: ed-v2-pulse 2s ease-out infinite; }
+@keyframes ed-v2-pulse { 0% { transform: scale(.45); opacity: .9; } 100% { transform: scale(1.8); opacity: 0; } }
+@media (max-width: 900px) {
+  :root[data-design="editorial"] .ed-v2-grid { grid-template-columns: 1fr; gap: 32px; }
+  :root[data-design="editorial"] .ed-v2-mapcol { position: relative; top: 0; height: auto; order: -1; }
+  :root[data-design="editorial"] .ed-v2-map { height: 52vh; }
+  :root[data-design="editorial"] .ed-v2-legs { gap: 56px; }
+}

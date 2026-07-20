@@ -4,12 +4,14 @@
 // der reisen-Collection zeigt hierher -> Visual-Editing (Klick=Feld + Live-Update) bleibt.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TripTimeline from '../../components/TripTimeline.tsx';
+import EditorialTripV2 from '../../components/EditorialTripV2.tsx';
 import AdminDocTools from '../../components/AdminDocTools.tsx';
 import { richToPlain } from '../../components/RichText.tsx';
 import { linkedAlbumsByTrip } from '../../lib/albums';
-import { tripTitle, type RawTrip } from '../../lib/trips';
+import { tripTitle, tripCover, bi, viewStops, type RawTrip } from '../../lib/trips';
 import { tripDesignsCss, resolveTripDesign, mergeTuning } from '../../lib/tripDesigns';
 import settings from '../../data/trips-settings.json';
+import appearance from '../../data/appearance-settings.json';
 import { client } from '../../../tina/__generated__/client';
 import '../../styles/trips-timeline.css';
 
@@ -47,36 +49,93 @@ const tripDesign = resolveTripDesign((s as any).design);
 const tripDesignCss = tripDesignsCss(mergeTuning(s.designs));
 // Meta-Description aus vorhandenem Inhalt (Reise-Zusammenfassung), Fallback templatisiert.
 const metaDesc = (richToPlain(trip.summary_de) || `Reisebericht „${ttl}“ — Stationen, Karte und Fotos einer Reise von Wide & Wild.`).replace(/\s+/g, ' ').trim().slice(0, 200);
-// Reise-Detail: bewusst KEIN eigener Editorial-Nachbau — die mühsam gebaute TripTimeline
-// (Stationen-Effekte, Kartenlinien/flyTo, Fahrzeug) bleibt 1:1 erhalten und wird im
-// Editorial-Design nur über die Token/Fonts dunkel eingefärbt.
+
+// --- Editorial „v2": Hero + Fakten + Etappen/Karte (EditorialTripV2, Fahrzeug-Engine wie bisher) + Weiterführend ---
+const design = (appearance as any).design === 'editorial' ? 'editorial' : 'klassisch';
+const SEASON = (m: number) => (m <= 2 || m === 12 ? 'Winter' : m <= 5 ? 'Frühling' : m <= 8 ? 'Sommer' : 'Herbst');
+const seasonYear = (d: string) => { const mm = parseInt(String(d).slice(5, 7), 10); const yy = String(d).slice(0, 4); return d ? (mm ? `${SEASON(mm)} ${yy}` : yy) : ''; };
+const edStops = design === 'editorial' ? viewStops(trip, 'de') : [];
+const edRoute = edStops.map((st: any) => st.name).filter(Boolean).join(' → ');
+const edCover = tripCover(trip) || (edStops.find((st: any) => st.photo)?.photo || '');
+const edSeason = seasonYear(trip.date || '');
+const edMetaTxt = bi(trip, 'meta', 'de');
+const edMetaLine = [edRoute, edMetaTxt].filter(Boolean).join(' · ');
+const edAlbum = linkedAlbums[slug as string];
+const mDays = edMetaTxt.match(/(\d+)\s*Tage?/i);
+const mKm = edMetaTxt.match(/([\d.\s]+)\s*km/i);
+const edFacts = [
+  edSeason ? { k: 'Zeitraum', v: edSeason } : null,
+  { k: 'Stationen', v: String(edStops.length) },
+  mDays ? { k: 'Dauer', v: `${mDays[1]} Tage` } : null,
+  mKm ? { k: 'Strecke', v: `${mKm[1].trim()} km` } : null,
+].filter(Boolean).slice(0, 4) as { k: string; v: string }[];
 ---
 <BaseLayout title={`${ttl} — Wide & Wild`} lang="de" description={metaDesc} noindex={archived}>
-  <Fragment set:html={`<style>${tripDesignCss}</style>`} />
-  <AdminDocTools client:load collection="reisen" relativePath={`${slug}.json`} title={ttl} variant="bar" />
-  <section style="padding-top:8px;">
-    <div class="wrap">
-      <TripTimeline
-        design={tripDesign}
-        client:load
-        query={res.query}
-        variables={res.variables}
-        data={res.data}
-        lang="de"
-        mapStyle={mapStyle}
-        scrollZoom={mapScrollZoom}
-        autoPopup={mapAutoPopup}
-        initialSlug={slug}
-        linkedAlbums={linkedAlbums}
-        settingsQuery={setRes.query}
-        settingsVariables={setRes.variables}
-        settingsData={setRes.data}
-        spotlight={spotlight}
-        dimMs={dimMs}
-        revealMs={revealMs}
-        snap={snap}
-        vehicleId={vehicleId}
-      />
-    </div>
-  </section>
+  {design === 'editorial' ? (
+    <Fragment>
+      <AdminDocTools client:load collection="reisen" relativePath={`${slug}.json`} title={ttl} variant="bar" />
+      <header class="ed-reader-hero ed-trip-hero">
+        <div class="ed-reader-hero-img" data-ed-hero-img>{edCover && <img src={edCover} alt="" fetchpriority="high" decoding="async" />}</div>
+        <div class="ed-reader-hero-scrim" aria-hidden="true"></div>
+        <div class="ed-reader-hero-content" data-ed-hero-content>
+          <p class="ed-reader-kicker">{['Reise', edSeason].filter(Boolean).join(' · ')}</p>
+          <h1 class="ed-reader-title">{ttl}</h1>
+          {edMetaLine && <p class="ed-reader-meta">{edMetaLine}</p>}
+        </div>
+      </header>
+      {edFacts.length > 0 && (
+        <section class="ed-trip-facts">
+          <div class="ed-trip-facts-grid" data-reveal style={`--fact-cols:${edFacts.length}`}>
+            {edFacts.map((f) => (<div class="ed-fact"><span class="ed-fact-k">{f.k}</span><span class="ed-fact-v">{f.v}</span></div>))}
+          </div>
+        </section>
+      )}
+      {edStops.length > 0 && (
+        <section class="ed-route">
+          <div class="ed-section-head" data-reveal>
+            <span class="ed-index">Die Route</span>
+            <span class="ed-rule"></span>
+            <span class="ed-more">Karte folgt den Etappen beim Scrollen</span>
+          </div>
+          <EditorialTripV2 client:load query={res.query} variables={res.variables} data={res.data} lang="de" initialSlug={slug} mapStyle={mapStyle} scrollZoom={mapScrollZoom} />
+        </section>
+      )}
+      <section class="ed-related">
+        <div class="ed-related-grid">
+          {edAlbum && (<a class="ed-related-card" href={`/portfolio/${edAlbum.slug}`}><span class="ed-related-k">Das Album</span><span class="ed-related-t">Alle Fotos der Reise →</span></a>)}
+          <a class="ed-related-card" href="/trips"><span class="ed-related-k">Mehr</span><span class="ed-related-t">Alle Reisen →</span></a>
+        </div>
+      </section>
+    </Fragment>
+  ) : (
+    <Fragment>
+      <Fragment set:html={`<style>${tripDesignCss}</style>`} />
+      <AdminDocTools client:load collection="reisen" relativePath={`${slug}.json`} title={ttl} variant="bar" />
+      <section style="padding-top:8px;">
+        <div class="wrap">
+          <TripTimeline
+            design={tripDesign}
+            client:load
+            query={res.query}
+            variables={res.variables}
+            data={res.data}
+            lang="de"
+            mapStyle={mapStyle}
+            scrollZoom={mapScrollZoom}
+            autoPopup={mapAutoPopup}
+            initialSlug={slug}
+            linkedAlbums={linkedAlbums}
+            settingsQuery={setRes.query}
+            settingsVariables={setRes.variables}
+            settingsData={setRes.data}
+            spotlight={spotlight}
+            dimMs={dimMs}
+            revealMs={revealMs}
+            snap={snap}
+            vehicleId={vehicleId}
+          />
+        </div>
+      </section>
+    </Fragment>
+  )}
 </BaseLayout>
