@@ -6,7 +6,10 @@
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
 > Session überschrieben). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
 >
-> **🚧 In Arbeit (Branch `editorial-redesign`, NICHT auf main/live): dunkles Editorial-Redesign, CMS-umschaltbar.**
+> **🚧 Editorial-Redesign: in `main` GEMERGT (`ba7ba58`, 19.07.), Standard `design: klassisch` → Live unverändert.**
+> **Nächste Schritte: (1) David pusht `main` (vorher pull nicht nötig — frisch gefetcht), (2) Tina-Cloud-Re-Index
+> (neues `design`-Feld), (3) Arbeitspaket „Editierbarkeits-Parität" (Heroes/Sektionsköpfe als useTina-Inseln mit
+> Live-Vorschau — von David ausdrücklich gefordert), (4) Go-Live per CMS-Schalter `design: editorial`.**
 > Ziel: die GANZE Seite ins dunkle Editorial-Design (Quelle: Claude-Design-Handoff, **`design/`-Ordner = HTML
 > ist maßgeblich, mitgelieferte Screenshots ignorieren — teils falsch**), per Schalter „Darstellung →
 > design (klassisch|editorial)" umschaltbar, echte CMS-Inhalte, bestehende Funktionen + Editierbarkeit erhalten.
