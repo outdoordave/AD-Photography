@@ -6,8 +6,12 @@ import SettingsHeader from '../components/SettingsHeader.tsx';
 import TripsOverview from '../components/TripsOverview.astro';
 import AdminSectionBar from '../components/AdminSectionBar.astro';
 import settings from '../data/trips-settings.json';
+import appearance from '../data/appearance-settings.json';
 import { client } from '../../tina/__generated__/client';
-import { sortTrips, type RawTrip } from '../lib/trips';
+import { sortTrips, tripTitle, tripCover, bi, viewStops, photoDisplay, type RawTrip } from '../lib/trips';
+import { normalizePath } from '../lib/stories';
+import { paletteFromString } from '../lib/albums';
+import { richToPlain } from '../components/RichText.tsx';
 
 const res = await client.queries.reisenConnection({ first: 100 });
 const setRes = await client.queries.reisen_settings({ relativePath: 'trips-settings.json' });
@@ -18,13 +22,92 @@ const trips = sortTrips(edges.map((e: any) => ({ slug: e.node._sys.filename, dat
 const archivedItems = allEdges.filter((e: any) => e.node?.archived === true)
   .map((e: any) => ({ relativePath: `${e.node._sys.filename}.json`, title: e.node.title || e.node._sys.filename, date: e.node.date || '', teaser: e.node.meta_de || '', href: `/trips/${e.node._sys.filename}` }));
 const s = settings as any;
+const design = (appearance as any).design === 'editorial' ? 'editorial' : 'klassisch';
+
+// --- Editorial: alle Reisen als alternierende Reihen (upcoming/neueste oben, älteste unten) ---
+const SEASON = (m: number) => (m <= 2 || m === 12 ? 'Winter' : m <= 5 ? 'Frühling' : m <= 8 ? 'Sommer' : 'Herbst');
+const seasonYear = (d: string) => { const mm = parseInt(String(d).slice(5, 7), 10); const yy = String(d).slice(0, 4); return d ? (mm ? `${SEASON(mm)} ${yy}` : yy) : ''; };
+// Cover-Fallback: viele Reisen haben keine Stop-Fotos -> erstes Foto des verknüpften Albums.
+const albRes = design === 'editorial' ? await client.queries.albenConnection({ first: 1000 }) : null;
+const tripAlbumCover: Record<string, string> = {};
+if (albRes) {
+  for (const e of (albRes.data.albenConnection?.edges || [])) {
+    const n = e?.node; const lt = n?.linked_trip;
+    if (typeof lt === 'string' && lt) {
+      const first = (Array.isArray(n.photos) ? n.photos : []).find((p: any) => typeof p === 'string' && p);
+      if (first && !tripAlbumCover[lt]) tripAlbumCover[lt] = normalizePath(photoDisplay(first));
+    }
+  }
+}
+// Alle Reisen (inkl. upcoming) nach Datum absteigend: bevorstehende/neueste oben, älteste unten.
+const edSorted = design === 'editorial' ? [...trips].sort((a: any, b: any) => String(b.data.date || '').localeCompare(String(a.data.date || ''))) : [];
+const edTrips = edSorted.map((t: any, i: number) => {
+  const d = t.data as RawTrip;
+  const route = viewStops(d, 'de').map((v: any) => v.name).filter(Boolean).join(' → ');
+  const src = tripCover(d) || tripAlbumCover[t.slug] || '';
+  const pal = paletteFromString(src || t.slug);
+  return {
+    href: `/trips/${t.slug}`,
+    src,
+    grad: `linear-gradient(135deg, ${pal.c1}, ${pal.c2})`,
+    alt: tripTitle(d, 'de'),
+    meta: bi(d, 'meta', 'de') || seasonYear(d.date || ''),
+    status: d.upcoming ? 'In Planung' : 'Reise online',
+    statusColor: d.upcoming ? '#d4a45a' : '#8a8778',
+    cta: d.upcoming ? 'Zur Planung' : 'Zur Reise',
+    title: tripTitle(d, 'de'),
+    teaser: richToPlain(bi(d, 'summary', 'de')),
+    route,
+    cols: i % 2 === 0 ? '7fr 5fr' : '5fr 7fr',
+    imgOrder: i % 2 === 0 ? 0 : 2,
+  };
+});
+const edHeroImg = edTrips[0]?.src || '';
+const edKicker = `Reisen — ${(s.kicker_de && s.kicker_de !== 'Reisen') ? s.kicker_de : 'Alle Routen'}`;
+const edTitle = s.title_de || 'Reisen';
+const edSub = s.intro_de || '';
 ---
 <BaseLayout title={`${s.title_de || 'Reisen'} — Wide & Wild`} lang="de" description="Unsere Roadtrips — Reisen von Wide & Wild als Karten-Timeline mit Stationen, Fotos und Erlebnissen.">
-  <section>
-    <div class="wrap">
-      <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="reisen_settings" lang="de" />
-      <AdminSectionBar collection="reisen" newLabel="Neue Reise" archived={archivedItems} lang="de" />
-      <TripsOverview trips={trips} lang="de" />
-    </div>
-  </section>
+  {design === 'editorial' ? (
+    <Fragment>
+      <header class="ed-page-hero">
+        <div class="ed-page-hero-img" data-ed-hero-img>{edHeroImg && <img src={edHeroImg} alt="" fetchpriority="high" decoding="async" />}</div>
+        <div class="ed-page-hero-scrim" aria-hidden="true"></div>
+        <div class="ed-page-hero-content" data-ed-hero-content>
+          <p class="ed-kicker">{edKicker}</p>
+          <h1 class="ed-page-title">{edTitle}</h1>
+          {edSub && <p class="ed-page-sub">{edSub}</p>}
+        </div>
+      </header>
+      <section class="ed-section" style="padding-top:clamp(80px,12vw,120px);padding-bottom:0">
+        <div class="ed-sfeat-list">
+          {edTrips.map((t: any) => (
+            <a href={t.href} class="ed-sfeat" data-reveal style={`grid-template-columns:${t.cols}`}>
+              <span class="ed-sfeat-img" style={`order:${t.imgOrder}${t.src ? '' : ';background:' + t.grad}`}>
+                {t.src && <img src={t.src} alt={t.alt} data-zoom loading="lazy" decoding="async" />}
+              </span>
+              <span class="ed-sfeat-body">
+                <span class="ed-sfeat-metarow">
+                  {t.meta && <span class="ed-sfeat-meta">{t.meta}</span>}
+                  <span class="ed-sfeat-pill" style={`color:${t.statusColor}`}>{t.status}</span>
+                </span>
+                <span class="ed-sfeat-title">{t.title}</span>
+                {t.teaser && <span class="ed-sfeat-teaser">{t.teaser}</span>}
+                {t.route && <span class="ed-sfeat-route">{t.route}</span>}
+                <span class="ed-sfeat-link">{t.cta} →</span>
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
+    </Fragment>
+  ) : (
+    <section>
+      <div class="wrap">
+        <SettingsHeader client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="reisen_settings" lang="de" />
+        <AdminSectionBar collection="reisen" newLabel="Neue Reise" archived={archivedItems} lang="de" />
+        <TripsOverview trips={trips} lang="de" />
+      </div>
+    </section>
+  )}
 </BaseLayout>

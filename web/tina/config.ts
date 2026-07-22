@@ -1123,6 +1123,14 @@ export default defineConfig({
         ui: { allowedActions: { create: false, delete: false } },
         fields: [
           { type: 'string', name: 'ww_here', label: '🎨 Darstellung', ui: { component: SectionBanner } },
+          {
+            type: 'string', name: 'design', label: '🖤 Design-Variante (ganze Seite)',
+            description: 'Schaltet das GESAMTE Seiten-Design um. „Klassisch" = die aktuelle helle Optik. „Editorial (dunkel)" = das neue dunkle Design. Nach dem Umschalten baut die Seite ~1–2 Min neu (Cloudflare), dann ist es live.',
+            options: [
+              { value: 'klassisch', label: 'Klassisch (hell)' },
+              { value: 'editorial', label: 'Editorial (dunkel)' },
+            ],
+          },
           { type: 'image', name: 'logo', label: 'Logo (Nav / Hero / Footer)', ui: { component: SinglePhotoField } },
           {
             type: 'string', name: 'image_frame', label: 'Bild-Rahmen & Schatten',

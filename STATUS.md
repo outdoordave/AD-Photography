@@ -1,10 +1,29 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-07-16** · Live-Branch `main`. Seite **live**, Cutover durch. SEO-Grundlage steht
+> **Stand: 2026-07-19** · Live-Branch `main`. Seite **live**, Cutover durch. SEO-Grundlage steht
 > (Sitemap, JSON-LD, Google Search Console bestätigt + Sitemap gelesen), Datenschutz **vollständig**
 > (inkl. Web3Forms), Performance ok, A11y-Basics drin, Security-Header + CSP gesetzt. **Keine offenen
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
 > Session überschrieben). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
+>
+> **🚧 In Arbeit (Branch `editorial-redesign`, NICHT auf main/live): dunkles Editorial-Redesign, CMS-umschaltbar.**
+> Ziel: die GANZE Seite ins dunkle Editorial-Design (Quelle: Claude-Design-Handoff, **`design/`-Ordner = HTML
+> ist maßgeblich, mitgelieferte Screenshots ignorieren — teils falsch**), per Schalter „Darstellung →
+> design (klassisch|editorial)" umschaltbar, echte CMS-Inhalte, bestehende Funktionen + Editierbarkeit erhalten.
+> **Stand 19.07.: ALLE Seiten 1:1 gebaut** (jeweils eigener editorial-Zweig, klassisch bleibt unverändert):
+> Startseite (Hero + 01 Duo + 02 Collage/Lightbox + 03 Stories + 04 Journal), Portfolio, **Stories**, **Journal**
+> (Foto-Lightbox/Karten-Pin/Social erhalten), **Reisen** (+ Nächste-Reise-Band), **Equipment** (TOC-Pillen +
+> Kategorie-Zeilen), **Über uns** (2 Porträts + Statement + Kontakt), **Story-Detail** (Hero + Lesetext,
+> Wander-Titel nur klassisch), **Reise-Detail** (Fakten + Etappen + sticky **MapLibre**-Karte, neue Insel
+> `EditorialTrip`). Nav/Footer/Motion (`EditorialMotion.astro`) dunkel. Commits `b0d44f2`,`899554e`,`0e97a23`,
+> `3601c24`,`729842e`,`7200077`,`8471f78`,`d43cc29` (+ frühere `ada8a5f`…`243a3ee`).
+> **🟡 Vor Merge zu prüfen (David):** (1) **Karten-Kacheln** der Reise-Detailseite laden erst auf dem echten
+> Deploy — die Headless-Preview blockt `tiles.openfreemap.org`; Route/Marker/flyTo/Dimmen im Browser gegentesten,
+> ggf. dunkleren Karten-Stil wählen. (2) Interaktive Effekte (Scroll-Reveal, Hero-Parallax, Wort-Scrub,
+> Collage-Hover, Karten-Sync) im **echten Browser** durchscrollen (Build-grün fängt keine Laufzeitfehler).
+> (3) Daten-Lücken ggü. Design-Mockup: „by"-Kürzel der Startseiten-Collage, Equipment-Notiz/„wer", Reise-Foto-Spot
+> — fehlen in den echten Feldern (nicht erfunden). Tina Cloud indexiert `main` → Schalter erscheint im echten
+> CMS erst nach Merge + Re-Index; bis dahin lokal (`npm run dev`) testen.
 >
 > **🆕 EXIF-Build-Fix + Bild-Referenzen repariert + Move-Ursache gefixt (16.07., `0d80b91`,`10b634e`,`b388f2c`,`e516fd6`).**
 > (1) **Build erhielt kein EXIF:** `optimize-uploads.mjs` (sharp) verwarf Metadaten bei JEDEM Build →

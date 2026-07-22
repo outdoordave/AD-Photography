@@ -4,20 +4,51 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import GearContent from '../components/GearContent.tsx';
 import { client } from '../../tina/__generated__/client';
+import appearance from '../data/appearance-settings.json';
+import { groupGear } from '../lib/gear';
 
 const res = await client.queries.gear({ relativePath: 'gear.json' });
-const title = (res.data.gear as any)?.title_de || 'Equipment';
+const g = (res.data.gear as any) || {};
+const title = g.title_de || 'Equipment';
+const design = (appearance as any).design === 'editorial' ? 'editorial' : 'klassisch';
+
+// Editorial: Hero-Sprungpillen aus den echten Kategorien (nur nicht-leere).
+const edGroups = design === 'editorial' ? groupGear(Array.isArray(g.items) ? g.items : [], Array.isArray(g.categories) ? g.categories : []) : [];
+const edToc = edGroups.map((grp: any, i: number) => ({ id: grp.id, label: `${String(i + 1).padStart(2, '0')} ${grp.de}` }));
+const edKicker = g.kicker_de || 'Equipment';
+const edSub = g.intro_de || '';
+const edHeroImg = '/uploads/img_1418-2.webp';
 ---
 <BaseLayout title={`${title} — Wide & Wild`} lang="de" description="Die Ausrüstung hinter Wide & Wild — Kameras, Objektive, Drohnen und Reise-Gear von Alexandra & David.">
-  <section>
-    <div class="wrap">
-      <GearContent
-        client:load
-        query={res.query}
-        variables={res.variables}
-        data={res.data}
-        lang="de"
-      />
-    </div>
-  </section>
+  {design === 'editorial' ? (
+    <Fragment>
+      <header class="ed-page-hero">
+        <div class="ed-page-hero-img" data-ed-hero-img><img src={edHeroImg} alt="" fetchpriority="high" decoding="async" /></div>
+        <div class="ed-page-hero-scrim" aria-hidden="true"></div>
+        <div class="ed-page-hero-content" data-ed-hero-content>
+          <p class="ed-kicker">{edKicker}</p>
+          <h1 class="ed-page-title">{title}</h1>
+          {edSub && <p class="ed-page-sub">{edSub}</p>}
+          {edToc.length > 0 && (
+            <div class="ed-hero-toc">
+              {edToc.map((tc: any) => (<a class="ed-toc-pill" href={`#${tc.id}`}>{tc.label}</a>))}
+            </div>
+          )}
+        </div>
+      </header>
+      <GearContent client:load query={res.query} variables={res.variables} data={res.data} lang="de" design="editorial" />
+    </Fragment>
+  ) : (
+    <section>
+      <div class="wrap">
+        <GearContent
+          client:load
+          query={res.query}
+          variables={res.variables}
+          data={res.data}
+          lang="de"
+        />
+      </div>
+    </section>
+  )}
 </BaseLayout>

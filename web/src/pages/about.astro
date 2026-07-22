@@ -4,18 +4,61 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AboutContent from '../components/AboutContent.tsx';
 import { client } from '../../tina/__generated__/client';
+import appearance from '../data/appearance-settings.json';
+import contact from '../data/contact.json';
+import { photoDisplay } from '../lib/trips';
+import { normalizePath } from '../lib/stories';
 
 const res = await client.queries.ueber_uns({ relativePath: 'about.json' });
-const title = (res.data.ueber_uns as any)?.title_de || 'Über uns';
+const ab = (res.data.ueber_uns as any) || {};
+const title = ab.title_de || 'Über uns';
+const design = (appearance as any).design === 'editorial' ? 'editorial' : 'klassisch';
+const c = contact as any;
+
+// Editorial-Hero: festes Titelbild (wie im Design), Fallback = erstes Porträt.
+const heroFixed = '/uploads/alben/Firsts/img_5916-3.webp';
+const firstPersonPhoto = normalizePath(photoDisplay((Array.isArray(ab.persons) ? ab.persons[0]?.photo : '') || ''));
+const edHeroImg = heroFixed || firstPersonPhoto;
+const edKicker = ab.kicker_de || 'Über uns';
+const edSub = ab.intro_de || '';
+const edChannels = (Array.isArray(c.channels) ? c.channels : []).filter((x: any) => x && x.url);
+const edContactKicker = c.kicker_de || 'Kontakt';
+const edContactTitle = c.title_de || 'Sag Hallo';
 ---
 <BaseLayout title={`${title} — Wide & Wild`} lang="de" description="Die zwei Menschen hinter Wide & Wild — wie Alexandra & David zur Reise- und Outdoor-Fotografie kamen.">
-  <div id="page-about">
-    <AboutContent
-      client:load
-      query={res.query}
-      variables={res.variables}
-      data={res.data}
-      lang="de"
-    />
-  </div>
+  {design === 'editorial' ? (
+    <Fragment>
+      <header class="ed-page-hero">
+        <div class="ed-page-hero-img" data-ed-hero-img><img src={edHeroImg} alt="" fetchpriority="high" decoding="async" /></div>
+        <div class="ed-page-hero-scrim" aria-hidden="true"></div>
+        <div class="ed-page-hero-content" data-ed-hero-content>
+          <p class="ed-kicker">{edKicker}</p>
+          <h1 class="ed-page-title">{title}</h1>
+          {edSub && <p class="ed-page-sub">{edSub}</p>}
+        </div>
+      </header>
+      <div id="page-about">
+        <AboutContent client:load query={res.query} variables={res.variables} data={res.data} lang="de" design="editorial" channels={edChannels} />
+      </div>
+      <section id="kontakt" class="ed-contact">
+        <p class="ed-contact-kicker" data-reveal>{edContactKicker}</p>
+        <p class="ed-contact-title" data-reveal>{edContactTitle}</p>
+        {edChannels.length > 0 && (
+          <div class="ed-contact-pills" data-reveal>
+            {edChannels.map((ch: any) => (<a class="ed-contact-pill" href={ch.url} target="_blank" rel="noopener">{ch.label}</a>))}
+          </div>
+        )}
+      </section>
+    </Fragment>
+  ) : (
+    <div id="page-about">
+      <AboutContent
+        client:load
+        query={res.query}
+        variables={res.variables}
+        data={res.data}
+        lang="de"
+      />
+    </div>
+  )}
 </BaseLayout>

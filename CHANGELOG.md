@@ -17,6 +17,41 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-19 — Editorial Reise-Detail „v2" + weitere Feedback-Korrekturen [Branch `editorial-redesign`]
+- **Reise-Detail v2** (`d9cfda0`): neues Design „Reise Tennessee Winter v2" (per claude_design-MCP importiert) als editoriale Reise-Detailseite umgesetzt — Hero + 4 Fakt-Karten + „Die Route" (Etappen links mit **Fade-in/-out** aktiv↔inaktiv, sticky Karte rechts + **Caption** „Station N/Gesamt + Name" + **Nummern-Dots** + **pulsierender Halo**). **Karte behält die bestehende MapLibre-Fahrzeug-Engine** (Auto fährt/Flugzeug fliegt, flyTo, mitwachsende Route): Geometrie-/Routen-Helfer aus `TripTimeline` exportiert (`buildRoute`/`buildPath`/`arcPoints`/`bearingDeg`/`setMapLanguage`/`prefersReduced`), Fahrzeug-Funktionen in `EditorialTripV2.tsx` portiert; Linien/Marker gold auf dunkel. Echte Stationen (CMS), `data-tina-field` bleibt. Klassische `TripTimeline` unverändert. **Nur auf echtem Deploy voll prüfbar** (Headless-Preview blockt externe Tiles → `load` feuert nie; programmatisches Scrollen greift nicht).
+- **Weitere Korrekturen** (`fe27bf8`, `4631194`): Hover-Grundsatz auch für Bild-Kacheln (Album-Name Startseite-02 + Portfolio wird gold), Insta-Icon Über uns (Kontur statt gefülltem Klotz), Timeline-Fades von Creme auf Dunkel. Hover-Grundsatz zusätzlich ins Projektgedächtnis geschrieben.
+
+## 2026-07-19 — Editorial-Redesign: Feedback-Korrekturen (2 Runden) [Branch `editorial-redesign`]
+- **Runde 1 (`a517754`):** Nav war auf Unterseiten oben unsichtbar (Hero-`<header>` erbte `header{z-index:1100}` und überdeckte die fixe Nav) → Heroes `z-index:1`. Journal-Karten-Hover-Pop (translateY/Schatten) + `data-card`-Stagger entfernt. Unterseiten-Titel kleiner (`clamp(38–76px)` statt 48–104) — echte lange Titel brachen sonst überdimensioniert um.
+- **Runde 2 (`47a598a`):**
+  - **Hover site-weit nur Schrift gold** (kein Feld-/Rahmen-/Padding-Highlight): Startseite 03/04, Journal-Zeilen (ganze Zeile färbt Text), Equipment-Zeilen.
+  - **Startseite 01:** beide Porträt-Kacheln gleiche Drift-Richtung (David −16 → +16).
+  - **Reisen:** „Nächste-Reise"-Band raus; ALLE Reisen als alternierende Reihen (upcoming/neueste oben, älteste unten). Teaser `[object Object]` gefixt (`summary` ist Tina-Rich-Text → `richToPlain`). Fehlende Cover → verknüpftes Album, sonst Farbverlauf-Platzhalter (Daten haben für 3 Reisen keine Fotos).
+  - **Über uns:** Social-Link zwischen Bio und Fakten + Instagram-Icon.
+  - **Kontaktseite** editorial reskinnt (`#page-contact`: Hero-Typo, dunkles Formular, Kanäle) — Web3Forms-Logik unangetastet.
+  - **Nav-Logo:** Filter `invert(1) hue-rotate(180deg)` statt `brightness(0) invert(1)` — das Logo hat einen weißen Hintergrund und wurde sonst zum weißen Klotz; jetzt Hintergrund dunkel, Zeichnung/Farben sichtbar.
+- **Offen:** Reise-Detail-Karte extern (nur Deploy prüfbar); manche Reisen ohne echte Fotos (David: Fotos/Alben zuordnen).
+
+## 2026-07-19 — Editorial-Redesign: alle Unterseiten + Detailseiten 1:1 [Branch `editorial-redesign`]
+- **Grundsatz geschärft:** Nur der `design/`-Ordner (HTML) des Claude-Design-Handoffs ist maßgeblich, die mitgelieferten Screenshots sind teils falsch → alle Seiten strikt aus den `.dc.html`/`.html` nachgebaut, Funktion + Editierbarkeit wie die echte Seite.
+- **Startseiten-Collage korrigiert:** `EditorialMoments` jetzt exakt **4** Design-Kacheln mit den Original-Spans/Drifts (statt 5 falscher), Collage-`gap` 14→28, Hover-Reveal-Label (opacity 0→1) + `.ed-collage-by`; Story-Zeilen-Hover färbt alle Spans gold. Commit: `899554e`.
+- **Editorial-Footer:** große Ghost-Wortmarke „Wide & Wild", Mono-Uppercase-Links, Logo/PaperRip aus; alle Links/Social/Admin bleiben. Commit: `b0d44f2`.
+- **Stories-Seite** (`stories/index.astro`): Hero + alternierende Bild/Text-Reihen (7fr/5fr ↔ 5fr/7fr, gap 96, Zoom-Hover, Meta/Titel/Teaser/„Story lesen →"), echte Stories-Daten. Commit: `899554e`.
+- **Journal-Seite** (`journal/index.astro` + `JournalArchive` design=editorial): Hero + nach Jahren gruppierte Notiz-Zeilen (Ghost-Jahr, 170px/1fr/auto, Hover), Foto-Lightbox/Karten-Pin/Social/Verlinkung erhalten. Commit: `0e97a23`.
+- **Reisen-Seite** (`trips.astro`): alternierende Reihen + Status-Pille + Route (aus Stationsnamen) + „Nächste-Reise"-Vollbild-Band. Commit: `3601c24`.
+- **Equipment-Seite** (`gear.astro` + `GearContent` design=editorial): Hero + TOC-Sprungpillen + Kategorie-/Item-Zeilen (Name-Link | Marke | ↗), „Bald hier". Commit: `729842e`.
+- **Über-uns-Seite** (`about.astro` + `AboutContent` design=editorial): 2 Porträts (Rolle/Name-Label, Bio, Fakt-Boxen aus echter Gear-Liste, IG je Person via Namensmatch) + Statement (why_text) + Kontakt (contact.json). Commit: `7200077`.
+- **Story-Detail** (`stories/[slug].astro` + `StoryReaderContent` design=editorial): 88vh-Hero + Lesetext (Lead/Pullquote/Bild-Typo) + Weiterführend; Wander-Titel bleibt nur im klassischen Design; Inline-Bild-Lightbox + Album-Block erhalten; Cover-Fallback aufs verknüpfte Album. Commit: `8471f78`.
+- **Reise-Detail** (`trips/[slug].astro` + neue Insel `EditorialTrip`): 72vh-Hero + Fakt-Karten + „Die Route" (Etappen-Liste + sticky **MapLibre**-Karte mit Gold-Route/Markern/flyTo/Dimmen beim Scrollen, echte OpenFreeMap-Technik) + Weiterführend; klassische `TripTimeline` unverändert. Commit: `d43cc29`.
+- Neue CSS-Blöcke in `editorial.css` (`.ed-sfeat*`, `.ed-journal-page/.ed-jrow*`, `.ed-nexttrip*`, `.ed-hero-toc/.ed-gear-*`, `.ed-about-*/.ed-statement*/.ed-contact*`, `.ed-reader-*/.ed-related*`, `.ed-trip-*/.ed-route*/.ed-leg*/.ed-map*`).
+- **Offen/zu prüfen:** Karten-Kacheln extern → erst auf dem echten Deploy sichtbar (Headless-Preview blockt `tiles.openfreemap.org`); dunklerer Karten-Stil optional; Foto-genaue Urheber-Kürzel („by") in der Startseiten-Collage fehlen in den echten Daten; Equipment-„Notiz"/„wer" und Reise-„Foto-Spot"/„Dauer/Strecke" nur so weit befüllt, wie echte Felder existieren.
+
+## 2026-07-16 — Editorial-Design (dunkel), Phase 0: Fundament [Branch `editorial-redesign`]
+- Start des CMS-umschaltbaren dunklen Editorial-Redesigns (Quelle: Claude-Design „Wide & Wild Startseite V1.1"). **Auf eigenem Branch**, kommt gebündelt auf main, wenn es rund ist.
+- **Schalter** `design` (klassisch|editorial) in „Darstellung" (Schema → Re-Index nötig; Default klassisch). BaseLayout setzt `<html data-design>` und lädt Editorial-Fonts (Archivo Variable, Space Mono, **lokal**) + `editorial.css`, beides nur unter `data-design="editorial"`.
+- `editorial.css`: dunkle Design-Tokens (bg #0d0e0c, Text #edeae3, Gold #d4a45a) überschreiben die `--c-*`/`--font-*`-Tokens → bestehendes Markup re-skint automatisch (im Browser verifiziert; Nav-Kopf bleibt hell → Phase 2). Commit: `ada8a5f`.
+- Nächste Phasen: 1) Startseite-Editorial-Markup (Hero/Portfolio/Stories/Journal, echte Daten, Lightbox/Hero-Modi erhalten), 2) Nav+Footer dunkel, 3) übrige Seiten je Claude-Design-Entwurf.
+
 ## 2026-07-16 — Medien-Manager: Vorschau klebt endgültig durch (Footer weg) + Spaltenköpfe bündig
 - **Vorschau rutschte ab einem Punkt doch mit** — Ursache gefunden: der Marketing-**Footer** unter dem Finder erzeugt ~360px Extra-Scroll, in denen die (hohe) sticky-Leiste löst (der kurzen Baum-Leiste fällt das nicht auf). **Footer auf der Medien-Seite (≥721px) ausgeblendet** → Seite endet am Listenende, Vorschau + Baum kleben bis ganz unten durch. Nachgerechnet: Löse-Punkt (Scroll 636) liegt HINTER dem max. Scroll (613) → unerreichbar, Sicherheitsabstand ~22px konstant je Bildschirm. Vorschau bleibt **voll**, scrollt nur bei kleinem Bildschirm intern (`max-height: calc(100vh - 200px)`).
 - **Spaltenköpfe bündig:** Datei-Zeilen haben einen Mülleimer am Ende, Kopf-/Ordnerzeilen nicht → alle Meta-Spalten waren um 28px versetzt. 28px-Platzhalter ergänzt → Kamera/Typ/Größe/Hochgeladen sitzen exakt über den Daten (nachgemessen).

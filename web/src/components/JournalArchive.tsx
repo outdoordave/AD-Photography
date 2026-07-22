@@ -27,7 +27,7 @@ const JournalMap = React.lazy(() => import('./JournalMap'));
 type Props = {
   query: string; variables: object; data: any;
   setQuery: string; setVariables: object; setData: any;
-  lang: 'de' | 'en'; prefix?: string;
+  lang: 'de' | 'en'; prefix?: string; design?: string;
 };
 
 const STYLES = ['stream', 'plain', 'card', 'notes'];
@@ -42,6 +42,7 @@ export default function JournalArchive(props: Props) {
   const lang = props.lang;
   const prefix = props.prefix || '';
   const isEn = lang === 'en';
+  const isEd = props.design === 'editorial';
 
   // Im Editor-iframe (self !== top) -> Symbole als Feld-Sprung; live -> echte Links/Aktionen.
   const [isEditor, setIsEditor] = React.useState(false);
@@ -152,6 +153,118 @@ export default function JournalArchive(props: Props) {
       </li>
     );
   };
+
+  // --- Editorial: eine Zeile pro Notiz (Datum | Text + Medien | →), 1:1 aus Journal.dc.html.
+  // Behält alle Funktionen (Foto-Lightbox, Karten-Pin, Social, Verlinkung, Video, Link).
+  const renderEditorialItem = (j: any) => {
+    const slug = j._sys.filename;
+    const text = journalText(j, lang);
+    const photo = journalFirstPhoto(j);
+    const point = parseGeoPoint(j.location);
+    const linked = resolveLinkedContent(j, lang);
+    const social = resolveSocial(j, lang);
+    const extLink = journalLink(j, lang);
+    const fTitle = isEn ? 'title_en' : 'title_de';
+    const fText = isEn ? 'text_en' : 'text_de';
+    const detail = `${prefix}/journal/${slug}`;
+    const placeLabel = (typeof j.place === 'string' && j.place.trim()) ? j.place.trim() : (isEn ? 'On the map' : 'Auf der Karte');
+    const hasTitle = journalHasTitle(j, lang);
+    const heading = journalHeading(j, lang);
+    const allPhotos = (Array.isArray(j.photos) ? j.photos.filter(Boolean) : []) as string[];
+    const openPhotos = () => setPhotoLb({ photos: allPhotos.map((x) => ({ photo: normalizePath(x) })), name: heading });
+    const hasMedia = photo || point || social || linked || j.youtube_url || extLink;
+    return (
+      <li className={`ed-jrow ww-card-wrap${isEditor ? '' : ' is-clickable'}`} key={slug} onClick={cardClick(detail)}>
+        <span className="ed-jrow-date" data-tina-field={tinaField(j, 'date')}>{formatFullDate(j.date || '', lang)}</span>
+        <span className="ed-jrow-body">
+          {hasTitle ? <a className="ed-jrow-title" href={detail} data-tina-field={tinaField(j, fTitle)}>{heading}</a> : null}
+          {text ? <div className="ed-jrow-text ww-rich" data-tina-field={tinaField(j, fText)}><RichText value={text} /></div> : null}
+          {hasMedia ? (
+            <div className="ed-jrow-media">
+              {photo ? (isEditor
+                ? <a className="jm-thumb" href={detail} data-tina-field={tinaField(j, 'photos')}><img src={photo} alt="" loading="lazy" /></a>
+                : <button type="button" className="jm-thumb" onClick={openPhotos} aria-label={isEn ? 'Enlarge photo' : 'Foto vergrößern'}><img src={photo} alt="" loading="lazy" /></button>
+              ) : null}
+              {point ? (isEditor
+                ? <span className="jm-badge" title={isEn ? 'Location' : 'Standort'} data-tina-field={tinaField(j, j.place ? 'place' : 'location')}>📍<span className="jm-txt">{placeLabel}</span></span>
+                : <button type="button" className="jm-badge" title={isEn ? 'Open map' : 'Karte öffnen'} onClick={() => setMapPoint(point)}>📍<span className="jm-txt">{placeLabel}</span></button>
+              ) : null}
+              {social ? (isEditor
+                ? <span className="jm-badge jm-social" title={social.platform} aria-label={social.platform} data-tina-field={tinaField(j, 'social')} dangerouslySetInnerHTML={{ __html: socialIcon(social.platform) }} />
+                : <a className="jm-badge jm-social" href={social.url} target="_blank" rel="noopener" title={social.platform} aria-label={social.platform} dangerouslySetInnerHTML={{ __html: socialIcon(social.platform) }} />
+              ) : null}
+              {linked ? (isEditor
+                ? <span className="jm-badge jm-linked" data-tina-field={tinaField(j, 'linked_content')}>{linked.typeLabel}</span>
+                : <a className="jm-badge jm-linked" href={linked.href}>{linked.typeLabel}</a>
+              ) : null}
+              {j.youtube_url ? (isEditor
+                ? <span className="jm-badge" title="Video" aria-label="Video" data-tina-field={tinaField(j, 'youtube_url')}>▶</span>
+                : <a className="jm-badge" href={j.youtube_url} target="_blank" rel="noopener" title="Video" aria-label="Video">▶</a>
+              ) : null}
+              {extLink ? (isEditor
+                ? <span className="jm-badge" title={extLink.label || 'Link'} data-tina-field={tinaField(j, 'link')}>↗<span className="jm-txt">{extLink.label}</span></span>
+                : <a className="jm-badge" href={extLink.url} target="_blank" rel="noopener" title={extLink.url}>↗<span className="jm-txt">{extLink.label}</span></a>
+              ) : null}
+            </div>
+          ) : null}
+        </span>
+        <span className="ed-jrow-arrow" aria-hidden="true">→</span>
+        <AdminDocTools collection="journal" relativePath={`${slug}.md`} title={heading} />
+      </li>
+    );
+  };
+
+  if (isEd) {
+    // main ist bereits nach Datum absteigend sortiert -> Jahre erscheinen in Reihenfolge.
+    const groups: { year: string; items: any[] }[] = [];
+    for (const j of main) {
+      const y = String((j as any).date || '').slice(0, 4) || '—';
+      let g = groups.find((x) => x.year === y);
+      if (!g) { g = { year: y, items: [] }; groups.push(g); }
+      g.items.push(j);
+    }
+    return (
+      <>
+        {isAdmin ? (
+          <div className="ww-admin-actions" style={{ maxWidth: 1080, margin: '0 auto', padding: '0 48px' }}>
+            <a className="btn ww-admin-newbtn" href={NEW_HREF} target="_top">{isEn ? '+ New entry' : '+ Neuer Beitrag'}</a>
+            <AdminArchive collection="journal" items={archivedJournal} lang={lang} />
+          </div>
+        ) : null}
+        {main.length === 0 && archive.length === 0 ? (
+          <p className="journal-empty" style={{ maxWidth: 1080, margin: '40px auto', padding: '0 48px' }}>{isEn ? 'No entries yet.' : 'Noch keine Einträge.'}</p>
+        ) : (
+          <div className="ed-journal-page">
+            {groups.map((g) => (
+              <div className="ed-jgroup" key={g.year}>
+                <p className="ed-jyear" data-reveal>{g.year}</p>
+                <ol style={{ listStyle: 'none', margin: 0, padding: 0 }}>{g.items.map(renderEditorialItem)}</ol>
+              </div>
+            ))}
+            {archive.length > 0 ? (
+              <details className="ed-jarch">
+                <summary>{isEn ? `Archive (${archive.length})` : `Archiv (${archive.length})`}</summary>
+                <ol style={{ listStyle: 'none', margin: 0, padding: 0 }}>{archive.map(renderEditorialItem)}</ol>
+              </details>
+            ) : null}
+          </div>
+        )}
+        {mapPoint ? (
+          <div className="journal-map-lb" role="dialog" aria-modal="true" onClick={() => setMapPoint(null)}>
+            <div className="jmlb-inner" onClick={(e) => e.stopPropagation()}>
+              <button className="jmlb-close" type="button" onClick={() => setMapPoint(null)} aria-label={isEn ? 'Close' : 'Schließen'}>✕</button>
+              <React.Suspense fallback={<div style={{ padding: 20, color: 'var(--c-ink-soft)' }}>…</div>}>
+                <JournalMap lon={mapPoint.lon} lat={mapPoint.lat} />
+              </React.Suspense>
+            </div>
+          </div>
+        ) : null}
+        {photoLb && photoLb.photos.length ? (
+          <Lightbox photos={photoLb.photos} startIndex={0} albumName={photoLb.name} onClose={() => setPhotoLb(null)} />
+        ) : null}
+      </>
+    );
+  }
 
   return (
     <>

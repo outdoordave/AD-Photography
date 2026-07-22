@@ -24,7 +24,7 @@ const STICKY_TOP = 96; // Fallback unter der globalen Nav (gemessen in measure()
 const READ_FRACTION = 0.5;  // ab welcher Höhe eine Station als „kurz" gilt (Anteil des Lesebands)
 const LEAD_FACTOR   = 0.55; // wie stark kurze Stationen früher umschalten (0 = aus, höher = früher)
 
-function setMapLanguage(map: maplibregl.Map, lang: Lang) {
+export function setMapLanguage(map: maplibregl.Map, lang: Lang) {
   if (!map.isStyleLoaded()) return;
   const expr: any = ['coalesce', ['get', 'name:' + lang], ['get', 'name:latin'], ['get', 'name']];
   try {
@@ -36,12 +36,12 @@ function setMapLanguage(map: maplibregl.Map, lang: Lang) {
   } catch { /* Stil noch nicht bereit */ }
 }
 
-const prefersReduced = () =>
+export const prefersReduced = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // Gekrümmter Flugbogen (Bézier, poleward). Nur aktiv, wenn ein Stop arriveBy:'flight' trägt
 // (im aktuellen Schema nicht vorhanden -> reale Reisen sind reine Fahrt; Code bleibt zukunftssicher).
-function arcPoints(a: [number, number], b: [number, number], bow: number, n: number): [number, number][] {
+export function arcPoints(a: [number, number], b: [number, number], bow: number, n: number): [number, number][] {
   const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2;
   const dx = b[0] - a[0], dy = b[1] - a[1];
   let perp: [number, number] = [dy, -dx];
@@ -51,7 +51,7 @@ function arcPoints(a: [number, number], b: [number, number], bow: number, n: num
   for (let t = 0; t <= n; t++) { const u = t / n, v = 1 - u; pts.push([v * v * a[0] + 2 * v * u * cx + u * u * b[0], v * v * a[1] + 2 * v * u * cy + u * u * b[1]]); }
   return pts;
 }
-function bearingDeg(a: [number, number], b: [number, number]) {
+export function bearingDeg(a: [number, number], b: [number, number]) {
   const dEast = (b[0] - a[0]) * Math.cos(((a[1] + b[1]) / 2) * Math.PI / 180);
   return Math.atan2(dEast, b[1] - a[1]) * 180 / Math.PI;
 }
@@ -76,8 +76,8 @@ function curveLeg(p0: [number, number], p1: [number, number], p2: [number, numbe
   return out;
 }
 
-type GeoStop = { lon: number | null; lat: number | null; flight: boolean };
-function buildRoute(geo: GeoStop[]) {
+export type GeoStop = { lon: number | null; lat: number | null; flight: boolean };
+export function buildRoute(geo: GeoStop[]) {
   const coords: ([number, number] | null)[] = geo.map((g) => (g.lon != null && g.lat != null ? [g.lon, g.lat] : null));
   const flightArcs: { i: number; pts: [number, number][] }[] = [];
   const legFlight: boolean[] = [false];
@@ -104,8 +104,8 @@ function buildRoute(geo: GeoStop[]) {
 // kumulierter Distanz (cum) und Flug-Flag des hinführenden Segments (segFlight); je Stop die
 // Distanz, an der er auf der Linie sitzt (stopDist). Damit kann die „gefahrene" Linie exakt bis
 // zur Fahrzeugposition gezeichnet werden, statt die ganze Route vorab als Balken zu zeigen.
-type RoutePath = { pts: [number, number][]; segFlight: boolean[]; cum: number[]; stopDist: number[]; total: number };
-function buildPath(route: ReturnType<typeof buildRoute>): RoutePath {
+export type RoutePath = { pts: [number, number][]; segFlight: boolean[]; cum: number[]; stopDist: number[]; total: number };
+export function buildPath(route: ReturnType<typeof buildRoute>): RoutePath {
   const { coords, legFlight, legPts: routeLegPts } = route;
   const pts: [number, number][] = [];
   const segFlight: boolean[] = [];

@@ -34,6 +34,10 @@ const { prev, next } = Astro.props as {
 if ((appearance as any).show_stories !== true) return Astro.redirect('/');
 const res = await client.queries.story({ relativePath: `${slug}.md` });
 const story = buildStory(res.data.story as any);
+const design = (appearance as any).design === 'editorial' ? 'editorial' : 'klassisch';
+// Editorial: „Weiterführend"-Karten aus verknüpftem Album (falls vorhanden).
+const linkedAlbum = (res.data.story as any)?.linked_album;
+const edAlbumSlug = linkedAlbum?._sys?.filename || '';
 // Archiviert -> Seite bleibt gebaut (Bearbeiten/Zurückholen), aber noindex (raus aus Suche).
 const archived = (res.data.story as any)?.archived === true;
 const title = story.de.title;
@@ -58,28 +62,56 @@ const articleLd: Record<string, any> = {
 };
 ---
 <BaseLayout title={`${title} — Wide & Wild`} lang="de" description={metaDesc} ogType="article" jsonld={articleLd} noindex={archived}>
-  <div id="page-story">
-    <a class="story-back" href="/stories">← Stories</a>
-    <AdminDocTools client:load collection="story" relativePath={`${slug}.md`} title={title} variant="bar" />
-    <StoryReaderContent
-      client:load
-      query={res.query}
-      variables={res.variables}
-      data={res.data}
-      lang="de"
-    />
-
-    <div class="reader-nav">
-      {prev ? (
-        <a href={`/stories/${prev.slug}`}><span class="dir">← Vorherige</span>{prev.title}</a>
-      ) : (
-        <button disabled><span class="dir">← Vorherige</span>—</button>
-      )}
-      {next ? (
-        <a class="next" href={`/stories/${next.slug}`}><span class="dir">Nächste →</span>{next.title}</a>
-      ) : (
-        <button class="next" disabled><span class="dir">Nächste →</span>—</button>
-      )}
+  {design === 'editorial' ? (
+    <div id="page-story">
+      <a class="ed-reader-back" href="/stories">← Stories</a>
+      <AdminDocTools client:load collection="story" relativePath={`${slug}.md`} title={title} variant="bar" />
+      <StoryReaderContent client:load query={res.query} variables={res.variables} data={res.data} lang="de" design="editorial" />
+      <section class="ed-related">
+        <div class="ed-related-grid">
+          {edAlbumSlug && (
+            <a class="ed-related-card" href={`/portfolio/${edAlbumSlug}`}>
+              <span class="ed-related-k">Das Album</span>
+              <span class="ed-related-t">Alle Fotos der Reise →</span>
+            </a>
+          )}
+          <a class="ed-related-card" href="/stories">
+            <span class="ed-related-k">Mehr</span>
+            <span class="ed-related-t">Weitere Stories →</span>
+          </a>
+          {next && (
+            <a class="ed-related-card" href={`/stories/${next.slug}`}>
+              <span class="ed-related-k">Nächste Story</span>
+              <span class="ed-related-t">{next.title} →</span>
+            </a>
+          )}
+        </div>
+      </section>
     </div>
-  </div>
+  ) : (
+    <div id="page-story">
+      <a class="story-back" href="/stories">← Stories</a>
+      <AdminDocTools client:load collection="story" relativePath={`${slug}.md`} title={title} variant="bar" />
+      <StoryReaderContent
+        client:load
+        query={res.query}
+        variables={res.variables}
+        data={res.data}
+        lang="de"
+      />
+
+      <div class="reader-nav">
+        {prev ? (
+          <a href={`/stories/${prev.slug}`}><span class="dir">← Vorherige</span>{prev.title}</a>
+        ) : (
+          <button disabled><span class="dir">← Vorherige</span>—</button>
+        )}
+        {next ? (
+          <a class="next" href={`/stories/${next.slug}`}><span class="dir">Nächste →</span>{next.title}</a>
+        ) : (
+          <button class="next" disabled><span class="dir">Nächste →</span>—</button>
+        )}
+      </div>
+    </div>
+  )}
 </BaseLayout>
