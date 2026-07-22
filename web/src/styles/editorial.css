@@ -448,7 +448,12 @@
 :root[data-design="editorial"] .tl-map, :root[data-design="editorial"] .tl-map .maplibregl-map { background: var(--c-bg-alt); }
 
 /* ===================== Reise-Detail v2: Etappen (Fade-in/-out) + sticky Karte + Caption + Dots + Halo ===================== */
-:root[data-design="editorial"] .ed-v2-grid { display: grid; grid-template-columns: 6fr 5fr; gap: 48px; align-items: start; max-width: 1360px; margin: 0 auto; padding: 0 clamp(20px,4vw,48px); }
+/* minmax(0,…fr): Spaltenbreite strikt am fr-Verhältnis — sonst zieht die Caption (nowrap-
+   Stationsname) die Karten-Spalte per min-content breiter/schmaler, wenn der Name wechselt
+   -> Karte + linkes Foto „zittern" in der Breite. */
+:root[data-design="editorial"] .ed-v2-grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 48px; align-items: start; max-width: 1360px; margin: 0 auto; padding: 0 clamp(20px,4vw,48px); }
+:root[data-design="editorial"] .ed-v2-legs { min-width: 0; }
+:root[data-design="editorial"] .ed-v2-mapcol { min-width: 0; }
 :root[data-design="editorial"] .ed-v2-legs { display: flex; flex-direction: column; gap: 96px; }
 :root[data-design="editorial"] .ed-v2-leg { transition: opacity .7s ease, filter .7s ease, transform .7s ease; }
 :root[data-design="editorial"] .ed-v2-leg.dim { opacity: .18; filter: saturate(.4); }
