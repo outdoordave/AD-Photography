@@ -477,10 +477,12 @@
 :root[data-design="editorial"] .ed-v2-map .maplibregl-ctrl-attrib { background: rgba(13,14,12,.7); }
 :root[data-design="editorial"] .ed-v2-map .maplibregl-ctrl-attrib a { color: var(--c-ink-soft); }
 :root[data-design="editorial"] .ed-v2-caption { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-:root[data-design="editorial"] .ed-v2-cap-txt { min-width: 0; }
+/* Name behält Mindestbreite; bei vielen Stationen brechen die Dots um (14 Dots passen sonst
+   nicht neben den Namen -> Name wurde auf „S…" gequetscht). */
+:root[data-design="editorial"] .ed-v2-cap-txt { min-width: 0; flex: 1 1 45%; }
 :root[data-design="editorial"] .ed-v2-cap-idx { display: block; font-family: var(--font-mono); font-size: 10px; letter-spacing: .24em; color: var(--c-accent); text-transform: uppercase; }
 :root[data-design="editorial"] .ed-v2-cap-name { display: block; margin-top: 4px; font-family: var(--font-display); font-variation-settings: 'wdth' 118; font-weight: 620; font-size: 19px; color: var(--c-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-:root[data-design="editorial"] .ed-v2-dots { display: flex; gap: 8px; flex-shrink: 0; }
+:root[data-design="editorial"] .ed-v2-dots { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; row-gap: 6px; max-width: 55%; }
 :root[data-design="editorial"] .ed-v2-dot { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(237,234,227,.2); background: transparent; color: var(--c-ink-soft); font-family: var(--font-mono); font-size: 9.5px; cursor: pointer; transition: all .3s; padding: 0; }
 :root[data-design="editorial"] .ed-v2-dot:hover { border-color: var(--c-accent); color: var(--c-accent); }
 :root[data-design="editorial"] .ed-v2-dot.on { background: var(--c-accent); border-color: var(--c-accent); color: #0d0e0c; }
