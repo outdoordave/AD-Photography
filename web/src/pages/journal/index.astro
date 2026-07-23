@@ -3,6 +3,7 @@
 // Liste als useTina-Insel (bearbeitbar in der CMS-Vorschau). Listen-Stil aus journal_settings.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import JournalArchive from '../../components/JournalArchive.tsx';
+import EditorialPageHero from '../../components/editorial/EditorialPageHero.tsx';
 import { client } from '../../../tina/__generated__/client';
 import appearance from '../../data/appearance-settings.json';
 import settings from '../../data/journal-settings.json';
@@ -22,22 +23,11 @@ const edNodes = design === 'editorial'
   ? sortJournalNodes((res.data.journalConnection?.edges || []).map((e: any) => e?.node).filter((n: any) => n && n.archived !== true))
   : [];
 const edHeroImg = edNodes.map((n: any) => journalFirstPhoto(n)).find(Boolean) || '';
-const edKicker = `Journal — ${s.kicker_de || 'Kurze Notizen'}`;
-const edTitle = s.title_de || 'Journal';
-const edSub = s.intro_de || '';
 ---
 <BaseLayout title={`${s.title_de || 'Journal'} — Wide & Wild`} lang="de" description={s.intro_de || 'Journal — kurze Notizen zwischen den Reisen von Alexandra & David.'}>
   {design === 'editorial' ? (
     <Fragment>
-      <header class="ed-page-hero">
-        <div class="ed-page-hero-img" data-ed-hero-img>{edHeroImg && <img src={edHeroImg} alt="" fetchpriority="high" decoding="async" />}</div>
-        <div class="ed-page-hero-scrim" aria-hidden="true"></div>
-        <div class="ed-page-hero-content" data-ed-hero-content>
-          <p class="ed-kicker">{edKicker}</p>
-          <h1 class="ed-page-title">{edTitle}</h1>
-          {edSub && <p class="ed-page-sub">{edSub}</p>}
-        </div>
-      </header>
+      <EditorialPageHero client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="journal_settings" lang="de" img={edHeroImg} titleFallback="Journal" />
       <JournalArchive client:load
         query={res.query} variables={res.variables} data={res.data}
         setQuery={setRes.query} setVariables={setRes.variables} setData={setRes.data}

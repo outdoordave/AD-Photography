@@ -3,6 +3,7 @@
 // (Ersetzt die frühere Tab-Variante.) Seitentexte live editierbar via SettingsHeader-Insel.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SettingsHeader from '../components/SettingsHeader.tsx';
+import EditorialPageHero from '../components/editorial/EditorialPageHero.tsx';
 import TripsOverview from '../components/TripsOverview.astro';
 import AdminSectionBar from '../components/AdminSectionBar.astro';
 import settings from '../data/trips-settings.json';
@@ -63,22 +64,11 @@ const edTrips = edSorted.map((t: any, i: number) => {
   };
 });
 const edHeroImg = edTrips[0]?.src || '';
-const edKicker = `Reisen — ${(s.kicker_de && s.kicker_de !== 'Reisen') ? s.kicker_de : 'Alle Routen'}`;
-const edTitle = s.title_de || 'Reisen';
-const edSub = s.intro_de || '';
 ---
 <BaseLayout title={`${s.title_de || 'Reisen'} — Wide & Wild`} lang="de" description="Unsere Roadtrips — Reisen von Wide & Wild als Karten-Timeline mit Stationen, Fotos und Erlebnissen.">
   {design === 'editorial' ? (
     <Fragment>
-      <header class="ed-page-hero">
-        <div class="ed-page-hero-img" data-ed-hero-img>{edHeroImg && <img src={edHeroImg} alt="" fetchpriority="high" decoding="async" />}</div>
-        <div class="ed-page-hero-scrim" aria-hidden="true"></div>
-        <div class="ed-page-hero-content" data-ed-hero-content>
-          <p class="ed-kicker">{edKicker}</p>
-          <h1 class="ed-page-title">{edTitle}</h1>
-          {edSub && <p class="ed-page-sub">{edSub}</p>}
-        </div>
-      </header>
+      <EditorialPageHero client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="reisen_settings" lang="de" img={edHeroImg} titleFallback="Reisen" />
       <section class="ed-section" style="padding-top:clamp(80px,12vw,120px);padding-bottom:0">
         <div class="ed-sfeat-list">
           {edTrips.map((t: any) => (

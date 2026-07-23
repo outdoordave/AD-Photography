@@ -3,6 +3,7 @@
 // der AboutContent-Insel. Wrapper #page-about, damit die Live-CSS-Scopes greifen.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AboutContent from '../components/AboutContent.tsx';
+import EditorialPageHero from '../components/editorial/EditorialPageHero.tsx';
 import { client } from '../../tina/__generated__/client';
 import appearance from '../data/appearance-settings.json';
 import contact from '../data/contact.json';
@@ -19,8 +20,6 @@ const c = contact as any;
 const heroFixed = '/uploads/alben/Firsts/img_5916-3.webp';
 const firstPersonPhoto = normalizePath(photoDisplay((Array.isArray(ab.persons) ? ab.persons[0]?.photo : '') || ''));
 const edHeroImg = heroFixed || firstPersonPhoto;
-const edKicker = ab.kicker_de || 'Über uns';
-const edSub = ab.intro_de || '';
 const edChannels = (Array.isArray(c.channels) ? c.channels : []).filter((x: any) => x && x.url);
 const edContactKicker = c.kicker_de || 'Kontakt';
 const edContactTitle = c.title_de || 'Sag Hallo';
@@ -28,15 +27,7 @@ const edContactTitle = c.title_de || 'Sag Hallo';
 <BaseLayout title={`${title} — Wide & Wild`} lang="de" description="Die zwei Menschen hinter Wide & Wild — wie Alexandra & David zur Reise- und Outdoor-Fotografie kamen.">
   {design === 'editorial' ? (
     <Fragment>
-      <header class="ed-page-hero">
-        <div class="ed-page-hero-img" data-ed-hero-img><img src={edHeroImg} alt="" fetchpriority="high" decoding="async" /></div>
-        <div class="ed-page-hero-scrim" aria-hidden="true"></div>
-        <div class="ed-page-hero-content" data-ed-hero-content>
-          <p class="ed-kicker">{edKicker}</p>
-          <h1 class="ed-page-title">{title}</h1>
-          {edSub && <p class="ed-page-sub">{edSub}</p>}
-        </div>
-      </header>
+      <EditorialPageHero client:load query={res.query} variables={res.variables} data={res.data} docKey="ueber_uns" lang="de" img={edHeroImg} titleFallback="Über uns" />
       <div id="page-about">
         <AboutContent client:load query={res.query} variables={res.variables} data={res.data} lang="de" design="editorial" channels={edChannels} />
       </div>

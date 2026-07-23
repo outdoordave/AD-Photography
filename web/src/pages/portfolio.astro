@@ -4,6 +4,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import GalleryContent from '../components/GalleryContent.tsx';
 import SettingsHeader from '../components/SettingsHeader.tsx';
+import EditorialPageHero from '../components/editorial/EditorialPageHero.tsx';
 import AdminSectionBar from '../components/AdminSectionBar.astro';
 import { tl } from '../lib/albums';
 import { photoDisplay } from '../lib/trips';
@@ -34,8 +35,6 @@ const edAlbums = design === 'editorial' ? albNodes.map((n: any, i: number) => {
   return { title: n.name || n._sys.filename, meta, cover, href: `/portfolio/${n._sys.filename}`, col: sp.col, row: sp.row };
 }).sort((a: any, b: any) => 0) : [];
 const edHeroImg = edAlbums[0]?.cover || '';
-const edTitle = s.title_de || 'Alben';
-const edSub = s.subtitle_de || s.intro_de || 'Jede Reise bekommt ihr eigenes Album. Vom Boden fotografiert, aus der Luft geflogen — neueste zuerst.';
 const modes = s.modes || { album: true, chronological: false, alphabetical: false };
 // Archivierte Alben für das Archiv-Panel (Ausblenden selbst passiert in GalleryContent).
 const archivedItems = (res.data.albenConnection?.edges || []).filter(Boolean)
@@ -45,15 +44,7 @@ const archivedItems = (res.data.albenConnection?.edges || []).filter(Boolean)
 <BaseLayout title={`${s.title_de || 'Portfolio'} — Wide & Wild`} lang="de" description="Ausgewählte Aufnahmen von Wide & Wild — Landschaften, Wildlife und Reisemomente in Foto-Alben.">
   {design === 'editorial' ? (
     <Fragment>
-      <header class="ed-page-hero">
-        <div class="ed-page-hero-img" data-ed-hero-img>{edHeroImg && <img src={edHeroImg} alt="" fetchpriority="high" decoding="async" />}</div>
-        <div class="ed-page-hero-scrim" aria-hidden="true"></div>
-        <div class="ed-page-hero-content" data-ed-hero-content>
-          <p class="ed-kicker">Portfolio — Alle Alben</p>
-          <h1 class="ed-page-title">{edTitle}</h1>
-          <p class="ed-page-sub">{edSub}</p>
-        </div>
-      </header>
+      <EditorialPageHero client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="galerie_settings" lang="de" img={edHeroImg} titleFallback="Alben" />
       <section class="ed-section" style="padding-top:clamp(60px,9vw,96px)">
         <div class="ed-collage ed-collage--albums">
           {edAlbums.map((a: any) => (
