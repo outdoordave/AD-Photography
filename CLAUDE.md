@@ -34,8 +34,10 @@
    `tina-lock.json` neu erzeugen (`npx tinacms dev --no-server`) und Build lokal grün ziehen
    (`./node_modules/.bin/astro build` aus `web/`). ⚠️ „Build grün" fängt **keine Laufzeitfehler** —
    interaktive Inseln (Lightbox/Karte/Scroll) im echten Browser gegentesten.
-5. **Push macht David selbst.** `git commit` ist erlaubt; **`git push` führt Claude NIE aus**
-   (David pusht gebündelt, manuell — `main` ist jetzt die Live-Seite, also doppelt vorsichtig).
+5. **Claude committet UND pusht selbst** (geändert 19.07.2026 auf Davids Wunsch — vorher pushte
+   David manuell). Verbindlich dabei: **vor jedem Push IMMER `git fetch`/`git pull`** (Tina Cloud
+   committet autonom auf `main`!), Push nur mit sauberem Stand, und nach dem Push kurz sagen,
+   dass deployed wird — **David prüft selbst auf Cloudflare**, ob der Build durchläuft.
 6. **Commit-Messages auf Deutsch**, sachlich, und enden mit:
    `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`
 7. **Cloudflare-Cache:** nach Deploy mit **Strg/Cmd+F5** (Hard Reload) testen; bei

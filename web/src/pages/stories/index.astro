@@ -49,6 +49,7 @@ const edRange = yearFirst && yearLast ? (yearFirst === yearLast ? yearFirst : `$
   {design === 'editorial' ? (
     <Fragment>
       <EditorialPageHero client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="stories_settings" lang="de" img={edHeroImg} titleFallback="Stories" />
+      <div class="wrap" style="padding-top:24px;"><AdminSectionBar collection="story" newLabel="Neue Story" archived={archivedItems} lang="de" /></div>
       <section class="ed-section" style="padding-top:clamp(80px,12vw,120px);padding-bottom:0">
         <div class="ed-section-head" data-reveal>
           <span class="ed-index">Alle Stories</span>

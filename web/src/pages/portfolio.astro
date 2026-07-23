@@ -45,6 +45,7 @@ const archivedItems = (res.data.albenConnection?.edges || []).filter(Boolean)
   {design === 'editorial' ? (
     <Fragment>
       <EditorialPageHero client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="galerie_settings" lang="de" img={edHeroImg} titleFallback="Alben" />
+      <div class="wrap" style="padding-top:24px;"><AdminSectionBar collection="alben" newLabel="Neues Album" archived={archivedItems} lang="de" /></div>
       <section class="ed-section" style="padding-top:clamp(60px,9vw,96px)">
         <div class="ed-collage ed-collage--albums">
           {edAlbums.map((a: any) => (
