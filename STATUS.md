@@ -43,8 +43,9 @@
 >    Kartenstil = eigenes Thema, OpenFreeMap hat keinen fertigen). 7. Startseiten-Sektionslabels
 >    („01 — Wer wir sind") sind Design-Beschriftungen, bewusst kein CMS-Feld.
 >
-> **Workflow (GEÄNDERT, s. Gedächtnis):** Claude committet UND **pusht selbst** (Erlaubnis liegt in
-> `.claude/settings.json`, greift ab neuer Session; vor Push IMMER pull — Tina committet autonom auf main).
+> **Workflow (GEÄNDERT, s. Gedächtnis):** Claude committet UND **pusht selbst** — FUNKTIONIERT (Blocker war
+> eine alte `deny: Bash(git push:*)`-Regel in `.claude/settings.local.json`, am 19.07. entfernt; Allow-Regeln
+> stehen in `.claude/settings.json`. Vor Push IMMER pull — Tina committet autonom auf main).
 > Nach Push per `curl https://aandd-photography.pages.dev` verifizieren; David prüft Cloudflare. Re-Index
 > bleibt David (nur bei Schema-Änderungen, vorher ankündigen). **Sandbox-Fallen:** lokaler `astro build`
 > braucht Tina-Cloud-Netz (scheitert ggf.), Headless-Preview blockt externe Tiles (Karte dort nie prüfbar),
