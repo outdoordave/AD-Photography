@@ -6,27 +6,49 @@
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
 > Session überschrieben). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
 >
-> **🚧 Editorial-Redesign: in `main` gemergt + deployed (19.07.), Re-Index erledigt, Standard `design: klassisch`.**
-> **Editierbarkeits-Parität der Heroes FERTIG (`1e9443e`, EditorialPageHero-Insel: Klick-zum-Feld + Live-Vorschau
-> auf Stories/Portfolio/Reisen/Journal/Equipment/Über uns). Nächste Schritte: (1) David pusht den Paritäts-Commit,
-> (2) Go-Live per CMS-Schalter 🎨 Darstellung → `design: editorial` (Not-Aus: zurückschalten).**
-> Ziel: die GANZE Seite ins dunkle Editorial-Design (Quelle: Claude-Design-Handoff, **`design/`-Ordner = HTML
-> ist maßgeblich, mitgelieferte Screenshots ignorieren — teils falsch**), per Schalter „Darstellung →
-> design (klassisch|editorial)" umschaltbar, echte CMS-Inhalte, bestehende Funktionen + Editierbarkeit erhalten.
-> **Stand 19.07.: ALLE Seiten 1:1 gebaut** (jeweils eigener editorial-Zweig, klassisch bleibt unverändert):
-> Startseite (Hero + 01 Duo + 02 Collage/Lightbox + 03 Stories + 04 Journal), Portfolio, **Stories**, **Journal**
-> (Foto-Lightbox/Karten-Pin/Social erhalten), **Reisen** (+ Nächste-Reise-Band), **Equipment** (TOC-Pillen +
-> Kategorie-Zeilen), **Über uns** (2 Porträts + Statement + Kontakt), **Story-Detail** (Hero + Lesetext,
-> Wander-Titel nur klassisch), **Reise-Detail** (Fakten + Etappen + sticky **MapLibre**-Karte, neue Insel
-> `EditorialTrip`). Nav/Footer/Motion (`EditorialMotion.astro`) dunkel. Commits `b0d44f2`,`899554e`,`0e97a23`,
-> `3601c24`,`729842e`,`7200077`,`8471f78`,`d43cc29` (+ frühere `ada8a5f`…`243a3ee`).
-> **🟡 Vor Merge zu prüfen (David):** (1) **Karten-Kacheln** der Reise-Detailseite laden erst auf dem echten
-> Deploy — die Headless-Preview blockt `tiles.openfreemap.org`; Route/Marker/flyTo/Dimmen im Browser gegentesten,
-> ggf. dunkleren Karten-Stil wählen. (2) Interaktive Effekte (Scroll-Reveal, Hero-Parallax, Wort-Scrub,
-> Collage-Hover, Karten-Sync) im **echten Browser** durchscrollen (Build-grün fängt keine Laufzeitfehler).
-> (3) Daten-Lücken ggü. Design-Mockup: „by"-Kürzel der Startseiten-Collage, Equipment-Notiz/„wer", Reise-Foto-Spot
-> — fehlen in den echten Feldern (nicht erfunden). Tina Cloud indexiert `main` → Schalter erscheint im echten
-> CMS erst nach Merge + Re-Index; bis dahin lokal (`npm run dev`) testen.
+> ## 🟢 ÜBERGABE Editorial-Redesign (Stand 19.07.2026 abends — hier nahtlos weiterarbeiten)
+>
+> **Ist-Zustand:** Das dunkle Editorial-Design ist **LIVE** (David hat im CMS `design: editorial` geschaltet).
+> Alles gemergt + gepusht bis inkl. `cd0f8c1`. **⚠️ EIN Schritt offen: Tina-Cloud-RE-INDEX steht aus**
+> (David macht ihn) — nötig für die 2 neuen Schema-Felder `startseite.hero.kicker_de/en` + `title_de/en`
+> (großer „WIDE & WILD"-Hero-Titel + Gold-Zeile, editierbar mit Zeilenumbruch; Fallbacks = alte Texte).
+>
+> **Architektur:** Schalter 🎨 Darstellung → `design (klassisch|editorial)`; jede Seite verzweigt daran,
+> klassisch bleibt vollständig erhalten (Not-Aus = zurückschalten). Editorial-Layer: `web/src/styles/editorial.css`
+> (Tokens `#0d0e0c`/`#131410`/Gold `#d4a45a` + alle `.ed-*`-Klassen), `EditorialMotion.astro` (Reveal/Parallax/
+> Scrub/Drift), Fonts lokal Archivo Variable + Space Mono. Maßgebliche Design-Referenz: **claude_design-MCP,
+> Projekt `46249b87-52c4-44a2-821e-239a0786a636`** (NUR die HTML-Dateien zählen, Screenshots sind teils falsch).
+>
+> **Gebaut (alle DE-Seiten 1:1):** Startseite (Hero-Insel mit allen Modi + 01 Duo + 02 Collage→Lightbox +
+> 03 Stories + 04 Journal), Portfolio, Stories, Journal (Foto-Lightbox/Karten-Pin/Social erhalten), Reisen
+> (alle Reisen als Reihen, upcoming oben), Equipment (TOC-Pillen; Zeile MIT Link = ganz klickbar), Über uns,
+> Kontakt, Story-Detail (Wander-Titel nur klassisch), **Reise-Detail v2** (`EditorialTripV2.tsx`: Etappen mit
+> Fade-in/-out + sticky Karte + Caption + Dots + Halo, Karte = ECHTE Fahrzeug-Engine aus `TripTimeline`
+> [Exporte: buildRoute/buildPath/…], Auto fährt/Flugzeug fliegt). Nav/Footer/Logo (invert-Filter) dunkel.
+>
+> **CMS-Parität (Davids hartes Kriterium, weitgehend erfüllt):** Alle 6 Unterseiten-Heroes = `EditorialPageHero`-
+> Insel (Klick-zum-Feld + Live-Vorschau), Admin-Leisten (+Neu/Archiv) auf den Listen-Seiten, Inhalts-Inseln
+> (Journal/Gear/About/Story-/Reise-Detail/Kontakt) live. **Hover-Grundsatz (Gedächtnis!): Hover färbt NUR
+> Schrift gold, nie Feld/Rahmen.**
+>
+> **🟡 Offene Punkte (Reihenfolge mit David geklärt):**
+> 1. **Re-Index** (David) → danach Hero-Titel-Felder im CMS testen (Startseite → Hero).
+> 2. **Davids CMS-Editier-Durchlauf** im neuen Design → gemeldete Haken fixen. Dabei **Medien-Manager**
+>    ansehen: erbt dunkle Tokens, ist aber dark-ungetestet (Option: bewusst hell lassen, ist Admin-Werkzeug).
+> 3. **Build-Beschleunigung** (vereinbartes nächstes Paket): Cloudflare-Build-Cache + Cache für
+>    `optimize-uploads` (nur neue Bilder verarbeiten) — Davids „ewig warten" adressieren.
+> 4. **EN-Seiten** (`/en/*`) haben noch KEIN Editorial-Layout (rendern klassisch-dunkel via Tokens).
+> 5. Reisen ohne Fotos (west/florida/birthday: keine Stop-Fotos, Alben ohne `linked_trip`) → Farbverlauf-
+>    Platzhalter; David kann Fotos/Alben zuordnen. 6. Reise-Karte nutzt hellen Stil `bright` (dunkler
+>    Kartenstil = eigenes Thema, OpenFreeMap hat keinen fertigen). 7. Startseiten-Sektionslabels
+>    („01 — Wer wir sind") sind Design-Beschriftungen, bewusst kein CMS-Feld.
+>
+> **Workflow (GEÄNDERT, s. Gedächtnis):** Claude committet UND **pusht selbst** (Erlaubnis liegt in
+> `.claude/settings.json`, greift ab neuer Session; vor Push IMMER pull — Tina committet autonom auf main).
+> Nach Push per `curl https://aandd-photography.pages.dev` verifizieren; David prüft Cloudflare. Re-Index
+> bleibt David (nur bei Schema-Änderungen, vorher ankündigen). **Sandbox-Fallen:** lokaler `astro build`
+> braucht Tina-Cloud-Netz (scheitert ggf.), Headless-Preview blockt externe Tiles (Karte dort nie prüfbar),
+> `window.innerHeight` kann 0 sein → Browser-Tab erst auf 1440×900 resizen.
 >
 > **🆕 EXIF-Build-Fix + Bild-Referenzen repariert + Move-Ursache gefixt (16.07., `0d80b91`,`10b634e`,`b388f2c`,`e516fd6`).**
 > (1) **Build erhielt kein EXIF:** `optimize-uploads.mjs` (sharp) verwarf Metadaten bei JEDEM Build →
