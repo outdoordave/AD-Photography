@@ -50,16 +50,19 @@ export default function GearContent(props: Props) {
               </div>
               {g.items.map((it, i) => {
                 const href = safeUrl(it.link);
-                return (
-                  <div className="ed-gear-row" key={i} data-reveal data-tina-field={tinaField(it as any)}>
-                    {href
-                      ? <a className="ed-gear-name" href={href} target="_blank" rel="noopener">{it.name}</a>
-                      : <span className="ed-gear-name">{it.name}</span>}
+                const inner = (
+                  <>
+                    <span className="ed-gear-name">{it.name}</span>
                     <span className="ed-gear-note">{it.brand}</span>
-                    {href
-                      ? <a className="ed-gear-who" href={href} target="_blank" rel="noopener" aria-label={lang === 'en' ? 'Open link' : 'Link öffnen'}>↗</a>
-                      : <span className="ed-gear-who" aria-hidden="true"></span>}
-                  </div>
+                    {href ? <span className="ed-gear-who" aria-hidden="true">↗</span> : <span className="ed-gear-who" aria-hidden="true"></span>}
+                  </>
+                );
+                // Mit Link: die GANZE Zeile ist der Link (wie die Story-Zeilen unter 03 auf der
+                // Startseite) — Hover färbt die Schrift gold. Ohne Link: einfache Zeile.
+                return href ? (
+                  <a className="ed-gear-row" key={i} href={href} target="_blank" rel="noopener" data-reveal data-tina-field={tinaField(it as any)}>{inner}</a>
+                ) : (
+                  <div className="ed-gear-row" key={i} data-reveal data-tina-field={tinaField(it as any)}>{inner}</div>
                 );
               })}
             </div>

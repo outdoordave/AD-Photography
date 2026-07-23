@@ -109,14 +109,24 @@ export default function HomeHeroLive(props: Props) {
 
   // ---- Editorial-Layout (dunkel, 1:1 aus dem Claude-Design) — gleiche Daten/Modi/Tina-Felder ----
   if (props.design === 'editorial') {
+    // Kicker + großer Titel editierbar (hero.kicker_de/title_de); Titel: Zeilenumbruch im
+    // Feld = neue Zeile. Fallbacks = bisherige Design-Texte.
+    const pick = (base: string) => (isEn ? hero[base + '_en'] || hero[base + '_de'] || '' : hero[base + '_de'] || '');
+    const edKicker = pick('kicker') || 'Travel & Outdoor Photography';
+    const edTitleRaw = pick('title') || 'Wide\n& Wild';
+    const edTitleLines = String(edTitleRaw).split(/\r?\n/).filter((l: string) => l.trim() !== '');
     return (
       <section className="ed-hero">
         <div className="ed-hero-media" ref={mediaRef} data-ed-hero-img>{media}</div>
         <div className="ed-hero-scrim" aria-hidden="true" />
         <div className="ed-hero-content" data-ed-hero-content>
           <div className="ed-hero-lead">
-            <p className="ed-kicker">Travel &amp; Outdoor Photography</p>
-            <h1 className="ed-hero-title">Wide<br />&amp; Wild</h1>
+            <p className="ed-kicker" data-tina-field={tf(hero, 'kicker')}>{edKicker}</p>
+            <h1 className="ed-hero-title" data-tina-field={tf(hero, 'title')}>
+              {edTitleLines.map((line: string, i: number) => (
+                <React.Fragment key={i}>{i > 0 ? <br /> : null}{line}</React.Fragment>
+              ))}
+            </h1>
             {headline ? <p className="ed-hero-sub" data-tina-field={tf(hero, 'headline')}>{headline}</p> : null}
             <div className="ed-hero-cta">
               <a href={`${prefix}/portfolio`} data-tina-field={tf(hero, 'cta_portfolio')}>{ctaP} <span aria-hidden="true">→</span></a>

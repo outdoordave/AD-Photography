@@ -304,8 +304,9 @@
 :root[data-design="editorial"] .ed-gear-count { font-family: var(--font-mono); font-size: 11px; letter-spacing: .2em; color: var(--c-ink-soft); text-transform: uppercase; white-space: nowrap; }
 :root[data-design="editorial"] .ed-gear-row { display: grid; grid-template-columns: 240px 1fr 70px; gap: 32px; align-items: baseline; padding: 26px 8px; border-bottom: 1px solid rgba(237,234,227,.1); }
 :root[data-design="editorial"] .ed-gear-name { font-family: var(--font-display); font-variation-settings: 'wdth' 118; font-weight: 600; font-size: 17px; line-height: 1.3; color: var(--c-ink); transition: color .3s; }
-:root[data-design="editorial"] .ed-gear-row:hover .ed-gear-name { color: var(--c-accent); }
-:root[data-design="editorial"] a.ed-gear-name:hover { color: var(--c-accent); }
+:root[data-design="editorial"] .ed-gear-note { transition: color .3s; }
+/* Ganze Zeile ist der Link (wie Story-Zeilen 03): Hover färbt Name + Marke gold. */
+:root[data-design="editorial"] a.ed-gear-row:hover .ed-gear-name, :root[data-design="editorial"] a.ed-gear-row:hover .ed-gear-note { color: var(--c-accent); }
 :root[data-design="editorial"] .ed-gear-note { font-size: 14px; line-height: 1.6; font-weight: 300; color: rgba(237,234,227,.65); text-wrap: pretty; }
 :root[data-design="editorial"] .ed-gear-who { font-family: var(--font-mono); font-size: 10px; letter-spacing: .18em; color: var(--c-accent); text-align: right; white-space: nowrap; }
 @media (max-width: 640px) {
