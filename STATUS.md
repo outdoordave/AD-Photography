@@ -37,7 +37,9 @@
 >    ansehen: erbt dunkle Tokens, ist aber dark-ungetestet (Option: bewusst hell lassen, ist Admin-Werkzeug).
 > 3. **Build-Beschleunigung** (vereinbartes nächstes Paket): Cloudflare-Build-Cache + Cache für
 >    `optimize-uploads` (nur neue Bilder verarbeiten) — Davids „ewig warten" adressieren.
-> 4. **EN-Seiten** (`/en/*`) haben noch KEIN Editorial-Layout (rendern klassisch-dunkel via Tokens).
+> 4. ~~EN-Seiten~~ **✅ ERLEDIGT (23.07., `a74446c`):** alle 9 `/en/*`-Seiten haben jetzt die DE-Editorial-
+>    Weichen 1:1 (EN-Felder mit DE-Fallback, `/en/`-Links, EN-Labels; Reise-Detail v2 inkl. Fahrzeug-Engine).
+>    `/en/contact` + Detailseiten Portfolio/Journal laufen wie DE rein über CSS.
 > 5. Reisen ohne Fotos (west/florida/birthday: keine Stop-Fotos, Alben ohne `linked_trip`) → Farbverlauf-
 >    Platzhalter; David kann Fotos/Alben zuordnen. 6. Reise-Karte nutzt hellen Stil `bright` (dunkler
 >    Kartenstil = eigenes Thema, OpenFreeMap hat keinen fertigen). 7. Startseiten-Sektionslabels
