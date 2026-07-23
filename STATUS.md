@@ -6,10 +6,10 @@
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
 > Session überschrieben). Historie → `CHANGELOG.md`. Cutover-Lehren → `FAHRPLAN.md`.
 >
-> **🚧 Editorial-Redesign: in `main` GEMERGT (`ba7ba58`, 19.07.), Standard `design: klassisch` → Live unverändert.**
-> **Nächste Schritte: (1) David pusht `main` (vorher pull nicht nötig — frisch gefetcht), (2) Tina-Cloud-Re-Index
-> (neues `design`-Feld), (3) Arbeitspaket „Editierbarkeits-Parität" (Heroes/Sektionsköpfe als useTina-Inseln mit
-> Live-Vorschau — von David ausdrücklich gefordert), (4) Go-Live per CMS-Schalter `design: editorial`.**
+> **🚧 Editorial-Redesign: in `main` gemergt + deployed (19.07.), Re-Index erledigt, Standard `design: klassisch`.**
+> **Editierbarkeits-Parität der Heroes FERTIG (`1e9443e`, EditorialPageHero-Insel: Klick-zum-Feld + Live-Vorschau
+> auf Stories/Portfolio/Reisen/Journal/Equipment/Über uns). Nächste Schritte: (1) David pusht den Paritäts-Commit,
+> (2) Go-Live per CMS-Schalter 🎨 Darstellung → `design: editorial` (Not-Aus: zurückschalten).**
 > Ziel: die GANZE Seite ins dunkle Editorial-Design (Quelle: Claude-Design-Handoff, **`design/`-Ordner = HTML
 > ist maßgeblich, mitgelieferte Screenshots ignorieren — teils falsch**), per Schalter „Darstellung →
 > design (klassisch|editorial)" umschaltbar, echte CMS-Inhalte, bestehende Funktionen + Editierbarkeit erhalten.
