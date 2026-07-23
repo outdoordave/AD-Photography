@@ -1,22 +1,46 @@
 ---
 // Equipment page EN ('/en/gear'). Same Tina-Client data as the DE page, English labels.
+// Editorial-Weiche 1:1 wie DE ('/gear'): Hero mit Sprungpillen + GearContent editorial.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import GearContent from '../../components/GearContent.tsx';
+import EditorialPageHero from '../../components/editorial/EditorialPageHero.tsx';
 import { client } from '../../../tina/__generated__/client';
+import appearance from '../../data/appearance-settings.json';
+import { groupGear } from '../../lib/gear';
 
 const res = await client.queries.gear({ relativePath: 'gear.json' });
-const title = (res.data.gear as any)?.title_en || 'Gear';
+const g = (res.data.gear as any) || {};
+const title = g.title_en || g.title_de || 'Gear';
+const design = (appearance as any).design === 'editorial' ? 'editorial' : 'klassisch';
+
+// Editorial: Hero-Sprungpillen aus den echten Kategorien (nur nicht-leere), EN-Namen.
+const edGroups = design === 'editorial' ? groupGear(Array.isArray(g.items) ? g.items : [], Array.isArray(g.categories) ? g.categories : []) : [];
+const edToc = edGroups.map((grp: any, i: number) => ({ id: grp.id, label: `${String(i + 1).padStart(2, '0')} ${grp.en || grp.de}` }));
+const edHeroImg = '/uploads/img_1418-2.webp';
 ---
 <BaseLayout title={`${title} — Wide & Wild`} lang="en" description="The kit behind Wide & Wild — cameras, lenses, drones and travel gear by Alexandra & David.">
-  <section>
-    <div class="wrap">
-      <GearContent
-        client:load
-        query={res.query}
-        variables={res.variables}
-        data={res.data}
-        lang="en"
-      />
-    </div>
-  </section>
+  {design === 'editorial' ? (
+    <Fragment>
+      <EditorialPageHero client:load query={res.query} variables={res.variables} data={res.data} docKey="gear" lang="en" img={edHeroImg} titleFallback="Gear">
+        {edToc.length > 0 && (
+          <div class="ed-hero-toc">
+            {edToc.map((tc: any) => (<a class="ed-toc-pill" href={`#${tc.id}`}>{tc.label}</a>))}
+          </div>
+        )}
+      </EditorialPageHero>
+      <GearContent client:load query={res.query} variables={res.variables} data={res.data} lang="en" design="editorial" />
+    </Fragment>
+  ) : (
+    <section>
+      <div class="wrap">
+        <GearContent
+          client:load
+          query={res.query}
+          variables={res.variables}
+          data={res.data}
+          lang="en"
+        />
+      </div>
+    </section>
+  )}
 </BaseLayout>

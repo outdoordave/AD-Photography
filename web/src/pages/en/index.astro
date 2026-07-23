@@ -1,6 +1,7 @@
 ---
 // Homepage EN ('/en/'). Hero + Intro + Sektion-Köpfe sind LIVE-Inseln (useTina
 // startseite). Moments/Latest/Discover-Inhalte aus Alben/Reisen/Stories.
+// Editorial-Weiche 1:1 wie DE ('/'): 01 Wer wir sind / 02 Portfolio / 03 Stories / 04 Journal.
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import HomeHeroLive from '../../components/HomeHeroLive.tsx';
@@ -9,13 +10,16 @@ import HomeJournalCards from '../../components/HomeJournalCards.astro';
 import '../../styles/journal.css';
 import HomeSectionHead from '../../components/HomeSectionHead.tsx';
 import HomeMoments from '../../components/HomeMoments.tsx';
+import EditorialMoments from '../../components/editorial/EditorialMoments.tsx';
 import HomeLatest from '../../components/HomeLatest.astro';
 import HomeDiscover from '../../components/HomeDiscover.tsx';
 import { buildMoments, buildLatest, buildDiscover } from '../../lib/home';
 import { normalizePath } from '../../lib/stories';
-import { sortJournalNodes } from '../../lib/journal';
+import { sortJournalNodes, formatFullDate, journalHeading, journalHasTitle, journalPlainText } from '../../lib/journal';
+import { photoDisplay, tripTitle, bi } from '../../lib/trips';
 import home from '../../data/home-settings.json';
 import appearance from '../../data/appearance-settings.json';
+import about from '../../data/about.json';
 import highlights from '../../data/highlights.json';
 import { client } from '../../../tina/__generated__/client';
 
@@ -24,6 +28,7 @@ const ap = appearance as any;
 const showStories = ap.show_stories === true;
 const showJournal = ap.show_journal === true;
 const showDiscover = ap.show_discover !== false;
+const design = ap.design === 'editorial' ? 'editorial' : 'klassisch';
 const lang = 'en';
 
 const stRes = await client.queries.startseite({ relativePath: 'home-settings.json' });
@@ -50,46 +55,159 @@ const heroFirst = heroData.mode === 'image' ? heroData.image
     : '';
 const heroPreload = heroFirst ? normalizePath(heroFirst) : undefined;
 
-// Neuester Journal-Eintrag für die Hero-Kachel (nur wenn Journal + Hero-Schalter an).
+// Neuester Journal-Eintrag für die Hero-Kachel + (Editorial) 3 Einträge für Sektion 04.
 const heroJournal = showJournal && ap.hero_journal === true;
+const isEd = design === 'editorial';
 let journalLatest: any = null;
-if (heroJournal) {
+let journalItems: any[] = [];
+if (heroJournal || (isEd && showJournal)) {
   const jc = await client.queries.journalConnection();
   const jn = sortJournalNodes(((jc.data.journalConnection?.edges ?? []).map((e: any) => e?.node).filter(Boolean)) as any[]);
   journalLatest = jn[0] ?? null;
+  journalItems = jn.slice(0, 3);
 }
+
+// --- Editorial-Startseite: Sektionsdaten aus denselben echten Quellen wie klassisch (EN-Felder) ---
+const ab = about as any;
+const edPersons = isEd ? (ab.persons || []).map((p: any) => ({
+  name: String(p.name || '').split(' ')[0],
+  role: p.role_en || p.role_de || '',
+  photo: normalizePath(photoDisplay(p.photo)),
+  ground: /luft|aerial|drohne|drone|bewegung/i.test((p.role_de || '') + ' ' + (p.role_en || '')) ? 'From the air' : 'From the ground',
+})) : [];
+const edIntro = ab.intro_en || ab.intro_de || '';
+const edStories = isEd ? [
+  ...stories.map((s: any) => ({ year: String(s.data.date || '').slice(0, 4), title: s.data.title_en || s.data.title_de || '', teaser: s.data.excerpt_en || s.data.excerpt_de || '', href: `/en/stories/${s.slug}`, date: s.data.date || '' })),
+  ...trips.filter((t: any) => !t.data.upcoming && t.data.title).map((t: any) => ({ year: String(t.data.date || '').slice(0, 4), title: tripTitle(t.data, 'en'), teaser: bi(t.data, 'meta', 'en') || '', href: `/en/trips/${t.slug}`, date: t.data.date || '' })),
+].sort((a: any, b: any) => (b.date || '').localeCompare(a.date || '')).slice(0, 5) : [];
+const upcomingTrip = trips.find((t: any) => t.data.upcoming && t.data.title);
+const edNextTitle = upcomingTrip ? tripTitle(upcomingTrip.data, 'en') : '';
+const edNextMeta = upcomingTrip ? (bi(upcomingTrip.data, 'meta', 'en') || '') : '';
+const edNextImg = upcomingTrip ? normalizePath(photoDisplay((upcomingTrip.data.stops || []).map((s: any) => s && s.photo).find(Boolean) || '')) : (hlImages[0] ? normalizePath(hlImages[0]) : '');
+const edJournal = journalItems.map((j: any) => ({
+  date: formatFullDate(j.date, 'en'),
+  text: journalHasTitle(j, 'en') ? journalHeading(j, 'en') : journalPlainText(j, 'en', 150),
+  href: j._sys ? `/en/journal/${j._sys.filename}` : '/en/journal',
+}));
 ---
 <BaseLayout title="Wide & Wild — Travel & Outdoor Photography" lang="en" preloadImage={heroPreload} description="Travel & outdoor photography by Alexandra & David — road trips through wild landscapes, with maps, photo albums and stories from the road.">
-  <HomeHeroLive client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="en" logo={ap.logo} showHeroLogo={ap.show_hero_logo !== false} showStories={showStories} logoQuery={apRes.query} logoVariables={apRes.variables} logoData={apRes.data} heroJournal={heroJournal} journalLatest={journalLatest} />
+  <HomeHeroLive client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="en" logo={ap.logo} showHeroLogo={ap.show_hero_logo !== false} showStories={showStories} logoQuery={apRes.query} logoVariables={apRes.variables} logoData={apRes.data} heroJournal={heroJournal} journalLatest={journalLatest} design={design} />
 
-  <HomeIntroLive client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="en" />
+  {isEd ? (
+    <Fragment>
+      {/* 01 — Who we are: Wort-Scrub-Headline + zwei Porträt-Tiles (echte „Über uns"-Personen) */}
+      <section class="ed-section">
+        <div class="ed-section-head" data-reveal>
+          <span class="ed-index">01 — Who we are</span>
+          <span class="ed-rule"></span>
+        </div>
+        <h2 class="ed-h2 ed-scrub" data-scrub set:html={edIntro.split(' ').filter(Boolean).map((w: string) => `<span data-word>${w} </span>`).join('')}></h2>
+        <div class="ed-duo">
+          {edPersons.map((p: any, i: number) => (
+            <a class="ed-duo-tile" href="/en/portfolio" data-reveal data-drift={i === 0 ? 16 : -16}>
+              <img src={p.photo} alt={p.name} data-zoom loading="lazy" decoding="async" />
+              <span class="ed-collage-vignette" aria-hidden="true"></span>
+              <span class="ed-duo-label">
+                <span class="ed-duo-kicker">{p.ground}</span>
+                <span class="ed-duo-name">{p.name}</span>
+                <span class="ed-duo-role">{p.role}</span>
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
 
-  {moments.length > 0 && (
-    <section style="padding-top:0;">
-      <div class="wrap">
-        <HomeSectionHead client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="en" sectionKey="gallery" />
-        <HomeMoments client:load moments={moments} lang="en" />
-      </div>
-    </section>
+      {/* 02 — Portfolio: 12-Spalten-Collage + Lightbox */}
+      {moments.length > 0 && (
+        <section id="portfolio" class="ed-section">
+          <div class="ed-section-head" data-reveal>
+            <span class="ed-index">02 — Portfolio</span>
+            <span class="ed-rule"></span>
+            <a class="ed-more" href="/en/portfolio">All albums →</a>
+          </div>
+          <h2 class="ed-h2" data-reveal>Moments</h2>
+          <EditorialMoments client:load moments={moments} lang="en" />
+        </section>
+      )}
+
+      {/* 03 — Stories: Parallax-Vollbild „Up next" + Listenzeilen */}
+      {(edNextTitle || edStories.length > 0) && (
+        <section id="stories" class="ed-stories">
+          <div class="ed-stories-hero">
+            <div class="ed-stories-hero-img" data-ed-parallax>{edNextImg && <img src={edNextImg} alt="" decoding="async" />}</div>
+            <div class="ed-stories-hero-scrim" aria-hidden="true"></div>
+            <div class="ed-stories-hero-content">
+              <p class="ed-index" data-reveal>03 — Stories · Up next</p>
+              <a href={upcomingTrip ? `/en/trips/${upcomingTrip.slug}` : '/en/stories'} data-reveal><span class="ed-stories-next" data-ed-story-title>{edNextTitle || 'Stories'}</span></a>
+              {edNextMeta && <p class="ed-stories-next-meta" data-reveal>{edNextMeta}</p>}
+            </div>
+          </div>
+          <div class="ed-stories-list">
+            {edStories.map((s: any) => (
+              <a class="ed-story-row" href={s.href} data-reveal>
+                <span class="ed-story-year">{s.year}</span>
+                <span class="ed-story-mid">
+                  <span class="ed-story-title">{s.title}</span>
+                  {s.teaser && <span class="ed-story-teaser">{s.teaser}</span>}
+                </span>
+                <span class="ed-story-arrow">→</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 04 — Journal: 3 Karten */}
+      {showJournal && edJournal.length > 0 && (
+        <section id="journal" class="ed-section ed-section--journal">
+          <div class="ed-section-head" data-reveal>
+            <span class="ed-index">04 — Journal</span>
+            <span class="ed-rule"></span>
+            <a class="ed-more" href="/en/journal">To the journal →</a>
+          </div>
+          <div class="ed-journal-grid">
+            {edJournal.map((j: any, i: number) => (
+              <a class="ed-journal-card" href={j.href} data-reveal>
+                <span class="ed-journal-date">{j.date}</span>
+                <span class="ed-journal-text">{j.text}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+    </Fragment>
+  ) : (
+    <Fragment>
+      <HomeIntroLive client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="en" />
+
+      {moments.length > 0 && (
+        <section style="padding-top:0;">
+          <div class="wrap">
+            <HomeSectionHead client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="en" sectionKey="gallery" />
+            <HomeMoments client:load moments={moments} lang="en" />
+          </div>
+        </section>
+      )}
+
+      {latest.length > 0 && (
+        <section style="padding-top:0;">
+          <div class="wrap">
+            <HomeSectionHead client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="en" sectionKey="latest" />
+            <HomeLatest cards={latest} />
+          </div>
+        </section>
+      )}
+
+      {showDiscover && discover.length > 0 && (
+        <section style="padding-top:0;">
+          <div class="wrap">
+            <HomeSectionHead client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="en" sectionKey="discover" />
+            <HomeDiscover client:load pool={discover} />
+          </div>
+        </section>
+      )}
+
+      {showJournal && <HomeJournalCards lang="en" prefix="/en" />}
+    </Fragment>
   )}
-
-  {latest.length > 0 && (
-    <section style="padding-top:0;">
-      <div class="wrap">
-        <HomeSectionHead client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="en" sectionKey="latest" />
-        <HomeLatest cards={latest} />
-      </div>
-    </section>
-  )}
-
-  {showDiscover && discover.length > 0 && (
-    <section style="padding-top:0;">
-      <div class="wrap">
-        <HomeSectionHead client:load query={stRes.query} variables={stRes.variables} data={stRes.data} lang="en" sectionKey="discover" />
-        <HomeDiscover client:load pool={discover} />
-      </div>
-    </section>
-  )}
-
-  {showJournal && <HomeJournalCards lang="en" prefix="/en" />}
 </BaseLayout>

@@ -34,6 +34,10 @@ const { prev, next } = Astro.props as {
 if ((appearance as any).show_stories !== true) return Astro.redirect('/en/');
 const res = await client.queries.story({ relativePath: `${slug}.md` });
 const story = buildStory(res.data.story as any);
+const design = (appearance as any).design === 'editorial' ? 'editorial' : 'klassisch';
+// Editorial: „Weiterführend"-Karten aus verknüpftem Album (falls vorhanden).
+const linkedAlbum = (res.data.story as any)?.linked_album;
+const edAlbumSlug = linkedAlbum?._sys?.filename || '';
 // Archived -> page still built (edit/restore), but noindex (out of search).
 const archived = (res.data.story as any)?.archived === true;
 const title = story.en.title;
@@ -58,6 +62,33 @@ const articleLd: Record<string, any> = {
 };
 ---
 <BaseLayout title={`${title} — Wide & Wild`} lang="en" description={metaDesc} ogType="article" jsonld={articleLd} noindex={archived}>
+  {design === 'editorial' ? (
+    <div id="page-story">
+      <a class="ed-reader-back" href="/en/stories">← Stories</a>
+      <AdminDocTools client:load collection="story" relativePath={`${slug}.md`} title={title} variant="bar" />
+      <StoryReaderContent client:load query={res.query} variables={res.variables} data={res.data} lang="en" design="editorial" />
+      <section class="ed-related">
+        <div class="ed-related-grid">
+          {edAlbumSlug && (
+            <a class="ed-related-card" href={`/en/portfolio/${edAlbumSlug}`}>
+              <span class="ed-related-k">The album</span>
+              <span class="ed-related-t">All photos from the trip →</span>
+            </a>
+          )}
+          <a class="ed-related-card" href="/en/stories">
+            <span class="ed-related-k">More</span>
+            <span class="ed-related-t">More stories →</span>
+          </a>
+          {next && (
+            <a class="ed-related-card" href={`/en/stories/${next.slug}`}>
+              <span class="ed-related-k">Next story</span>
+              <span class="ed-related-t">{next.title} →</span>
+            </a>
+          )}
+        </div>
+      </section>
+    </div>
+  ) : (
   <div id="page-story">
     <a class="story-back" href="/en/stories">← Stories</a>
     <AdminDocTools client:load collection="story" relativePath={`${slug}.md`} title={title} variant="bar" />
@@ -82,4 +113,5 @@ const articleLd: Record<string, any> = {
       )}
     </div>
   </div>
+  )}
 </BaseLayout>

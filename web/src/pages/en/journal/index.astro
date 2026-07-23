@@ -1,10 +1,13 @@
 ---
 // Journal archive EN ('/en/journal'). Editable header (SettingsHeader) + list island + style.
+// Editorial-Weiche 1:1 wie DE ('/journal'): Hero + JournalArchive im editorial-Modus.
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import JournalArchive from '../../../components/JournalArchive.tsx';
+import EditorialPageHero from '../../../components/editorial/EditorialPageHero.tsx';
 import { client } from '../../../../tina/__generated__/client';
 import appearance from '../../../data/appearance-settings.json';
 import settings from '../../../data/journal-settings.json';
+import { sortJournalNodes, journalFirstPhoto } from '../../../lib/journal';
 import '../../../styles/journal.css';
 
 if ((appearance as any).show_journal !== true) return Astro.redirect('/en/');
@@ -12,14 +15,31 @@ if ((appearance as any).show_journal !== true) return Astro.redirect('/en/');
 const res = await client.queries.journalConnection();
 const setRes = await client.queries.journal_settings({ relativePath: 'journal-settings.json' });
 const s = settings as any;
+const design = (appearance as any).design === 'editorial' ? 'editorial' : 'klassisch';
+
+// Editorial-Hero: Titelbild = erstes Foto des neuesten Eintrags (echte Daten).
+const edNodes = design === 'editorial'
+  ? sortJournalNodes((res.data.journalConnection?.edges || []).map((e: any) => e?.node).filter((n: any) => n && n.archived !== true))
+  : [];
+const edHeroImg = edNodes.map((n: any) => journalFirstPhoto(n)).find(Boolean) || '';
 ---
 <BaseLayout title={`${s.title_en || s.title_de || 'Journal'} — Wide & Wild`} lang="en" description={s.intro_en || 'Journal — short notes between the trips by Alexandra & David.'}>
-  <section>
-    <div class="wrap journal-archive">
+  {design === 'editorial' ? (
+    <Fragment>
+      <EditorialPageHero client:load query={setRes.query} variables={setRes.variables} data={setRes.data} docKey="journal_settings" lang="en" img={edHeroImg} titleFallback="Journal" />
       <JournalArchive client:load
         query={res.query} variables={res.variables} data={res.data}
         setQuery={setRes.query} setVariables={setRes.variables} setData={setRes.data}
-        lang="en" prefix="/en" />
-    </div>
-  </section>
+        lang="en" prefix="/en" design="editorial" />
+    </Fragment>
+  ) : (
+    <section>
+      <div class="wrap journal-archive">
+        <JournalArchive client:load
+          query={res.query} variables={res.variables} data={res.data}
+          setQuery={setRes.query} setVariables={setRes.variables} setData={setRes.data}
+          lang="en" prefix="/en" />
+      </div>
+    </section>
+  )}
 </BaseLayout>

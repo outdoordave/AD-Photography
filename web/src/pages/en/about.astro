@@ -1,20 +1,55 @@
 ---
 // About page EN ('/en/about'). Same Tina-Client data as the DE page, English labels.
+// Editorial-Weiche 1:1 wie DE ('/about'): Hero + AboutContent editorial + Kontakt-Sektion.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AboutContent from '../../components/AboutContent.tsx';
+import EditorialPageHero from '../../components/editorial/EditorialPageHero.tsx';
 import { client } from '../../../tina/__generated__/client';
+import appearance from '../../data/appearance-settings.json';
+import contact from '../../data/contact.json';
+import { photoDisplay } from '../../lib/trips';
+import { normalizePath } from '../../lib/stories';
 
 const res = await client.queries.ueber_uns({ relativePath: 'about.json' });
-const title = (res.data.ueber_uns as any)?.title_en || 'About';
+const ab = (res.data.ueber_uns as any) || {};
+const title = ab.title_en || ab.title_de || 'About';
+const design = (appearance as any).design === 'editorial' ? 'editorial' : 'klassisch';
+const c = contact as any;
+
+// Editorial-Hero: festes Titelbild (wie im Design), Fallback = erstes Porträt.
+const heroFixed = '/uploads/alben/Firsts/img_5916-3.webp';
+const firstPersonPhoto = normalizePath(photoDisplay((Array.isArray(ab.persons) ? ab.persons[0]?.photo : '') || ''));
+const edHeroImg = heroFixed || firstPersonPhoto;
+const edChannels = (Array.isArray(c.channels) ? c.channels : []).filter((x: any) => x && x.url);
+const edContactKicker = c.kicker_en || c.kicker_de || 'Contact';
+const edContactTitle = c.title_en || c.title_de || 'Say hello';
 ---
 <BaseLayout title={`${title} — Wide & Wild`} lang="en" description="The two people behind Wide & Wild — how Alexandra & David got into travel and outdoor photography.">
-  <div id="page-about">
-    <AboutContent
-      client:load
-      query={res.query}
-      variables={res.variables}
-      data={res.data}
-      lang="en"
-    />
-  </div>
+  {design === 'editorial' ? (
+    <Fragment>
+      <EditorialPageHero client:load query={res.query} variables={res.variables} data={res.data} docKey="ueber_uns" lang="en" img={edHeroImg} titleFallback="About" />
+      <div id="page-about">
+        <AboutContent client:load query={res.query} variables={res.variables} data={res.data} lang="en" design="editorial" channels={edChannels} />
+      </div>
+      <section id="kontakt" class="ed-contact">
+        <p class="ed-contact-kicker" data-reveal>{edContactKicker}</p>
+        <p class="ed-contact-title" data-reveal>{edContactTitle}</p>
+        {edChannels.length > 0 && (
+          <div class="ed-contact-pills" data-reveal>
+            {edChannels.map((ch: any) => (<a class="ed-contact-pill" href={ch.url} target="_blank" rel="noopener">{ch.label}</a>))}
+          </div>
+        )}
+      </section>
+    </Fragment>
+  ) : (
+    <div id="page-about">
+      <AboutContent
+        client:load
+        query={res.query}
+        variables={res.variables}
+        data={res.data}
+        lang="en"
+      />
+    </div>
+  )}
 </BaseLayout>
