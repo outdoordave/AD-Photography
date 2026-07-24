@@ -17,6 +17,13 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-24 19:18 — Portfolio-Paket (Album-Detail editorial + Diashow) + Gear-Liste + Fixes
+- **Gear-Umbau (`567694e`):** Profil-Ausrüstung von Freitextzeile → strukturierte, einzeln editierbare Tina-Liste `gear` [{name, link?}] pro Person. Auto-Verlinkung bleibt (leerer Link + Name im Equipment → auto). Beide Designs. Datenmigration in about.json. ⚠️ Schema-Änderung → **Re-Index (David)**.
+- **Album-Detail editorial (`7698b4e`):** Die Album-Innenseite erbte als einzige das helle Klassik-Grid → neuer Editorial-Zweig in `AlbumContent` (randloser dunkler Hero + Editorial-Foto-Raster, Lightbox bleibt). Seiten DE+EN rendern editorial ohne `.wrap`. Jede Kachel = eigener Button (Hover/Fokus rahmt nur das eine Foto).
+- **Editorial-Diashow (`0662f12`):** Neue Insel `EditorialAlbumTile` — Album-Kacheln der Portfolio-Übersicht rotieren durch ~6 Fotos (Crossfade, Autoplay 4 s, Pause bei Hover), **wischbar** (Pointer/Touch), Klick öffnet Album; Dot-Indikator. Bringt die Durchswipe-Mechanik des hellen Designs ins dunkle Raster. DE+EN.
+- **Stories-Sektion respektiert Schalter (`a40ee6c`):** Editorial-Startseite Sektion 03 war nicht an `show_stories` gekoppelt → bei deaktivierten Stories sichtbar geblieben. Jetzt aus, wie Nav/Footer. DE+EN.
+- **Album-Glow (`dcb8011`):** warmer Lade-Platzhalter + warmer Hover-Schatten (heller-Design-Rest) im dunklen Album entfernt. (Der „goldene Rahmen" beim Hover ist Tinas Editier-Outline — nur im CMS, nicht für Besucher.)
+
 ## 2026-07-24 17:35 — Über uns: Profil-Ausrüstung als CMS-Toggle + Equipment-Verlinkung
 - **#2 Toggle (`eb9e3c4`):** neues Schema-Feld `ueber_uns.show_person_gear` (boolean, Standard AN). AUS = Ausrüstungs-Zeile unter den Profilen ausgeblendet. Wirkt in **beiden** Designs (editorial: Fakt-Kacheln; klassisch: Textzeile) — neue Projektregel „CMS-Änderungen für hell UND dunkel" (auch ins Gedächtnis geschrieben).
 - **#3 Verlinkung (`eb9e3c4`):** Profil-Ausrüstung ist Freitext; neue Helfer `personGearTokens` + `gearLinkFor` in `lib/gear.ts` matchen jedes Token normalisiert gegen die Equipment-Geräte. Treffer mit Link → Hyperlink (editorial: ganze Zeile, Hover nur Schrift gold + „↗"; klassisch: Link im Text). Seiten reichen `gear.json`-Items an `AboutContent` (DE+EN, beide Zweige). Kein Datenstruktur-Umbau. Verifiziert: 5/7 Geräte verlinkt; „Peak Design Stativ"/„iPhone" bleiben Text (Item-Name weicht ab → ggf. im CMS angleichen).

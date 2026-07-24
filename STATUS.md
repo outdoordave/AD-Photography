@@ -32,17 +32,18 @@
 > Schrift gold, nie Feld/Rahmen.**
 >
 > **🟡 Offene Punkte (Reihenfolge mit David geklärt):**
-> 1. **Re-Index** (David) → schaltet ZWEI Schema-Erweiterungen im CMS frei: (a) Hero-Titel-/Kicker-Felder
->    (Startseite → Hero), (b) Toggle **„Ausrüstung unter Profil zeigen?"** (Über uns, `show_person_gear`,
->    Standard AN). Danach beide im CMS testen. `tina-lock.json` ist jeweils schon aktuell.
+> 1. **Re-Index** (David) → schaltet DREI Schema-Erweiterungen im CMS frei: (a) Hero-Titel-/Kicker-Felder
+>    (Startseite → Hero), (b) Toggle **„Ausrüstung unter Profil zeigen?"** (Über uns, `show_person_gear`),
+>    (c) **Ausrüstung als Liste** (Über uns → Person → `gear` [{name, link?}] statt Freitext). `tina-lock.json`
+>    jeweils schon aktuell. Danach im CMS testen.
 > 2. **Davids CMS-Editier-Durchlauf** im neuen Design → gemeldete Haken fixen. Dabei **Medien-Manager**
 >    ansehen: erbt dunkle Tokens, ist aber dark-ungetestet (Option: bewusst hell lassen, ist Admin-Werkzeug).
 > 3. **Build-Beschleunigung** (vereinbartes Paket): Cloudflare-Build-Cache (Davids Schalter) + Cache für
 >    `optimize-uploads` (nur neue Bilder verarbeiten) — Davids „ewig warten" adressieren.
-> 3b. **Fallback-Bilder** (geplant, wartet auf David): 21er-Motiv-Satz nach Klima/Terrain (Master-Prompt
->    übergeben) → David generiert via Claude Design, gibt sie mir → ich baue Keyword-Matching in
->    `lib/albums.ts` (zweisprachig) + Ablage `web/public/uploads/fallbacks/`. Ersetzt den Zufalls-Farbverlauf
->    (`paletteFromString`) durch inhaltlich passendes Bild; Verlauf bleibt letzter Notnagel.
+> 3b. ~~Fallback-Bilder~~ **verworfen (24.07.):** Claude kann keine Bilder generieren → Thema gestrichen.
+>    (Zufalls-Farbverlauf `paletteFromString` bleibt der Platzhalter für Alben/Reisen ohne Foto.)
+> 3c. **Lese-Paket** (zurückgestellt, David): wärmere Story-Lesefläche + größere/luftigere Typo + wärmeres
+>    Basis-Schwarz (gegen „erdrückend"). Visualisiert, nicht gebaut — auf Davids Zuruf.
 > 4. ~~EN-Seiten~~ **✅ ERLEDIGT (23.07., `a74446c`):** alle 9 `/en/*`-Seiten haben jetzt die DE-Editorial-
 >    Weichen 1:1 (EN-Felder mit DE-Fallback, `/en/`-Links, EN-Labels; Reise-Detail v2 inkl. Fahrzeug-Engine).
 >    `/en/contact` + Detailseiten Portfolio/Journal laufen wie DE rein über CSS.
