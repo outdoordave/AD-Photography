@@ -318,7 +318,7 @@
 :root[data-design="editorial"] .ed-about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 :root[data-design="editorial"] .ed-about-person { display: flex; flex-direction: column; }
 :root[data-design="editorial"] .ed-about-photo { position: relative; display: block; aspect-ratio: 4/5; max-height: 640px; overflow: hidden; border-radius: 10px; background: #151613; }
-:root[data-design="editorial"] .ed-about-photo > img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.07); transition: transform 1.4s cubic-bezier(.2,.6,.2,1), filter .6s ease; filter: saturate(.95); }
+:root[data-design="editorial"] .ed-about-photo > img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.07); transition: transform 1.4s cubic-bezier(.2,.6,.2,1), filter .6s ease; filter: saturate(.95); -webkit-backface-visibility: hidden; backface-visibility: hidden; will-change: transform, filter; }
 :root[data-design="editorial"] .ed-about-person:hover .ed-about-photo > img { transform: scale(1.045); filter: saturate(1.03) brightness(1.07); }
 :root[data-design="editorial"] .ed-about-bio { display: block; margin-top: 28px; font-size: 15.5px; line-height: 1.7; font-weight: 300; color: rgba(237,234,227,.8); max-width: 520px; text-wrap: pretty; }
 :root[data-design="editorial"] .ed-about-bio p { margin: 0 0 12px; }
@@ -343,8 +343,11 @@
 }
 
 /* ===================== Story-Detail: Hero + Lesetext + Weiterführend (1:1) ===================== */
-:root[data-design="editorial"] .ed-reader-back { display: inline-block; position: relative; z-index: 20; margin: 0; padding: 96px clamp(20px,4vw,48px) 0; font-family: var(--font-mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--c-ink-soft); }
-:root[data-design="editorial"] .ed-reader-back:hover { color: var(--c-accent); }
+/* Story-Detail: Hero randlos nach oben (wie Liste + Reise-Detail); „← Stories" als
+   dezente Overlay-Pille auf dem Bild statt schwarzem Streifen darüber (nur dunkel). */
+:root[data-design="editorial"] #page-story { position: relative; }
+:root[data-design="editorial"] .ed-reader-back { position: absolute; top: 88px; left: clamp(20px,4vw,48px); z-index: 20; margin: 0; padding: 9px 16px; border: 1px solid rgba(237,234,227,.2); border-radius: 999px; background: rgba(13,14,12,.42); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); font-family: var(--font-mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--c-ink); transition: border-color .3s, color .3s; }
+:root[data-design="editorial"] .ed-reader-back:hover { color: var(--c-accent); border-color: var(--c-accent); }
 :root[data-design="editorial"] .ed-reader-hero { position: relative; z-index: 1; height: 88vh; min-height: 560px; overflow: hidden; }
 :root[data-design="editorial"] .ed-reader-hero-img { position: absolute; inset: 0; transform: scale(1.08); will-change: transform; }
 :root[data-design="editorial"] .ed-reader-hero-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
