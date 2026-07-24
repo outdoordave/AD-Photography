@@ -130,8 +130,9 @@ const edJournal = journalItems.map((j: any) => ({
         </section>
       )}
 
-      {/* 03 — Stories: Parallax-Vollbild „Up next" + Listenzeilen */}
-      {(edNextTitle || edStories.length > 0) && (
+      {/* 03 — Stories: Parallax-Vollbild „Up next" + Listenzeilen. Nur wenn Stories aktiv
+          (🎨 Darstellung → „Stories zeigen?") — sonst komplett aus, wie Nav/Footer. */}
+      {showStories && (edNextTitle || edStories.length > 0) && (
         <section id="stories" class="ed-stories">
           <div class="ed-stories-hero">
             <div class="ed-stories-hero-img" data-ed-parallax>{edNextImg && <img src={edNextImg} alt="" decoding="async" />}</div>
