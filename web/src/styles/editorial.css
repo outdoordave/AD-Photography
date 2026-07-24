@@ -329,6 +329,12 @@
 :root[data-design="editorial"] .ed-about-person:hover .ed-about-photo > img { transform: scale(1.045); filter: saturate(1.03) brightness(1.07); }
 :root[data-design="editorial"] .ed-about-bio { display: block; margin-top: 28px; font-size: 15.5px; line-height: 1.7; font-weight: 300; color: rgba(237,234,227,.8); max-width: 520px; text-wrap: pretty; }
 :root[data-design="editorial"] .ed-about-bio p { margin: 0 0 12px; }
+/* Album-/Galerie-Kacheln im dunklen Design (Detailseite erbt noch das helle Grid):
+   1) Lade-Platzhalter dunkel statt warmem Sand-Verlauf -> kein „Glow" während des Bild-Ladens.
+   2) Hover ohne warmen Lift/Schatten (heller-Design-Rest + Grundsatz-Verstoß) -> nur Bild zoomt. */
+:root[data-design="editorial"] .ph::before { background: #15160f; }
+:root[data-design="editorial"] .gallery .item, :root[data-design="editorial"] .gallery .item:hover { transform: none; box-shadow: var(--ww-ring); }
+
 /* Profil-Ausrüstung = Reihe runder Pillen (dieselbe Geometrie wie Equipment/Kontakt). Verlinkte Geräte:
    ganze Pille klickbar (<a class="ed-gearpill">) + „↗"; nicht verlinkte: schlichte Pille (<span>). */
 :root[data-design="editorial"] .ed-about-facts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; max-width: 560px; }
