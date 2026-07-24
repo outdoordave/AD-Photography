@@ -10,10 +10,12 @@ import { albumPhotos, bi, type RawAlbum, type Lang } from '../lib/albums';
 // Kachel-Grid; Kachel-Klick -> Lightbox des Albums. Daten via useTina(alben) ->
 // Live-Vorschau (Ziel von Tinas Router /portfolio/<slug>).
 
-type Props = { query: string; variables: object; data: any; lang: Lang };
+type Props = { query: string; variables: object; data: any; lang: Lang; design?: string };
 
 export default function AlbumContent(props: Props) {
   const { lang } = props;
+  const isEd = props.design === 'editorial';
+  const base = lang === 'en' ? '/en' : '';
   const { data } = useTina({
     query: props.query, variables: props.variables, data: props.data,
     // Vorschau-Navigation: Sidebar links automatisch auf das Dokument dieser Seite schalten.
@@ -31,6 +33,36 @@ export default function AlbumContent(props: Props) {
   function openAt(start: number) {
     if (!photos.length) return;
     setLb({ photos: photos.map((p) => ({ photo: normalizePath(p.image) })), start });
+  }
+
+  // --- Editorial: dunkler Album-Hero (Titelbild = erstes Foto) + Editorial-Raster, Lightbox wie gehabt. ---
+  if (isEd) {
+    const cover = photos[0] ? normalizePath(photos[0].image) : '';
+    return (
+      <div id="page-album">
+        <a className="ed-reader-back" href={`${base}/portfolio`}>← {lang === 'en' ? 'Albums' : 'Alben'}</a>
+        <header className="ed-reader-hero ed-album-hero">
+          <div className="ed-reader-hero-img" data-ed-hero-img>{cover ? <img src={cover} alt="" fetchPriority="high" decoding="async" /> : null}</div>
+          <div className="ed-reader-hero-scrim" aria-hidden="true" />
+          <div className="ed-reader-hero-content" data-ed-hero-content>
+            <p className="ed-reader-kicker">Album</p>
+            <h1 className="ed-reader-title" data-tina-field={tinaField(alb as any, 'name')}>{name}</h1>
+            {note ? <p className="ed-reader-meta" data-tina-field={tinaField(alb as any, lang === 'en' ? 'note_en' : 'note_de')}>{note}</p> : null}
+          </div>
+        </header>
+        <section className="ed-album-section">
+          <div className="ed-album-grid">
+            {photos.map((ph, i) => (
+              <button type="button" className="ed-album-cell" key={ph.idx + ':' + i} onClick={() => openAt(i)} aria-label={lang === 'en' ? 'Enlarge photo' : 'Foto vergrößern'}>
+                <img src={normalizePath(ph.image)} alt="" loading="lazy" decoding="async" />
+                <span className="ed-collage-vignette" aria-hidden="true" />
+              </button>
+            ))}
+          </div>
+        </section>
+        {lb && <Lightbox photos={lb.photos} startIndex={lb.start} albumName={name} loop onClose={() => setLb(null)} />}
+      </div>
+    );
   }
 
   return (

@@ -4,6 +4,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AlbumContent from '../../components/AlbumContent.tsx';
 import AdminDocTools from '../../components/AdminDocTools.tsx';
+import appearance from '../../data/appearance-settings.json';
 import { client } from '../../../tina/__generated__/client';
 
 export async function getStaticPaths() {
@@ -19,12 +20,17 @@ const name = alb.name || 'Album';
 const archived = alb.archived === true;
 // Meta-Description aus der Album-Notiz, Fallback templatisiert.
 const metaDesc = (alb.note_de || `Foto-Album „${name}“ von Wide & Wild.`).replace(/\s+/g, ' ').trim().slice(0, 200);
+const design = (appearance as any).design === 'editorial' ? 'editorial' : 'klassisch';
 ---
 <BaseLayout title={`${name} — Wide & Wild`} lang="de" description={metaDesc} noindex={archived}>
   <AdminDocTools client:load collection="alben" relativePath={`${slug}.json`} title={name} variant="bar" />
-  <section>
-    <div class="wrap">
-      <AlbumContent client:load query={res.query} variables={res.variables} data={res.data} lang="de" />
-    </div>
-  </section>
+  {design === 'editorial' ? (
+    <AlbumContent client:load query={res.query} variables={res.variables} data={res.data} lang="de" design="editorial" />
+  ) : (
+    <section>
+      <div class="wrap">
+        <AlbumContent client:load query={res.query} variables={res.variables} data={res.data} lang="de" />
+      </div>
+    </section>
+  )}
 </BaseLayout>
