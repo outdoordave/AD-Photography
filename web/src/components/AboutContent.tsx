@@ -90,14 +90,10 @@ export default function AboutContent(props: Props) {
                     <div className="ed-about-facts" data-tina-field={tf(person, 'gear')}>
                       {facts.map((f, i) => {
                         const link = gearLinkFor(f, gearItems);
-                        return (
-                          <span className="ed-about-fact" key={i}>
-                            <span className="ed-about-fact-k">{String(i + 1).padStart(2, '0')}</span>
-                            {link
-                              ? <a className="ed-about-fact-v ed-about-fact-link" href={link} target="_blank" rel="noopener">{f}</a>
-                              : <span className="ed-about-fact-v">{f}</span>}
-                          </span>
-                        );
+                        // Verlinktes Gerät: GANZE Pille klickbar; sonst schlichte Pille.
+                        return link
+                          ? <a className="ed-gearpill" key={i} href={link} target="_blank" rel="noopener">{f}</a>
+                          : <span className="ed-gearpill" key={i}>{f}</span>;
                       })}
                     </div>
                   ) : null}
