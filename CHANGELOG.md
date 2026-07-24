@@ -17,6 +17,16 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-24 17:35 — Über uns: Profil-Ausrüstung als CMS-Toggle + Equipment-Verlinkung
+- **#2 Toggle (`eb9e3c4`):** neues Schema-Feld `ueber_uns.show_person_gear` (boolean, Standard AN). AUS = Ausrüstungs-Zeile unter den Profilen ausgeblendet. Wirkt in **beiden** Designs (editorial: Fakt-Kacheln; klassisch: Textzeile) — neue Projektregel „CMS-Änderungen für hell UND dunkel" (auch ins Gedächtnis geschrieben).
+- **#3 Verlinkung (`eb9e3c4`):** Profil-Ausrüstung ist Freitext; neue Helfer `personGearTokens` + `gearLinkFor` in `lib/gear.ts` matchen jedes Token normalisiert gegen die Equipment-Geräte. Treffer mit Link → Hyperlink (editorial: ganze Zeile, Hover nur Schrift gold + „↗"; klassisch: Link im Text). Seiten reichen `gear.json`-Items an `AboutContent` (DE+EN, beide Zweige). Kein Datenstruktur-Umbau. Verifiziert: 5/7 Geräte verlinkt; „Peak Design Stativ"/„iPhone" bleiben Text (Item-Name weicht ab → ggf. im CMS angleichen).
+- ⚠️ **Schema-Änderung → Tina-Cloud-Re-Index nötig (David)**, damit der Toggle im CMS erscheint. `tina-lock.json` neu erzeugt (Feld drin, valides JSON).
+
+## 2026-07-24 17:10 — Editorial-Feinschliff (Story-Detail-Hero, About-Hover, Hero-Lesbarkeit)
+- **Story-Detail randlos (`8f9e3df`):** Der „← Stories"-Link saß mit `padding-top:96px` über dem Hero und schob das Titelbild runter (schwarzer Streifen) — anders als Liste/Reise-Detail. Jetzt Hero flush oben, Zurück-Link als frostige Overlay-Pille. Greift DE+EN (data-design-scoped). Nur dunkel.
+- **About-Hover-Blur (`8f9e3df`):** Porträts wurden beim Hover kurz unscharf (Filter-Wechsel promotete kurz eine neue GPU-Ebene). Ebene stabilisiert (`backface-visibility:hidden` + `will-change`) → kein Re-Raster-Blur.
+- **Hero-Lesbarkeit (`6f50c82`):** Kleine gold-Überschrift, Unterzeile und Equipment-Sprungpillen gingen auf Foto-Heros bei flüchtigem Blick fast unter. Verlauf (`.ed-page-hero-scrim`) im unteren Band vertieft, Kicker 12→13px + Textschatten, Unterzeile 85→92 %/weight 400 + Schatten, Pillen: Rand 16→24 %, gedämpftes Weiß statt Braungrau, dünne Frost-Füllung. Dezent, aber klar sichtbar.
+
 ## 2026-07-23 17:00 — EN-Seiten: Editorial-Design-Parität zu DE
 - David fand Alt-Design-Überbleibsel auf `/en/*` — Befund: **keine** EN-Seite hatte die Editorial-Weiche (dunkle Tokens kamen global aus BaseLayout, Markup blieb klassisch).
 - Alle 9 EN-Seiten bekommen die DE-Editorial-Weichen 1:1: `/en/` (Sektionen 01–04), `/en/stories` + Reader, `/en/portfolio` (Collage), `/en/trips` + Detail v2 (EditorialTripV2 mit Fahrzeug-Engine), `/en/journal`, `/en/gear` (Hero-Sprungpillen, EN-Kategorienamen), `/en/about` (+ Kontakt-Sektion). EN-Felder mit DE-Fallback, `/en/`-Links, englische Labels (Who we are, Up next, View trip, When/Stops/Duration/Distance, Seasons EN); Dauer-Parser matcht „Tage" UND „days". Klassische Zweige unverändert. `/en/contact` + Detail Portfolio/Journal laufen wie DE rein über CSS (kein Umbau nötig).

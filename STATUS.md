@@ -32,11 +32,17 @@
 > Schrift gold, nie Feld/Rahmen.**
 >
 > **🟡 Offene Punkte (Reihenfolge mit David geklärt):**
-> 1. **Re-Index** (David) → danach Hero-Titel-Felder im CMS testen (Startseite → Hero).
+> 1. **Re-Index** (David) → schaltet ZWEI Schema-Erweiterungen im CMS frei: (a) Hero-Titel-/Kicker-Felder
+>    (Startseite → Hero), (b) Toggle **„Ausrüstung unter Profil zeigen?"** (Über uns, `show_person_gear`,
+>    Standard AN). Danach beide im CMS testen. `tina-lock.json` ist jeweils schon aktuell.
 > 2. **Davids CMS-Editier-Durchlauf** im neuen Design → gemeldete Haken fixen. Dabei **Medien-Manager**
 >    ansehen: erbt dunkle Tokens, ist aber dark-ungetestet (Option: bewusst hell lassen, ist Admin-Werkzeug).
-> 3. **Build-Beschleunigung** (vereinbartes nächstes Paket): Cloudflare-Build-Cache + Cache für
+> 3. **Build-Beschleunigung** (vereinbartes Paket): Cloudflare-Build-Cache (Davids Schalter) + Cache für
 >    `optimize-uploads` (nur neue Bilder verarbeiten) — Davids „ewig warten" adressieren.
+> 3b. **Fallback-Bilder** (geplant, wartet auf David): 21er-Motiv-Satz nach Klima/Terrain (Master-Prompt
+>    übergeben) → David generiert via Claude Design, gibt sie mir → ich baue Keyword-Matching in
+>    `lib/albums.ts` (zweisprachig) + Ablage `web/public/uploads/fallbacks/`. Ersetzt den Zufalls-Farbverlauf
+>    (`paletteFromString`) durch inhaltlich passendes Bild; Verlauf bleibt letzter Notnagel.
 > 4. ~~EN-Seiten~~ **✅ ERLEDIGT (23.07., `a74446c`):** alle 9 `/en/*`-Seiten haben jetzt die DE-Editorial-
 >    Weichen 1:1 (EN-Felder mit DE-Fallback, `/en/`-Links, EN-Labels; Reise-Detail v2 inkl. Fahrzeug-Engine).
 >    `/en/contact` + Detailseiten Portfolio/Journal laufen wie DE rein über CSS.
