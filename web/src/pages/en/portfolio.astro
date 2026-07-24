@@ -5,6 +5,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import GalleryContent from '../../components/GalleryContent.tsx';
 import SettingsHeader from '../../components/SettingsHeader.tsx';
 import EditorialPageHero from '../../components/editorial/EditorialPageHero.tsx';
+import EditorialAlbumTile from '../../components/editorial/EditorialAlbumTile.tsx';
 import AdminSectionBar from '../../components/AdminSectionBar.astro';
 import { tl } from '../../lib/albums';
 import { photoDisplay } from '../../lib/trips';
@@ -28,13 +29,13 @@ const ALBUM_SPANS = [
 ];
 const albNodes = (res.data.albenConnection?.edges || []).filter(Boolean).map((e: any) => e.node).filter((n: any) => n && !n.archived);
 const edAlbums = design === 'editorial' ? albNodes.map((n: any, i: number) => {
-  const cover = normalizePath(photoDisplay((Array.isArray(n.photos) ? n.photos : []).find((p: any) => p) || ''));
+  const photos = (Array.isArray(n.photos) ? n.photos : []).filter((p: any) => typeof p === 'string' && p).slice(0, 6).map((p: any) => normalizePath(photoDisplay(p)));
   const d = String(n.date || ''); const mm = parseInt(d.slice(5, 7), 10);
   const meta = d ? (d.slice(0, 4) + (mm ? ' · ' + SEASON(mm) : '')) : (n.note_en || n.note_de || '');
   const sp = ALBUM_SPANS[i % ALBUM_SPANS.length];
-  return { title: n.name_en || n.name || n._sys.filename, meta, cover, href: `/en/portfolio/${n._sys.filename}`, col: sp.col, row: sp.row };
+  return { title: n.name_en || n.name || n._sys.filename, meta, photos, href: `/en/portfolio/${n._sys.filename}`, col: sp.col, row: sp.row };
 }).sort((a: any, b: any) => 0) : [];
-const edHeroImg = edAlbums[0]?.cover || '';
+const edHeroImg = edAlbums[0]?.photos?.[0] || '';
 const modes = s.modes || { album: true, chronological: false, alphabetical: false };
 // Archivierte Alben für das Archiv-Panel (Ausblenden selbst passiert in GalleryContent).
 const archivedItems = (res.data.albenConnection?.edges || []).filter(Boolean)
@@ -49,14 +50,7 @@ const archivedItems = (res.data.albenConnection?.edges || []).filter(Boolean)
       <section class="ed-section" style="padding-top:clamp(60px,9vw,96px)">
         <div class="ed-collage ed-collage--albums">
           {edAlbums.map((a: any) => (
-            <a class="ed-album-tile" href={a.href} data-reveal style={`grid-column:${a.col};grid-row:${a.row}`}>
-              {a.cover && <img src={a.cover} alt={a.title} data-zoom loading="lazy" decoding="async" />}
-              <span class="ed-collage-vignette" aria-hidden="true"></span>
-              <span class="ed-album-label">
-                <span class="ed-album-meta">{a.meta}</span>
-                <span class="ed-album-title">{a.title}</span>
-              </span>
-            </a>
+            <EditorialAlbumTile client:load href={a.href} title={a.title} meta={a.meta} photos={a.photos} col={a.col} row={a.row} />
           ))}
         </div>
       </section>
