@@ -1004,9 +1004,13 @@ export default defineConfig({
               { type: 'string', name: 'role_en', label: '↳ English', ui: { component: EnglishOnlyField } },
               { type: 'rich-text', name: 'bio_de', label: 'Bio', parser: { type: 'markdown', skipEscaping: 'html' } } as any,
               { type: 'rich-text', name: 'bio_en', label: '↳ English', parser: { type: 'markdown', skipEscaping: 'html' }, ui: { component: EnglishRichTextField } } as any,
-              { type: 'string', name: 'gear_de', label: 'Ausrüstungs-Zeile', description: 'Freie Textzeile (z. B. „Ausrüstung: Sony A7 IV · …"). NICHT automatisch aus der Equipment-Liste.' },
+              { type: 'string', name: 'gear_de', label: 'Ausrüstungs-Zeile', description: 'Freie Textzeile (z. B. „Ausrüstung: Sony A7 IV · …"). Einträge, die es auch auf der Equipment-Seite gibt, werden automatisch dorthin verlinkt.' },
               { type: 'string', name: 'gear_en', label: '↳ English', ui: { component: EnglishOnlyField } },
             ],
+          },
+          {
+            type: 'boolean', name: 'show_person_gear', label: 'Ausrüstung unter den Profilen zeigen?',
+            description: 'AN (Standard): die Ausrüstungs-Zeile wird unter jedem Profil angezeigt (im dunklen Design als Kacheln, im hellen als Textzeile). AUS: die Ausrüstung wird ausgeblendet.',
           },
           {
             type: 'boolean', name: 'person_hover', label: 'Profile beim Drüberfahren anheben?',

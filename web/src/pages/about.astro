@@ -7,6 +7,7 @@ import EditorialPageHero from '../components/editorial/EditorialPageHero.tsx';
 import { client } from '../../tina/__generated__/client';
 import appearance from '../data/appearance-settings.json';
 import contact from '../data/contact.json';
+import gear from '../data/gear.json';
 import { photoDisplay } from '../lib/trips';
 import { normalizePath } from '../lib/stories';
 
@@ -15,6 +16,8 @@ const ab = (res.data.ueber_uns as any) || {};
 const title = ab.title_de || 'Über uns';
 const design = (appearance as any).design === 'editorial' ? 'editorial' : 'klassisch';
 const c = contact as any;
+// Equipment-Geräte für die Verlinkung der Profil-Ausrüstung (Über uns).
+const gearItems = (Array.isArray((gear as any).items) ? (gear as any).items : []);
 
 // Editorial-Hero: festes Titelbild (wie im Design), Fallback = erstes Porträt.
 const heroFixed = '/uploads/alben/Firsts/img_5916-3.webp';
@@ -29,7 +32,7 @@ const edContactTitle = c.title_de || 'Sag Hallo';
     <Fragment>
       <EditorialPageHero client:load query={res.query} variables={res.variables} data={res.data} docKey="ueber_uns" lang="de" img={edHeroImg} titleFallback="Über uns" />
       <div id="page-about">
-        <AboutContent client:load query={res.query} variables={res.variables} data={res.data} lang="de" design="editorial" channels={edChannels} />
+        <AboutContent client:load query={res.query} variables={res.variables} data={res.data} lang="de" design="editorial" channels={edChannels} gearItems={gearItems} />
       </div>
       <section id="kontakt" class="ed-contact">
         <p class="ed-contact-kicker" data-reveal>{edContactKicker}</p>
@@ -49,6 +52,7 @@ const edContactTitle = c.title_de || 'Sag Hallo';
         variables={res.variables}
         data={res.data}
         lang="de"
+        gearItems={gearItems}
       />
     </div>
   )}

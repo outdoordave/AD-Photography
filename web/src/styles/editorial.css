@@ -326,6 +326,10 @@
 :root[data-design="editorial"] .ed-about-fact { display: flex; flex-direction: column; gap: 6px; padding: 16px 14px; border: 1px solid rgba(237,234,227,.1); border-radius: 10px; }
 :root[data-design="editorial"] .ed-about-fact-k { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .2em; color: var(--c-ink-soft); text-transform: uppercase; }
 :root[data-design="editorial"] .ed-about-fact-v { font-size: 13.5px; font-weight: 400; color: rgba(237,234,227,.9); }
+/* Verlinktes Gerät (existiert auch im Equipment): ganze Zeile klickbar, Hover färbt nur die Schrift gold. */
+:root[data-design="editorial"] a.ed-about-fact-link { text-decoration: none; transition: color .3s; }
+:root[data-design="editorial"] a.ed-about-fact-link::after { content: ' ↗'; color: var(--c-ink-soft); }
+:root[data-design="editorial"] a.ed-about-fact-link:hover, :root[data-design="editorial"] a.ed-about-fact-link:hover::after { color: var(--c-accent); }
 :root[data-design="editorial"] .ed-about-ig { display: inline-flex; align-items: center; gap: 9px; margin-top: 22px; font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .18em; color: var(--c-accent); }
 :root[data-design="editorial"] .ed-about-ig-ic { display: inline-flex; width: 16px; height: 16px; color: var(--c-accent); }
 :root[data-design="editorial"] .ed-about-ig-ic svg { width: 16px; height: 16px; }

@@ -4,6 +4,7 @@ import { photoFrame } from '../lib/trips';
 import { ILLUS } from '../lib/illus';
 import RichText, { pickRich } from './RichText';
 import { socialIcon } from '../lib/socialIcons';
+import { personGearTokens, gearLinkFor, type GearItem } from '../lib/gear';
 import PaperRip from './PaperRip';
 
 // Über-uns als React-Insel (wie Stories/Gear): useTina = LIVE-Daten, data-tina-field
@@ -19,6 +20,7 @@ type Props = {
   lang: 'de' | 'en';
   design?: string;
   channels?: { type?: string; label?: string; url?: string }[];
+  gearItems?: GearItem[];   // Equipment-Geräte (für Verlinkung der Profil-Ausrüstung)
 };
 
 // Illustration + Platzhalterfarben nach Position (Eintrag 1 = desert, 2 = coast).
@@ -39,6 +41,10 @@ export default function AboutContent(props: Props) {
   const t = (o: any, base: string) => { if (!o) return ''; const de = o[base + '_de'], en = o[base + '_en']; return lang === 'en' ? (en || de || '') : (de || ''); };
   const tf = (o: any, base: string) => tinaField(o, (lang === 'en' ? base + '_en' : base + '_de') as any);
   const isEd = props.design === 'editorial';
+  // Toggle „Ausrüstung unter Profil zeigen?" (Standard AN, solange Feld ungesetzt).
+  const showGear = about.show_person_gear !== false;
+  // Equipment-Geräte für die Verlinkung der Profil-Ausrüstung (gilt für beide Designs).
+  const gearItems = (Array.isArray(props.gearItems) ? props.gearItems : []) as GearItem[];
 
   // --- Editorial: 2 Porträt-Spalten (Bild + Bio + Fakten aus echter Gear-Liste + IG) + Statement, 1:1 aus Ueber uns.dc.html.
   if (isEd) {
@@ -52,10 +58,7 @@ export default function AboutContent(props: Props) {
       });
       return hit || null;
     };
-    const gearFacts = (person: any) => {
-      const raw = String(t(person, 'gear') || '').replace(/^[^:]*:\s*/, '').trim();
-      return raw ? raw.split('·').map((x) => x.trim()).filter(Boolean) : [];
-    };
+    const gearFacts = (person: any) => personGearTokens(t(person, 'gear'));
     const whyKicker = t(about, 'why_title');
     const whyText = t(about, 'why_text');
     return (
@@ -83,14 +86,19 @@ export default function AboutContent(props: Props) {
                       {ig.label}
                     </a>
                   ) : null}
-                  {facts.length > 0 ? (
+                  {showGear && facts.length > 0 ? (
                     <div className="ed-about-facts" data-tina-field={tf(person, 'gear')}>
-                      {facts.map((f, i) => (
-                        <span className="ed-about-fact" key={i}>
-                          <span className="ed-about-fact-k">{String(i + 1).padStart(2, '0')}</span>
-                          <span className="ed-about-fact-v">{f}</span>
-                        </span>
-                      ))}
+                      {facts.map((f, i) => {
+                        const link = gearLinkFor(f, gearItems);
+                        return (
+                          <span className="ed-about-fact" key={i}>
+                            <span className="ed-about-fact-k">{String(i + 1).padStart(2, '0')}</span>
+                            {link
+                              ? <a className="ed-about-fact-v ed-about-fact-link" href={link} target="_blank" rel="noopener">{f}</a>
+                              : <span className="ed-about-fact-v">{f}</span>}
+                          </span>
+                        );
+                      })}
                     </div>
                   ) : null}
                 </div>
@@ -145,7 +153,23 @@ export default function AboutContent(props: Props) {
                     <h3 data-tina-field={tinaField(person, 'name')}>{person.name}</h3>
                     <div className="role" data-tina-field={tf(person, 'role')}>{t(person, 'role')}</div>
                     <div className="bio ww-rich" data-tina-field={tf(person, 'bio')}><RichText value={pickRich(person.bio_de, person.bio_en, lang === 'en')} /></div>
-                    <div className="gear" data-tina-field={tf(person, 'gear')}>{t(person, 'gear')}</div>
+                    {showGear ? (
+                      <div className="gear" data-tina-field={tf(person, 'gear')}>
+                        {(() => {
+                          const raw = String(t(person, 'gear') || '');
+                          const tokens = personGearTokens(raw);
+                          if (!tokens.length) return raw;
+                          const m = raw.match(/^([^:]*:)\s*/);
+                          const prefix = m ? m[1] + ' ' : '';
+                          return (<>{prefix}{tokens.map((tok, i) => {
+                            const link = gearLinkFor(tok, gearItems);
+                            return (<span key={i}>{i > 0 ? ' · ' : ''}{link
+                              ? <a href={link} target="_blank" rel="noopener">{tok}</a>
+                              : tok}</span>);
+                          })}</>);
+                        })()}
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               );
