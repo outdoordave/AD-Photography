@@ -13,8 +13,12 @@
       "role_en": "Landscape & Wildlife",
       "bio_de": "Frisch verliebt in die Fotografie und schon nicht mehr zu bremsen. Alexandra hat das Auge für Tiere und Licht — und die Geduld, die beides braucht.\n",
       "bio_en": "Freshly in love with photography and already unstoppable. Alexandra has the eye for animals and light — and the patience both demand.\n",
-      "gear_de": "Ausrüstung: Sony A7 IV · Tamron 28-75mm · Tamron 150-500mm · Peak Design Stativ",
-      "gear_en": "Gear: Sony A7 IV · Tamron 28-75mm · Tamron 150-500mm · Peak Design tripod"
+      "gear": [
+        { "name": "Sony A7 IV" },
+        { "name": "Tamron 28-75mm" },
+        { "name": "Tamron 150-500mm" },
+        { "name": "Peak Design Stativ" }
+      ]
     },
     {
       "name": "David Bastisch",
@@ -23,8 +27,11 @@
       "role_en": "Aerial & Motion",
       "bio_de": "Der Mann für die andere Perspektive. David schickt die Drohne hoch, hält mit der Action-Cam drauf und findet Blickwinkel, an die sonst keiner denkt.\n",
       "bio_en": "The man for the other angle. David sends the drone up, rolls the action cam, and finds perspectives nobody else thinks of.\n",
-      "gear_de": "Ausrüstung: DJI Air 2S · DJI Osmo Action 4 · iPhone",
-      "gear_en": "Gear: DJI Air 2S · DJI Osmo Action 4 · iPhone"
+      "gear": [
+        { "name": "DJI Air 2S" },
+        { "name": "DJI Osmo Action 4" },
+        { "name": "iPhone" }
+      ]
     }
   ],
   "person_hover": true,

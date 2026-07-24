@@ -4,7 +4,7 @@ import { photoFrame } from '../lib/trips';
 import { ILLUS } from '../lib/illus';
 import RichText, { pickRich } from './RichText';
 import { socialIcon } from '../lib/socialIcons';
-import { personGearTokens, gearLinkFor, type GearItem } from '../lib/gear';
+import { personGearTokens, gearLinkFor, safeUrl, type GearItem } from '../lib/gear';
 import PaperRip from './PaperRip';
 
 // Über-uns als React-Insel (wie Stories/Gear): useTina = LIVE-Daten, data-tina-field
@@ -45,6 +45,13 @@ export default function AboutContent(props: Props) {
   const showGear = about.show_person_gear !== false;
   // Equipment-Geräte für die Verlinkung der Profil-Ausrüstung (gilt für beide Designs).
   const gearItems = (Array.isArray(props.gearItems) ? props.gearItems : []) as GearItem[];
+  // Profil-Ausrüstung als [{name, link}]: neue strukturierte Liste (person.gear) bevorzugt —
+  // Link = expliziter Link ODER Auto-Treffer auf der Equipment-Seite. Fallback: alte Freitextzeile.
+  const personGear = (person: any): { name: string; link: string }[] => {
+    const list = Array.isArray(person?.gear) ? person.gear : null;
+    if (list) return list.filter((g: any) => g && g.name).map((g: any) => ({ name: g.name, link: safeUrl(g.link) || gearLinkFor(g.name, gearItems) }));
+    return personGearTokens(t(person, 'gear')).map((name) => ({ name, link: gearLinkFor(name, gearItems) }));
+  };
 
   // --- Editorial: 2 Porträt-Spalten (Bild + Bio + Fakten aus echter Gear-Liste + IG) + Statement, 1:1 aus Ueber uns.dc.html.
   if (isEd) {
@@ -58,7 +65,7 @@ export default function AboutContent(props: Props) {
       });
       return hit || null;
     };
-    const gearFacts = (person: any) => personGearTokens(t(person, 'gear'));
+    const gearFacts = (person: any) => personGear(person);
     const whyKicker = t(about, 'why_title');
     const whyText = t(about, 'why_text');
     return (
@@ -87,14 +94,13 @@ export default function AboutContent(props: Props) {
                     </a>
                   ) : null}
                   {showGear && facts.length > 0 ? (
-                    <div className="ed-about-facts" data-tina-field={tf(person, 'gear')}>
-                      {facts.map((f, i) => {
-                        const link = gearLinkFor(f, gearItems);
+                    <div className="ed-about-facts" data-tina-field={tinaField(person, 'gear')}>
+                      {facts.map((g, i) => (
                         // Verlinktes Gerät: GANZE Pille klickbar; sonst schlichte Pille.
-                        return link
-                          ? <a className="ed-gearpill" key={i} href={link} target="_blank" rel="noopener">{f}</a>
-                          : <span className="ed-gearpill" key={i}>{f}</span>;
-                      })}
+                        g.link
+                          ? <a className="ed-gearpill" key={i} href={g.link} target="_blank" rel="noopener">{g.name}</a>
+                          : <span className="ed-gearpill" key={i}>{g.name}</span>
+                      ))}
                     </div>
                   ) : null}
                 </div>
@@ -149,23 +155,20 @@ export default function AboutContent(props: Props) {
                     <h3 data-tina-field={tinaField(person, 'name')}>{person.name}</h3>
                     <div className="role" data-tina-field={tf(person, 'role')}>{t(person, 'role')}</div>
                     <div className="bio ww-rich" data-tina-field={tf(person, 'bio')}><RichText value={pickRich(person.bio_de, person.bio_en, lang === 'en')} /></div>
-                    {showGear ? (
-                      <div className="gear" data-tina-field={tf(person, 'gear')}>
-                        {(() => {
-                          const raw = String(t(person, 'gear') || '');
-                          const tokens = personGearTokens(raw);
-                          if (!tokens.length) return raw;
-                          const m = raw.match(/^([^:]*:)\s*/);
-                          const prefix = m ? m[1] + ' ' : '';
-                          return (<>{prefix}{tokens.map((tok, i) => {
-                            const link = gearLinkFor(tok, gearItems);
-                            return (<span key={i}>{i > 0 ? ' · ' : ''}{link
-                              ? <a href={link} target="_blank" rel="noopener">{tok}</a>
-                              : tok}</span>);
-                          })}</>);
-                        })()}
-                      </div>
-                    ) : null}
+                    {(() => {
+                      const g = personGear(person);
+                      if (!showGear || !g.length) return null;
+                      const prefix = lang === 'en' ? 'Gear: ' : 'Ausrüstung: ';
+                      return (
+                        <div className="gear" data-tina-field={tinaField(person, 'gear')}>
+                          {prefix}{g.map((it, i) => (
+                            <span key={i}>{i > 0 ? ' · ' : ''}{it.link
+                              ? <a href={it.link} target="_blank" rel="noopener">{it.name}</a>
+                              : it.name}</span>
+                          ))}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               );

@@ -1004,8 +1004,15 @@ export default defineConfig({
               { type: 'string', name: 'role_en', label: '↳ English', ui: { component: EnglishOnlyField } },
               { type: 'rich-text', name: 'bio_de', label: 'Bio', parser: { type: 'markdown', skipEscaping: 'html' } } as any,
               { type: 'rich-text', name: 'bio_en', label: '↳ English', parser: { type: 'markdown', skipEscaping: 'html' }, ui: { component: EnglishRichTextField } } as any,
-              { type: 'string', name: 'gear_de', label: 'Ausrüstungs-Zeile', description: 'Freie Textzeile (z. B. „Ausrüstung: Sony A7 IV · …"). Einträge, die es auch auf der Equipment-Seite gibt, werden automatisch dorthin verlinkt.' },
-              { type: 'string', name: 'gear_en', label: '↳ English', ui: { component: EnglishOnlyField } },
+              {
+                type: 'object', name: 'gear', label: 'Ausrüstung', list: true,
+                description: 'Geräte einzeln hinzufügen (je eine Pille). Steht ein Gerät schon auf der Equipment-Seite, wird es automatisch dorthin verlinkt — sonst optional einen eigenen Link angeben.',
+                ui: { itemProps: (i: any) => ({ label: i?.name || 'Gerät' }) },
+                fields: [
+                  { type: 'string', name: 'name', label: 'Gerät', description: 'z. B. Sony A7 IV' },
+                  { type: 'string', name: 'link', label: 'Link (optional)', description: 'Leer lassen, wenn das Gerät schon auf der Equipment-Seite steht — wird dann automatisch verlinkt. Sonst eigene URL (z. B. Hersteller-Seite).' },
+                ],
+              },
             ],
           },
           {
