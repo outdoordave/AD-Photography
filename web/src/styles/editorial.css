@@ -464,7 +464,9 @@
 :root[data-design="editorial"] .ed-v2-mapcol { min-width: 0; }
 :root[data-design="editorial"] .ed-v2-legs { display: flex; flex-direction: column; gap: 96px; }
 :root[data-design="editorial"] .ed-v2-leg { transition: opacity .7s ease, filter .7s ease, transform .7s ease; }
-:root[data-design="editorial"] .ed-v2-leg.dim { opacity: .18; filter: saturate(.4); }
+:root[data-design="editorial"] .ed-v2-leg.dim { opacity: .18; filter: saturate(.4); cursor: pointer; }
+/* Ausgegraute Station ist anklickbar (springt hin) — Hover färbt NUR den Titel gold (Klick-Hinweis, Grundsatz). */
+:root[data-design="editorial"] .ed-v2-leg.dim:hover .ed-v2-leg-title { color: var(--c-accent); }
 :root[data-design="editorial"] .ed-v2-leg.dim .ed-v2-leg-photo img { filter: grayscale(.5) brightness(.8); }
 :root[data-design="editorial"] .ed-v2-leg-kicker { margin: 0 0 12px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .18em; color: var(--c-accent); text-transform: uppercase; }
 :root[data-design="editorial"] .ed-v2-leg-title { margin: 0; font-family: var(--font-display); font-variation-settings: 'wdth' 118; font-weight: 620; font-size: clamp(24px,2.8vw,34px); line-height: 1.15; color: var(--c-ink); }

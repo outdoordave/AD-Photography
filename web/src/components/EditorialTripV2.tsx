@@ -317,13 +317,25 @@ export default function EditorialTripV2(props: Props) {
             const raw = rawStops[i] || {};
             const textVal = lang === 'en' ? (richIsEmpty(raw.text_en) ? raw.text_de : raw.text_en) : raw.text_de;
             return (
-              <article className="ed-v2-leg" key={i} ref={(el) => (legRefs.current[i] = el)}>
+              <article
+                className="ed-v2-leg"
+                key={i}
+                ref={(el) => (legRefs.current[i] = el)}
+                onClick={(e) => {
+                  // Klick auf eine ausgegraute (inaktive) Station -> dorthin springen.
+                  // Aktive Station: normales Verhalten (Foto = Lightbox). Links/Tina-Felder nicht kapern.
+                  if (i === activeRef.current) return;
+                  const tgt = e.target as HTMLElement;
+                  if (tgt.closest('a')) return;
+                  scrollToLeg(i);
+                }}
+              >
                 <p className="ed-v2-leg-kicker">{dayLabel(i)}</p>
                 <h2 className="ed-v2-leg-title" data-tina-field={rawStops[i] ? tinaField(rawStops[i], (lang === 'en' ? 'title_en' : 'title_de') as any) : undefined}>{s.title || s.name}</h2>
                 {!richIsEmpty(textVal) ? <div className="ed-v2-leg-text ww-rich" data-tina-field={rawStops[i] ? tinaField(rawStops[i], (lang === 'en' ? 'text_en' : 'text_de') as any) : undefined}><RichText value={textVal} /></div> : null}
                 {s.name && s.name !== s.title ? <p className="ed-v2-leg-spot">{lang === 'en' ? 'Spot' : 'Foto-Spot'}: {s.name}</p> : null}
                 {photo ? (
-                  <button type="button" className="ed-v2-leg-photo" onClick={() => legPhotos.length && setLb({ photos: legPhotos, start: 0 })} data-tina-field={rawStops[i] ? tinaField(rawStops[i], 'photo') : undefined}>
+                  <button type="button" className="ed-v2-leg-photo" onClick={(e) => { if (i !== activeRef.current) { e.stopPropagation(); scrollToLeg(i); return; } legPhotos.length && setLb({ photos: legPhotos, start: 0 }); }} data-tina-field={rawStops[i] ? tinaField(rawStops[i], 'photo') : undefined}>
                     <img src={photo} alt={s.title || s.name} loading="lazy" decoding="async" />
                   </button>
                 ) : null}
