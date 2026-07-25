@@ -35,11 +35,12 @@ export default function GearContent(props: Props) {
   const isEd = props.design === 'editorial';
 
   // Admin-Button „+ Equipment" (nur eingeloggt sichtbar, via .ww-admin-island + html.ww-loggedin).
-  // Doppelmodus: `href` öffnet das Equipment-Formular im Tina-Editor (funktioniert auch auf der
-  // Live-Seite); zusätzlich `data-tina-field` -> im CMS-Vorschaurahmen springt die Sidebar direkt
-  // aufs Equipment-Dokument (Live-Vorschau). Dort „+" für ein neues Teil (Name/Kategorie/Link).
+  // Doppelmodus: `data-tina-field` zeigt auf die ITEMS-LISTE -> im CMS-Vorschaurahmen öffnet der Klick
+  // direkt die „Hinzufügen"-Ansicht mit leerem Item-Formular (Name/Marke/Kategorie/Link) BEI Live-
+  // Vorschau; nach „Speichern" aktualisiert die Live-Seite (useTina) und zeigt das neue Teil.
+  // `href` ist nur der Fallback für die Live-Seite ohne Editier-Rahmen (öffnet den Tina-Editor).
   const adminBtn = (
-    <a className="btn ww-admin-newbtn ww-admin-island" href={editHref('gear', 'gear.json')} target="_top" data-tina-field={tinaField(gear as any)}>
+    <a className="btn ww-admin-newbtn ww-admin-island" href={editHref('gear', 'gear.json')} target="_top" data-tina-field={tinaField(gear as any, 'items')}>
       {lang === 'en' ? '+ Add equipment' : '+ Equipment'}
     </a>
   );
