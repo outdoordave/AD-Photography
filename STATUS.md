@@ -32,10 +32,11 @@
 > Schrift gold, nie Feld/Rahmen.**
 >
 > **🟡 Offene Punkte (Reihenfolge mit David geklärt):**
-> 1. **Re-Index** (David) → schaltet DREI Schema-Erweiterungen im CMS frei: (a) Hero-Titel-/Kicker-Felder
->    (Startseite → Hero), (b) Toggle **„Ausrüstung unter Profil zeigen?"** (Über uns, `show_person_gear`),
->    (c) **Ausrüstung als Liste** (Über uns → Person → `gear` [{name, link?}] statt Freitext). `tina-lock.json`
->    jeweils schon aktuell. Danach im CMS testen.
+> 1. ~~Re-Index~~ **✅ ERLEDIGT (David, 25.07.):** Hero-Titel/Kicker, Toggle `show_person_gear` und
+>    Ausrüstung-Liste sind im CMS live. **Nachgelagerte CMS-Verbesserungen (25.07., `5605b3a`) sind
+>    UI-only → KEIN weiterer Re-Index nötig, nur Deploy:** Geräte-Vorschlagsliste (datalist) + Freitext,
+>    Klick aufs Ausrüstungs-Kästchen öffnet Personen-Formular, Foto-Crop 4:5, „+ Ausrüstung"-Admin-Button.
+>    **Von David im echten CMS zu bestätigen** (Datalist-Verhalten, Klick-Navigation, Crop-Vorschau).
 > 2. **Davids CMS-Editier-Durchlauf** im neuen Design → gemeldete Haken fixen. Dabei **Medien-Manager**
 >    ansehen: erbt dunkle Tokens, ist aber dark-ungetestet (Option: bewusst hell lassen, ist Admin-Werkzeug).
 > 3. **Build-Beschleunigung** (vereinbartes Paket): Cloudflare-Build-Cache (Davids Schalter) + Cache für

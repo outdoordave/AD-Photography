@@ -17,6 +17,14 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-25 10:58 — CMS-Ausrüstung: Vorschlagsliste + Freitext, Übersicht-Klick, Crop 4:5, Add-Button (`5605b3a`)
+- Vier CMS-Verbesserungen, **alle UI-only → KEIN Re-Index** (nur Deploy):
+- **#1 Klick → Übersicht:** Ausrüstungs-Kästchen (Über uns) zeigt jetzt aufs Personen-Formular (`tinaField(person)` statt `…'gear'`) → öffnet die Person mit der Ausrüstungs-Liste statt direkt ins Einzel-Element.
+- **#2 Vorschlagsliste + Freitext:** neues Feld `GearPickerField` (`tina/fields/`) — „Gerät" ist ein Eingabefeld mit `datalist` aus den echten Equipment-Namen (`gear.json` items); Auswahl per Tippen ODER frei etwas Eigenes eintragen. Auto-Verlinkung bleibt. `ui.component`, kein neues Feld.
+- **#3 Crop 4:3 → 4:5:** Person-Foto-`cropRatio` an die Anzeige im dunklen Design angeglichen → CMS-Crop-Vorschau = Website. UI-only.
+- **#4/5 „+ Ausrüstung"-Button:** ww-admin-only auf `/gear` + `/en/gear`, öffnet das Equipment-Dokument im Tina-Editor (`editHref`) — wie „+ Neu" bei Reise/Album/Journal.
+- Verifiziert (dev): tina-lock neu+valide (gear.json-Import löst auf), esbuild grün, Admin-Button korrekte Edit-URL (hidden bis Login), About-Pillen rendern. Datalist-Feinverhalten + Tina-Navigation final im echten CMS zu bestätigen.
+
 ## 2026-07-24 19:18 — Portfolio-Paket (Album-Detail editorial + Diashow) + Gear-Liste + Fixes
 - **Gear-Umbau (`567694e`):** Profil-Ausrüstung von Freitextzeile → strukturierte, einzeln editierbare Tina-Liste `gear` [{name, link?}] pro Person. Auto-Verlinkung bleibt (leerer Link + Name im Equipment → auto). Beide Designs. Datenmigration in about.json. ⚠️ Schema-Änderung → **Re-Index (David)**.
 - **Album-Detail editorial (`7698b4e`):** Die Album-Innenseite erbte als einzige das helle Klassik-Grid → neuer Editorial-Zweig in `AlbumContent` (randloser dunkler Hero + Editorial-Foto-Raster, Lightbox bleibt). Seiten DE+EN rendern editorial ohne `.wrap`. Jede Kachel = eigener Button (Hover/Fokus rahmt nur das eine Foto).
