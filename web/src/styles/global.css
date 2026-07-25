@@ -781,6 +781,12 @@ footer { background: var(--c-dark); color: #9a8c76; padding: 72px 0 36px; text-a
    angemeldete Admins ein. !important, damit das hidden ein evtl. display der Nav-Links schlägt. */
 .ww-admin-only[hidden] { display: none !important; }
 
+/* Admin-Steuerung INNERHALB einer React-Insel (z. B. „+ Equipment" in GearContent): Sichtbarkeit
+   über die <html>-Klasse ww-loggedin statt über das hidden-Attribut — sonst würde ein React-
+   Re-Render (Tina-Vorschau) das hidden wieder setzen. Standard verborgen, für Admins sichtbar. */
+.ww-admin-island { display: none !important; }
+:root.ww-loggedin .ww-admin-island { display: inline-block !important; }
+
 /* „+ Neu"-Knopf (admin-only): nutzt bewusst die Standard-.btn-Optik der Seite (Rahmen+Effekte über
    frame_controls kommen dadurch automatisch). Sichtbarkeit via ww-admin-only (leak-sicher). */
 .ww-admin-newbtn { margin: 0 0 22px; }

@@ -79,7 +79,7 @@ export default function AboutContent(props: Props) {
               return (
                 <div className="ed-about-person" data-reveal key={idx}>
                   <span className="ed-about-photo" data-tina-field={tinaField(person, 'photo')}>
-                    {frame.src ? <img src={frame.src} alt={person.name || ''} data-zoom loading="lazy" decoding="async" /> : null}
+                    {frame.src ? <img src={frame.src} alt={person.name || ''} style={frame.style} data-zoom loading="lazy" decoding="async" /> : null}
                     <span className="ed-collage-vignette" aria-hidden="true" />
                     <span className="ed-duo-label">
                       <span className="ed-duo-kicker" data-tina-field={tf(person, 'role')}>{t(person, 'role')}</span>

@@ -33,10 +33,20 @@ export default function GearContent(props: Props) {
   const groups = groupGear(items, categories);
   const isEd = props.design === 'editorial';
 
+  // Admin-Button „+ Equipment" (nur eingeloggt sichtbar, via .ww-admin-island + html.ww-loggedin).
+  // data-tina-field zeigt aufs Equipment-Dokument -> Klick öffnet das Formular in der Sidebar MIT
+  // Live-Vorschau (wir bleiben auf /gear); dort ist die Ausrüstungs-Liste zum Hinzufügen.
+  const adminBtn = (
+    <button type="button" className="btn ww-admin-newbtn ww-admin-island" data-tina-field={tinaField(gear as any)}>
+      {lang === 'en' ? '+ Add equipment' : '+ Equipment'}
+    </button>
+  );
+
   // --- Editorial: Kategorien mit Item-Zeilen (Name | Marke | ↗), 1:1 aus Equipment.dc.html.
   if (isEd) {
     return (
       <div className="ed-gear-page">
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>{adminBtn}</div>
         {groups.map((g, gi) => {
           const catObj = categories.find((c: any) => (c?.key || '').trim() === g.id);
           const num = String(gi + 1).padStart(2, '0');
@@ -79,6 +89,7 @@ export default function GearContent(props: Props) {
 
   return (
     <>
+      {adminBtn}
       <div className="page-title">
         <div className="kicker" data-tina-field={tf(gear, 'kicker')}>{t(gear, 'kicker')}</div>
         <h1 data-tina-field={tf(gear, 'title')}>{t(gear, 'title')}</h1>

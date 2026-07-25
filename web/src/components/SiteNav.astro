@@ -101,6 +101,9 @@ const navBack =
     }
     if (loggedIn()) {
       document.querySelectorAll('.ww-admin-only').forEach((el) => { el.hidden = false; });
+      // Klasse am <html> -> React-Inseln können Admin-Steuerungen per CSS zeigen, ohne dass
+      // ein Re-Render das `hidden`-Attribut überschreibt (siehe .ww-admin-island).
+      document.documentElement.classList.add('ww-loggedin');
     }
   })();
 
