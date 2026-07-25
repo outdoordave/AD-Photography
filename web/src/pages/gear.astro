@@ -5,6 +5,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import GearContent from '../components/GearContent.tsx';
 import EditorialPageHero from '../components/editorial/EditorialPageHero.tsx';
 import { client } from '../../tina/__generated__/client';
+import { editHref } from '../lib/tinaAdmin';
 import appearance from '../data/appearance-settings.json';
 import { groupGear } from '../lib/gear';
 
@@ -28,11 +29,15 @@ const edHeroImg = '/uploads/img_1418-2.webp';
           </div>
         )}
       </EditorialPageHero>
+      <div class="wrap" style="padding-top:24px;">
+        <a class="btn ww-admin-only ww-admin-newbtn" hidden href={editHref('gear', 'gear.json')} target="_top">+ Ausrüstung hinzufügen</a>
+      </div>
       <GearContent client:load query={res.query} variables={res.variables} data={res.data} lang="de" design="editorial" />
     </Fragment>
   ) : (
     <section>
       <div class="wrap">
+        <a class="btn ww-admin-only ww-admin-newbtn" hidden href={editHref('gear', 'gear.json')} target="_top">+ Ausrüstung hinzufügen</a>
         <GearContent
           client:load
           query={res.query}

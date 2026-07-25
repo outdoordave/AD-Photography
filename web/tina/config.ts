@@ -8,6 +8,7 @@ import ImageFrameField from './fields/ImageFrameField';
 import GearStyleField from './fields/GearStyleField';
 import JournalStyleField from './fields/JournalStyleField';
 import GearCategoryField from './fields/GearCategoryField';
+import GearPickerField from './fields/GearPickerField';
 import TripDesignsEditor from './fields/TripDesignsEditor';
 import SectionBanner from './fields/SectionBanner';
 import SprachBannerPreview from './fields/SprachBannerPreview';
@@ -999,7 +1000,7 @@ export default defineConfig({
             ui: { itemProps: (i: any) => ({ label: i?.name || 'Person' }) },
             fields: [
               { type: 'string', name: 'name', label: 'Name', description: 'z. B. Alexandra Apostel' },
-              { type: 'string', name: 'photo', label: 'Foto (Zuschnitt 4:3, Auto-WebP)', cropRatio: 4 / 3, ui: { component: CropPhotoField } },
+              { type: 'string', name: 'photo', label: 'Foto (Zuschnitt 4:5, Auto-WebP)', cropRatio: 4 / 5, ui: { component: CropPhotoField } },
               { type: 'string', name: 'role_de', label: 'Rolle' },
               { type: 'string', name: 'role_en', label: '↳ English', ui: { component: EnglishOnlyField } },
               { type: 'rich-text', name: 'bio_de', label: 'Bio', parser: { type: 'markdown', skipEscaping: 'html' } } as any,
@@ -1009,7 +1010,7 @@ export default defineConfig({
                 description: 'Geräte einzeln hinzufügen (je eine Pille). Steht ein Gerät schon auf der Equipment-Seite, wird es automatisch dorthin verlinkt — sonst optional einen eigenen Link angeben.',
                 ui: { itemProps: (i: any) => ({ label: i?.name || 'Gerät' }) },
                 fields: [
-                  { type: 'string', name: 'name', label: 'Gerät', description: 'z. B. Sony A7 IV' },
+                  { type: 'string', name: 'name', label: 'Gerät', description: 'Aus deiner Equipment-Liste wählen (Vorschläge beim Tippen) — oder etwas Eigenes eintippen, das nicht im Equipment steht.', ui: { component: GearPickerField } },
                   { type: 'string', name: 'link', label: 'Link (optional)', description: 'Leer lassen, wenn das Gerät schon auf der Equipment-Seite steht — wird dann automatisch verlinkt. Sonst eigene URL (z. B. Hersteller-Seite).' },
                 ],
               },

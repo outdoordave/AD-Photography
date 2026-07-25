@@ -94,7 +94,7 @@ export default function AboutContent(props: Props) {
                     </a>
                   ) : null}
                   {showGear && facts.length > 0 ? (
-                    <div className="ed-about-facts" data-tina-field={tinaField(person, 'gear')}>
+                    <div className="ed-about-facts" data-tina-field={tinaField(person)}>
                       {facts.map((g, i) => (
                         // Verlinktes Gerät: GANZE Pille klickbar; sonst schlichte Pille.
                         g.link
@@ -160,7 +160,7 @@ export default function AboutContent(props: Props) {
                       if (!showGear || !g.length) return null;
                       const prefix = lang === 'en' ? 'Gear: ' : 'Ausrüstung: ';
                       return (
-                        <div className="gear" data-tina-field={tinaField(person, 'gear')}>
+                        <div className="gear" data-tina-field={tinaField(person)}>
                           {prefix}{g.map((it, i) => (
                             <span key={i}>{i > 0 ? ' · ' : ''}{it.link
                               ? <a href={it.link} target="_blank" rel="noopener">{it.name}</a>
