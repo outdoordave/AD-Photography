@@ -17,6 +17,10 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-25 — Person-Foto-Crop im dunklen Design + Equipment-Button mit Live-Vorschau (`2182a62`)
+- **Crop-Mismatch behoben:** Editorial zeigte das Personen-Foto per `object-fit:cover` des Originals und ignorierte den gespeicherten Zuschnitt (nur klassisch wandte `frame.style` an). Jetzt wendet auch Editorial `frame.style` an → Website = CMS-Crop (verifiziert: img absolute, width 142 %, left/top aus Crop).
+- **„+ Equipment"-Button überarbeitet:** vorher `editHref` → roher Admin OHNE Live-Vorschau. Neu: Button in der GearContent-Insel mit `data-tina-field` aufs Equipment-Dokument → öffnet das Formular in der Sidebar MIT Live-Vorschau (bleibt auf /gear). Umbenannt „Equipment"/„Add equipment". Sichtbarkeit React-sicher via `<html>.ww-loggedin` (`.ww-admin-island`) statt `hidden`-Attribut. Alles UI-only, kein Re-Index.
+
 ## 2026-07-25 10:58 — CMS-Ausrüstung: Vorschlagsliste + Freitext, Übersicht-Klick, Crop 4:5, Add-Button (`5605b3a`)
 - Vier CMS-Verbesserungen, **alle UI-only → KEIN Re-Index** (nur Deploy):
 - **#1 Klick → Übersicht:** Ausrüstungs-Kästchen (Über uns) zeigt jetzt aufs Personen-Formular (`tinaField(person)` statt `…'gear'`) → öffnet die Person mit der Ausrüstungs-Liste statt direkt ins Einzel-Element.
