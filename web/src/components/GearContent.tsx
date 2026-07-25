@@ -1,5 +1,6 @@
 import { useTina, tinaField } from 'tinacms/dist/react';
 import { selectActiveFormId } from '../lib/tinaForm';
+import { editHref } from '../lib/tinaAdmin';
 import { groupGear, safeUrl, type GearItem } from '../lib/gear';
 
 // Gear als kleine React-Insel (wie StoryReaderContent): useTina liefert LIVE-Daten
@@ -34,12 +35,13 @@ export default function GearContent(props: Props) {
   const isEd = props.design === 'editorial';
 
   // Admin-Button „+ Equipment" (nur eingeloggt sichtbar, via .ww-admin-island + html.ww-loggedin).
-  // data-tina-field zeigt aufs Equipment-Dokument -> Klick öffnet das Formular in der Sidebar MIT
-  // Live-Vorschau (wir bleiben auf /gear); dort ist die Ausrüstungs-Liste zum Hinzufügen.
+  // Doppelmodus: `href` öffnet das Equipment-Formular im Tina-Editor (funktioniert auch auf der
+  // Live-Seite); zusätzlich `data-tina-field` -> im CMS-Vorschaurahmen springt die Sidebar direkt
+  // aufs Equipment-Dokument (Live-Vorschau). Dort „+" für ein neues Teil (Name/Kategorie/Link).
   const adminBtn = (
-    <button type="button" className="btn ww-admin-newbtn ww-admin-island" data-tina-field={tinaField(gear as any)}>
+    <a className="btn ww-admin-newbtn ww-admin-island" href={editHref('gear', 'gear.json')} target="_top" data-tina-field={tinaField(gear as any)}>
       {lang === 'en' ? '+ Add equipment' : '+ Equipment'}
-    </button>
+    </a>
   );
 
   // --- Editorial: Kategorien mit Item-Zeilen (Name | Marke | ↗), 1:1 aus Equipment.dc.html.

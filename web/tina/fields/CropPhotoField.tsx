@@ -113,9 +113,11 @@ const CropPhotoFieldInner = wrapFieldsWithMeta(({ input, field }: any) => {
       const sc = (frameW / (val.crop.w * nat.w)) / baseScale; // relativer Zoom
       const s = Math.max(1, sc);
       const dispScale = baseScale * s;
-      setScale(s);
-      setTx(-val.crop.x * nat.w * dispScale);
-      setTy(-val.crop.y * nat.h * dispScale);
+      // Sofort auf den gültigen Bereich clampen (fill), sonst bleibt beim Erst-Laden ein dunkler
+      // Rand, bis eine Bewegung clampPan auslöst — v. a. wenn der alte Zuschnitt nicht aufs
+      // aktuelle Seitenverhältnis passt. So sitzt das Bild direkt im richtigen Format.
+      const c = clampPan(-val.crop.x * nat.w * dispScale, -val.crop.y * nat.h * dispScale, s);
+      setScale(s); setTx(c.x); setTy(c.y);
     } else {
       // Vollbild cover, zentriert.
       setScale(1);
