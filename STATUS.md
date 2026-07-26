@@ -32,11 +32,13 @@
 > Schrift gold, nie Feld/Rahmen.**
 >
 > **🟡 Offene Punkte (Reihenfolge mit David geklärt):**
-> 1. ~~Re-Index~~ **✅ ERLEDIGT (David, 25.07.):** Hero-Titel/Kicker, Toggle `show_person_gear` und
->    Ausrüstung-Liste sind im CMS live. **Nachgelagerte CMS-Verbesserungen (25.07., `5605b3a`) sind
->    UI-only → KEIN weiterer Re-Index nötig, nur Deploy:** Geräte-Vorschlagsliste (datalist) + Freitext,
->    Klick aufs Ausrüstungs-Kästchen öffnet Personen-Formular, Foto-Crop 4:5, „+ Ausrüstung"-Admin-Button.
->    **Von David im echten CMS zu bestätigen** (Datalist-Verhalten, Klick-Navigation, Crop-Vorschau).
+> 1. **🔴 Re-Index NÖTIG (David, 25.07.):** Equipment-Teile sind jetzt eine eigene Collection `equipment`
+>    (1 Dokument pro Teil, `23efc15`) statt einer Liste in gear.json — damit „+ Equipment" nativ wie
+>    „+ Neue Reise" mit Live-Vorschau anlegt. **Schema-Änderung (neue Collection + entferntes `items`-Feld)
+>    → Re-Index zwingend.** Danach im CMS testen: „+ Equipment" → leeres Formular (tippbar!) → Speichern →
+>    Teil erscheint. `tina-lock.json` + Migration (12 Teile → `src/data/equipment/*.json`) sind schon drin.
+>    (Frühere 25.07.-Verbesserungen `5605b3a`/`2182a62` waren UI-only; der Collection-Umbau ersetzt den
+>    damaligen Add-Button-Ansatz.)
 > 2. **Davids CMS-Editier-Durchlauf** im neuen Design → gemeldete Haken fixen. Dabei **Medien-Manager**
 >    ansehen: erbt dunkle Tokens, ist aber dark-ungetestet (Option: bewusst hell lassen, ist Admin-Werkzeug).
 > 3. **Build-Beschleunigung** (vereinbartes Paket): Cloudflare-Build-Cache (Davids Schalter) + Cache für

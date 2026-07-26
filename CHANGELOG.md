@@ -17,6 +17,14 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-25 — Equipment als eigene Collection (1 Dokument pro Teil) → „+ Equipment" nativ mit Live-Vorschau (`23efc15`)
+- Umbau von „Liste in gear.json" auf eine echte Tina-**Collection** `equipment` (ein Dokument pro Teil), damit „+ Equipment" **nativ** wie „+ Neue Reise" funktioniert: ein Klick → leeres Formular (Name/Marke/Kategorie/Link) mit **Live-Vorschau** → Speichern → Teil erscheint. Grund: bei der Liste ließ sich das Anlegen nur per Cross-iframe-Hack auslösen, dessen Formular aber nicht bedienbar war (Tastatur/Dropdown blockiert). Native Dokumente lösen das komplett.
+- **Schema:** neue Collection `equipment` (name/brand/category/link/sort, router `/gear`, Dateiname aus Name); `items`-Feld aus der `gear`-Collection entfernt (Texte/Kategorien/Stil bleiben).
+- **Migration:** 12 Teile gear.json → `src/data/equipment/*.json` (sort 10…120 = bisherige Reihenfolge).
+- **Code:** GearContent liest Teile via `useTina(equipmentConnection)` (live); Texte/Kategorien als Prop; „+ Equipment" = `newHref('equipment')`. gear.astro/about.astro (DE+EN) fragen `equipmentConnection`. GearCategoryField liest Kategorien aus gear.json; GearPickerField aus neuem `equipment-index.json` (Build-Skript `gen-equipment-index.mjs`). Cross-iframe-Hack entfernt.
+- Verifiziert (dev, beide Designs): 12 Teile gruppiert/sortiert, About-Auto-Link (6 verlinkt), kein Konsolenfehler, esbuild grün.
+- ⚠️ **Schema-Änderung → Tina-Cloud-Re-Index nötig (David).**
+
 ## 2026-07-25 — Person-Foto-Crop im dunklen Design + Equipment-Button mit Live-Vorschau (`2182a62`)
 - **Crop-Mismatch behoben:** Editorial zeigte das Personen-Foto per `object-fit:cover` des Originals und ignorierte den gespeicherten Zuschnitt (nur klassisch wandte `frame.style` an). Jetzt wendet auch Editorial `frame.style` an → Website = CMS-Crop (verifiziert: img absolute, width 142 %, left/top aus Crop).
 - **„+ Equipment"-Button überarbeitet:** vorher `editHref` → roher Admin OHNE Live-Vorschau. Neu: Button in der GearContent-Insel mit `data-tina-field` aufs Equipment-Dokument → öffnet das Formular in der Sidebar MIT Live-Vorschau (bleibt auf /gear). Umbenannt „Equipment"/„Add equipment". Sichtbarkeit React-sicher via `<html>.ww-loggedin` (`.ww-admin-island`) statt `hidden`-Attribut. Alles UI-only, kein Re-Index.
