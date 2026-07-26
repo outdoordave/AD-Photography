@@ -35,12 +35,38 @@ export default function GearContent(props: Props) {
   const isEd = props.design === 'editorial';
 
   // Admin-Button „+ Equipment" (nur eingeloggt sichtbar, via .ww-admin-island + html.ww-loggedin).
-  // Doppelmodus: `data-tina-field` zeigt auf die ITEMS-LISTE -> im CMS-Vorschaurahmen öffnet der Klick
-  // direkt die „Hinzufügen"-Ansicht mit leerem Item-Formular (Name/Marke/Kategorie/Link) BEI Live-
-  // Vorschau; nach „Speichern" aktualisiert die Live-Seite (useTina) und zeigt das neue Teil.
-  // `href` ist nur der Fallback für die Live-Seite ohne Editier-Rahmen (öffnet den Tina-Editor).
+  // Verknüpft mit Tinas nativem „Add" der Ausrüstungs-Liste: im CMS läuft die Seite im Admin-iframe,
+  // die Sidebar (mit Tinas „+") steckt im Top-Dokument (gleicher Ursprung -> erreichbar). Der Klick
+  // findet das Feld „Ausrüstung" und drückt dessen „Add"-Knopf -> Tina öffnet direkt das leere Teil-
+  // Formular (Name/Marke/Kategorie/Link) BEI Live-Vorschau. Nach „Speichern" aktualisiert die Seite.
+  // Ausserhalb des CMS (reine Live-Seite) findet er kein Feld -> der href-Fallback öffnet den Editor.
+  const openTinaAdd = (e: React.MouseEvent) => {
+    let sideDoc: Document = document;
+    try { if (window.top && window.top !== window.self && (window.top as any).document) sideDoc = (window.top as any).document; } catch { /* fremder Ursprung */ }
+    const findAdd = (): HTMLButtonElement | null => {
+      const nodes = Array.from(sideDoc.querySelectorAll('label, span, h2, h3, legend, div')) as HTMLElement[];
+      const labels = nodes.filter((el) => el.childElementCount <= 1 && (el.textContent || '').trim() === 'Ausrüstung');
+      for (const label of labels) {
+        let node: HTMLElement | null = label;
+        for (let i = 0; i < 8 && node; i++) {
+          const btn = Array.from(node.querySelectorAll('button')).find((b) => /^\s*add\b/i.test((b.textContent || '').trim())) as HTMLButtonElement | undefined;
+          if (btn) return btn;
+          node = node.parentElement;
+        }
+      }
+      return null;
+    };
+    if (!findAdd()) return; // kein CMS-Formular sichtbar -> href-Fallback greift
+    e.preventDefault();
+    const tryClick = (left: number) => {
+      const btn = findAdd();
+      if (btn) { btn.click(); return; }
+      if (left > 0) window.setTimeout(() => tryClick(left - 1), 250);
+    };
+    tryClick(6);
+  };
   const adminBtn = (
-    <a className="btn ww-admin-newbtn ww-admin-island" href={editHref('gear', 'gear.json')} target="_top" data-tina-field={tinaField(gear as any, 'items')}>
+    <a className="btn ww-admin-newbtn ww-admin-island" href={editHref('gear', 'gear.json')} target="_top" data-tina-field={tinaField(gear as any, 'items')} onClick={openTinaAdd}>
       {lang === 'en' ? '+ Add equipment' : '+ Equipment'}
     </a>
   );
