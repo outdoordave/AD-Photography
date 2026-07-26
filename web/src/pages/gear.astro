@@ -1,6 +1,6 @@
 ---
-// Equipment-Seite DE ('/gear'). Daten via Tina-Client (Live-Vorschau-fähig wie
-// Stories); Render in der GearContent-Insel. Aufbau wie #page-gear in index.html.
+// Equipment-Seite DE ('/gear'). Seitentexte/Kategorien aus gear.json; die Teile aus der
+// eigenen `equipment`-Collection (equipmentConnection). GearContent rendert live via useTina.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import GearContent from '../components/GearContent.tsx';
 import EditorialPageHero from '../components/editorial/EditorialPageHero.tsx';
@@ -9,12 +9,15 @@ import appearance from '../data/appearance-settings.json';
 import { groupGear } from '../lib/gear';
 
 const res = await client.queries.gear({ relativePath: 'gear.json' });
+const eqRes = await client.queries.equipmentConnection({ first: 1000 });
 const g = (res.data.gear as any) || {};
 const title = g.title_de || 'Equipment';
 const design = (appearance as any).design === 'editorial' ? 'editorial' : 'klassisch';
 
-// Editorial: Hero-Sprungpillen aus den echten Kategorien (nur nicht-leere).
-const edGroups = design === 'editorial' ? groupGear(Array.isArray(g.items) ? g.items : [], Array.isArray(g.categories) ? g.categories : []) : [];
+// Teile aus der Collection (nach Reihenfolge-Zahl, dann Name) für die Hero-Sprungpillen.
+const eqItems = ((eqRes.data.equipmentConnection?.edges || []).map((e: any) => e?.node).filter(Boolean))
+  .sort((a: any, b: any) => ((typeof a.sort === 'number' ? a.sort : 1e9) - (typeof b.sort === 'number' ? b.sort : 1e9)) || String(a.name || '').localeCompare(String(b.name || '')));
+const edGroups = design === 'editorial' ? groupGear(eqItems, Array.isArray(g.categories) ? g.categories : []) : [];
 const edToc = edGroups.map((grp: any, i: number) => ({ id: grp.id, label: `${String(i + 1).padStart(2, '0')} ${grp.de}` }));
 const edHeroImg = '/uploads/img_1418-2.webp';
 ---
@@ -28,16 +31,17 @@ const edHeroImg = '/uploads/img_1418-2.webp';
           </div>
         )}
       </EditorialPageHero>
-      <GearContent client:load query={res.query} variables={res.variables} data={res.data} lang="de" design="editorial" />
+      <GearContent client:load query={eqRes.query} variables={eqRes.variables} data={eqRes.data} gearDoc={g} lang="de" design="editorial" />
     </Fragment>
   ) : (
     <section>
       <div class="wrap">
         <GearContent
           client:load
-          query={res.query}
-          variables={res.variables}
-          data={res.data}
+          query={eqRes.query}
+          variables={eqRes.variables}
+          data={eqRes.data}
+          gearDoc={g}
           lang="de"
         />
       </div>

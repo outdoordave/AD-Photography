@@ -1,16 +1,15 @@
 import React from 'react';
 import { wrapFieldsWithMeta } from 'tinacms';
-import gear from '../../src/data/gear.json';
+import equipmentNames from '../../src/data/equipment-index.json';
 
-// Geräte-Feld der Profil-Ausrüstung: Eingabefeld MIT Vorschlagsliste (datalist) aus den
-// echten Equipment-Geräten (gear.json → items[].name). Tippen zeigt passende Vorschläge —
-// man kann aber genauso etwas Eigenes eintippen, das nicht im Equipment steht (dann optional
-// im „Link"-Feld verlinken). Steht der Name im Equipment, wird er auf der Seite automatisch
-// dorthin verlinkt (gearLinkFor). Bewusst kein hartes Dropdown: Freitext bleibt möglich.
+// Geräte-Feld der Profil-Ausrüstung: Eingabefeld MIT Vorschlagsliste (datalist) aus den echten
+// Ausrüstungs-Teilen (equipment-Collection → src/data/equipment-index.json, im Build erzeugt).
+// Tippen zeigt passende Vorschläge — man kann aber genauso etwas Eigenes eintippen, das nicht im
+// Equipment steht (dann optional im „Link"-Feld verlinken). Steht der Name im Equipment, wird er
+// auf der Seite automatisch dorthin verlinkt (gearLinkFor). Kein hartes Dropdown: Freitext bleibt.
 
 const GearPickerField = wrapFieldsWithMeta(({ input }: any) => {
-  const items: any[] = Array.isArray((gear as any)?.items) ? (gear as any).items : [];
-  const names: string[] = Array.from(new Set(items.map((i) => String(i?.name || '').trim()).filter(Boolean)));
+  const names: string[] = Array.from(new Set((Array.isArray(equipmentNames) ? equipmentNames : []).map((n: any) => String(n || '').trim()).filter(Boolean)));
   const value: string = typeof input.value === 'string' ? input.value : '';
   const listId = 'ww-gear-' + String(input.name || 'x').replace(/[^a-z0-9]/gi, '-');
 

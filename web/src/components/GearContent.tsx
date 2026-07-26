@@ -1,72 +1,45 @@
 import { useTina, tinaField } from 'tinacms/dist/react';
-import { selectActiveFormId } from '../lib/tinaForm';
-import { editHref } from '../lib/tinaAdmin';
-import { groupGear, safeUrl, type GearItem } from '../lib/gear';
+import { newHref } from '../lib/tinaAdmin';
+import { groupGear, safeUrl, type GearItem, type GearCategory } from '../lib/gear';
 
-// Gear als kleine React-Insel (wie StoryReaderContent): useTina liefert LIVE-Daten
-// (aktualisiert beim Tippen in der Tina-Sidebar), data-tina-field = Klick auf der
-// Seite springt zum passenden Feld. Render-Logik 1:1 wie renderGear (Reihenfolge,
-// Link-vs-kein-Link, „↗" per CSS). Astro rendert die Insel beim Build statisch vor
-// (Besucher sehen volles HTML), im Tina-Editor hydratisiert sie fuer die Vorschau.
+// Gear-Insel: die Ausrüstungs-TEILE kommen jetzt aus der eigenen `equipment`-Collection (ein
+// Dokument pro Teil) — via useTina(equipmentConnection) LIVE (neues Teil erscheint nach dem
+// Speichern). Seitentexte + Kategorien + Stil kommen als Prop aus gear.json (selten geändert;
+// die Editorial-Kopftexte sind über EditorialPageHero separat live). „+ Equipment" nutzt Tinas
+// natives „Neues Dokument" (newHref) -> Formular mit Live-Vorschau, tippen/Dropdown/Speichern
+// funktionieren nativ. data-tina-field je Teil = Klick springt ins jeweilige Dokument.
 
 type Props = {
   query: string;
   variables: object;
-  data: any;
+  data: any;            // equipmentConnection
+  gearDoc: any;         // gear.json (Texte, Kategorien, Stil)
   lang: 'de' | 'en';
   design?: string;
 };
 
 export default function GearContent(props: Props) {
-  const { data } = useTina({
-    query: props.query, variables: props.variables, data: props.data,
-    // Vorschau-Navigation: Sidebar links automatisch auf das Dokument dieser Seite schalten.
-    experimental___selectFormByFormId: () => selectActiveFormId(props.data),
-  });
-  const gear = (data.gear ?? {}) as Record<string, any>;
+  const { data } = useTina({ query: props.query, variables: props.variables, data: props.data });
   const lang = props.lang;
-  // Flache Felder (base_de/base_en): EN fällt auf DE zurück.
+  const gear = (props.gearDoc ?? {}) as Record<string, any>;
   const t = (o: any, base: string) => { if (!o) return ''; const de = o[base + '_de'], en = o[base + '_en']; return lang === 'en' ? (en || de || '') : (de || ''); };
-  const tf = (o: any, base: string) => tinaField(o, (lang === 'en' ? base + '_en' : base + '_de') as any);
 
-  const items: GearItem[] = Array.isArray(gear.items) ? gear.items : [];
-  const categories = Array.isArray(gear.categories) ? gear.categories : [];
+  const nodes = ((data as any)?.equipmentConnection?.edges ?? [])
+    .map((e: any) => e?.node)
+    .filter(Boolean) as any[];
+  // Sortierung: Reihenfolge-Zahl (leer = ganz hinten), dann Name.
+  const items = [...nodes].sort((a, b) =>
+    ((typeof a.sort === 'number' ? a.sort : 1e9) - (typeof b.sort === 'number' ? b.sort : 1e9))
+    || String(a.name || '').localeCompare(String(b.name || '')),
+  ) as (GearItem & { sort?: number })[];
+  const categories = (Array.isArray(gear.categories) ? gear.categories : []) as GearCategory[];
   const groups = groupGear(items, categories);
   const isEd = props.design === 'editorial';
 
-  // Admin-Button „+ Equipment" (nur eingeloggt sichtbar, via .ww-admin-island + html.ww-loggedin).
-  // Verknüpft mit Tinas nativem „Add" der Ausrüstungs-Liste: im CMS läuft die Seite im Admin-iframe,
-  // die Sidebar (mit Tinas „+") steckt im Top-Dokument (gleicher Ursprung -> erreichbar). Der Klick
-  // findet das Feld „Ausrüstung" und drückt dessen „Add"-Knopf -> Tina öffnet direkt das leere Teil-
-  // Formular (Name/Marke/Kategorie/Link) BEI Live-Vorschau. Nach „Speichern" aktualisiert die Seite.
-  // Ausserhalb des CMS (reine Live-Seite) findet er kein Feld -> der href-Fallback öffnet den Editor.
-  const openTinaAdd = (e: React.MouseEvent) => {
-    let sideDoc: Document = document;
-    try { if (window.top && window.top !== window.self && (window.top as any).document) sideDoc = (window.top as any).document; } catch { /* fremder Ursprung */ }
-    const findAdd = (): HTMLButtonElement | null => {
-      const nodes = Array.from(sideDoc.querySelectorAll('label, span, h2, h3, legend, div')) as HTMLElement[];
-      const labels = nodes.filter((el) => el.childElementCount <= 1 && (el.textContent || '').trim() === 'Ausrüstung');
-      for (const label of labels) {
-        let node: HTMLElement | null = label;
-        for (let i = 0; i < 8 && node; i++) {
-          const btn = Array.from(node.querySelectorAll('button')).find((b) => /^\s*add\b/i.test((b.textContent || '').trim())) as HTMLButtonElement | undefined;
-          if (btn) return btn;
-          node = node.parentElement;
-        }
-      }
-      return null;
-    };
-    if (!findAdd()) return; // kein CMS-Formular sichtbar -> href-Fallback greift
-    e.preventDefault();
-    const tryClick = (left: number) => {
-      const btn = findAdd();
-      if (btn) { btn.click(); return; }
-      if (left > 0) window.setTimeout(() => tryClick(left - 1), 250);
-    };
-    tryClick(6);
-  };
+  // Admin-Button „+ Equipment" (nur eingeloggt, via .ww-admin-island + html.ww-loggedin):
+  // Tinas natives „Neues Dokument" der equipment-Collection -> leeres Formular mit Live-Vorschau.
   const adminBtn = (
-    <a className="btn ww-admin-newbtn ww-admin-island" href={editHref('gear', 'gear.json')} target="_top" data-tina-field={tinaField(gear as any, 'items')} onClick={openTinaAdd}>
+    <a className="btn ww-admin-newbtn ww-admin-island" href={newHref('equipment')} target="_top">
       {lang === 'en' ? '+ Add equipment' : '+ Equipment'}
     </a>
   );
@@ -77,13 +50,12 @@ export default function GearContent(props: Props) {
       <div className="ed-gear-page">
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>{adminBtn}</div>
         {groups.map((g, gi) => {
-          const catObj = categories.find((c: any) => (c?.key || '').trim() === g.id);
           const num = String(gi + 1).padStart(2, '0');
           const count = `${g.items.length} ${g.items.length === 1 ? (lang === 'en' ? 'item' : 'Teil') : (lang === 'en' ? 'items' : 'Teile')}`;
           return (
             <div id={g.id} key={g.id}>
               <div className="ed-gear-cathead" data-reveal>
-                <span className="ed-gear-catnum" data-tina-field={catObj ? tinaField(catObj as any) : undefined}>{num} — {lang === 'en' ? g.en : g.de}</span>
+                <span className="ed-gear-catnum">{num} — {lang === 'en' ? g.en : g.de}</span>
                 <span className="ed-rule" />
                 <span className="ed-gear-count">{count}</span>
               </div>
@@ -96,8 +68,8 @@ export default function GearContent(props: Props) {
                     {href ? <span className="ed-gear-who" aria-hidden="true">↗</span> : <span className="ed-gear-who" aria-hidden="true"></span>}
                   </>
                 );
-                // Mit Link: die GANZE Zeile ist der Link (wie die Story-Zeilen unter 03 auf der
-                // Startseite) — Hover färbt die Schrift gold. Ohne Link: einfache Zeile.
+                // Mit Link: die GANZE Zeile ist der Link — Hover färbt die Schrift gold.
+                // data-tina-field je Teil = Klick springt ins jeweilige Ausrüstungs-Dokument.
                 return href ? (
                   <a className="ed-gear-row" key={i} href={href} target="_blank" rel="noopener" data-reveal data-tina-field={tinaField(it as any)}>{inner}</a>
                 ) : (
@@ -120,24 +92,19 @@ export default function GearContent(props: Props) {
     <>
       {adminBtn}
       <div className="page-title">
-        <div className="kicker" data-tina-field={tf(gear, 'kicker')}>{t(gear, 'kicker')}</div>
-        <h1 data-tina-field={tf(gear, 'title')}>{t(gear, 'title')}</h1>
-        <p data-tina-field={tf(gear, 'intro')}>{t(gear, 'intro')}</p>
+        <div className="kicker">{t(gear, 'kicker')}</div>
+        <h1>{t(gear, 'title')}</h1>
+        <p>{t(gear, 'intro')}</p>
       </div>
 
       <div className={`gear-list gear-style-${['plain', 'card', 'notes'].includes(gear.gear_style) ? gear.gear_style : 'card'} gear-scope-${gear.gear_scope === 'groups' ? 'groups' : 'whole'}`}>
-        {groups.map((g) => {
-          // Zugehöriges Kategorie-Objekt aus der Inline-Liste -> Klick auf die Überschrift
-          // springt im CMS direkt zu DIESER Kategorie (wie der Klick auf ein Gerät).
-          const catObj = categories.find((c: any) => (c?.key || '').trim() === g.id);
-          return (
+        {groups.map((g) => (
           <div className="gear-cat" key={g.id}>
-            <h3 data-tina-field={catObj ? tinaField(catObj as any) : undefined}>{lang === 'en' ? g.en : g.de}</h3>
+            <h3>{lang === 'en' ? g.en : g.de}</h3>
             {g.items.map((it, i) => {
               const href = safeUrl(it.link);
               return (
-                // data-tina-field je Gegenstand (nicht auf der ganzen Liste) -> Klick
-                // springt zu DIESEM Eintrag, statt die Liste zu fokussieren („+ hinzufügen").
+                // data-tina-field je Teil -> Klick springt ins jeweilige Ausrüstungs-Dokument.
                 <div className="gear-row" key={i} data-tina-field={tinaField(it as any)}>
                   {href ? (
                     <a className="gr-name" href={href} target="_blank" rel="noopener">{it.name}</a>
@@ -149,8 +116,7 @@ export default function GearContent(props: Props) {
               );
             })}
           </div>
-          );
-        })}
+        ))}
       </div>
     </>
   );

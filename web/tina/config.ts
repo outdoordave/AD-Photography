@@ -931,35 +931,39 @@ export default defineConfig({
               { type: 'string', name: 'key', label: 'Kennung', required: true, description: 'Kurz, klein, ohne Leerzeichen (z. B. „cooler"). Einmal vergeben, danach nicht mehr ändern — die Geräte hängen daran.' },
             ],
           },
-          // --- Ausrüstungs-Liste ---
-          {
-            type: 'object',
-            name: 'items',
-            label: 'Ausrüstung',
-            list: true,
-            ui: {
-              itemProps: (item: any) => ({
-                label: item?.name
-                  ? `${item.name}${item.brand ? ' — ' + item.brand : ''}`
-                  : 'Neues Ausrüstungsteil',
-              }),
-            },
-            fields: [
-              { type: 'string', name: 'name', label: 'Name', required: true, description: 'z. B. Sony A7 IV' },
-              { type: 'string', name: 'brand', label: 'Marke', description: 'z. B. Sony' },
-              {
-                // Dropdown, gespeist aus der „Kategorien"-Liste oben (gleiches Dokument).
-                // Eigenes Feld (GearCategoryField), weil Tina-`options` nicht aus CMS-Inhalt
-                // gefüllt werden können. Speichert die „Kennung" (key) der Kategorie.
-                type: 'string',
-                name: 'category',
-                label: 'Kategorie',
-                description: 'Bestimmt, unter welcher Überschrift das Teil erscheint. Auswahl aus deinen Kategorien (oben „Kategorien" pflegen).',
-                ui: { component: GearCategoryField },
-              },
-              { type: 'string', name: 'link', label: 'Link (optional)', description: 'Volle URL (https://…). Leer lassen = kein Link.' },
-            ],
+          // Hinweis: Die Ausrüstungs-TEILE sind jetzt eine eigene Collection „Ausrüstung"
+          // (ein Dokument pro Teil) — damit „+ Neu" wie bei Reise/Album mit Live-Vorschau geht.
+          // Hier bleiben nur Seitentexte, Stil und Kategorien.
+        ],
+      },
+      // --- Ausrüstung: EIN Dokument pro Teil (eigene Collection) -> „+ Neu" mit Live-Vorschau ---
+      {
+        name: 'equipment',
+        label: '🎒 Ausrüstung (Teile)',
+        path: 'src/data/equipment',
+        format: 'json',
+        ui: {
+          router: () => '/gear',
+          // Dateiname automatisch aus dem Namen (z. B. „Sony A7 IV" -> sony-a7-iv).
+          filename: {
+            readonly: false,
+            slugify: (values: any) => String(values?.name || 'teil').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'teil',
           },
+        },
+        fields: [
+          { type: 'string', name: 'name', label: 'Name', isTitle: true, required: true, description: 'z. B. Sony A7 IV' },
+          { type: 'string', name: 'brand', label: 'Marke', description: 'z. B. Sony' },
+          {
+            // Dropdown aus den Kategorien der Equipment-Seite (gear.json). Eigenes Feld
+            // (GearCategoryField), weil Tina-`options` nicht aus CMS-Inhalt gefüllt werden können.
+            type: 'string',
+            name: 'category',
+            label: 'Kategorie',
+            description: 'Bestimmt, unter welcher Überschrift das Teil erscheint. Kategorien pflegst du unter „Equipment".',
+            ui: { component: GearCategoryField },
+          },
+          { type: 'string', name: 'link', label: 'Link (optional)', description: 'Volle URL (https://…). Leer lassen = kein Link.' },
+          { type: 'number', name: 'sort', label: 'Reihenfolge', description: 'Zahl für die Sortierung innerhalb der Kategorie (kleiner = weiter oben). Leer = nach Name.' },
         ],
       },
       // --- Über uns: EIN Eintrag (Kopf-Texte + 2 Personen + „Warum die USA?") ---
