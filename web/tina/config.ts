@@ -545,6 +545,7 @@ export default defineConfig({
           { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
           { type: 'string', name: 'intro_de', label: 'Einleitung', ui: { component: 'textarea' } },
           { type: 'string', name: 'intro_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+          { type: 'string', name: 'hero_photo', label: 'Titelbild (Zoom/Verschieben, Auto-WebP)', description: 'Optionales Titelbild dieser Seite mit Zoom/Verschieben. Leer = automatisch abgeleitetes Motiv.', cropRatio: 16 / 9, ui: { component: CropPhotoField } },
           {
             type: 'string', name: 'journal_style', label: 'Listen-Stil',
             description: 'Aussehen der Journal-Einträge. Vorschau unten — einen Stil anklicken.',
@@ -620,6 +621,7 @@ export default defineConfig({
           { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
           { type: 'string', name: 'intro_de', label: 'Einleitung', ui: { component: 'textarea' } },
           { type: 'string', name: 'intro_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+          { type: 'string', name: 'hero_photo', label: 'Titelbild (Zoom/Verschieben, Auto-WebP)', description: 'Optionales Titelbild dieser Seite mit Zoom/Verschieben. Leer = automatisch abgeleitetes Motiv.', cropRatio: 16 / 9, ui: { component: CropPhotoField } },
           {
             type: 'object', name: 'modes', label: 'Sichtbare Sortier-Modi',
             description: 'Welche Sortier-Knöpfe Besucher sehen. Ist nur einer (oder keiner) an, wird die Leiste versteckt und „Alben" als Standard genutzt.',
@@ -706,6 +708,7 @@ export default defineConfig({
           { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
           { type: 'string', name: 'intro_de', label: 'Einleitung', ui: { component: 'textarea' } },
           { type: 'string', name: 'intro_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+          { type: 'string', name: 'hero_photo', label: 'Titelbild (Zoom/Verschieben, Auto-WebP)', description: 'Optionales Titelbild dieser Seite mit Zoom/Verschieben. Leer = automatisch abgeleitetes Motiv.', cropRatio: 16 / 9, ui: { component: CropPhotoField } },
         ],
       },
       // --- Reisen: jede Reise ein Eintrag (Mehrfach-Collection wie Stories) ---
@@ -816,6 +819,7 @@ export default defineConfig({
           { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
           { type: 'string', name: 'intro_de', label: 'Einleitung', ui: { component: 'textarea' } },
           { type: 'string', name: 'intro_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+          { type: 'string', name: 'hero_photo', label: 'Titelbild (Zoom/Verschieben, Auto-WebP)', description: 'Optionales Titelbild dieser Seite mit Zoom/Verschieben. Leer = automatisch abgeleitetes Motiv.', cropRatio: 16 / 9, ui: { component: CropPhotoField } },
           {
             type: 'string', name: 'map_style', label: 'Karten-Stil',
             description: 'Stil der MapLibre-Karte (OpenFreeMap).',
@@ -895,6 +899,7 @@ export default defineConfig({
           { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
           { type: 'string', name: 'intro_de', label: 'Beschreibung', ui: { component: 'textarea' } },
           { type: 'string', name: 'intro_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+          { type: 'string', name: 'hero_photo', label: 'Titelbild (Zoom/Verschieben, Auto-WebP)', description: 'Optionales Titelbild dieser Seite mit Zoom/Verschieben. Leer = automatisch abgeleitetes Motiv.', cropRatio: 16 / 9, ui: { component: CropPhotoField } },
           // --- Listen-Stil (Vorschau im CMS) ---
           {
             type: 'string', name: 'gear_style', label: 'Listen-Stil',
@@ -994,6 +999,7 @@ export default defineConfig({
           { type: 'string', name: 'title_en', label: '↳ English', ui: { component: EnglishOnlyField } },
           { type: 'string', name: 'intro_de', label: 'Einleitung', ui: { component: 'textarea' } },
           { type: 'string', name: 'intro_en', label: '↳ English', ui: { component: EnglishOnlyTextField } },
+          { type: 'string', name: 'hero_photo', label: 'Titelbild (Zoom/Verschieben, Auto-WebP)', description: 'Optionales Titelbild dieser Seite mit Zoom/Verschieben. Leer = automatisch abgeleitetes Motiv.', cropRatio: 16 / 9, ui: { component: CropPhotoField } },
           // --- Personen: aufklappbare Liste (Eintrag 1 = links, Eintrag 2 = rechts) ---
           {
             type: 'object',

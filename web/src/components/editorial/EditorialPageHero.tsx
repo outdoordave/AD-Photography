@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTina, tinaField } from 'tinacms/dist/react';
 import { selectActiveFormId } from '../../lib/tinaForm';
+import { photoFrame } from '../../lib/trips';
 
 // Editorial-Unterseiten-Hero als LIVE-Insel (Editierbarkeits-Parität zum klassischen Design):
 // useTina liefert Kicker/Titel/Intro live (Tippen in der Sidebar aktualisiert die Vorschau),
@@ -32,10 +33,17 @@ export default function EditorialPageHero(props: Props) {
   const kicker = t('kicker');
   const intro = t('intro');
 
+  // Titelbild: eigenes Feld `hero_photo` (mit Zoom/Zuschnitt via photoFrame) gewinnt; sonst das
+  // aus Inhalten abgeleitete `img`-Prop (bisheriges Verhalten). Klick aufs Bild -> Feld in der Sidebar.
+  const heroVal = d.hero_photo;
+  const frame = heroVal ? photoFrame(heroVal) : null;
+  const heroSrc = frame?.src || props.img || '';
+  const heroTf = tinaField(d, 'hero_photo');
+
   return (
     <header className="ed-page-hero">
-      <div className="ed-page-hero-img" data-ed-hero-img>
-        {props.img ? <img src={props.img} alt="" fetchPriority="high" decoding="async" /> : null}
+      <div className="ed-page-hero-img" data-ed-hero-img data-tina-field={heroTf}>
+        {heroSrc ? <img src={heroSrc} alt="" fetchPriority="high" decoding="async" style={frame ? frame.style : undefined} /> : null}
       </div>
       <div className="ed-page-hero-scrim" aria-hidden="true" />
       <div className="ed-page-hero-content" data-ed-hero-content>
