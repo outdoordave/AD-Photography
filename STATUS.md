@@ -1,6 +1,7 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-07-19** · Live-Branch `main`. Seite **live**, Cutover durch. SEO-Grundlage steht
+> **Stand: 2026-07-29** · Live-Branch `main`. Seite **live**, Cutover durch. Zuletzt: automatische
+> Fallback-Titelbilder für Inhalte ohne Foto (24 Motive, `9c3c1d0`). SEO-Grundlage steht
 > (Sitemap, JSON-LD, Google Search Console bestätigt + Sitemap gelesen), Datenschutz **vollständig**
 > (inkl. Web3Forms), Performance ok, A11y-Basics drin, Security-Header + CSP gesetzt. **Keine offenen
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
@@ -43,15 +44,19 @@
 >    ansehen: erbt dunkle Tokens, ist aber dark-ungetestet (Option: bewusst hell lassen, ist Admin-Werkzeug).
 > 3. **Build-Beschleunigung** (vereinbartes Paket): Cloudflare-Build-Cache (Davids Schalter) + Cache für
 >    `optimize-uploads` (nur neue Bilder verarbeiten) — Davids „ewig warten" adressieren.
-> 3b. ~~Fallback-Bilder~~ **verworfen (24.07.):** Claude kann keine Bilder generieren → Thema gestrichen.
->    (Zufalls-Farbverlauf `paletteFromString` bleibt der Platzhalter für Alben/Reisen ohne Foto.)
+> 3b. **✅ ERLEDIGT (29.07., `9c3c1d0`): Fallback-Titelbilder.** Wieder aufgegriffen: David hat 24 flache
+>    editoriale Motive (Claude Design) geliefert → runterskaliert nach `web/public/uploads/fallbacks/` +
+>    inhaltsbasierter Matcher `src/lib/fallback.ts` (Alaska→tundra, Yellowstone→volcano, Westküste→coast …).
+>    Verdrahtet in Reisen (Liste+Detail), Stories (Liste+Reader), Startseite — DE+EN. Kein Re-Index.
+>    ⚠️ `mountain.webp` hat ein kosmetisches Rechteck-Artefakt (kein Live-Inhalt matcht aktuell) → Nachbesserung.
 > 3c. **Lese-Paket** (zurückgestellt, David): wärmere Story-Lesefläche + größere/luftigere Typo + wärmeres
 >    Basis-Schwarz (gegen „erdrückend"). Visualisiert, nicht gebaut — auf Davids Zuruf.
 > 4. ~~EN-Seiten~~ **✅ ERLEDIGT (23.07., `a74446c`):** alle 9 `/en/*`-Seiten haben jetzt die DE-Editorial-
 >    Weichen 1:1 (EN-Felder mit DE-Fallback, `/en/`-Links, EN-Labels; Reise-Detail v2 inkl. Fahrzeug-Engine).
 >    `/en/contact` + Detailseiten Portfolio/Journal laufen wie DE rein über CSS.
-> 5. Reisen ohne Fotos (west/florida/birthday: keine Stop-Fotos, Alben ohne `linked_trip`) → Farbverlauf-
->    Platzhalter; David kann Fotos/Alben zuordnen. 6. Reise-Karte nutzt hellen Stil `bright` (dunkler
+> 5. Reisen ohne Fotos (west/florida/birthday: keine Stop-Fotos, Alben ohne `linked_trip`) → seit 29.07.
+>    **automatisches Fallback-Motiv** (s. 3b) statt Farbverlauf; David kann weiter echte Fotos/Alben zuordnen.
+>    6. Reise-Karte nutzt hellen Stil `bright` (dunkler
 >    Kartenstil = eigenes Thema, OpenFreeMap hat keinen fertigen). 7. Startseiten-Sektionslabels
 >    („01 — Wer wir sind") sind Design-Beschriftungen, bewusst kein CMS-Feld.
 >

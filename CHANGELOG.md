@@ -17,6 +17,14 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-29 22:30 — Automatische Fallback-Titelbilder (24 Motive, inhaltsbasiert) (`9c3c1d0`)
+- Inhalte **ohne hochgeladenes Bild** bekommen jetzt automatisch ein passendes, flach-editoriales Titelbild statt eines gewürfelten Farbverlauf-SVGs. 24 Motive (16:9, ~1920×1080 WebP) in `web/public/uploads/fallbacks/`.
+- **Neu:** `src/lib/fallback.ts` — 24 Szenarien + DE/EN-Keyword-Matcher mit **Wortgrenzen** (damit z. B. „See" nicht in „Tennessee" anschlägt). `fallbackImage(...parts)` → `/uploads/fallbacks/<key>.webp`, ohne Treffer generisch `landscape`. Live-Matches: Alaska→tundra, Yellowstone→volcano, Westküste→coast, Florida→beach, Robin/Tennessee→hills, Utah→canyon.
+- **Verdrahtet:** Reisen-Liste + Reise-Detail-Hero (trips.astro/`[slug]` + en), Stories-Liste (stories/index + en), Story-Reader (StoryReaderContent, editorial + klassisch, Klick öffnet weiter das Cover-Feld), Startseite (home.ts: Story-/Reise-Teaser). Alte ILLUS-SVGs bleiben als Notnagel.
+- **Bilder:** aus Davids Vorlagen (Claude Design) von 4K auf 1920×1080 runterskaliert via sharp (21 MB → 0,8 MB gesamt).
+- Verifiziert (dev, DE): Fallback-`src` im DOM, alle 24 WebP HTTP 200, esbuild grün, keine neuen Konsolenfehler. **Kein Re-Index** (keine Schema-Änderung).
+- ⚠️ Bekannt: `mountain.webp` hat ein kosmetisches Rechteck-Artefakt aus der Vorlage (aktuell matcht **kein** Live-Inhalt `mountain`) → Nachbesserung separat.
+
 ## 2026-07-25 — Equipment als eigene Collection (1 Dokument pro Teil) → „+ Equipment" nativ mit Live-Vorschau (`23efc15`)
 - Umbau von „Liste in gear.json" auf eine echte Tina-**Collection** `equipment` (ein Dokument pro Teil), damit „+ Equipment" **nativ** wie „+ Neue Reise" funktioniert: ein Klick → leeres Formular (Name/Marke/Kategorie/Link) mit **Live-Vorschau** → Speichern → Teil erscheint. Grund: bei der Liste ließ sich das Anlegen nur per Cross-iframe-Hack auslösen, dessen Formular aber nicht bedienbar war (Tastatur/Dropdown blockiert). Native Dokumente lösen das komplett.
 - **Schema:** neue Collection `equipment` (name/brand/category/link/sort, router `/gear`, Dateiname aus Name); `items`-Feld aus der `gear`-Collection entfernt (Texte/Kategorien/Stil bleiben).
