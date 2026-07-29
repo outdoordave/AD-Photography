@@ -55,8 +55,8 @@ const edStops = design === 'editorial' ? viewStops(trip, 'en') : [];
 const edRoute = edStops.map((st: any) => st.name).filter(Boolean).join(' → ');
 const edSeason = seasonYear(trip.date || '');
 const edMetaTxt = bi(trip, 'meta', 'en');
-// Cover chain: own/stop photo -> otherwise automatic fallback motif (content-aware).
-const edCover = tripCover(trip) || (edStops.find((st: any) => st.photo)?.photo || '') || fallbackImage(ttl, tripTitle(trip, 'de'), edRoute, edMetaTxt, richToPlain(trip.summary_en), richToPlain(trip.summary_de));
+// Cover chain: own/stop photo -> otherwise automatic fallback motif. Match title + meta only.
+const edCover = tripCover(trip) || (edStops.find((st: any) => st.photo)?.photo || '') || fallbackImage(ttl, tripTitle(trip, 'de'), edMetaTxt, bi(trip, 'meta', 'de'));
 const edMetaLine = [edRoute, edMetaTxt].filter(Boolean).join(' · ');
 const edAlbum = linkedAlbums[slug as string];
 // Dauer/Strecke aus der Meta-Zeile parsen — EN-Meta kann „days" ODER (DE-Fallback) „Tage" enthalten.

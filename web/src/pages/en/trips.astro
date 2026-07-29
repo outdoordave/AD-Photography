@@ -46,8 +46,9 @@ const edSorted = design === 'editorial' ? [...trips].sort((a: any, b: any) => St
 const edTrips = edSorted.map((t: any, i: number) => {
   const d = t.data as RawTrip;
   const route = viewStops(d, 'en').map((v: any) => v.name).filter(Boolean).join(' → ');
-  // Cover chain: own stop/album photo -> otherwise automatic fallback motif (content-aware).
-  const src = tripCover(d) || tripAlbumCover[t.slug] || fallbackImage(tripTitle(d, 'en'), tripTitle(d, 'de'), route, bi(d, 'meta', 'en'), richToPlain(bi(d, 'summary', 'en')));
+  // Cover chain: own stop/album photo -> otherwise automatic fallback motif. Match title + meta only
+  // (the curated essence) -> no misfires from the stop route/summary text.
+  const src = tripCover(d) || tripAlbumCover[t.slug] || fallbackImage(tripTitle(d, 'en'), tripTitle(d, 'de'), bi(d, 'meta', 'en'), bi(d, 'meta', 'de'));
   const pal = paletteFromString(src || t.slug);
   return {
     href: `/en/trips/${t.slug}`,

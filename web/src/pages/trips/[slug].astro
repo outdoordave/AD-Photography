@@ -59,8 +59,8 @@ const edStops = design === 'editorial' ? viewStops(trip, 'de') : [];
 const edRoute = edStops.map((st: any) => st.name).filter(Boolean).join(' → ');
 const edSeason = seasonYear(trip.date || '');
 const edMetaTxt = bi(trip, 'meta', 'de');
-// Cover-Kette: eigenes/Stop-Foto -> sonst automatisches Fallback-Motiv (je nach Inhalt).
-const edCover = tripCover(trip) || (edStops.find((st: any) => st.photo)?.photo || '') || fallbackImage(ttl, edRoute, edMetaTxt, richToPlain(trip.summary_de));
+// Cover-Kette: eigenes/Stop-Foto -> sonst automatisches Fallback-Motiv. Match nur auf Titel + Meta.
+const edCover = tripCover(trip) || (edStops.find((st: any) => st.photo)?.photo || '') || fallbackImage(ttl, edMetaTxt);
 const edMetaLine = [edRoute, edMetaTxt].filter(Boolean).join(' · ');
 const edAlbum = linkedAlbums[slug as string];
 const mDays = edMetaTxt.match(/(\d+)\s*Tage?/i);

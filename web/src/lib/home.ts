@@ -67,7 +67,7 @@ export function buildLatest(opts: { stories: Doc[]; trips: Doc[]; albums: Doc[];
     if (d.upcoming || !d.title) continue;
     const firstPhoto = (Array.isArray(d.stops) ? d.stops : []).map((s: any) => photoDisplay(s && s.photo)).find(Boolean) || '';
     const pal = paletteFromString(firstPhoto || t.slug);
-    rows.push({ date: d.date || '', card: { tag: TAG.trip[lang], title: tripTitle(d, lang), meta: bi(d, 'meta', lang) || monthYear(d.date, lang), href: `${prefix}/trips/${t.slug}`, image: firstPhoto || fallbackImage(tripTitle(d, lang), bi(d, 'meta', lang), t.slug), c1: pal.c1, c2: pal.c2, img: pal.img } });
+    rows.push({ date: d.date || '', card: { tag: TAG.trip[lang], title: tripTitle(d, lang), meta: bi(d, 'meta', lang) || monthYear(d.date, lang), href: `${prefix}/trips/${t.slug}`, image: firstPhoto || fallbackImage(tripTitle(d, lang), bi(d, 'meta', lang)), c1: pal.c1, c2: pal.c2, img: pal.img } });
   }
   for (const a of albums) {
     const d = a.data;
@@ -108,7 +108,7 @@ export function buildDiscover(opts: { albums: Doc[]; trips: Doc[]; highlights: s
     if (d.upcoming || !d.title) continue;
     const firstPhoto = (Array.isArray(d.stops) ? d.stops : []).map((s: any) => photoDisplay(s && s.photo)).find(Boolean) || '';
     const pal = paletteFromString(firstPhoto || t.slug);
-    pool.push({ cat: lang === 'en' ? 'Trip' : 'Reise', title: tripTitle(d, lang), image: firstPhoto || fallbackImage(tripTitle(d, lang), bi(d, 'meta', lang), t.slug), href: `${prefix}/trips/${t.slug}`, c1: pal.c1, c2: pal.c2, img: pal.img });
+    pool.push({ cat: lang === 'en' ? 'Trip' : 'Reise', title: tripTitle(d, lang), image: firstPhoto || fallbackImage(tripTitle(d, lang), bi(d, 'meta', lang)), href: `${prefix}/trips/${t.slug}`, c1: pal.c1, c2: pal.c2, img: pal.img });
   }
   return pool;
 }

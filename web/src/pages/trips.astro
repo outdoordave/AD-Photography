@@ -46,8 +46,9 @@ const edSorted = design === 'editorial' ? [...trips].sort((a: any, b: any) => St
 const edTrips = edSorted.map((t: any, i: number) => {
   const d = t.data as RawTrip;
   const route = viewStops(d, 'de').map((v: any) => v.name).filter(Boolean).join(' → ');
-  // Cover-Kette: eigenes Stop-/Album-Foto -> sonst automatisches Fallback-Motiv (je nach Inhalt).
-  const src = tripCover(d) || tripAlbumCover[t.slug] || fallbackImage(tripTitle(d, 'de'), route, bi(d, 'meta', 'de'), richToPlain(bi(d, 'summary', 'de')));
+  // Cover-Kette: eigenes Stop-/Album-Foto -> sonst automatisches Fallback-Motiv. Match nur auf
+  // Titel + Meta (die kuratierte Essenz) -> keine Fehlgriffe durch Stationsroute/Text.
+  const src = tripCover(d) || tripAlbumCover[t.slug] || fallbackImage(tripTitle(d, 'de'), bi(d, 'meta', 'de'));
   const pal = paletteFromString(src || t.slug);
   return {
     href: `/trips/${t.slug}`,
