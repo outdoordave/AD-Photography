@@ -17,6 +17,10 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-29 — Seiten-Titelbild pro Seite wählbar + zuschneidbar (`b688245`) + Fallback-Matcher-Fix (`c3ba6a1`)
+- **Titelbild-Crop (Schema):** Neues optionales Feld `hero_photo` auf den 6 Seiten-Settings (Portfolio/Reisen/Stories/Journal/Equipment/Über uns). Gesetzt → dieses Bild ist der Hero, **mit Zoom/Verschieben** über denselben `CropPhotoField` wie die Profilfotos; leer → unverändert das automatisch abgeleitete Motiv. `EditorialPageHero` wendet den Zuschnitt via `photoFrame()` an (Breite/Höhe relativ zum Container + `object-fit:cover`, vom `overflow:hidden` geclippt); Klick aufs Titelbild öffnet das Feld (data-tina-field). DE+EN teilen das Settings-Dokument. Verifiziert (dev): leer = Alt-Verhalten; mit Crop = width/height 166,67 % + left/top −16,67 %, Bild geladen/sichtbar (berechnete Werte). **⚠️ Schema-Änderung → Tina-Cloud-Re-Index nötig (David); Build bis dahin ggf. rot.** WYSIWYG beim vollflächigen Hero nicht pixelgenau über alle Viewports (Fokus/Zoom greifen überall).
+- **Fallback-Matcher-Fix:** „Yellowstone" zeigte auf `volcano` und riss die West-Reise mit; jetzt `yellowstone/geysir → forest`, `volcano` nur noch für echte Vulkan-Wörter. Reisen matchen nur noch **Titel + Meta** (kuratierte Essenz) statt Stationsroute/Text. Ergebnis: West→coast, Yellowstone-Story→forest, kein Vulkan mehr bei Live-Inhalten. Kein Re-Index.
+
 ## 2026-07-29 22:30 — Automatische Fallback-Titelbilder (24 Motive, inhaltsbasiert) (`9c3c1d0`)
 - Inhalte **ohne hochgeladenes Bild** bekommen jetzt automatisch ein passendes, flach-editoriales Titelbild statt eines gewürfelten Farbverlauf-SVGs. 24 Motive (16:9, ~1920×1080 WebP) in `web/public/uploads/fallbacks/`.
 - **Neu:** `src/lib/fallback.ts` — 24 Szenarien + DE/EN-Keyword-Matcher mit **Wortgrenzen** (damit z. B. „See" nicht in „Tennessee" anschlägt). `fallbackImage(...parts)` → `/uploads/fallbacks/<key>.webp`, ohne Treffer generisch `landscape`. Live-Matches: Alaska→tundra, Yellowstone→volcano, Westküste→coast, Florida→beach, Robin/Tennessee→hills, Utah→canyon.

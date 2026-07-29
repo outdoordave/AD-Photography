@@ -1,7 +1,8 @@
 # STATUS.md — Aktueller Projektstand
 
 > **Stand: 2026-07-29** · Live-Branch `main`. Seite **live**, Cutover durch. Zuletzt: automatische
-> Fallback-Titelbilder für Inhalte ohne Foto (24 Motive, `9c3c1d0`). SEO-Grundlage steht
+> Fallback-Titelbilder (24 Motive, `9c3c1d0`) + Seiten-Titelbild pro Seite wählbar/zuschneidbar
+> (`b688245`, **Re-Index nötig**). SEO-Grundlage steht
 > (Sitemap, JSON-LD, Google Search Console bestätigt + Sitemap gelesen), Datenschutz **vollständig**
 > (inkl. Web3Forms), Performance ok, A11y-Basics drin, Security-Header + CSP gesetzt. **Keine offenen
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
@@ -33,6 +34,11 @@
 > Schrift gold, nie Feld/Rahmen.**
 >
 > **🟡 Offene Punkte (Reihenfolge mit David geklärt):**
+> 0. **🔴 Re-Index NÖTIG (David, 29.07., `b688245`): Seiten-Titelbild-Feld `hero_photo`.** Neues optionales
+>    Feld auf den 6 Seiten-Settings (Portfolio/Reisen/Stories/Journal/Equipment/Über uns) → Titelbild pro
+>    Seite wählbar + zuschneidbar (Zoom/Verschieben wie Profilfotos); leer = Alt-Verhalten. **Schema-Änderung
+>    → Re-Index zwingend; Cloudflare-Build bis dahin ggf. rot.** `tina-lock.json` ist regeneriert. Build-fix:
+>    erst re-indexen, dann läuft der Build grün. (Alt-Punkt 1 Equipment-Re-Index hat David bereits erledigt.)
 > 1. **🔴 Re-Index NÖTIG (David, 25.07.):** Equipment-Teile sind jetzt eine eigene Collection `equipment`
 >    (1 Dokument pro Teil, `23efc15`) statt einer Liste in gear.json — damit „+ Equipment" nativ wie
 >    „+ Neue Reise" mit Live-Vorschau anlegt. **Schema-Änderung (neue Collection + entferntes `items`-Feld)
