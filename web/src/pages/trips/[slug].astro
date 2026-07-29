@@ -9,6 +9,7 @@ import AdminDocTools from '../../components/AdminDocTools.tsx';
 import { richToPlain } from '../../components/RichText.tsx';
 import { linkedAlbumsByTrip } from '../../lib/albums';
 import { tripTitle, tripCover, bi, viewStops, type RawTrip } from '../../lib/trips';
+import { fallbackImage } from '../../lib/fallback';
 import { tripDesignsCss, resolveTripDesign, mergeTuning } from '../../lib/tripDesigns';
 import settings from '../../data/trips-settings.json';
 import appearance from '../../data/appearance-settings.json';
@@ -56,9 +57,10 @@ const SEASON = (m: number) => (m <= 2 || m === 12 ? 'Winter' : m <= 5 ? 'Frühli
 const seasonYear = (d: string) => { const mm = parseInt(String(d).slice(5, 7), 10); const yy = String(d).slice(0, 4); return d ? (mm ? `${SEASON(mm)} ${yy}` : yy) : ''; };
 const edStops = design === 'editorial' ? viewStops(trip, 'de') : [];
 const edRoute = edStops.map((st: any) => st.name).filter(Boolean).join(' → ');
-const edCover = tripCover(trip) || (edStops.find((st: any) => st.photo)?.photo || '');
 const edSeason = seasonYear(trip.date || '');
 const edMetaTxt = bi(trip, 'meta', 'de');
+// Cover-Kette: eigenes/Stop-Foto -> sonst automatisches Fallback-Motiv (je nach Inhalt).
+const edCover = tripCover(trip) || (edStops.find((st: any) => st.photo)?.photo || '') || fallbackImage(ttl, edRoute, edMetaTxt, richToPlain(trip.summary_de));
 const edMetaLine = [edRoute, edMetaTxt].filter(Boolean).join(' · ');
 const edAlbum = linkedAlbums[slug as string];
 const mDays = edMetaTxt.match(/(\d+)\s*Tage?/i);

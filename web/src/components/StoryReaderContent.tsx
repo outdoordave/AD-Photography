@@ -2,6 +2,7 @@ import React from 'react';
 import { useTina, tinaField } from 'tinacms/dist/react';
 import { buildStory, wwYouTubeEmbed, normalizePath, type StoryData } from '../lib/stories';
 import { ILLUS } from '../lib/illus';
+import { fallbackImage } from '../lib/fallback';
 import RichText, { richIsEmpty } from './RichText';
 import StoryAlbumBlock from './StoryAlbumBlock';
 import Lightbox, { type LbPhoto } from './Lightbox';
@@ -62,6 +63,8 @@ export default function StoryReaderContent(props: Props) {
   const fBody = props.lang === 'en' ? 'body_en' : 'body_de';
 
   const cover = story.cover ? normalizePath(story.cover) : '';
+  // Ohne Cover: automatisches Fallback-Motiv passend zum Story-Titel/Kategorie (statt Berg-SVG).
+  const fbImg = fallbackImage(d.title, d.cat, (story as any)?._sys?.filename);
   const ytHtml = wwYouTubeEmbed(story.youtube_url || '');
   const phStyle = {
     ['--ph-c1' as any]: '#8a9a7e',
@@ -254,7 +257,7 @@ export default function StoryReaderContent(props: Props) {
   if (isEd) {
     const kicker = ['Story', d.dateLabel].filter(Boolean).join(' · ');
     // Kein Cover gesetzt -> auf das erste Foto des verknüpften Albums zurückfallen (sonst Platzhalter).
-    const edCover = cover || (albumPhotos[0] ? normalizePath(albumPhotos[0]) : '');
+    const edCover = cover || (albumPhotos[0] ? normalizePath(albumPhotos[0]) : '') || fbImg;
     return (
       <>
         <header className="ed-reader-hero">
@@ -287,8 +290,8 @@ export default function StoryReaderContent(props: Props) {
         <a className="story-back-line" href={props.lang === 'en' ? '/en/stories' : '/stories'}>← Stories</a>
       </div>
       <div className="reader-hero" ref={heroRef}>
-        {cover ? (
-          <img className="reader-cover-img" src={cover} alt={d.title} data-tina-field={tinaField(story, 'cover')} />
+        {(cover || fbImg) ? (
+          <img className="reader-cover-img" src={cover || fbImg} alt={d.title} data-tina-field={tinaField(story, 'cover')} />
         ) : (
           <div className="ph has-illus" data-ph="PLATZHALTER" data-tina-field={tinaField(story, 'cover')} style={phStyle} />
         )}

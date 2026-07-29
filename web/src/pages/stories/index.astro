@@ -8,6 +8,7 @@ import AdminSectionBar from '../../components/AdminSectionBar.astro';
 import SettingsHeader from '../../components/SettingsHeader.tsx';
 import EditorialPageHero from '../../components/editorial/EditorialPageHero.tsx';
 import { toSortedStories, normalizePath } from '../../lib/stories';
+import { fallbackImage } from '../../lib/fallback';
 import { groupByYear } from '../../lib/groupByYear';
 import { tl } from '../../lib/albums';
 import settings from '../../data/stories-settings.json';
@@ -32,7 +33,7 @@ const design = (appearance as any).design === 'editorial' ? 'editorial' : 'klass
 // --- Editorial: alternierende Bild/Text-Reihen (1:1 aus Stories.dc.html) aus echten Stories ---
 const edStories = design === 'editorial' ? stories.map((st, i) => ({
   href: `/stories/${st.slug}`,
-  src: normalizePath(st.photo),
+  src: normalizePath(st.photo) || fallbackImage(st.de.title, st.de.category, st.slug),
   alt: st.de.title,
   meta: st.de.dateLabel,
   title: st.de.title,

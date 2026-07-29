@@ -12,6 +12,7 @@ import { client } from '../../tina/__generated__/client';
 import { sortTrips, tripTitle, tripCover, bi, viewStops, photoDisplay, type RawTrip } from '../lib/trips';
 import { normalizePath } from '../lib/stories';
 import { paletteFromString } from '../lib/albums';
+import { fallbackImage } from '../lib/fallback';
 import { richToPlain } from '../components/RichText.tsx';
 
 const res = await client.queries.reisenConnection({ first: 100 });
@@ -45,7 +46,8 @@ const edSorted = design === 'editorial' ? [...trips].sort((a: any, b: any) => St
 const edTrips = edSorted.map((t: any, i: number) => {
   const d = t.data as RawTrip;
   const route = viewStops(d, 'de').map((v: any) => v.name).filter(Boolean).join(' → ');
-  const src = tripCover(d) || tripAlbumCover[t.slug] || '';
+  // Cover-Kette: eigenes Stop-/Album-Foto -> sonst automatisches Fallback-Motiv (je nach Inhalt).
+  const src = tripCover(d) || tripAlbumCover[t.slug] || fallbackImage(tripTitle(d, 'de'), route, bi(d, 'meta', 'de'), richToPlain(bi(d, 'summary', 'de')));
   const pal = paletteFromString(src || t.slug);
   return {
     href: `/trips/${t.slug}`,
