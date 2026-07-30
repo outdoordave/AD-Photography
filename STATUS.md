@@ -1,8 +1,9 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-07-29** · Live-Branch `main`. Seite **live**, Cutover durch. Zuletzt: automatische
+> **Stand: 2026-07-30** · Live-Branch `main`. Seite **live**, Cutover durch. Zuletzt: automatische
 > Fallback-Titelbilder (24 Motive, `9c3c1d0`) + Seiten-Titelbild pro Seite wählbar/zuschneidbar
-> (`b688245`, **Re-Index nötig**). SEO-Grundlage steht
+> (`b688245`, **Re-Index nötig**) + Mediathek-Feld-Picker mit Ordner/Sortierung/Suche (wie Manager-Seite).
+> SEO-Grundlage steht
 > (Sitemap, JSON-LD, Google Search Console bestätigt + Sitemap gelesen), Datenschutz **vollständig**
 > (inkl. Web3Forms), Performance ok, A11y-Basics drin, Security-Header + CSP gesetzt. **Keine offenen
 > Pflicht-Punkte.** Übriges ist geparkt/Kür (§6). Diese Datei ist eine **Momentaufnahme** (wird je
