@@ -5,6 +5,7 @@
   "title_en": "Our road trips",
   "intro_de": "Tausende Kilometer, unzählige Stopps. Tippe auf eine Station, um zu sehen, was wir dort erlebt haben.",
   "intro_en": "Thousands of miles, countless stops. Tap a station to see what we got up to there.",
+  "hero_photo": "{\"original\":\"/uploads/alben/Firsts/img_6039.webp\",\"display\":\"/uploads/alben/Firsts/img_6039.webp\",\"crop\":{\"x\":0,\"y\":0.2493573264781491,\"w\":1,\"h\":0.750642673521851}}",
   "map_style": "bright",
   "map_scroll_zoom": true,
   "map_auto_popup": false,
