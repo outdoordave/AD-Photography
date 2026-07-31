@@ -10,7 +10,7 @@
 export const FALLBACK_SCENARIOS = [
   'mountain','snow','glacier','forest','hills','farmland','lake','river','wetland',
   'coast','ocean','beach','jungle','terraces','desert','canyon','savanna','volcano',
-  'nightsky','city','aerial','landscape','aurora','tundra',
+  'nightsky','city','aerial','landscape','aurora','tundra','geyser',
 ] as const;
 export type FallbackScenario = (typeof FALLBACK_SCENARIOS)[number];
 
@@ -19,6 +19,7 @@ export type FallbackScenario = (typeof FALLBACK_SCENARIOS)[number];
 const KEYWORDS: Array<[FallbackScenario, string[]]> = [
   ['aurora',   ['aurora','polarlicht','nordlicht','northern lights']],
   ['glacier',  ['glacier','gletscher','iceberg','eisberg','packeis']],
+  ['geyser',   ['geyser','geysir','yellowstone','hot spring','heisse quelle','geothermal','geothermisch']],
   ['volcano',  ['volcano','vulkan','lava','krater','crater','vulkanisch']],
   ['canyon',   ['canyon','schlucht','gorge','red rock','utah','arches','zion','antelope','bryce','moab']],
   ['desert',   ['desert','wuste','wueste','dune','duene','sahara','mojave','death valley','sanddune']],
@@ -30,7 +31,7 @@ const KEYWORDS: Array<[FallbackScenario, string[]]> = [
   ['tundra',   ['tundra','arctic','arktis','arctic circle','polarkreis','alaska','denali','coldfoot','fairbanks','anchorage']],
   ['mountain', ['mountain','berg','gebirge','gipfel','alpen','alps','peak','summit','rockies','rocky','sierra','dolomit']],
   ['hills',    ['hill','hugel','huegel','rolling hills','tennessee','appalach','toscana','tuscany','highland']],
-  ['forest',   ['forest','wald','forst','woods','baumkron','redwood','sequoia','tannen','kiefer','yellowstone','geysir','geyser']],
+  ['forest',   ['forest','wald','forst','woods','baumkron','redwood','sequoia','tannen','kiefer']],
   ['farmland', ['farmland','farm','feld','field','vineyard','weinberg','acker','countryside','landwirtschaft']],
   ['wetland',  ['wetland','marsh','sumpf','moor','everglade','schilf','reed','feuchtgebiet']],
   ['river',    ['river','fluss','wasserfall','waterfall','creek','bach','rapids','stromschnelle']],
