@@ -55,7 +55,8 @@
 >    editoriale Motive (Claude Design) geliefert → runterskaliert nach `web/public/uploads/fallbacks/` +
 >    inhaltsbasierter Matcher `src/lib/fallback.ts` (Alaska→tundra, Yellowstone→volcano, Westküste→coast …).
 >    Verdrahtet in Reisen (Liste+Detail), Stories (Liste+Reader), Startseite — DE+EN. Kein Re-Index.
->    ⚠️ `mountain.webp` hat ein kosmetisches Rechteck-Artefakt (kein Live-Inhalt matcht aktuell) → Nachbesserung.
+>    Update 30.07. (`d42fb1e`): 25 Motive v2 (Rechteck-Artefakt behoben) + neues `geyser`-Motiv →
+>    Yellowstone-Story bekommt Geysir statt forest.
 > 3c. **Lese-Paket** (zurückgestellt, David): wärmere Story-Lesefläche + größere/luftigere Typo + wärmeres
 >    Basis-Schwarz (gegen „erdrückend"). Visualisiert, nicht gebaut — auf Davids Zuruf.
 > 4. ~~EN-Seiten~~ **✅ ERLEDIGT (23.07., `a74446c`):** alle 9 `/en/*`-Seiten haben jetzt die DE-Editorial-

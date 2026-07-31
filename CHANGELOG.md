@@ -17,6 +17,10 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-30 — Fallback-Motive v2: Rechteck-Artefakt behoben + Geysir-Motiv (`d42fb1e`)
+- David lieferte die 25 SVGs neu (inkl. `25-geyser`). Frisch nach WebP 1920×1080 gerendert (höhere Render-Dichte) → **der Rechteck-Artefakt im Dunst-/Wolkenband ist weg** (mountain + river visuell geprüft, sauber). 24 Motive ersetzt, **geyser** neu (25.). Gesamt 0,69 MB.
+- `fallback.ts`: neues Szenario `geyser`; `yellowstone/geysir/geothermal → geyser` (vorher Zwischenlösung forest) → **Yellowstone-Story bekommt jetzt das Geysir-Motiv** (verifiziert). `volcano` bleibt für echte Vulkan-Wörter. Übrige Matches unverändert. Kein Re-Index.
+
 ## 2026-07-30 — Mediathek-Feld-Picker geordnet wie die Manager-Seite (Ordner + Sortierung + Suche)
 - Der „🖼️ Aus Mediathek"-Picker der Foto-Felder (Single/Bulk/Crop + PhotoSwap) zeigte ein flaches, ungeordnetes Raster aller `/uploads`-Bilder. Jetzt bietet er dieselbe Ordnung wie die Medien-Manager-Seite: **Ordner-Navigation** (Breadcrumb „Alle › Alben › Firsts …" + Ordner-Kacheln, aus den Pfaden abgeleitet), **Sortierung** (Name/Datum/Kamera/Typ, auf-/absteigend) und ordnerübergreifende **Suche** (mit Ordner-Tag am Treffer). Frische Uploads bleiben im Wurzel oben angepinnt; „schon gewählt" bleibt markiert.
 - Neu: `src/lib/mediaBrowse.ts` (React-frei: `viewOf`/`sortMedia`/`searchMedia`/`folderLabel`), abgeleitet aus MediaManager → beide teilen die Semantik. Der große `MediaManager` bleibt **unangetastet** (kein Regressionsrisiko). Ein Änderungspunkt (`MediaPickerButton`) wirkt in allen Foto-Feldern.
