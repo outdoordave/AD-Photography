@@ -17,6 +17,10 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-07-31 — Editorial-Album-Kachel: Trackpad-/Mausrad-Wisch (`a2c526e`)
+- Die Editorial-Album-Diashow (Portfolio) hatte Touch- + Maus-Ziehen, aber **kein** Trackpad-Zweifinger/Mausrad-quer — im hellen Design geht das (nativer Scroll-Track). Nachgerüstet: horizontales Wheel blättert ein Bild weiter/zurück. Nativer, nicht-passiver `wheel`-Listener + `preventDefault` (kein seitliches Seiten-Scrollen), Akkumulator + 220 ms-Sperre (**ein Wisch = ein Bild**), Autoplay pausiert und startet nach ~700 ms Ruhe neu; vertikales Wheel bleibt unberührt.
+- Klarstellung Punkte: die Kachel zeigt bewusst nur die **ersten 6 Fotos** (`slice(0,6)`) → max. 6 Punkte, egal wie groß das Album. Verifiziert (dev): vor/zurück, vertikal ignoriert, Sub-Schwelle blättert nicht. Kein Re-Index.
+
 ## 2026-07-30 — Fallback-Motive v2: Rechteck-Artefakt behoben + Geysir-Motiv (`d42fb1e`)
 - David lieferte die 25 SVGs neu (inkl. `25-geyser`). Frisch nach WebP 1920×1080 gerendert (höhere Render-Dichte) → **der Rechteck-Artefakt im Dunst-/Wolkenband ist weg** (mountain + river visuell geprüft, sauber). 24 Motive ersetzt, **geyser** neu (25.). Gesamt 0,69 MB.
 - `fallback.ts`: neues Szenario `geyser`; `yellowstone/geysir/geothermal → geyser` (vorher Zwischenlösung forest) → **Yellowstone-Story bekommt jetzt das Geysir-Motiv** (verifiziert). `volcano` bleibt für echte Vulkan-Wörter. Übrige Matches unverändert. Kein Re-Index.
