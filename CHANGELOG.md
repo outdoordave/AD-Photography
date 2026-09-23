@@ -17,6 +17,10 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-09-23 — Startseiten-Hero: Verlauf auf schmalen Schirmen hochgezogen
+- Davids Einwand („was, wenn ich ein dunkles Titelbild habe?") war berechtigt — pauschal abdunkeln wäre der falsche Fix gewesen. Die Messung zeigte: der Verlauf war **nicht zu schwach, sondern endete zu tief**. Der Hero-Inhalt stapelt sich auf schmalen Schirmen zu einer hohen Spalte (Beginn bei 28 % statt 47 % der Hero-Höhe) und lag damit genau im **transparenten Fenster (32–58 %)** des Verlaufs.
+- Verlauf bis 900 px Breite nach oben gezogen (Handys + Tablets hochkant), Desktop unverändert. Funktioniert für helle **und** dunkle Bilder, weil der Verlauf in die **Seitenfarbe** `#0d0e0c` blendet statt in reines Schwarz. Über alle 5 Hero-Diashow-Bilder gemessen (Helligkeit im Textbereich): hellstes 120 → 77, dunkelstes 61 → 42 — beide gut lesbar, keines säuft ab.
+
 ## 2026-09-23 — Editorial-Design: Mobil-Feinschliff (`daa114c`)
 - Am echten 375-px-Viewport durchgemessen. **Abgeschnittene Titel:** die `clamp()`-Untergrenze (`.ed-page-title` 38 px, `.ed-h2` 32 px) greift auf schmalen Schirmen immer, der Text konnte nicht kleiner werden — „FOTOGRAFIEREN" brauchte 433 px bei 335 px Platz. Betroffen: /gear/, /portfolio/, /stories/ und „Momentaufnahmen" auf der Startseite.
 - **Seitliches Scrollen** auf /gear/ und /portfolio/: die Abschnitts-Kopfzeilen (`.ed-section-head`, `.ed-gear-cathead`) sind Flex-Zeilen aus zwei `white-space: nowrap`-Labels + Trennlinie und können nicht schrumpfen → Dokument 409 statt 375 px breit. **Sichtbare Folge: Logo nicht mittig, Menü-Button halb außerhalb des Bildschirms.**
