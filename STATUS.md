@@ -1,8 +1,8 @@
 # STATUS.md — Aktueller Projektstand
 
 > **Stand: 2026-09-23** · Live-Branch `main`. Seite **live**, Cutover durch. Zuletzt (23.09.):
-> **Performance-Paket** — Logo 341→163 KB, Build-Cache für `optimize-uploads` (12,3 s → 0,1 s,
-> bitgleich), **responsive Bilder (srcset 320/640/1024/1600 — live gemessen −79 % Bilddaten am
+> **Performance-Paket** — Logo 341→163 KB, Build-Cache für `optimize-uploads` (lokal 12,3 s → 0,1 s,
+> bitgleich; auf Cloudflare wirkungslos, weil `npm ci` node_modules löscht — s. CHANGELOG), **responsive Bilder (srcset 320/640/1024/1600 — live gemessen −79 % Bilddaten am
 > Handy)** und Matcher-Fix für deutsche Komposita
 > (DE/EN lieferten verschiedene Motive). Davor: Fallback-Titelbilder (25 Motive inkl. Geysir),
 > Titelbild-Crop pro Seite (`hero_photo`), Mediathek-Feld-Picker mit Ordner/Sortierung/Suche.
