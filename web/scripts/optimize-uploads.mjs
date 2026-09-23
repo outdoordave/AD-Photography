@@ -45,7 +45,7 @@ const keepPath = (k) => join(cacheDir, k + '.keep');
 // Die Leiter steht in scripts/lib/image-ladder.json und wird auch von gen-uploads-manifest
 // und src/lib/img.ts gelesen -> eine einzige Quelle, kein Auseinanderlaufen.
 const LADDER = JSON.parse(readFileSync(resolve('scripts', 'lib', 'image-ladder.json'), 'utf8'));
-let vMade = 0, vHits = 0;
+let vMade = 0, vHits = 0, skipped = 0;
 
 async function makeVariants(file, src, ext, key) {
   let md = null;
@@ -102,10 +102,27 @@ for (const file of allFiles) {
     const src = readFileSync(file);
     const before = src.length;
 
+    // --- Schon fertig? Dann gar nicht erst anfassen. ------------------------------------
+    // Jeder Upload ueber das CMS ist bereits WebP mit max. MAX px (toOptimized im Browser:
+    // WebP q85, Breite <= 2400). Ein erneutes Encodieren im Build bringt kaum noch Bytes,
+    // kostet aber bei JEDEM Build Zeit — und drueckt q85 auf q80, also unnoetig Qualitaet.
+    // Deshalb: solche Dateien unveraendert durchreichen. Nur Alt-Bestand (Roh-JPG/PNG oder
+    // uebergrosse Dateien) wird noch verarbeitet — eine feste, nicht wachsende Menge.
+    // Varianten werden trotzdem erzeugt (weiter unten), die braucht auch ein fertiges Bild.
+    let handled = false;
+    if (ext === '.webp') {
+      try {
+        const md = await sharp(src, { failOn: 'none' }).metadata();
+        if (md?.width && md?.height && md.width <= MAX && md.height <= MAX) {
+          skipped++;
+          handled = true;
+        }
+      } catch { /* nicht lesbar -> normal verarbeiten */ }
+    }
+
     // --- Cache-Treffer? Dann fertiges Ergebnis zurueckschreiben, nicht neu encodieren. ---
     const key = cacheOk ? keyOf(src, ext) : null;
-    let handled = false;
-    if (key) {
+    if (!handled && key) {
       usedKeys.add(key);
       try {
         if (existsSync(keepPath(key))) { hits++; handled = true; }    // Original war schon kleiner
@@ -166,5 +183,6 @@ if (cacheOk) {
 }
 
 console.log(`[optimize-uploads] ${count} Bilder verkleinert, ~${(savedBytes / 1048576).toFixed(1)} MB gespart` +
-  (cacheOk ? ` (${hits} aus Cache, ${allFiles.length - hits} neu berechnet)` : ' (ohne Cache)') +
+  (cacheOk ? ` (${hits} aus Cache, ${allFiles.length - hits - skipped} neu berechnet)` : ' (ohne Cache)') +
+  `; ${skipped} bereits optimiert (uebersprungen)` +
   `; ${vMade + vHits} srcset-Varianten (${vHits} aus Cache, ${vMade} neu).`);
