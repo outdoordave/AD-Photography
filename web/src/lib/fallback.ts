@@ -55,9 +55,16 @@ function norm(s: string): string {
 
 // Ein Keyword trifft, wenn es als ganzes Wort / Phrase im Text vorkommt (Wortgrenzen),
 // damit z. B. "see" (Lake) NICHT in "Tennessee" anschlägt.
+// Ab dieser Laenge darf ein Stichwort auch als WORTTEIL treffen. Grund: Deutsch klebt
+// Woerter zusammen — "Westkuesten-Runde", "Schwarzwald", "Bergsee" wuerden sonst nie
+// erkannt. Kurze Stichwoerter (see, berg, wald …) bleiben bewusst wortgenau, sonst
+// schlaegt "see" in "Tennessee" oder "berg" in "Heidelberg" an.
+const PART_MATCH_MIN = 5;
+
 function hasWord(hay: string, kw: string): boolean {
   const k = norm(kw);
   if (!k) return false;
+  if (k.length >= PART_MATCH_MIN && !k.includes(' ')) return hay.includes(k);
   const re = new RegExp('(^|\\s)' + k.replace(/\s+/g, '\\s+') + '($|\\s)');
   return re.test(hay);
 }
