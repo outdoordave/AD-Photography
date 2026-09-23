@@ -557,3 +557,26 @@
   :root[data-design="editorial"] .ed-album-label { left: 18px; right: 18px; bottom: 20px; }
   :root[data-design="editorial"] .ed-album-title { font-size: clamp(18px, 5.4vw, 30px); }
 }
+
+/* --- Startseiten-Hero: Verlauf auf schmalen Schirmen hochziehen (<=900px) ---------------
+   Gemessen (23.09.2026): der Hero-Inhalt (Titel + Text + Buttons + Journal-Karte) stapelt
+   sich auf schmalen Schirmen zu einer hohen Spalte und beginnt bei 28 % (375px) bzw. 42 %
+   (700px) der Hero-Hoehe — also mitten im TRANSPARENTEN Fenster des Verlaufs (32–58 %).
+   Der Verlauf war nicht zu schwach, er endete nur zu tief. Deshalb hier nach oben gezogen,
+   statt ihn generell abzudunkeln.
+
+   Wichtig fuer helle UND dunkle Titelbilder: der Verlauf blendet in die SEITENFARBE
+   (#0d0e0c), nicht in reines Schwarz. Bei einem dunklen Bild ist er dadurch kaum sichtbar
+   (dunkel auf dunkel), bei einem hellen rettet er die Lesbarkeit. Gemessen an der
+   Hero-Diashow, die beides enthaelt: helles Bild 130 -> 83, dunkelstes Bild 59 -> 41
+   (Struktur bleibt erhalten, Text 237 hat in beiden Faellen klaren Kontrast).
+
+   Desktop bleibt bewusst unveraendert. */
+@media (max-width: 900px) {
+  :root[data-design="editorial"] .ed-hero-scrim {
+    background: linear-gradient(180deg,
+      rgba(13,14,12,.55) 0%, rgba(13,14,12,.30) 10%, rgba(13,14,12,.14) 18%,
+      rgba(13,14,12,.24) 30%, rgba(13,14,12,.40) 45%, rgba(13,14,12,.56) 60%,
+      rgba(13,14,12,.72) 72%, rgba(13,14,12,.86) 82%, rgba(13,14,12,.95) 92%, #0d0e0c 100%);
+  }
+}
