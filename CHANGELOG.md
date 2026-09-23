@@ -17,7 +17,15 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
-## 2026-07-31 — Editorial-Album-Kachel: Trackpad-/Mausrad-Wisch (`a2c526e`)
+## 2026-09-23 — Performance-Paket: Logo, Build-Cache, responsive Bilder, Matcher-Fix
+- **Logo** (`46f3c63`): lud auf JEDER Seite mit 341 KB bei 1536 px, angezeigt wird es aber max. 440 px breit → auf 1024 px/163 KB verkleinert (2,3-facher Sicherheitsabstand, q90 wegen der feinen Tuschezeichnung, Alpha erhalten, Pfad unverändert). **−178 KB pro Seitenaufruf.**
+- **Build-Cache** (`69110c0`): `optimize-uploads` komprimierte bei **jedem** Build alle 48 MB neu — der eigentliche Grund, warum der Cloudflare-Build-Cache nichts brachte (der hebt nur Abhängigkeiten auf). Jetzt wird das fertige Ergebnis unter einem Hash aus (Dateiinhalt + Parametern) in `node_modules/.cache/` abgelegt und byte-identisch zurückgeschrieben. Gemessen: **12,3 s → 0,106 s**; Ergebnis per Prüfsumme als **bitgleich** verifiziert (kein erneutes Encodieren, kein Generationsverlust).
+- **Responsive Bilder** (`91f854a`): die Seite hatte **null** `srcset` — jeder Besucher lud 2400-px-Bilder, auch bei 454 px Anzeige (Faktor bis 5,3×; Startseite 4,1 MB, davon 3,9 MB Bilder). Neu: Breitenleiter 640/1024/1600 aus **einer** Quelle (`scripts/lib/image-ladder.json`), echte Bildbreiten via `gen-uploads-manifest` → `src/data/image-widths.json`, Varianten-Erzeugung im Build (vom Original abgeleitet, **nie hochskaliert**, gecacht), Helfer `src/lib/img.ts`. Beispiel: 728 KB → 67 KB bei 640 px. Sicherheitsnetze: nur gemessene Bilder, nur im gebauten Stand (`import.meta.env.PROD`, sonst 404er im Dev), `srcset` immer im selben Render aus demselben `src` (kann nie veralten), Hero **mit** Zuschnitt und Lightbox bewusst ausgenommen. Verifiziert: 64 Bilder, 254 Verweise, **0 fehlende Dateien**.
+- **Matcher-Fix** (`d862ead`): dieselbe Reise bekam auf DE und EN **verschiedene** Motive (West: EN „West Coast loop" → coast, DE „Westküsten-Runde" → landscape), weil streng wortgenau geprüft wurde und Deutsch Wörter zusammenklebt. Neu: Stichwörter ab 5 Zeichen treffen auch als Wortteil, kürzere (see/berg/wald) bleiben wortgenau. Verifiziert: Westküsten/Sandstrand/Wintersturm/Gletscherwanderung treffen jetzt; Tennessee→hills, Nürnberg/Sommerreise/Oswald schlagen weiterhin **nicht** an. DE und EN liefern bei allen 5 Reisen dasselbe Motiv.
+- **Doku:** Datum des Trackpad-Eintrags korrigiert (war 31.07., Commit ist vom 03.08.).
+- Alles ohne Schema-Eingriff → **kein Re-Index**.
+
+## 2026-08-03 18:49 — Editorial-Album-Kachel: Trackpad-/Mausrad-Wisch (`a2c526e`)
 - Die Editorial-Album-Diashow (Portfolio) hatte Touch- + Maus-Ziehen, aber **kein** Trackpad-Zweifinger/Mausrad-quer — im hellen Design geht das (nativer Scroll-Track). Nachgerüstet: horizontales Wheel blättert ein Bild weiter/zurück. Nativer, nicht-passiver `wheel`-Listener + `preventDefault` (kein seitliches Seiten-Scrollen), Akkumulator + 220 ms-Sperre (**ein Wisch = ein Bild**), Autoplay pausiert und startet nach ~700 ms Ruhe neu; vertikales Wheel bleibt unberührt.
 - Klarstellung Punkte: die Kachel zeigt bewusst nur die **ersten 6 Fotos** (`slice(0,6)`) → max. 6 Punkte, egal wie groß das Album. Verifiziert (dev): vor/zurück, vertikal ignoriert, Sub-Schwelle blättert nicht. Kein Re-Index.
 

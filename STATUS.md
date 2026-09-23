@@ -1,8 +1,10 @@
 # STATUS.md — Aktueller Projektstand
 
-> **Stand: 2026-07-30** · Live-Branch `main`. Seite **live**, Cutover durch. Zuletzt: automatische
-> Fallback-Titelbilder (24 Motive, `9c3c1d0`) + Seiten-Titelbild pro Seite wählbar/zuschneidbar
-> (`b688245`, **Re-Index nötig**) + Mediathek-Feld-Picker mit Ordner/Sortierung/Suche (wie Manager-Seite).
+> **Stand: 2026-09-23** · Live-Branch `main`. Seite **live**, Cutover durch. Zuletzt (23.09.):
+> **Performance-Paket** — Logo 341→163 KB, Build-Cache für `optimize-uploads` (12,3 s → 0,1 s,
+> bitgleich), **responsive Bilder (srcset 640/1024/1600)** und Matcher-Fix für deutsche Komposita
+> (DE/EN lieferten verschiedene Motive). Davor: Fallback-Titelbilder (25 Motive inkl. Geysir),
+> Titelbild-Crop pro Seite (`hero_photo`), Mediathek-Feld-Picker mit Ordner/Sortierung/Suche.
 > SEO-Grundlage steht
 > (Sitemap, JSON-LD, Google Search Console bestätigt + Sitemap gelesen), Datenschutz **vollständig**
 > (inkl. Web3Forms), Performance ok, A11y-Basics drin, Security-Header + CSP gesetzt. **Keine offenen
@@ -35,12 +37,13 @@
 > Schrift gold, nie Feld/Rahmen.**
 >
 > **🟡 Offene Punkte (Reihenfolge mit David geklärt):**
-> 0. **🔴 Re-Index NÖTIG (David, 29.07., `b688245`): Seiten-Titelbild-Feld `hero_photo`.** Neues optionales
+> 0. ~~Re-Index `hero_photo`~~ **✅ ERLEDIGT** — am 23.09. live gegengeprüft: Build grün, Titelbild-Crop
+>    greift auf /trips/ (`width:100%; height:133,2%`), Geysir-Motiv wird ausgeliefert. (Ursprünglich:) Neues optionales
 >    Feld auf den 6 Seiten-Settings (Portfolio/Reisen/Stories/Journal/Equipment/Über uns) → Titelbild pro
 >    Seite wählbar + zuschneidbar (Zoom/Verschieben wie Profilfotos); leer = Alt-Verhalten. **Schema-Änderung
 >    → Re-Index zwingend; Cloudflare-Build bis dahin ggf. rot.** `tina-lock.json` ist regeneriert. Build-fix:
 >    erst re-indexen, dann läuft der Build grün. (Alt-Punkt 1 Equipment-Re-Index hat David bereits erledigt.)
-> 1. **🔴 Re-Index NÖTIG (David, 25.07.):** Equipment-Teile sind jetzt eine eigene Collection `equipment`
+> 1. ~~Re-Index Equipment~~ **✅ ERLEDIGT (David).** (Ursprünglich:) Equipment-Teile sind eine eigene Collection `equipment`
 >    (1 Dokument pro Teil, `23efc15`) statt einer Liste in gear.json — damit „+ Equipment" nativ wie
 >    „+ Neue Reise" mit Live-Vorschau anlegt. **Schema-Änderung (neue Collection + entferntes `items`-Feld)
 >    → Re-Index zwingend.** Danach im CMS testen: „+ Equipment" → leeres Formular (tippbar!) → Speichern →
@@ -49,8 +52,11 @@
 >    damaligen Add-Button-Ansatz.)
 > 2. **Davids CMS-Editier-Durchlauf** im neuen Design → gemeldete Haken fixen. Dabei **Medien-Manager**
 >    ansehen: erbt dunkle Tokens, ist aber dark-ungetestet (Option: bewusst hell lassen, ist Admin-Werkzeug).
-> 3. **Build-Beschleunigung** (vereinbartes Paket): Cloudflare-Build-Cache (Davids Schalter) + Cache für
->    `optimize-uploads` (nur neue Bilder verarbeiten) — Davids „ewig warten" adressieren.
+> 3. **✅ ERLEDIGT (23.09., `69110c0`): Build-Beschleunigung.** Ursache gefunden: `optimize-uploads` hatte
+>    KEINEN Cache und komprimierte jeden Build alle 48 MB neu — deshalb brachte Davids Cloudflare-Build-Cache
+>    nichts (der hebt nur Abhängigkeiten auf). Jetzt Ergebnis-Cache per Inhalts-Hash in `node_modules/.cache/`:
+>    **12,3 s → 0,106 s**, Ergebnis per Prüfsumme bitgleich. Zusätzlich 23.09.: Logo −178 KB (`46f3c63`) und
+>    responsive Bilder/srcset (`91f854a`) → deutlich weniger Datenlast für Besucher, v. a. mobil.
 > 3b. **✅ ERLEDIGT (29.07., `9c3c1d0`): Fallback-Titelbilder.** Wieder aufgegriffen: David hat 24 flache
 >    editoriale Motive (Claude Design) geliefert → runterskaliert nach `web/public/uploads/fallbacks/` +
 >    inhaltsbasierter Matcher `src/lib/fallback.ts` (Alaska→tundra, Yellowstone→volcano, Westküste→coast …).
