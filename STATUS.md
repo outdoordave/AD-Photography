@@ -4,7 +4,9 @@
 > **Performance-Paket** — Logo 341→163 KB, Build-Cache für `optimize-uploads` (lokal 12,3 s → 0,1 s,
 > bitgleich; auf Cloudflare wirkungslos, weil `npm ci` node_modules löscht — s. CHANGELOG),
 > **Build überspringt fertig optimierte Bilder** (CMS-Uploads sind bereits WebP q85/2400px →
-> Bild-Phase konstant statt mit der Bibliothek wachsend; Push→live 3:35 statt 4:25), **responsive Bilder (srcset 320/640/1024/1600 — live gemessen −79 % Bilddaten am
+> Hauptbilder wachsen nicht mehr mit der Bibliothek; Build 265 s → 222 s gemessen). Offen/bewusst
+> vertagt: die 254 srcset-Varianten entstehen weiter bei jedem Build (~40 s, wächst mit der
+> Bibliothek) — Mitcommitten verworfen (Repo-Wachstum), bei Bedarf später Bild-CDN, **responsive Bilder (srcset 320/640/1024/1600 — live gemessen −79 % Bilddaten am
 > Handy)** und Matcher-Fix für deutsche Komposita
 > (DE/EN lieferten verschiedene Motive). Davor: Fallback-Titelbilder (25 Motive inkl. Geysir),
 > Titelbild-Crop pro Seite (`hero_photo`), Mediathek-Feld-Picker mit Ordner/Sortierung/Suche.
