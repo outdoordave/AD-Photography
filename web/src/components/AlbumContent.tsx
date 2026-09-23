@@ -5,6 +5,7 @@ import Lightbox, { type LbPhoto } from './Lightbox';
 import { Tile } from './GalleryContent';
 import { normalizePath } from '../lib/stories';
 import { albumPhotos, bi, type RawAlbum, type Lang } from '../lib/albums';
+import { imgAttrs } from '../lib/img';
 
 // Album-Unterseite (1:1 aus renderAlbum): Kicker „Album" + Name + Notiz + flaches
 // Kachel-Grid; Kachel-Klick -> Lightbox des Albums. Daten via useTina(alben) ->
@@ -42,7 +43,7 @@ export default function AlbumContent(props: Props) {
       <div id="page-album">
         <a className="ed-reader-back" href={`${base}/portfolio`}>← {lang === 'en' ? 'Albums' : 'Alben'}</a>
         <header className="ed-reader-hero ed-album-hero">
-          <div className="ed-reader-hero-img" data-ed-hero-img>{cover ? <img src={cover} alt="" fetchPriority="high" decoding="async" /> : null}</div>
+          <div className="ed-reader-hero-img" data-ed-hero-img>{cover ? <img src={cover} alt="" fetchPriority="high" decoding="async" {...imgAttrs(cover, '100vw')} /> : null}</div>
           <div className="ed-reader-hero-scrim" aria-hidden="true" />
           <div className="ed-reader-hero-content" data-ed-hero-content>
             <p className="ed-reader-kicker">Album</p>
@@ -54,7 +55,7 @@ export default function AlbumContent(props: Props) {
           <div className="ed-album-grid">
             {photos.map((ph, i) => (
               <button type="button" className="ed-album-cell" key={ph.idx + ':' + i} onClick={() => openAt(i)} aria-label={lang === 'en' ? 'Enlarge photo' : 'Foto vergrößern'}>
-                <img src={normalizePath(ph.image)} alt="" loading="lazy" decoding="async" />
+                <img src={normalizePath(ph.image)} alt="" loading="lazy" decoding="async" {...imgAttrs(normalizePath(ph.image), '(max-width: 700px) 100vw, 33vw')} />
                 <span className="ed-collage-vignette" aria-hidden="true" />
               </button>
             ))}

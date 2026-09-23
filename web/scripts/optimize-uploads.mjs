@@ -38,6 +38,40 @@ const keyOf = (buf, ext) =>
 const binPath = (k) => join(cacheDir, k + '.bin');
 const keepPath = (k) => join(cacheDir, k + '.keep');
 
+// --- Groessen-Varianten fuer responsive Bilder (srcset) -----------------------------------
+// Je Bild zusaetzlich schmalere Fassungen `<name>-<breite>w.<ext>` erzeugen, damit Besucher
+// nicht immer die 2400px-Datei laden. Wird NIE hochskaliert: Varianten entstehen nur fuer
+// Breiten, die kleiner als das Original sind — sonst gaebe es Unschaerfe statt Ersparnis.
+// Die Leiter steht in scripts/lib/image-ladder.json und wird auch von gen-uploads-manifest
+// und src/lib/img.ts gelesen -> eine einzige Quelle, kein Auseinanderlaufen.
+const LADDER = JSON.parse(readFileSync(resolve('scripts', 'lib', 'image-ladder.json'), 'utf8'));
+let vMade = 0, vHits = 0;
+
+async function makeVariants(file, src, ext, key) {
+  let md = null;
+  for (const w of LADDER.widths) {
+    const vFile = file.replace(/\.([A-Za-z0-9]+)$/, `-${w}w.$1`);
+    const vKey = key ? `${key}-${w}` : null;
+    if (vKey) usedKeys.add(vKey);
+    if (vKey && existsSync(binPath(vKey))) {
+      try { writeFileSync(vFile, readFileSync(binPath(vKey))); vHits++; continue; } catch { /* neu bauen */ }
+    }
+    if (!md) { try { md = await sharp(src, { failOn: 'none' }).metadata(); } catch { md = {}; } }
+    const realW = Math.min(md.width || 0, MAX);
+    if (!realW || w >= realW) continue; // nie hochskalieren
+    try {
+      const pipe = sharp(src, { failOn: 'none' }).rotate().resize({ width: w, withoutEnlargement: true });
+      let out;
+      if (ext === '.png') out = await pipe.png({ compressionLevel: 9 }).toBuffer();
+      else if (ext === '.webp') out = await pipe.webp({ quality: Q }).toBuffer();
+      else out = await pipe.jpeg({ quality: Q, mozjpeg: true }).toBuffer();
+      writeFileSync(vFile, out);
+      vMade++;
+      if (vKey) { try { writeFileSync(binPath(vKey), out); } catch { /* Cache optional */ } }
+    } catch { /* eine Variante darf fehlschlagen, srcset faellt dann auf src zurueck */ }
+  }
+}
+
 if (!existsSync(dir)) {
   console.warn('[optimize-uploads] kein dist/uploads gefunden -> uebersprungen.');
   process.exit(0);
@@ -54,7 +88,9 @@ function collect(d, out) {
     const p = join(d, name);
     let st; try { st = statSync(p); } catch { continue; }
     if (st.isDirectory()) collect(p, out);
-    else if (exts.has(extname(name).toLowerCase())) out.push(p);
+    // Erzeugte srcset-Varianten (…-640w.webp) NIE als Eingabe behandeln — sonst wuerden sie
+    // erneut optimiert und es entstuenden Varianten-von-Varianten (…-640w-640w.webp).
+    else if (exts.has(extname(name).toLowerCase()) && !/-\d+w\.[A-Za-z0-9]+$/.test(name)) out.push(p);
   }
 }
 const allFiles = [];
@@ -68,20 +104,28 @@ for (const file of allFiles) {
 
     // --- Cache-Treffer? Dann fertiges Ergebnis zurueckschreiben, nicht neu encodieren. ---
     const key = cacheOk ? keyOf(src, ext) : null;
+    let handled = false;
     if (key) {
       usedKeys.add(key);
       try {
-        if (existsSync(keepPath(key))) { hits++; continue; }          // Original war schon kleiner
-        if (existsSync(binPath(key))) {
+        if (existsSync(keepPath(key))) { hits++; handled = true; }    // Original war schon kleiner
+        else if (existsSync(binPath(key))) {
           const cached = readFileSync(binPath(key));
           writeFileSync(file, cached);
           savedBytes += before - cached.length;
-          count++; hits++;
-          continue;
+          count++; hits++; handled = true;
         }
       } catch { /* Cache defekt -> normal weiterverarbeiten */ }
     }
 
+    if (!handled) await optimizeMain(file, src, ext, before, key);
+    await makeVariants(file, src, ext, key); // Varianten auch bei Cache-Treffer sicherstellen
+  } catch (e) {
+    console.warn('[optimize-uploads] uebersprungen (Fehler):', file, e?.message || e);
+  }
+}
+
+async function optimizeMain(file, src, ext, before, key) {
     const pipe = sharp(src, { failOn: 'none' })
       .rotate() // EXIF-Orientierung anwenden (sonst koennte das Bild kippen)
       .resize({ width: MAX, height: MAX, fit: 'inside', withoutEnlargement: true });
@@ -103,9 +147,6 @@ for (const file of allFiles) {
     } else if (key) {
       try { writeFileSync(keepPath(key), ''); } catch { /* Cache optional */ }
     }
-  } catch (e) {
-    console.warn('[optimize-uploads] uebersprungen (Fehler):', file, e?.message || e);
-  }
 }
 
 // Cache begrenzen: NUR laengst unbenutzte Eintraege (>30 Tage) entfernen. Bewusst nicht
@@ -125,4 +166,5 @@ if (cacheOk) {
 }
 
 console.log(`[optimize-uploads] ${count} Bilder verkleinert, ~${(savedBytes / 1048576).toFixed(1)} MB gespart` +
-  (cacheOk ? ` (${hits} aus Cache, ${allFiles.length - hits} neu berechnet).` : ' (ohne Cache).'));
+  (cacheOk ? ` (${hits} aus Cache, ${allFiles.length - hits} neu berechnet)` : ' (ohne Cache)') +
+  `; ${vMade + vHits} srcset-Varianten (${vHits} aus Cache, ${vMade} neu).`);

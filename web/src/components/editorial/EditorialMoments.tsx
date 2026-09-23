@@ -2,6 +2,7 @@ import React from 'react';
 import Lightbox, { type LbPhoto } from '../Lightbox';
 import { normalizePath } from '../../lib/stories';
 import type { Moment } from '../../lib/home';
+import { imgAttrs } from '../../lib/img';
 
 // Editorial „02 — Portfolio / Momentaufnahmen": 12-Spalten-Collage (1:1 aus dem Design), Hover-Overlay
 // (Album), Zoom-Bilder (data-zoom) + Drift (data-drift) über EditorialMotion. Klick -> echte Lightbox
@@ -38,7 +39,7 @@ export default function EditorialMoments({ moments, lang }: Props) {
             <a key={i} className="ed-collage-tile" data-reveal data-drift={s.drift}
               style={{ gridColumn: s.col, gridRow: s.row }}
               href="#" onClick={(e) => { e.preventDefault(); setLb({ photos, start: i }); }}>
-              <img src={normalizePath(m.image)} alt={m.album ? (lang === 'en' ? `Photo from album ${m.album}` : `Foto aus Album ${m.album}`) : ''} data-zoom loading="lazy" decoding="async" />
+              <img src={normalizePath(m.image)} alt={m.album ? (lang === 'en' ? `Photo from album ${m.album}` : `Foto aus Album ${m.album}`) : ''} data-zoom loading="lazy" decoding="async" {...imgAttrs(normalizePath(m.image), '(max-width: 900px) 100vw, 33vw')} />
               <span className="ed-collage-vignette" aria-hidden="true" />
               <span className="ed-collage-label">
                 <span className="ed-collage-album">{m.album}</span>

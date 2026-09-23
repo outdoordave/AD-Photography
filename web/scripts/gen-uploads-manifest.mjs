@@ -19,6 +19,7 @@ import { existsSync, readdirSync, statSync, readFileSync, writeFileSync, mkdirSy
 import { resolve, join, posix } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { readPhotoInfo } from './lib/exifCamera.mjs';
+import sharp from 'sharp';
 
 const IMG = /\.(jpe?g|png|webp|gif|avif)$/i;
 const root = resolve('public', 'uploads');
@@ -66,10 +67,35 @@ function walk(dir, rel) {
 if (existsSync(root)) walk(root, '');
 list.sort((a, b) => a.localeCompare(b));
 
+// --- Echte Bildbreiten ermitteln (fuer responsive Bilder / srcset) ----------------------
+// Die Komponenten duerfen nur Varianten anbieten, die es WIRKLICH gibt — sonst zeigen sie
+// auf 404er. Darum hier die Originalbreite je Bild festhalten, geklemmt auf `max`, weil
+// optimize-uploads im Build genau darauf herunterskaliert (die ausgelieferte Datei ist nie
+// breiter). Ergebnis: src/data/image-widths.json  { "/uploads/<pfad>": <breite> }.
+const LADDER = JSON.parse(readFileSync(resolve('scripts', 'lib', 'image-ladder.json'), 'utf8'));
+const widths = {};
+for (const pub of list) {
+  const abs = resolve('public', pub.replace(/^\//, ''));
+  try {
+    const md = await sharp(abs).metadata();
+    if (md.width) {
+      const w = Math.min(md.width, LADDER.max);
+      widths[pub] = w;
+      meta[pub].w = w;
+      if (md.height) meta[pub].h = Math.round(md.height * (w / md.width));
+    }
+  } catch { /* unlesbar -> kein srcset fuer dieses Bild (sicherer Rueckfall) */ }
+}
+
 const outDir = resolve('public');
 mkdirSync(outDir, { recursive: true });
 const out = resolve(outDir, 'uploads-manifest.json');
 writeFileSync(out, JSON.stringify(list));
 const outMeta = resolve(outDir, 'uploads-meta.json');
 writeFileSync(outMeta, JSON.stringify(meta));
-console.log('[uploads-manifest]', list.length, 'Bilder (rekursiv) ->', out, '+ meta ->', outMeta);
+const dataDir = resolve('src', 'data');
+mkdirSync(dataDir, { recursive: true });
+const outW = resolve(dataDir, 'image-widths.json');
+writeFileSync(outW, JSON.stringify(widths, null, 2) + '\n');
+console.log('[uploads-manifest]', list.length, 'Bilder (rekursiv) ->', out, '+ meta ->', outMeta,
+  '+ Breiten ->', outW, `(${Object.keys(widths).length} gemessen)`);

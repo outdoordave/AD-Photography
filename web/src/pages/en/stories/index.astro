@@ -10,6 +10,7 @@ import SettingsHeader from '../../../components/SettingsHeader.tsx';
 import EditorialPageHero from '../../../components/editorial/EditorialPageHero.tsx';
 import { toSortedStories, normalizePath } from '../../../lib/stories';
 import { fallbackImage } from '../../../lib/fallback';
+import { imgAttrs } from '../../../lib/img';
 import { groupByYear } from '../../../lib/groupByYear';
 import { tl } from '../../../lib/albums';
 import settings from '../../../data/stories-settings.json';
@@ -62,7 +63,7 @@ const edRange = yearFirst && yearLast ? (yearFirst === yearLast ? yearFirst : `$
           {edStories.map((st) => (
             <a href={st.href} class="ed-sfeat" data-reveal style={`grid-template-columns:${st.cols}`}>
               <span class="ed-sfeat-img" style={`order:${st.imgOrder}`}>
-                {st.src && <img src={st.src} alt={st.alt} data-zoom loading="lazy" decoding="async" />}
+                {st.src && <img src={st.src} alt={st.alt} data-zoom loading="lazy" decoding="async" {...imgAttrs(st.src, '(max-width: 900px) 100vw, 55vw')} />}
               </span>
               <span class="ed-sfeat-body">
                 <span class="ed-sfeat-meta">{st.meta}</span>

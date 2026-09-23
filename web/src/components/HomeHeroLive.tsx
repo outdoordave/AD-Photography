@@ -8,6 +8,7 @@ import { formatFullDate, journalHeading, journalHasTitle, journalPlainText, jour
 import { glyphSvg, glyphLabel } from '../lib/journalGlyphs';
 import LogoLink from './LogoLink';
 import PaperRip from './PaperRip';
+import { imgAttrs } from '../lib/img';
 
 // Hero als LIVE-Insel (useTina startseite) — 1:1-Port von HomeHero.astro:
 // gleiche Klassen/Markup/Effekte (alle Politur-Effekte laufen über CSS-Klassen),
@@ -103,7 +104,7 @@ export default function HomeHeroLive(props: Props) {
         <img className={`hero-slide${i === 0 ? ' is-active' : ''}`} src={s} alt="" key={i} fetchPriority={i === 0 ? 'high' : undefined} decoding="async" />
       ))
     ) : mode === 'image' && hero.image ? (
-      <img className="hero-img" src={normalizePath(hero.image)} alt="" fetchPriority="high" decoding="async" />
+      <img className="hero-img" src={normalizePath(hero.image)} alt="" fetchPriority="high" decoding="async" {...imgAttrs(normalizePath(hero.image), '100vw')} />
     ) : null
   );
 

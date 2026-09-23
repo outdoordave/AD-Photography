@@ -2,6 +2,7 @@ import React from 'react';
 import { useTina, tinaField } from 'tinacms/dist/react';
 import { selectActiveFormId } from '../../lib/tinaForm';
 import { photoFrame } from '../../lib/trips';
+import { imgAttrs } from '../../lib/img';
 
 // Editorial-Unterseiten-Hero als LIVE-Insel (Editierbarkeits-Parität zum klassischen Design):
 // useTina liefert Kicker/Titel/Intro live (Tippen in der Sidebar aktualisiert die Vorschau),
@@ -43,7 +44,10 @@ export default function EditorialPageHero(props: Props) {
   return (
     <header className="ed-page-hero">
       <div className="ed-page-hero-img" data-ed-hero-img data-tina-field={heroTf}>
-        {heroSrc ? <img src={heroSrc} alt="" fetchPriority="high" decoding="async" style={frame ? frame.style : undefined} /> : null}
+        {heroSrc ? <img src={heroSrc} alt="" fetchPriority="high" decoding="async" style={frame ? frame.style : undefined}
+          /* Bei aktivem Zuschnitt KEIN srcset: das Bild wird dann ueber den Container hinaus
+             vergroessert, eine sizes-Schaetzung waere unzuverlaessig -> lieber volle Aufloesung. */
+          {...(frame ? {} : imgAttrs(heroSrc, '100vw'))} /> : null}
       </div>
       <div className="ed-page-hero-scrim" aria-hidden="true" />
       <div className="ed-page-hero-content" data-ed-hero-content>

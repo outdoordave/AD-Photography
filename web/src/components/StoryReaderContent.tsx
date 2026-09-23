@@ -3,6 +3,7 @@ import { useTina, tinaField } from 'tinacms/dist/react';
 import { buildStory, wwYouTubeEmbed, normalizePath, type StoryData } from '../lib/stories';
 import { ILLUS } from '../lib/illus';
 import { fallbackImage } from '../lib/fallback';
+import { imgAttrs } from '../lib/img';
 import RichText, { richIsEmpty } from './RichText';
 import StoryAlbumBlock from './StoryAlbumBlock';
 import Lightbox, { type LbPhoto } from './Lightbox';
@@ -263,7 +264,7 @@ export default function StoryReaderContent(props: Props) {
         <header className="ed-reader-hero">
           <div className="ed-reader-hero-img" data-ed-hero-img>
             {edCover
-              ? <img src={edCover} alt={d.title} fetchPriority="high" decoding="async" data-tina-field={tinaField(story, 'cover')} />
+              ? <img src={edCover} alt={d.title} fetchPriority="high" decoding="async" data-tina-field={tinaField(story, 'cover')} {...imgAttrs(edCover, '100vw')} />
               : <div className="ph has-illus" data-ph="PLATZHALTER" data-tina-field={tinaField(story, 'cover')} style={phStyle} />}
           </div>
           <div className="ed-reader-hero-scrim" aria-hidden="true" />
@@ -291,7 +292,7 @@ export default function StoryReaderContent(props: Props) {
       </div>
       <div className="reader-hero" ref={heroRef}>
         {(cover || fbImg) ? (
-          <img className="reader-cover-img" src={cover || fbImg} alt={d.title} data-tina-field={tinaField(story, 'cover')} />
+          <img className="reader-cover-img" src={cover || fbImg} alt={d.title} data-tina-field={tinaField(story, 'cover')} {...imgAttrs(cover || fbImg, '100vw')} />
         ) : (
           <div className="ph has-illus" data-ph="PLATZHALTER" data-tina-field={tinaField(story, 'cover')} style={phStyle} />
         )}

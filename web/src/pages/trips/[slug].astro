@@ -10,6 +10,7 @@ import { richToPlain } from '../../components/RichText.tsx';
 import { linkedAlbumsByTrip } from '../../lib/albums';
 import { tripTitle, tripCover, bi, viewStops, type RawTrip } from '../../lib/trips';
 import { fallbackImage } from '../../lib/fallback';
+import { imgAttrs } from '../../lib/img';
 import { tripDesignsCss, resolveTripDesign, mergeTuning } from '../../lib/tripDesigns';
 import settings from '../../data/trips-settings.json';
 import appearance from '../../data/appearance-settings.json';
@@ -77,7 +78,7 @@ const edFacts = [
     <Fragment>
       <AdminDocTools client:load collection="reisen" relativePath={`${slug}.json`} title={ttl} variant="bar" />
       <header class="ed-reader-hero ed-trip-hero">
-        <div class="ed-reader-hero-img" data-ed-hero-img>{edCover && <img src={edCover} alt="" fetchpriority="high" decoding="async" />}</div>
+        <div class="ed-reader-hero-img" data-ed-hero-img>{edCover && <img src={edCover} alt="" fetchpriority="high" decoding="async" {...imgAttrs(edCover, '100vw')} />}</div>
         <div class="ed-reader-hero-scrim" aria-hidden="true"></div>
         <div class="ed-reader-hero-content" data-ed-hero-content>
           <p class="ed-reader-kicker">{['Reise', edSeason].filter(Boolean).join(' · ')}</p>

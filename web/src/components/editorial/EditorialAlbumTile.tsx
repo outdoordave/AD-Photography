@@ -1,4 +1,5 @@
 import React from 'react';
+import { imgAttrs } from '../../lib/img';
 
 // Editorial-Album-Kachel als Mini-Diashow (Portfolio-Übersicht): rotiert durch die ersten
 // Fotos des Albums (Autoplay ~4 s), wischbar per Pointer/Touch, Klick öffnet die Album-Seite.
@@ -100,7 +101,7 @@ export default function EditorialAlbumTile({ href, title, meta, photos, col, row
     >
       <span className="ed-album-slides">
         {slides.map((src, i) => (
-          <img key={i} src={src} alt={i === 0 ? title : ''} className={i === idx ? 'on' : ''} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" draggable={false} />
+          <img key={i} src={src} alt={i === 0 ? title : ''} className={i === idx ? 'on' : ''} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" draggable={false} {...imgAttrs(src, '(max-width: 900px) 100vw, 50vw')} />
         ))}
       </span>
       <span className="ed-collage-vignette" aria-hidden="true" />

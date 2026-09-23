@@ -13,6 +13,7 @@ import { sortTrips, tripTitle, tripCover, bi, viewStops, photoDisplay, type RawT
 import { normalizePath } from '../lib/stories';
 import { paletteFromString } from '../lib/albums';
 import { fallbackImage } from '../lib/fallback';
+import { imgAttrs } from '../lib/img';
 import { richToPlain } from '../components/RichText.tsx';
 
 const res = await client.queries.reisenConnection({ first: 100 });
@@ -78,7 +79,7 @@ const edHeroImg = edTrips[0]?.src || '';
           {edTrips.map((t: any) => (
             <a href={t.href} class="ed-sfeat" data-reveal style={`grid-template-columns:${t.cols}`}>
               <span class="ed-sfeat-img" style={`order:${t.imgOrder}${t.src ? '' : ';background:' + t.grad}`}>
-                {t.src && <img src={t.src} alt={t.alt} data-zoom loading="lazy" decoding="async" />}
+                {t.src && <img src={t.src} alt={t.alt} data-zoom loading="lazy" decoding="async" {...imgAttrs(t.src, '(max-width: 900px) 100vw, 55vw')} />}
               </span>
               <span class="ed-sfeat-body">
                 <span class="ed-sfeat-metarow">
