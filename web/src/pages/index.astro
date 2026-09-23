@@ -22,6 +22,7 @@ import appearance from '../data/appearance-settings.json';
 import about from '../data/about.json';
 import highlights from '../data/highlights.json';
 import { client } from '../../tina/__generated__/client';
+import { imgAttrs } from '../lib/img';
 
 const h = home as any;
 const ap = appearance as any;
@@ -105,7 +106,7 @@ const edJournal = journalItems.map((j: any) => ({
         <div class="ed-duo">
           {edPersons.map((p: any, i: number) => (
             <a class="ed-duo-tile" href="/portfolio" data-reveal data-drift={i === 0 ? 16 : -16}>
-              <img src={p.photo} alt={p.name} data-zoom loading="lazy" decoding="async" />
+              <img src={p.photo} alt={p.name} data-zoom loading="lazy" decoding="async" {...imgAttrs(p.photo, '(max-width: 900px) 100vw, 50vw')} />
               <span class="ed-collage-vignette" aria-hidden="true"></span>
               <span class="ed-duo-label">
                 <span class="ed-duo-kicker">{p.ground}</span>
@@ -135,7 +136,7 @@ const edJournal = journalItems.map((j: any) => ({
       {showStories && (edNextTitle || edStories.length > 0) && (
         <section id="stories" class="ed-stories">
           <div class="ed-stories-hero">
-            <div class="ed-stories-hero-img" data-ed-parallax>{edNextImg && <img src={edNextImg} alt="" decoding="async" />}</div>
+            <div class="ed-stories-hero-img" data-ed-parallax>{edNextImg && <img src={edNextImg} alt="" decoding="async" {...imgAttrs(edNextImg, '100vw')} />}</div>
             <div class="ed-stories-hero-scrim" aria-hidden="true"></div>
             <div class="ed-stories-hero-content">
               <p class="ed-index" data-reveal>03 — Stories · Als Nächstes</p>

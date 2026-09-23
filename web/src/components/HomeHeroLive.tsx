@@ -101,7 +101,7 @@ export default function HomeHeroLive(props: Props) {
         poster={hero.video_poster ? normalizePath(hero.video_poster) : undefined} />
     ) : mode === 'random' && slides.length ? (
       slides.map((s: string, i: number) => (
-        <img className={`hero-slide${i === 0 ? ' is-active' : ''}`} src={s} alt="" key={i} fetchPriority={i === 0 ? 'high' : undefined} decoding="async" />
+        <img className={`hero-slide${i === 0 ? ' is-active' : ''}`} src={s} alt="" key={i} fetchPriority={i === 0 ? 'high' : undefined} decoding="async" {...imgAttrs(s, '100vw')} />
       ))
     ) : mode === 'image' && hero.image ? (
       <img className="hero-img" src={normalizePath(hero.image)} alt="" fetchPriority="high" decoding="async" {...imgAttrs(normalizePath(hero.image), '100vw')} />

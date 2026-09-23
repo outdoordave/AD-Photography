@@ -1,5 +1,6 @@
 import { useTina, tinaField } from 'tinacms/dist/react';
 import { normalizePath } from '../lib/stories';
+import { imgAttrs } from '../lib/img';
 
 // Logo als kleine Tina-Insel: liest die „Darstellung"-Doc (appearance-settings) live
 // und hängt data-tina-field ans <img> -> Klick aufs Logo (in der CMS-Vorschau) springt
@@ -27,7 +28,7 @@ export default function LogoLink(props: Props) {
     if (!src) return null;
     return (
       <div className="hero-logo">
-        <img src={src} alt="Wide & Wild" data-tina-field={tf} />
+        <img src={src} alt="Wide & Wild" data-tina-field={tf} {...imgAttrs(src, '(max-width: 550px) 80vw, 440px')} />
       </div>
     );
   }
@@ -37,7 +38,7 @@ export default function LogoLink(props: Props) {
     return (
       <div className="footer-logo">
         <a href={href} aria-label={props.ariaLabel}>
-          <img src={src} alt="Wide & Wild" loading="lazy" data-tina-field={tf} />
+          <img src={src} alt="Wide & Wild" loading="lazy" data-tina-field={tf} {...imgAttrs(src, '200px')} />
         </a>
       </div>
     );
@@ -46,7 +47,7 @@ export default function LogoLink(props: Props) {
   // nav
   return (
     <a className="nav-logo" href={href} aria-label={props.ariaLabel}>
-      {src ? <img src={src} alt="Wide & Wild Logo" data-tina-field={tf} /> : <strong>Wide &amp; Wild</strong>}
+      {src ? <img src={src} alt="Wide & Wild Logo" data-tina-field={tf} {...imgAttrs(src, '(max-width: 767px) 72px, 93px')} /> : <strong>Wide &amp; Wild</strong>}
     </a>
   );
 }
