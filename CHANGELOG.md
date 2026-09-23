@@ -17,6 +17,12 @@ Den aktuellen Gesamtstand zeigt `STATUS.md`.
 
 ---
 
+## 2026-09-23 — Editorial-Design: Mobil-Feinschliff (`daa114c`)
+- Am echten 375-px-Viewport durchgemessen. **Abgeschnittene Titel:** die `clamp()`-Untergrenze (`.ed-page-title` 38 px, `.ed-h2` 32 px) greift auf schmalen Schirmen immer, der Text konnte nicht kleiner werden — „FOTOGRAFIEREN" brauchte 433 px bei 335 px Platz. Betroffen: /gear/, /portfolio/, /stories/ und „Momentaufnahmen" auf der Startseite.
+- **Seitliches Scrollen** auf /gear/ und /portfolio/: die Abschnitts-Kopfzeilen (`.ed-section-head`, `.ed-gear-cathead`) sind Flex-Zeilen aus zwei `white-space: nowrap`-Labels + Trennlinie und können nicht schrumpfen → Dokument 409 statt 375 px breit. **Sichtbare Folge: Logo nicht mittig, Menü-Button halb außerhalb des Bildschirms.**
+- Gelöst mit **einer** Medienabfrage (≤ 560 px): Silbentrennung für Titel/H2/Album-Titel (behebt das Abschneiden, **ohne** die Schriftgrößen anzutasten — das Design bleibt), Kopfzeilen dürfen umbrechen, Trennlinie darf schrumpfen, Album-Label mit kleinerem Innenabstand.
+- Verifiziert (dev, 375 px): kein abgeschnittener Text mehr, `scrollWidth` exakt 375 (vorher 409), Logo mittig, Menü-Button im Bild. Desktop per Medienabfrage nicht betroffen.
+
 ## 2026-09-23 — Performance-Paket: Logo, Build-Cache, responsive Bilder, Matcher-Fix
 - **Logo** (`46f3c63`): lud auf JEDER Seite mit 341 KB bei 1536 px, angezeigt wird es aber max. 440 px breit → auf 1024 px/163 KB verkleinert (2,3-facher Sicherheitsabstand, q90 wegen der feinen Tuschezeichnung, Alpha erhalten, Pfad unverändert). **−178 KB pro Seitenaufruf.**
 - **Build-Cache** (`69110c0`): `optimize-uploads` komprimiert bei **jedem** Build alle 48 MB neu. Neu: das fertige Ergebnis wird unter einem Hash aus (Dateiinhalt + Parametern) in `node_modules/.cache/` abgelegt und byte-identisch zurückgeschrieben. **Lokal gemessen: 12,3 s → 0,106 s**, Ergebnis per Prüfsumme als **bitgleich** verifiziert.
