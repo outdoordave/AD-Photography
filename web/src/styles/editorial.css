@@ -526,3 +526,34 @@
   :root[data-design="editorial"] .ed-v2-map { height: 52vh; }
   :root[data-design="editorial"] .ed-v2-legs { gap: 56px; }
 }
+
+/* --- Mobil-Feinschliff (<=560px) -------------------------------------------------------
+   Drei Befunde aus dem Test am echten 375px-Viewport (23.09.2026):
+
+   1) Lange deutsche Woerter wurden RECHTS ABGESCHNITTEN. Ursache: die clamp()-Untergrenze
+      der Titel (38px bzw. 32px) greift auf schmalen Schirmen immer, der Text kann also nicht
+      kleiner werden — "FOTOGRAFIEREN" brauchte 433px bei 335px Platz. Silbentrennung loest
+      das, ohne die Schriftgroesse (und damit die Wirkung des Designs) anzutasten.
+   2) Die Seite liess sich SEITLICH SCHIEBEN (/gear/, /portfolio/). Ursache: die Abschnitts-
+      Kopfzeilen sind Flex-Zeilen aus zwei `white-space: nowrap`-Labels + Trennlinie; die
+      koennen nicht schrumpfen, das Dokument wurde 409 statt 375px breit. Folge war sichtbar:
+      Logo nicht mittig und der Menue-Button halb ausserhalb des Bildschirms.
+   3) Album-Titel wurden knapp beschnitten, weil das Label je 28px Innenabstand hat.
+
+   Bewusst NICHT angefasst: die Schriftgroessen selbst (Design bleibt), und `.jm-txt` im
+   Journal (das kuerzt absichtlich mit Auslassungspunkten). */
+@media (max-width: 560px) {
+  /* 1) Lange Woerter duerfen trennen statt abgeschnitten zu werden */
+  :root[data-design="editorial"] .ed-page-title,
+  :root[data-design="editorial"] .ed-h2,
+  :root[data-design="editorial"] .ed-album-title { hyphens: auto; overflow-wrap: break-word; }
+
+  /* 2) Kopfzeilen duerfen umbrechen, die Trennlinie darf schrumpfen */
+  :root[data-design="editorial"] .ed-section-head,
+  :root[data-design="editorial"] .ed-gear-cathead { flex-wrap: wrap; gap: 10px 14px; }
+  :root[data-design="editorial"] .ed-rule { flex: 1 1 40px; min-width: 24px; }
+
+  /* 3) Album-Label: mehr Platz fuer den Titel */
+  :root[data-design="editorial"] .ed-album-label { left: 18px; right: 18px; bottom: 20px; }
+  :root[data-design="editorial"] .ed-album-title { font-size: clamp(18px, 5.4vw, 30px); }
+}
